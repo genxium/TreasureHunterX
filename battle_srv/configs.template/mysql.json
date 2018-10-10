@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "port": 3306, 
+  "dbname": "cuisine",
+  "username": "root", 
+  "password": "root"
+}
