@@ -79,7 +79,7 @@ func setRouter(router *gin.Engine) {
 	router.Use(cors.Default())
 	router.StaticFS("/asset", http.Dir(filepath.Join(Conf.General.AppRoot, "asset")))
 	router.GET("/ping", f)
-	router.GET("/cuisineconn", ws.Serve)
+	router.GET("/tsrht", ws.Serve)
 
 	apiRouter := router.Group("/api")
 	{
