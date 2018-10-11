@@ -11,7 +11,6 @@ import (
 	"server/api/v1"
 	. "server/common"
 	"server/env_tools"
-	"server/scheduler"
 	"server/storage"
 	"server/ws"
 	"syscall"
@@ -24,10 +23,8 @@ import (
 )
 
 func main() {
-	// 加载所有配置
 	MustParseConfig()
 	MustParseConstants()
-	// 存储相关初始化
 	storage.Init()
 	env_tools.LoadPreConf()
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
@@ -45,7 +42,7 @@ func main() {
 	go func() {
 		// service connections
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			Logger.Fatal("listen: %s\n", zap.Error(err))
+			Logger.Fatal("Listening: %s\n", zap.Error(err))
 		}
 	}()
 	var gracefulStop = make(chan os.Signal)
@@ -66,7 +63,7 @@ func main() {
 }
 
 func clean() {
-	Logger.Info("start clean")
+	Logger.Info("About to clean up the resources occupied by this server-process.")
 	if storage.MySQLManagerIns != nil {
 		storage.MySQLManagerIns.Close()
 	}
@@ -96,27 +93,11 @@ func setRouter(router *gin.Engine) {
 			apiRouter.Handle(method, url, v1.Player.TokenWithPlayerIdAuth, handler)
 		}
 		authRouter(http.MethodPost, "/player/v1/profile/fetch", v1.Player.FetchProfile)
-		authRouter(http.MethodPost, "/player/v1/belonging/fetch", v1.Belonging.Fetch)
-
-		//tokenAuth := func(method string, url string, handler gin.HandlerFunc) {
-		//	apiRouter.Handle(method, url, v1.Player.TokenAuth, handler)
-		//}
 	}
 }
 
 func startScheduler() {
-	go func() {
-		// 启动需要运行，写到下面
-		scheduler.HandleRestaurantUpgrading()
-		scheduler.HandleExpiredPlayerLoginToken()
-//		ws.HandleCookWork()
-		ws.HandleGenGuest()
-	}()
 	c := cron.New()
-	c.AddFunc("*/1 * * * * *", scheduler.HandleRestaurantUpgrading)
-	c.AddFunc("0 */30 * * * *", scheduler.HandleExpiredPlayerLoginToken)
-  c.AddFunc("*/10 * * * * *", ws.HandleGenGuest)
-	c.AddFunc("*/10 * * * * *", ws.HandleGenGold)
-	//c.AddFunc("*/1 * * * * *", ws.HandleCookWork)
+	//c.AddFunc("*/1 * * * * *", FuncName)
 	c.Start()
 }

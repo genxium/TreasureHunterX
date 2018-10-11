@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "flatHeadSister",
+    "texture": "a528c4f5-9aea-4f8d-a150-111c564809bd",
+    "atlas": "",
+    "rect": [
+      2,
+      2,
+      2030,
+      718
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      2034,
+      722
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,8 +1,21 @@
+const i18n = require('LanguageData');
+i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
+
+window.ALL_MAP_STATES = {
+  VISUAL: 0, // For free dragging & zooming.
+  EDITING_BELONGING: 1,
+  SHOWING_MODAL_POPUP: 2,
+};
+
 cc.Class({
   extends: cc.Component,
 
   properties: {
     selfPlayer: null,
+    canvasNode: {
+      type: cc.Node,
+      default: null,
+    },
     tiledAnimPrefab: {
       type: cc.Prefab,
       default: null, 
@@ -39,6 +52,10 @@ cc.Class({
       type: cc.Node,
       default: null
     },
+    confirmLogoutPrefab: {
+      type: cc.Prefab,
+      default: null
+    },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -51,93 +68,96 @@ cc.Class({
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
-    cc.director.getCollisionManager().enabledDebugDraw = true;
+    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
-    self.state = ALL_MAP_STATES.VISUAL;
-    const tiledMapIns = self.node.getComponent(cc.TiledMap); 
-    self.spawnSelfPlayer();
-    this._inputControlEnabled = true;
-    self.setupInputControls();
+    self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
+    self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
+    self.confirmLogoutNode.width = canvasNode.width;
+    self.confirmLogoutNode.height = canvasNode.height;
 
-    const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node); 
-    for (let frameAnim of boundaryObjs.frameAnimations) {
-      const animNode = cc.instantiate(self.tiledAnimPrefab);  
-      const anim = animNode.getComponent(cc.Animation); 
-      animNode.setPosition(frameAnim.posInMapNode);
-      animNode.width = frameAnim.sizeInMapNode.width;
-      animNode.height = frameAnim.sizeInMapNode.height;
-      animNode.setScale(frameAnim.sizeInMapNode.width/frameAnim.origSize.width, frameAnim.sizeInMapNode.height/frameAnim.origSize.height);
-      animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
-      safelyAddChild(self.node, animNode);  
-      setLocalZOrder(animNode, 5);  
-      anim.addClip(frameAnim.animationClip, "default");
-      anim.play("default");
-    } 
+    initPersistentSessionClient(() => {
+      self.state = ALL_MAP_STATES.VISUAL;
+      const tiledMapIns = self.node.getComponent(cc.TiledMap); 
+      self.spawnSelfPlayer();
+      this._inputControlEnabled = true;
+      self.setupInputControls();
 
-    self.barrierColliders = [];
-    for (let boundaryObj of boundaryObjs.barriers) {
-      const newBarrier = cc.instantiate(self.barrierPrefab);
-      const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
-      newBarrier.setPosition(newBoundaryOffsetInMapNode);
-      newBarrier.setAnchorPoint(cc.v2(0, 0));
-      const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider); 
-      newBarrierColliderIns.points = [];
-      for (let p of boundaryObj) {
-        newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
-      }  
-      self.barrierColliders.push(newBarrierColliderIns);
-      self.node.addChild(newBarrier);
-    }
+      const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node); 
+      for (let frameAnim of boundaryObjs.frameAnimations) {
+        const animNode = cc.instantiate(self.tiledAnimPrefab);  
+        const anim = animNode.getComponent(cc.Animation); 
+        animNode.setPosition(frameAnim.posInMapNode);
+        animNode.width = frameAnim.sizeInMapNode.width;
+        animNode.height = frameAnim.sizeInMapNode.height;
+        animNode.setScale(frameAnim.sizeInMapNode.width/frameAnim.origSize.width, frameAnim.sizeInMapNode.height/frameAnim.origSize.height);
+        animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
+        safelyAddChild(self.node, animNode);  
+        setLocalZOrder(animNode, 5);  
+        anim.addClip(frameAnim.animationClip, "default");
+        anim.play("default");
+      } 
 
-    const allLayers = tiledMapIns.getLayers();
-    for (let layer of allLayers) {
-      const layerType = layer.getProperty("type"); 
-      switch (layerType) {
-        case "normal":
-          setLocalZOrder(layer.node, 0);
-          break;
-        case "barrier_and_shelter":
-          setLocalZOrder(layer.node, 3);
-          break;
-        default:
-          break;
+      self.barrierColliders = [];
+      for (let boundaryObj of boundaryObjs.barriers) {
+        const newBarrier = cc.instantiate(self.barrierPrefab);
+        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
+        newBarrier.setPosition(newBoundaryOffsetInMapNode);
+        newBarrier.setAnchorPoint(cc.v2(0, 0));
+        const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider); 
+        newBarrierColliderIns.points = [];
+        for (let p of boundaryObj) {
+          newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
+        }  
+        self.barrierColliders.push(newBarrierColliderIns);
+        self.node.addChild(newBarrier);
       }
-    }
 
-    const allObjectGroups = tiledMapIns.getObjectGroups(); 
-    for (let objectGroup of allObjectGroups) {
-      const objectGroupType = objectGroup.getProperty("type"); 
-      switch (objectGroupType) {
-        case "barrier_and_shelter":
-          setLocalZOrder(objectGroup.node, 3);
-          break;
-        default:
-          break;
+      const allLayers = tiledMapIns.getLayers();
+      for (let layer of allLayers) {
+        const layerType = layer.getProperty("type"); 
+        switch (layerType) {
+          case "normal":
+            setLocalZOrder(layer.node, 0);
+            break;
+          case "barrier_and_shelter":
+            setLocalZOrder(layer.node, 3);
+            break;
+          default:
+            break;
+        }
       }
-    }
 
+      const allObjectGroups = tiledMapIns.getObjectGroups(); 
+      for (let objectGroup of allObjectGroups) {
+        const objectGroupType = objectGroup.getProperty("type"); 
+        switch (objectGroupType) {
+          case "barrier_and_shelter":
+            setLocalZOrder(objectGroup.node, 3);
+            break;
+          default:
+            break;
+        }
+      }
 
-    // self.spawnNPCs();
-    self.spawnType2NPCs();
+      if (this.joystickInputControllerNode.parent !== this.node.parent.parent.getChildByName('JoystickContainer')) {
+        this.joystickInputControllerNode.parent = this.node.parent.parent.getChildByName('JoystickContainer');
+      }
+      this.joystickInputControllerNode.parent.width = this.node.parent.width * 0.5;
+      this.joystickInputControllerNode.parent.height = this.node.parent.height;
 
-    if (this.joystickInputControllerNode.parent !== this.node.parent.parent.getChildByName('JoystickContainer')) {
-      this.joystickInputControllerNode.parent = this.node.parent.parent.getChildByName('JoystickContainer');
-    }
-    this.joystickInputControllerNode.parent.width = this.node.parent.width * 0.5;
-    this.joystickInputControllerNode.parent.height = this.node.parent.height;
-
-    for (let boundaryObj of boundaryObjs.sheltersZReducer) {
-      const newShelter = cc.instantiate(self.shelterZReducerPrefab);
-      const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
-      newShelter.setPosition(newBoundaryOffsetInMapNode);
-      newShelter.setAnchorPoint(cc.v2(0, 0));
-      const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider); 
-      newShelterColliderIns.points = [];
-      for (let p of boundaryObj) {
-        newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
-      }  
-      self.node.addChild(newShelter);
-    }
+      for (let boundaryObj of boundaryObjs.sheltersZReducer) {
+        const newShelter = cc.instantiate(self.shelterZReducerPrefab);
+        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
+        newShelter.setPosition(newBoundaryOffsetInMapNode);
+        newShelter.setAnchorPoint(cc.v2(0, 0));
+        const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider); 
+        newShelterColliderIns.points = [];
+        for (let p of boundaryObj) {
+          newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
+        }  
+        self.node.addChild(newShelter);
+      }
+    });
   },
 
   setupInputControls() {
@@ -186,76 +206,53 @@ cc.Class({
     this.selfPlayer = newPlayer;
   },
 
-  spawnNPCs() {
-    const self = this;
-    const tiledMapIns = self.node.getComponent(cc.TiledMap);
-    const npcPatrolLayer = tiledMapIns.getObjectGroup('NPCPatrol');
-
-    const npcList = npcPatrolLayer.getObjects();
-    npcList.forEach(function (npcPlayerObj, index) {
-      const npcPlayerNode = cc.instantiate(self.npcPlayerPrefab);
-      const npcPlayerContinuousPositionWrtMapNode = tileCollisionManager.continuousObjLayerOffsetToContinuousMapNodePos(self.node, npcPlayerObj.offset);
-      npcPlayerNode.getChildByName('username').getComponent(cc.Label).string = npcPlayerObj.name;
-      npcPlayerNode.setPosition(npcPlayerContinuousPositionWrtMapNode);
-
-      npcPlayerNode.getComponent('NPCPlayer').mapNode = self.node;
-      safelyAddChild(self.node, npcPlayerNode);
-      setLocalZOrder(npcPlayerNode, 5);
-    });
-  },
-
-  spawnType2NPCs() {
-    const self = this;
-    const tiledMapIns = self.node.getComponent(cc.TiledMap);
-    const type2NpcPatrolSrcLayer = tiledMapIns.getObjectGroup('Type2NPCPatrolSrc');
-    const type2NpcPatrolDstLayer = tiledMapIns.getObjectGroup('Type2NPCPatrolDst');
-
-    const npcSrcList = type2NpcPatrolSrcLayer.getObjects();
-    const npcDstList = type2NpcPatrolDstLayer.getObjects();
-
-    for (let indice = 0; indice < npcSrcList.length; ++indice) {
-      let type2NpcSrc = npcSrcList[indice]; 
-      const npcPlayerNode = cc.instantiate(self.type2NpcPlayerPrefab);
-      const npcPlayerSrcContinuousPositionWrtMapNode = tileCollisionManager.continuousObjLayerOffsetToContinuousMapNodePos(self.node, type2NpcSrc.offset);
-      const npcPlayerIns = npcPlayerNode.getComponent('Type2NPCPlayer');
-      npcPlayerIns.mapNode = self.node;
-      npcPlayerNode.setPosition(npcPlayerSrcContinuousPositionWrtMapNode);
-      safelyAddChild(self.node, npcPlayerNode);
-      setLocalZOrder(npcPlayerNode, 5);
-
-      let type2NpcDst = npcDstList[indice]; 
-      const npcPlayerDstContinuousPositionWrtMapNode = tileCollisionManager.continuousObjLayerOffsetToContinuousMapNodePos(self.node, type2NpcDst.offset);
-      const eps = 10.0;
-      const initialGuessedCountOfSteps = 10;
-      const stops = findPathForType2NPCWithDoubleAstar(npcPlayerSrcContinuousPositionWrtMapNode, npcPlayerDstContinuousPositionWrtMapNode, eps, initialGuessedCountOfSteps, npcPlayerNode.getComponent(cc.CircleCollider), self.barrierColliders, null, self.node);
-	  if (null == stops) continue;
-      let ccSeqActArray = [];
-      for (let i = 0; i < stops.length; ++i) {
-        const stop = stops[i];
-        // Note that `stops[0]` is always `npcPlayerSrcContinuousPositionWrtMapNode`.
-        ccSeqActArray.push(cc.moveTo(2, stop)); 
-        if (i < stops.length - 1) {
-          const nextStop = stops[i + 1];
-          const tmpVec = nextStop.sub(stop);
-          const diffVec = {
-            dx: tmpVec.x,
-            dy: tmpVec.y,
-          };
-          const discretizedDirection = npcPlayerIns._discretizeDirection(diffVec);
-          ccSeqActArray.push(cc.callFunc(() => {
-            npcPlayerIns.scheduleNewDirection(discretizedDirection);
-          }, npcPlayerIns)); 
-        }
-      } 
-      for (let act of ccSeqActArray) {
-        cc.log(act.toString());
-      } 
-      npcPlayerNode.runAction(cc.sequence(ccSeqActArray));
-    }
-  },
-
   update(dt) {
   },
 
+  transitToState(s) {
+    const self = this;
+    self.state = s;
+  },
+
+  logout() {
+    // Will be called within "ConfirmLogou.js".
+    const self = this;
+    const selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    const requestContent = {
+      intAuthToken: selfPlayer.intAuthToken
+    }
+    NetworkUtils.ajax({
+      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
+      type: "POST",
+      data: requestContent,
+      success: function(res) {
+        if (res.ret != constants.RET_CODE.OK) {
+          cc.log(`Logout failed: ${res}.`);
+        }
+        self.closeFlag = true;
+        window.closeWSConnection();
+        cc.sys.localStorage.removeItem('selfPlayer');
+        cc.director.loadScene('login');
+      }
+    });
+  },
+
+  onLogoutClicked(evt) {
+    const self = this;
+    self.disableInputControls();
+    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
+    const canvasNode = self.canvasNode;
+    self.confirmLogoutNode.setScale(1 / canvasNode.getScale());
+    safelyAddChild(canvasNode, self.confirmLogoutNode);
+    setLocalZOrder(self.confirmLogoutNode, 10);
+  },
+
+  onLogoutConfirmationDismissed() {
+    const self = this;
+    self.transitToState(ALL_MAP_STATES.VISUAL);
+    const canvasNode = self.canvasNode;
+    canvasNode.removeChild(self.confirmLogoutNode);
+    self.enableInputControls();
+  },
 });
 

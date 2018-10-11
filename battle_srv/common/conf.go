@@ -55,7 +55,6 @@ type config struct {
 }
 
 func MustParseConfig() {
-	// 初始所有指针数据
 	Conf = &config{
 		General: new(generalConf),
 		MySQL:   new(mysqlConf),
@@ -94,7 +93,7 @@ func MustParseConfig() {
 	if !isNotExist(testEnvSQLitePath) {
 		Conf.General.TestEnvSQLitePath = testEnvSQLitePath
 	}
-	preConfSQLitePath := filepath.Join(confDir, "RestaurantAndCookAndFoodAndBelonging_BuildingRestaurantTest.sqlite")
+	preConfSQLitePath := filepath.Join(confDir, "pre_conf_data.sqlite")
 	if !isNotExist(preConfSQLitePath) {
 		Conf.General.PreConfSQLitePath = preConfSQLitePath
 	}
@@ -105,8 +104,6 @@ func MustParseConfig() {
 	setMySQLDSNURL(Conf.MySQL)
 	loadJSON("sio.json", Conf.Sio)
 	loadJSON("redis.json", Conf.Redis)
-
-	//Logger.Debug(spew.Sdump(Conf))
 }
 
 func setMySQLDSNURL(c *mysqlConf) {
@@ -126,13 +123,13 @@ func loadJSON(fp string, v interface{}) {
 	fd, err := os.Open(fp)
 	ErrFatal(err)
 	defer fd.Close()
-	Logger.Info("open file successfully", zap.String("fp", fp))
+	Logger.Info("Opened json file successfully.", zap.String("fp", fp))
 	err = json.NewDecoder(fd).Decode(v)
 	ErrFatal(err)
-	Logger.Info("load json successfully", zap.String("fp", fp))
+	Logger.Info("Loaded json file successfully.", zap.String("fp", fp))
 }
 
-// 启动过程可以使用，运行时不准使用
+// Please only use this auxiliary function before server is fully started up, but not afterwards (启动过程可以使用，运行时不准使用).
 func ErrFatal(err error) {
 	if err != nil {
 		Logger.Fatal("ErrFatal", zap.NamedError("err", err))

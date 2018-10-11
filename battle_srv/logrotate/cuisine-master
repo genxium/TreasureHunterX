@@ -1,8 +1,8 @@
-# This file should be put as "/etc/logrotate.d/cuisine-master".                  
+# This file should be put as "/etc/logrotate.d/treasure-hunter".                  
 # Manual usage Example                                                            
-# - logrotate -f /etc/logrotate.d/cuisine-master                                 
+# - logrotate -f /etc/logrotate.d/treasure-hunter                                 
                                                                            
-/var/log/cuisine-master.log {            
+/var/log/treasure-hunter.log {            
   rotate 12
   size 32M
   hourly

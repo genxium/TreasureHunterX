@@ -7,7 +7,7 @@ fi
 
 OS_USER=$USER
 ServerEnv=$1
-LOG_PATH="/var/log/cuisine-master.log"
+LOG_PATH="/var/log/treasure-hunter.log"
 
 basedir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
