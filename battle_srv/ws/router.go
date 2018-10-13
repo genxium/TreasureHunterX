@@ -1,10 +1,10 @@
 package ws
 
 import (
+	. "server/common"
 	"encoding/json"
 	"reflect"
-	. "server/common"
-
+	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 )
 
@@ -27,16 +27,16 @@ type wsResp struct {
 }
 
 type wsHandler interface {
-	handle(*Session, *wsResp) error
+  // To be implemented by "subclasses".
+	handle(*websocket.Conn, *wsResp) error
 }
 
 var wsRouter = make(map[string]*wsHandleInfo, 50)
-
 func regHandleInfo(reqAct string, info *wsHandleInfo) {
 	wsRouter[reqAct] = info
 }
 
-func wsHandle(session *Session, req *wsReq) *wsResp {
+func wsGenerateRespectiveResp(conn *websocket.Conn, req *wsReq) *wsResp {
 	var body interface{}
 	resp := &wsResp{
 		MsgId: req.MsgId,
@@ -59,7 +59,7 @@ func wsHandle(session *Session, req *wsReq) *wsResp {
 		return resp
 	}
 	resp.Act = info.respAct
-	err = h.handle(session, resp)
+	err = h.handle(conn, resp)
 	if err != nil {
 		Logger.Warn("ws handle", zap.Error(err))
 		if resp.Ret == 0 {
@@ -69,13 +69,13 @@ func wsHandle(session *Session, req *wsReq) *wsResp {
 	return resp
 }
 
-func wsSend(s *Session, act string, data interface{}) {
+func wsSendAction(conn *websocket.Conn, act string, data interface{}) {
 	resp := &wsResp{
 		Act:  act,
 		Data: data,
 		Ret:  Constants.RetCode.Ok,
 	}
-	err := s.Send(resp)
+  err := conn.WriteJSON(resp)
 	if err != nil {
 		Logger.Debug("write:", zap.Error(err))
 	}

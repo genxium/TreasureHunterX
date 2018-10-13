@@ -14,9 +14,7 @@ import (
 type PlayerWallet struct {
 	CreatedAt int64     `json:"-" db:"created_at"`
 	DeletedAt NullInt64 `json:"-" db:"deleted_at"`
-	Diamond   int       `json:"diamond" db:"diamond"`
-	Energy    int       `json:"energy" db:"energy"`
-	Gold      int       `json:"gold" db:"gold"`
+	Gem   int       `json:"gem" db:"gem"`
 	ID        int       `json:"-" db:"id"`
 	UpdatedAt int64     `json:"-" db:"updated_at"`
 }

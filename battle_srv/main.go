@@ -10,6 +10,7 @@ import (
 	"server/api"
 	"server/api/v1"
 	. "server/common"
+	"server/models"
 	"server/env_tools"
 	"server/storage"
 	"server/ws"
@@ -30,6 +31,7 @@ func main() {
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
 		env_tools.MergeTestPlayerAccounts()
 	}
+  models.InitRoomHeapManager()
 	startScheduler()
 	router := gin.Default()
 	setRouter(router)
