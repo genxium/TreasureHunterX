@@ -5,7 +5,6 @@ import (
   "go.uber.org/zap/zapcore"
 )
 
-// 隐式导入
 var Logger *zap.Logger
 var LoggerConfig zap.Config
 

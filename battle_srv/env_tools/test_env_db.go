@@ -13,7 +13,7 @@ import (
 
 func MergeTestPlayerAccounts()  {
   fp := Conf.General.TestEnvSQLitePath
-  Logger.Info(`from sqlite merge into MySQL`, zap.String("fp", fp))
+  Logger.Info(`Initializing TestPlayerAccounts in runtime MySQLServer from SQLite file:`, zap.String("fp", fp))
   db, err := sqlx.Connect("sqlite3", fp)
   ErrFatal(err)
   defer db.Close()

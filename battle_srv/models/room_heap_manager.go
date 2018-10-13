@@ -3,15 +3,19 @@ package models
 import (
   . "server/common"
   "sync"
-  "go.uber.org/zap"
 	"container/heap"
-	"fmt"
+  "go.uber.org/zap"
+  "fmt"
 )
 
+
 // Reference https://github.com/genxium/GoStructPrac.
-var RoomHeapMux sync.Mutex
 type RoomHeap []Room
-var RoomHeapManagerIns RoomHeap
+var (
+  RoomHeapMux sync.Mutex
+  // NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types. 
+  RoomHeapManagerIns *RoomHeap
+)
 
 func (pq RoomHeap) Len() int { return len(pq) }
 
@@ -36,7 +40,7 @@ func (pq *RoomHeap) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	if n == 0 {
-		panic(fmt.Sprintf("Popping on an empty heap is not allowed.\n"))
+		panic("Popping on an empty heap is not allowed.")
 	}
 	item := old[n-1]
 	item.Index = -1 // for safety
@@ -49,26 +53,34 @@ func (pq *RoomHeap) update(item Room, Score float32) {
 	heap.Fix(pq, item.Index)
 }
 
+func (pq *RoomHeap) Update(item Room, Score float32) {
+  pq.update(item, Score)
+}
+
 func InitRoomHeapManager() {
 	// Init "pseudo class constants".
   InitRoomStateIns()
 
 	initialCountOfRooms := 20
-	RoomHeapManagerIns := make(RoomHeap, initialCountOfRooms)
+	pq := make(RoomHeap, initialCountOfRooms)
 
 	roomCapacity := 4
 	for i := 0; i < initialCountOfRooms; i++ {
 		players := make(map[int]*Player)
+    playerDownsyncChanDict := make(map[int]chan interface{})
 		currentRoomState := RoomStateIns.IDLE
-		RoomHeapManagerIns[i] = Room{
+		pq[i] = Room{
 			Players:  players,
+      PlayerDownsyncChanDict: playerDownsyncChanDict,
 			Capacity: roomCapacity,
-			Score:    CalRoomScore(len(players) /* Initially 0. */, roomCapacity, currentRoomState),
+			Score:    calRoomScore(len(players) /* Initially 0. */, roomCapacity, currentRoomState),
 			State:    currentRoomState,
+      CmdFromPlayersChan: make(chan interface{}, 2048 /* Hardcoded temporarily. */),
 			ID:       i,
 			Index:    i,
 		}
 	}
-	heap.Init(&RoomHeapManagerIns)
-  Logger.Info("The RoomHeapManagerIns has been initialized.", zap.Any("RoomHeapManagerIns", RoomHeapManagerIns))
+	heap.Init(&pq)
+  RoomHeapManagerIns = &pq
+  Logger.Info("The RoomHeapManagerIns has been initialized:", zap.Any("addr", fmt.Sprintf("%p", RoomHeapManagerIns)), zap.Any("size", len(*RoomHeapManagerIns)))
 }
