@@ -62,7 +62,6 @@ func Serve(c *gin.Context) {
     return nil
   });
   defer func() {
-    // Will immediately execute `RoomHeapMux.Unlock()` and then `wg.Done()` in order if panics.
     if r := recover(); r != nil {
       Logger.Warn("Recovered from: ", zap.Any("panic", r))
       conn.Close()
@@ -76,21 +75,22 @@ func Serve(c *gin.Context) {
   }
 
   // Pop a room to join.
-  Logger.Info("About to acquire RoomHeapMux\n")
-  models.RoomHeapMux.Lock()
+  Logger.Info("About to acquire RoomHeapMux for player:", zap.Any("playerId", playerId))
+  (*(models.RoomHeapMux)).Lock()
   defer func() {
-    models.RoomHeapMux.Unlock()
-    Logger.Info("Released RoomHeapMux\n")
+    (*(models.RoomHeapMux)).Unlock()
+    Logger.Info("Released RoomHeapMux for player:", zap.Any("playerId", playerId))
   }()
-  Logger.Info("Acquired RoomHeapMux\n")
+  Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
   // Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
-  room := heap.Pop(models.RoomHeapManagerIns).(models.Room)
-  Logger.Info("Successfully popped:\n", zap.Any("roomID", room.ID), zap.Any("playerId", playerId))
+  pRoom := heap.Pop(models.RoomHeapManagerIns).(*models.Room)
+  Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
   randomMillisToSleepAgain := rand.Intn(100) // [0, 100) milliseconds.
   time.Sleep(time.Duration(randomMillisToSleepAgain) * time.Millisecond)
-  _ = room.AddPlayerIfPossible(pPlayer)
-  heap.Push(models.RoomHeapManagerIns, room)
-  (models.RoomHeapManagerIns).Update(room, room.Score)
+  _ = pRoom.AddPlayerIfPossible(pPlayer)
+  heap.Push(models.RoomHeapManagerIns, pRoom)
+  (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
+  (models.RoomHeapManagerIns).PrintInOrder()
 
   resp := wsResp{
     Ret:   Constants.RetCode.Ok,
@@ -131,7 +131,7 @@ func Serve(c *gin.Context) {
       if req.Act != "HeartbeatPing" {
         Logger.Debug("recv:", zap.Any("req", req))
         select {
-          case room.CmdFromPlayersChan <- req:
+          case pRoom.CmdFromPlayersChan <- req:
           default:
         }
       }

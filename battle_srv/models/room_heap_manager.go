@@ -10,12 +10,21 @@ import (
 
 
 // Reference https://github.com/genxium/GoStructPrac.
-type RoomHeap []Room
+type RoomHeap []*Room
 var (
-  RoomHeapMux sync.Mutex
   // NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types. 
+  RoomHeapMux *sync.Mutex
   RoomHeapManagerIns *RoomHeap
 )
+
+func (pPq *RoomHeap) PrintInOrder() {
+	pq := *pPq
+	fmt.Printf("The RoomHeap instance now contains:\n")
+	for i := 0; i < len(pq); i++ {
+		fmt.Printf("{index: %d, roomID: %d, score: %.2f} ", i, pq[i].ID, pq[i].Score)
+	}
+	fmt.Printf("\n")
+}
 
 func (pq RoomHeap) Len() int { return len(pq) }
 
@@ -23,45 +32,50 @@ func (pq RoomHeap) Less(i, j int) bool {
 	return pq[i].Score > pq[j].Score
 }
 
-func (pq RoomHeap) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].Index = i
-	pq[j].Index = j
+func (pq *RoomHeap) Swap(i, j int) {
+	(*pq)[i], (*pq)[j] = (*pq)[j], (*pq)[i]
+	(*pq)[i].Index = i
+	(*pq)[j].Index = j
 }
 
-func (pq *RoomHeap) Push(x interface{}) {
+func (pq *RoomHeap) Push(pItem interface{}) {
+	// NOTE: Must take input param type `*Room` here.
 	n := len(*pq)
-	item := x.(Room)
-	item.Index = n
-	*pq = append(*pq, item)
+	pItem.(*Room).Index = n
+	*pq = append(*pq, pItem.(*Room))
 }
 
 func (pq *RoomHeap) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	if n == 0 {
-		panic("Popping on an empty heap is not allowed.")
+		panic("Popping on an empty heap is not allowed.\n")
 	}
-	item := old[n-1]
-	item.Index = -1 // for safety
+	pItem := old[n-1]
+  if pItem.Score <= float32(0.0) {
+		panic("No available room at the moment.\n")
+  }
+	pItem.Index = -1 // for safety
 	*pq = old[0 : n-1]
-	return item
+  // NOTE: Must return instance which is directly castable to type `*Room` here.
+	return pItem
 }
 
-func (pq *RoomHeap) update(item Room, Score float32) {
-	item.Score = Score
-	heap.Fix(pq, item.Index)
+func (pq *RoomHeap) update(pItem *Room, Score float32) {
+	// NOTE: Must use type `*Room` here.
+	heap.Fix(pq, pItem.Index)
 }
 
-func (pq *RoomHeap) Update(item Room, Score float32) {
-  pq.update(item, Score)
+func (pq *RoomHeap) Update(pItem *Room, Score float32) {
+  pq.update(pItem, Score)
 }
 
 func InitRoomHeapManager() {
+  RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
   InitRoomStateIns()
 
-	initialCountOfRooms := 20
+	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
 
 	roomCapacity := 4
@@ -69,7 +83,7 @@ func InitRoomHeapManager() {
 		players := make(map[int]*Player)
     playerDownsyncChanDict := make(map[int]chan interface{})
 		currentRoomState := RoomStateIns.IDLE
-		pq[i] = Room{
+		pq[i] = &Room{
 			Players:  players,
       PlayerDownsyncChanDict: playerDownsyncChanDict,
 			Capacity: roomCapacity,

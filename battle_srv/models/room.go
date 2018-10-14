@@ -16,7 +16,9 @@ var RoomStateIns RoomState
 
 func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int) float32 {
 	x := float32(inRoomPlayerCount) / float32(roomCapacity)
-	return -7.8125*(x - 0.2) + 5.0 - float32(currentRoomState)
+  d := (x - 0.2)
+  d2 := d*d
+	return -7.8125*d2 + 5.0 - float32(currentRoomState)
 }
 
 func InitRoomStateIns() {
@@ -56,11 +58,12 @@ type Room struct {
 	Index    int
 }
 
-func (r Room) updateScore() {
-  r.Score = calRoomScore(len(r.Players), r.Capacity, r.State)
+func (pR *Room) updateScore() {
+	pR.Score = calRoomScore(len(pR.Players), pR.Capacity, pR.State)
 }
 
-func (r Room) lazilyInitPlayerDownSyncChan(playerId int) {
+func (pR *Room) lazilyInitPlayerDownSyncChan(playerId int) {
+  r := *pR
   if r.PlayerDownsyncChanDict[playerId] != nil {
     return
   }
@@ -68,40 +71,55 @@ func (r Room) lazilyInitPlayerDownSyncChan(playerId int) {
   return
 }
 
-func (r Room) AddPlayerIfPossible(pPlayer *Player) bool {
+func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
   // TODO: Check feasibility first.
-  r.Players[pPlayer.ID] = pPlayer
-  r.lazilyInitPlayerDownSyncChan(pPlayer.ID)
-  r.updateScore()
+  pR.Players[pPlayer.ID] = pPlayer
+  pR.lazilyInitPlayerDownSyncChan(pPlayer.ID)
+  pR.updateScore()
   /* TODO: Invoke r.StartBattle or update r.State accordingly. */
   return true
 }
 
-func (r Room) StartBattle() {
+func (pR *Room) StartBattle() {
   // TODO
 }
 
-func (r Room) StopBattleForSettlement() {
+func (pR *Room) StopBattleForSettlement() {
   // TODO
 }
 
-func (r Room) onSettlementCompleted() {
+func (pR *Room) onSettlementCompleted() {
   // TODO
 }
 
-func (r Room) Dismiss() {
+func (pR *Room) Dismiss() {
   // TODO
 }
 
-func (r Room) onDismissed() {
+func (pR *Room) onDismissed() {
   // TODO
 }
 
-func (r Room) Unicast(toPlayerId int, msg interface{}) {
+func (pR *Room) Unicast(toPlayerId int, msg interface{}) {
   // TODO
 }
 
-func (r Room) Broadcast(msg interface{}) {
+func (pR *Room) Broadcast(msg interface{}) {
   // TODO
 }
 
+func (pR *Room) expelPlayer(playerId int) {
+  // TODO
+}
+
+func (pR *Room) onPlayerExpelled(playerId int) {
+  // TODO
+}
+
+func (pR *Room) onPlayerDisconnected(playerId int) {
+  // TODO
+}
+
+func (pR *Room) onPlayerLost(playerId int) {
+  // TODO
+}
