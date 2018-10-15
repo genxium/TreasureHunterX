@@ -56,6 +56,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    boundRoomIdLabel: {
+      type: cc.Label,
+      default: null
+    },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -63,21 +67,46 @@ cc.Class({
     clearInterval(this.inputControlTimer)
   },
 
+  _onPerUpsyncFrame() {
+    const instance = this; 
+    const upsyncFrameData = {
+      id: instance.selfPlayerId,
+      dir: {
+        dPjX: parseFloat(instance.ctrl.activeDirection.dPjX),
+        dPjY: parseFloat(instance.ctrl.activeDirection.dPjY),
+      },
+      x: instance.selfPlayer.x,
+      y: instance.selfPlayer.y, 
+    };
+    const wrapped = {
+      msgId: Date.now(),
+      act: "PlayerUpsyncCmd",
+      data: upsyncFrameData, 
+    }
+    window.clientSession.send(JSON.stringify(wrapped)); 
+  },
+
   onLoad() {
     const self = this;
+    self.msgId = 0;
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
+    self.otherPlayerNodeDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
     self.confirmLogoutNode.height = canvasNode.height;
 
+    self.clientUpsyncFps = 24;
+    self.upsyncLoopInterval = null;
+
     initPersistentSessionClient(() => {
       self.state = ALL_MAP_STATES.VISUAL;
       const tiledMapIns = self.node.getComponent(cc.TiledMap); 
+      self.selfPlayerId = JSON.parse(cc.sys.localStorage.selfPlayer).playerId;
       self.spawnSelfPlayer();
       this._inputControlEnabled = true;
       self.setupInputControls();
@@ -157,8 +186,35 @@ cc.Class({
         }  
         self.node.addChild(newShelter);
       }
+      self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
+      window.handleDownsyncRoomFrame = function(roomFrame) {
+        const frameId = roomFrame.id;
+        const sentAt = roomFrame.sentAt;
+        const refFrameId = roomFrame.refFrameId;
+        const players = roomFrame.players;
+        for (let playerId in players) {
+          if (playerId == self.selfPlayer.id) break;
+          const anotherPlayer = players[playerId]; 
+          self.renderAnotherControlledPlayer(self, anotherPlayer);
+        } 
+      };
     });
   },
+
+  renderAnotherControlledPlayer: (mapIns, anotherPlayer) => {
+    const mapNode = mapIns.node;
+
+    cc.log(`Rendering player ${anotherPlayer.id}`)
+    let targetNode = mapIns.otherPlayerNodeDict[anotherPlayer.id];
+    if (!targetNode) {
+      targetNode = cc.instantiate(mapIns.selfPlayerPrefab);
+      targetNode.getComponent("SelfPlayer").mapNode = mapNode;
+      mapNode.addChild(targetNode);
+      setLocalZOrder(targetNode, 5);
+      mapIns.otherPlayerNodeDict[anotherPlayer.id] = targetNode;
+    }
+    targetNode.setPosition(cc.v2(anotherPlayer.x, anotherPlayer.y));
+  }, 
 
   setupInputControls() {
     const instance = this;
@@ -170,10 +226,11 @@ cc.Class({
     const selfPlayerScriptIns = instance.selfPlayer.getComponent("SelfPlayer");
     const keyboardInputControllerScriptIns = instance.keyboardInputControllerNode.getComponent("KeyboardControls");
 
+    const ctrl = keyboardInputControllerScriptIns.activeDirection.dPjX || keyboardInputControllerScriptIns.activeDirection.dPjY ? keyboardInputControllerScriptIns : joystickInputControllerScriptIns;
+    instance.ctrl = ctrl;
+
     instance.inputControlTimer = setInterval(function() {
       if (false == instance._inputControlEnabled) return;
-
-      const ctrl = keyboardInputControllerScriptIns.activeDirection.dPjX || keyboardInputControllerScriptIns.activeDirection.dPjY ? keyboardInputControllerScriptIns : joystickInputControllerScriptIns;
 
       const newScheduledDirectionInWorldCoordinate = {
         dx: ctrl.activeDirection.dPjX,
@@ -194,19 +251,23 @@ cc.Class({
   },
 
   spawnSelfPlayer() {
-    const self = this;
-    const newPlayer = cc.instantiate(self.selfPlayerPrefab);
+    const instance = this;
+    const newPlayer = cc.instantiate(instance.selfPlayerPrefab);
     newPlayer.uid = 0;
     newPlayer.setPosition(cc.v2(0, 0));
-    newPlayer.getComponent("SelfPlayer").mapNode = self.node;
+    newPlayer.getComponent("SelfPlayer").mapNode = instance.node;
 
-    self.node.addChild(newPlayer);
+    instance.node.addChild(newPlayer);
 
     setLocalZOrder(newPlayer, 5);
-    this.selfPlayer = newPlayer;
+    instance.selfPlayer = newPlayer;
   },
 
   update(dt) {
+    const self = this;
+    if (null != window.boundRoomId) {
+      self.boundRoomIdLabel.string = window.boundRoomId;  
+    }
   },
 
   transitToState(s) {

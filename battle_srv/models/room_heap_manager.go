@@ -15,6 +15,7 @@ var (
   // NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types. 
   RoomHeapMux *sync.Mutex
   RoomHeapManagerIns *RoomHeap
+  RoomMapManagerIns map[int]*Room
 )
 
 func (pPq *RoomHeap) PrintInOrder() {
@@ -77,8 +78,9 @@ func InitRoomHeapManager() {
 
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
+  RoomMapManagerIns := make(map[int]*Room)
 
-	roomCapacity := 4
+	roomCapacity := 2
 	for i := 0; i < initialCountOfRooms; i++ {
 		players := make(map[int]*Player)
     playerDownsyncChanDict := make(map[int]chan interface{})
@@ -92,7 +94,10 @@ func InitRoomHeapManager() {
       CmdFromPlayersChan: make(chan interface{}, 2048 /* Hardcoded temporarily. */),
 			ID:       i,
 			Index:    i,
+      Tick:     0,
+      ServerFPS: 10,
 		}
+    RoomMapManagerIns[pq[i].ID] = pq[i]
 	}
 	heap.Init(&pq)
   RoomHeapManagerIns = &pq

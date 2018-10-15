@@ -7,14 +7,24 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Direction struct {
+  DPjX           float32     `json:"dPjX"`
+  DPjY           float32     `json:"dPjY"`
+}
+
 type Player struct {
-	CreatedAt     int64      `json:"created_at" db:"created_at"`
-	DeletedAt     NullInt64  `json:"deleted_at" db:"deleted_at"`
-	DisplayName   NullString `json:"display_name" db:"display_name"`
 	ID            int        `json:"id" db:"id"`
+  X             float32    `json:"x"`
+  Y             float32    `json:"y"`
+  Dir           Direction  `json:"dir"`
+  Speed         int        `json:"speed"`
+  LastMoveGmtMillis int    `json:"lastMoveGmtMillis"`
 	Name          string     `json:"name" db:"name"`
-	UpdatedAt     int64      `json:"updated_at" db:"updated_at"`
-	TutorialStage int        `json:"tutorial_stage" db:"tutorial_stage"`
+	DisplayName   NullString `json:"displayName" db:"display_name"`
+	CreatedAt     int64      `json:"createdAt" db:"created_at"`
+	UpdatedAt     int64      `json:"updatedAt" db:"updated_at"`
+	DeletedAt     NullInt64  `json:"deletedAt" db:"deleted_at"`
+  TutorialStage int        `json:"tutorialStage" db:"tutorial_stage"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

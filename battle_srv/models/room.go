@@ -1,6 +1,9 @@
 package models
 
 import (
+  "time"
+  "sync"
+  "server/common/utils"
 )
 
 type RoomState struct {
@@ -17,7 +20,7 @@ var RoomStateIns RoomState
 
 func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int) float32 {
 	x := float32(inRoomPlayerCount) / float32(roomCapacity)
-  d := (x - 0.2)
+  d := (x - 0.5)
   d2 := d*d
 	return -7.8125*d2 + 5.0 - float32(currentRoomState)
 }
@@ -36,7 +39,7 @@ func InitRoomStateIns() {
 type Room struct {
 	ID       int             `json:"id"`
 	Capacity int             `json:"capacity"`
-	Players  map[int]*Player `json:"players"`
+	Players  map[int]*Player
   /**
   * The following `PlayerDownsyncChanDict` is NOT individually put 
   * under `type Player struct` for a reason.
@@ -58,6 +61,16 @@ type Room struct {
 	Score    float32
 	State    int
 	Index    int
+  Tick     int
+  ServerFPS int
+  DismissalWaitGroup sync.WaitGroup
+}
+
+type RoomDownsyncFrame struct {
+  ID    int   `json:"id"`
+  RefFrameID    int   `json:"refFrameId"`
+  Players       map[int]*Player  `json:"players"`
+  SentAt        int64 `json:"sentAt"`
 }
 
 func (pR *Room) updateScore() {
@@ -78,6 +91,9 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
   pR.Players[pPlayer.ID] = pPlayer
   pR.lazilyInitPlayerDownSyncChan(pPlayer.ID)
   pR.updateScore()
+  if pR.Capacity == len(pR.Players) {
+    pR.StartBattle()
+  }
   /* TODO: Invoke r.StartBattle or update r.State accordingly. */
   return true
 }
@@ -87,6 +103,9 @@ func (pR *Room) StartBattle() {
     return
   }
   pR.State = RoomStateIns.IN_BATTLE
+  millisPerFrame := 1000/int64(pR.ServerFPS)
+  twiceMillisPerFrame := 2*millisPerFrame
+  pR.Tick = 0
   /**
   * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached. 
   * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
@@ -96,12 +115,46 @@ func (pR *Room) StartBattle() {
       if (RoomStateIns.IN_BATTLE != pR.State) {
         break
       }
-      // TODO: Control to sleep w.r.t. `ServerFps`.
+      pR.Tick++
+      stCalculation := utils.UnixtimeMilli()
+      for playerId, _ := range pR.Players {
+        assembledFrame := &RoomDownsyncFrame{
+          ID: pR.Tick,
+          RefFrameID: 0, // Hardcoded for now.
+          Players: pR.Players,
+          SentAt: utils.UnixtimeMilli(),
+        }
+        theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+        utils.SendSafely(assembledFrame, theForwardingChannel)
+      }
+      elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
+      time.Sleep(time.Millisecond * time.Duration(millisPerFrame - elapsedMillisInCalculation))
     }
     pR.onBattleStoppedForSettlement()
   }
 
   go battleMainLoop()
+
+  cmdReceivingLoop := func() {
+    for {
+      if (RoomStateIns.IN_BATTLE != pR.State) {
+        break
+      }
+      stCalculation := utils.UnixtimeMilli()
+      select {
+        case tmp := <-pR.CmdFromPlayersChan:
+          immediatePlayerData := tmp.(*Player)
+          // Update immediate player info for broadcasting or unicasting.
+          pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
+          pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
+        default:
+      }
+      elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
+      time.Sleep(time.Millisecond * time.Duration(twiceMillisPerFrame - elapsedMillisInCalculation))
+    }
+  }
+
+  go cmdReceivingLoop()
 }
 
 func (pR *Room) StopBattleForSettlement() {
@@ -128,12 +181,20 @@ func (pR *Room) Dismiss() {
   if RoomStateIns.IN_SETTLEMENT != pR.State {
     return
   }
-  pR.State = RoomStateIns.IN_DISMISSAL 
-  // TODO
+  pR.State = RoomStateIns.IN_DISMISSAL
+  for playerId, _ := range pR.Players {
+    pR.DismissalWaitGroup.Add(1)
+    pR.expelPlayerForDismissal(playerId)
+  }
+  pR.DismissalWaitGroup.Wait()
+  pR.onDismissed()
 }
 
 func (pR *Room) onDismissed() {
-  // TODO
+  pR.Players = nil
+  pR.PlayerDownsyncChanDict = nil
+  utils.CloseSafely(pR.CmdFromPlayersChan)
+  pR.CmdFromPlayersChan = nil
 }
 
 func (pR *Room) Unicast(toPlayerId int, msg interface{}) {
@@ -144,18 +205,34 @@ func (pR *Room) Broadcast(msg interface{}) {
   // TODO
 }
 
-func (pR *Room) expelPlayer(playerId int) {
+func (pR *Room) expelPlayerDuringGame(playerId int) {
+  utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
+  pR.onPlayerExpelledDuringGame(playerId)
+}
+
+func (pR *Room) expelPlayerForDismissal(playerId int) {
+  utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
+  pR.onPlayerExpelledForDismissal(playerId)
+}
+
+func (pR *Room) onPlayerRejoined(playerId int) {
   // TODO
 }
 
-func (pR *Room) onPlayerExpelled(playerId int) {
-  // TODO
+func (pR *Room) onPlayerExpelledDuringGame(playerId int) {
+}
+
+func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
+  pR.DismissalWaitGroup.Done()
 }
 
 func (pR *Room) onPlayerDisconnected(playerId int) {
+  /**
+  * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
+  */
   // TODO
 }
 
 func (pR *Room) onPlayerLost(playerId int) {
-  // TODO
+  utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
 }

@@ -2,8 +2,8 @@ syntax = "proto3";
 package tsrht;
 
 message Dir {
-  float dx = 1;
-  float dy = 2;
+  float dPjX = 1;
+  float dPjY = 2;
 }
 
 message Player {
@@ -32,10 +32,10 @@ message Powerup {
 message FrameSync {
   int32 id = 1;
   int32 refFrameId = 2;
-  map<string, Tank> tanks = 3;
+  map<string, Player> players = 3;
   map<string, Powerup> powerups = 4;
   map<string, Powerup> removedPowerups = 5;
-  int64 lastSendAt = 6;
+  int64 sentAt = 6;
   map<string, int32> teamScores = 7;
   int64 countdownMillis = 8;
 }

@@ -70,7 +70,7 @@ cc.Class({
     self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
     self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
 
-    cc.loader.loadRes("protobuf/GameData.proto", function(err, textAsset /* cc.TextAsset */) {
+    cc.loader.loadRes("protobuf/GameData", function(err, textAsset /* cc.TextAsset */) {
       if (err) {
         cc.error(err.message || err);
         return;
