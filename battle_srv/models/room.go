@@ -7,6 +7,7 @@ type RoomState struct {
 	IDLE          int
 	WAITING       int
 	IN_BATTLE     int
+  STOPPING_BATTLE_FOR_SETTLEMENT  int
 	IN_SETTLEMENT int
 	IN_DISMISSAL  int
 }
@@ -26,6 +27,7 @@ func InitRoomStateIns() {
 		IDLE:          0,
 		WAITING:       0,
 		IN_BATTLE:     9999999,
+		STOPPING_BATTLE_FOR_SETTLEMENT:  9999999,
 		IN_SETTLEMENT: 9999999,
 		IN_DISMISSAL:  9999999,
 	}
@@ -81,18 +83,52 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 }
 
 func (pR *Room) StartBattle() {
-  // TODO
+  if RoomStateIns.WAITING != pR.State {
+    return
+  }
+  pR.State = RoomStateIns.IN_BATTLE
+  /**
+  * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached. 
+  * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
+  */
+  battleMainLoop := func () {
+    for {
+      if (RoomStateIns.IN_BATTLE != pR.State) {
+        break
+      }
+      // TODO: Control to sleep w.r.t. `ServerFps`.
+    }
+    pR.onBattleStoppedForSettlement()
+  }
+
+  go battleMainLoop()
 }
 
 func (pR *Room) StopBattleForSettlement() {
-  // TODO
+  if RoomStateIns.IN_BATTLE != pR.State {
+    return
+  }
+  pR.State = RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
+}
+
+func (pR *Room) onBattleStoppedForSettlement() {
+  if RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT != pR.State {
+    return
+  }
+  pR.State = RoomStateIns.IN_SETTLEMENT
+
+  pR.onSettlementCompleted()
 }
 
 func (pR *Room) onSettlementCompleted() {
-  // TODO
+  pR.Dismiss()
 }
 
 func (pR *Room) Dismiss() {
+  if RoomStateIns.IN_SETTLEMENT != pR.State {
+    return
+  }
+  pR.State = RoomStateIns.IN_DISMISSAL 
   // TODO
 }
 
