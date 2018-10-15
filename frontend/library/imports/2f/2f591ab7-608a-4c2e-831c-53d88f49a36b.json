@@ -1,0 +1,7 @@
+{
+  "__type__": "cc.TextAsset",
+  "_name": "GameData",
+  "_objFlags": 0,
+  "_native": "",
+  "text": "syntax = \"proto3\";\npackage tsrht;\n\nmessage Dir {\n  float dx = 1;\n  float dy = 2;\n}\n\nmessage Player {\n  string id = 1;\n  string name = 2;\n  float x = 3;\n  float y = 4;\n  float speed = 5;\n  Dir   dir = 6;\n  int32 lastMoveGmtMillis = 7;\n  string teamId = 8;\n  bool invincible = 9;\n  bool frozen = 10;\n}\n\nmessage Powerup {\n  string id = 1;\n  float x = 2;\n  float y = 3;\n  int32 type = 4;\n  int32 w = 5;\n  int32 h = 6;\n  int32 expireInMillis = 7;\n}\n\nmessage FrameSync {\n  int32 id = 1;\n  int32 refFrameId = 2;\n  map<string, Tank> tanks = 3;\n  map<string, Powerup> powerups = 4;\n  map<string, Powerup> removedPowerups = 5;\n  int64 lastSendAt = 6;\n  map<string, int32> teamScores = 7;\n  int64 countdownMillis = 8;\n}\n\nmessage FrameAck {\n  int32 ackedFrameId = 1;\n  int64 sendAt = 2;\n  Player player = 3;\n}\n"
+}

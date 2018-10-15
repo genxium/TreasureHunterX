@@ -24,7 +24,7 @@
         "__id__": 26
       },
       {
-        "__id__": 40
+        "__id__": 41
       }
     ],
     "_active": true,
@@ -51,8 +51,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.175,
-      "y": 0.175,
+      "x": 0.134375,
+      "y": 0.134375,
       "z": 1
     },
     "_quat": {
@@ -86,9 +86,6 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 35
-      },
-      {
         "__id__": 36
       },
       {
@@ -99,6 +96,9 @@
       },
       {
         "__id__": 39
+      },
+      {
+        "__id__": 40
       }
     ],
     "_prefab": null,
@@ -277,6 +277,9 @@
       },
       {
         "__id__": 34
+      },
+      {
+        "__id__": 35
       }
     ],
     "_prefab": null,
@@ -1358,6 +1361,16 @@
     "_id": "e8A/5MGa9AWo/bAF00fQSm"
   },
   {
+    "__type__": "70ed3Y56chC65gypGU2njvv",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 5
+    },
+    "_enabled": true,
+    "_id": "5aOblZnkpJZ4z3kY3BDYfc"
+  },
+  {
     "__type__": "cc.Canvas",
     "_name": "",
     "_objFlags": 0,
@@ -1471,17 +1484,17 @@
     },
     "_children": [
       {
-        "__id__": 41
+        "__id__": 42
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 43
+        "__id__": 44
       },
       {
-        "__id__": 44
+        "__id__": 45
       }
     ],
     "_prefab": null,
@@ -1535,14 +1548,14 @@
     "_name": "Label",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 40
+      "__id__": 41
     },
     "_children": [],
     "_active": true,
     "_level": 0,
     "_components": [
       {
-        "__id__": 42
+        "__id__": 43
       }
     ],
     "_prefab": null,
@@ -1596,7 +1609,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 41
+      "__id__": 42
     },
     "_enabled": true,
     "_srcBlendFactor": 1,
@@ -1621,7 +1634,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 40
+      "__id__": 41
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1649,7 +1662,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 40
+      "__id__": 41
     },
     "_enabled": true,
     "transition": 2,
@@ -1671,7 +1684,7 @@
     "zoomScale": 1.2,
     "clickEvents": [
       {
-        "__id__": 45
+        "__id__": 46
       }
     ],
     "_N$interactable": true,
@@ -1709,7 +1722,7 @@
       "__uuid__": "29158224-f8dd-4661-a796-1ffab537140e"
     },
     "_N$target": {
-      "__id__": 40
+      "__id__": 41
     },
     "_id": "29a7O/sABBgYFUwbkJSm/0"
   },

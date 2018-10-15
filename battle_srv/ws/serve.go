@@ -35,6 +35,7 @@ func Serve(c *gin.Context) {
   // TODO: Wrap the following 2 stmts by sql transaction!
   playerId, err := models.GetPlayerIdByToken(token)
   if err != nil || playerId == 0 {
+    // TODO: Abort with specific message.
     c.AbortWithStatus(http.StatusBadRequest)
     return
   }
@@ -47,30 +48,10 @@ func Serve(c *gin.Context) {
   }
   Logger.Debug("ConstVals.Ws.WillKickIfInactiveFor", zap.Duration("v", ConstVals.Ws.WillKickIfInactiveFor))
 
-  isConnAskedToClose := false
-
-  /**
-  * "The default close handler sends a close message back to the peer." 
-  *
-  * "The connection read methods return a CloseError when a close message is received. Most applications should handle close messages as part of their normal error handling. Applications should only set a close handler when the application must perform some action before sending a close message back to the peer."
-  *
-  * from reference https://godoc.org/github.com/gorilla/websocket#Conn.SetCloseHandler. 
-  */
-  conn.SetCloseHandler(func(code int, text string) error {
-    Logger.Debug("Close handler triggered:", zap.Any("code", code), zap.Any("text", text))
-    isConnAskedToClose = true // To terminate ALL spawned goroutines.
-    return nil
-  });
-  defer func() {
-    if r := recover(); r != nil {
-      Logger.Warn("Recovered from: ", zap.Any("panic", r))
-      conn.Close()
-    }
-  }()
-
   pPlayer, err := models.GetPlayerById(playerId)
   if err != nil || pPlayer == nil {
-    conn.Close()
+    // TODO: Abort with specific message.
+    c.AbortWithStatus(http.StatusBadRequest)
     return
   }
 
@@ -80,6 +61,13 @@ func Serve(c *gin.Context) {
   defer func() {
     (*(models.RoomHeapMux)).Unlock()
     Logger.Info("Released RoomHeapMux for player:", zap.Any("playerId", playerId))
+  }()
+  defer func() {
+    if r := recover(); r != nil {
+      Logger.Warn("Recovered from: ", zap.Any("panic", r))
+      // TODO: Abort with specific message.
+      c.AbortWithStatus(http.StatusBadRequest)
+    }
   }()
   Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
   // Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
@@ -91,6 +79,23 @@ func Serve(c *gin.Context) {
   heap.Push(models.RoomHeapManagerIns, pRoom)
   (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
   (models.RoomHeapManagerIns).PrintInOrder()
+
+  isConnAskedToClose := false
+  onConnClosed := func(code int, text string) error {
+    // Reference of `code` https://godoc.org/github.com/gorilla/websocket#pkg-constants.
+    Logger.Info("Close handler triggered:", zap.Any("code", code), zap.Any("playerId", playerId), zap.Any("message", text))
+    isConnAskedToClose = true // To terminate ALL spawned goroutines.
+    return nil
+  }
+
+  /**
+  * "The default close handler sends a close message back to the peer." 
+  *
+  * "The connection read methods return a CloseError when a close message is received. Most applications should handle close messages as part of their normal error handling. Applications should only set a close handler when the application must perform some action before sending a close message back to the peer."
+  *
+  * from reference https://godoc.org/github.com/gorilla/websocket#Conn.SetCloseHandler. 
+  */
+  conn.SetCloseHandler(onConnClosed);
 
   resp := wsResp{
     Ret:   Constants.RetCode.Ok,
@@ -105,7 +110,8 @@ func Serve(c *gin.Context) {
   err = conn.WriteJSON(resp)
   if err != nil {
     Logger.Warn("HeartbeatRequirements resp not written:", zap.Error(err))
-    conn.Close()
+    // TODO: Abort with specific message.
+    c.AbortWithStatus(http.StatusBadRequest)
   }
 
   // Starts the receiving loop against the client-side 

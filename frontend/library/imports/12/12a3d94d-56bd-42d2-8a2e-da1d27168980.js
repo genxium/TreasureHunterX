@@ -73,14 +73,25 @@ cc.Class({
     self.smsLoginCaptchaButton.on('click', self.onSMSCaptchaGetButtonClicked);
 
     self.loadingNode = cc.instantiate(this.loadingPrefab);
-    self.checkIntAuthTokenExpire().then(function () {
-      var intAuthToken = JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken;
-      self.useTokenLogin(intAuthToken);
-    }, function () {
-      // TODO: Handle expired intAuthToken appropriately.
+    self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
+    self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
+
+    cc.loader.loadRes("protobuf/GameData.proto", function (err, textAsset /* cc.TextAsset */) {
+      if (err) {
+        cc.error(err.message || err);
+        return;
+      }
+      var protoRoot = new protobuf.Root();
+      protobuf.parse(textAsset.text, protoRoot);
+      window.FrameSync = protoRoot.lookupType("tsrht.FrameSync");
+      window.FrameAck = protoRoot.lookupType("tsrht.FrameAck");
+      self.checkIntAuthTokenExpire().then(function () {
+        var intAuthToken = JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken;
+        self.useTokenLogin(intAuthToken);
+      }, function () {
+        // TODO: Handle expired intAuthToken appropriately.
+      });
     });
-    this.smsGetCaptchaNode = this.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
-    this.smsWaitCountdownNode = cc.instantiate(this.smsWaitCountdownPrefab);
   },
   getRetCodeList: function getRetCodeList() {
     var self = this;
