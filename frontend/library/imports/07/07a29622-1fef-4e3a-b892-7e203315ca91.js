@@ -76,7 +76,7 @@ window.initPersistentSessionClient = function (onopenCb) {
       case "HeartbeatPong":
         window.handleHbPong(resp);
         break;
-      case "DownsyncRoomFrame":
+      case "RoomDownsyncFrame":
         if (window.handleDownsyncRoomFrame) {
           window.handleDownsyncRoomFrame(resp.data);
         }
@@ -89,14 +89,16 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   clientSession.onerror = function (event) {
     cc.error("Error caught on the WS clientSession: " + event);
-    if (!window.handleClientSessionCloseOrError) return;
-    window.handleClientSessionCloseOrError();
+    if (window.handleClientSessionCloseOrError) {
+      window.handleClientSessionCloseOrError();
+    }
   };
 
   clientSession.onclose = function (event) {
     cc.log("The WS clientSession is closed: " + event);
-    if (!window.handleClientSessionCloseOrError) return;
-    window.handleClientSessionCloseOrError();
+    if (window.handleClientSessionCloseOrError) {
+      window.handleClientSessionCloseOrError();
+    }
   };
 };
 

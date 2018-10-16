@@ -95,7 +95,9 @@ func InitRoomHeapManager() {
 			ID:       i,
 			Index:    i,
       Tick:     0,
-      ServerFPS: 10,
+      EffectivePlayerCount: 0,
+      BattleDurationMillis: int64(30*1000),
+      ServerFPS: 30,
 		}
     RoomMapManagerIns[pq[i].ID] = pq[i]
 	}

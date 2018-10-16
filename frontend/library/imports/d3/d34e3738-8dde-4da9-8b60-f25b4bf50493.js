@@ -324,31 +324,40 @@ cc.Class({
       return;
     }
 
-    // Discretization of 8 projected planar directions.
-    if (Math.abs(this.cachedStickHeadPosition.x) < eps) {
-      this.activeDirection.dPjX = 0;
-      this.activeDirection.dPjY = this.cachedStickHeadPosition.y > 0 ? +1 : -1;
-    } else if (Math.abs(this.cachedStickHeadPosition.y) < eps) {
-      this.activeDirection.dPjX = this.cachedStickHeadPosition.x > 0 ? +2 : -2;
-      this.activeDirection.dPjY = 0;
+    var res = this.discretizeDirection(this.cachedStickHeadPosition.x, this.cachedStickHeadPosition.y, eps);
+    this.activeDirection.dPjX = res.dx;
+    this.activeDirection.dPjY = res.dy;
+  },
+  discretizeDirection: function discretizeDirection(continuousDx, continuousDy, eps) {
+    var ret = {
+      dx: 0,
+      dy: 0
+    };
+    if (Math.abs(continuousDx) < eps) {
+      ret.dx = 0;
+      ret.dy = continuousDy > 0 ? +1 : -1;
+    } else if (Math.abs(continuousDy) < eps) {
+      ret.dx = continuousDx > 0 ? +2 : -2;
+      ret.dy = 0;
     } else {
-      var criticalRatio = this.cachedStickHeadPosition.y / this.cachedStickHeadPosition.x;
+      var criticalRatio = continuousDy / continuousDx;
       if (criticalRatio > this.magicLeanLowerBound && criticalRatio < this.magicLeanUpperBound) {
-        this.activeDirection.dPjX = this.cachedStickHeadPosition.x > 0 ? +2 : -2;
-        this.activeDirection.dPjY = this.cachedStickHeadPosition.x > 0 ? +1 : -1;
+        ret.dx = continuousDx > 0 ? +2 : -2;
+        ret.dy = continuousDx > 0 ? +1 : -1;
       } else if (criticalRatio > -this.magicLeanUpperBound && criticalRatio < -this.magicLeanLowerBound) {
-        this.activeDirection.dPjX = this.cachedStickHeadPosition.x > 0 ? +2 : -2;
-        this.activeDirection.dPjY = this.cachedStickHeadPosition.x > 0 ? -1 : +1;
+        ret.dx = continuousDx > 0 ? +2 : -2;
+        ret.dy = continuousDx > 0 ? -1 : +1;
       } else {
         if (Math.abs(criticalRatio) < 1) {
-          this.activeDirection.dPjX = this.cachedStickHeadPosition.x > 0 ? +2 : -2;
-          this.activeDirection.dPjY = 0;
+          ret.dx = continuousDx > 0 ? +2 : -2;
+          ret.dy = 0;
         } else {
-          this.activeDirection.dPjX = 0;
-          this.activeDirection.dPjY = this.cachedStickHeadPosition.y > 0 ? +1 : -1;
+          ret.dx = 0;
+          ret.dy = continuousDy > 0 ? +1 : -1;
         }
       }
     }
+    return ret;
   }
 });
 

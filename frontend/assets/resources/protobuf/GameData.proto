@@ -2,8 +2,8 @@ syntax = "proto3";
 package tsrht;
 
 message Dir {
-  float dPjX = 1;
-  float dPjY = 2;
+  float dx = 1;
+  float dy = 2;
 }
 
 message Player {

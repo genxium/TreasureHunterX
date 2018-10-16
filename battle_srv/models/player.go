@@ -7,15 +7,16 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Use type `float64` for json unmarshalling of numbers.
 type Direction struct {
-  DPjX           float32     `json:"dPjX"`
-  DPjY           float32     `json:"dPjY"`
+  Dx           float64     `json:"dx"`
+  Dy           float64     `json:"dy"`
 }
 
 type Player struct {
 	ID            int        `json:"id" db:"id"`
-  X             float32    `json:"x"`
-  Y             float32    `json:"y"`
+  X             float64    `json:"x"`
+  Y             float64    `json:"y"`
   Dir           Direction  `json:"dir"`
   Speed         int        `json:"speed"`
   LastMoveGmtMillis int    `json:"lastMoveGmtMillis"`

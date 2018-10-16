@@ -3,6 +3,8 @@ package models
 import (
   "time"
   "sync"
+  "go.uber.org/zap"
+  . "server/common"
   "server/common/utils"
 )
 
@@ -28,11 +30,11 @@ func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int)
 func InitRoomStateIns() {
   RoomStateIns = RoomState{
 		IDLE:          0,
-		WAITING:       0,
-		IN_BATTLE:     9999999,
-		STOPPING_BATTLE_FOR_SETTLEMENT:  9999999,
-		IN_SETTLEMENT: 9999999,
-		IN_DISMISSAL:  9999999,
+		WAITING:       -1,
+		IN_BATTLE:     10000000,
+		STOPPING_BATTLE_FOR_SETTLEMENT:  10000001,
+		IN_SETTLEMENT: 10000002,
+		IN_DISMISSAL:  10000003,
 	}
 }
 
@@ -63,6 +65,8 @@ type Room struct {
 	Index    int
   Tick     int
   ServerFPS int
+  BattleDurationMillis int64
+  EffectivePlayerCount int
   DismissalWaitGroup sync.WaitGroup
 }
 
@@ -71,6 +75,7 @@ type RoomDownsyncFrame struct {
   RefFrameID    int   `json:"refFrameId"`
   Players       map[int]*Player  `json:"players"`
   SentAt        int64 `json:"sentAt"`
+  CountdownMillis int64 `json:"countdownMillis"`
 }
 
 func (pR *Room) updateScore() {
@@ -79,7 +84,7 @@ func (pR *Room) updateScore() {
 
 func (pR *Room) lazilyInitPlayerDownSyncChan(playerId int) {
   r := *pR
-  if r.PlayerDownsyncChanDict[playerId] != nil {
+  if _, existent := r.PlayerDownsyncChanDict[playerId]; existent {
     return
   }
   r.PlayerDownsyncChanDict[playerId] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
@@ -87,14 +92,27 @@ func (pR *Room) lazilyInitPlayerDownSyncChan(playerId int) {
 }
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
-  // TODO: Check feasibility first.
+  if RoomStateIns.IDLE != pR.State && RoomStateIns.WAITING != pR.State {
+    return false
+  }
+  if _, existent := pR.Players[pPlayer.ID]; existent {
+    return false
+  }
+  defer pR.onPlayerAdded(pPlayer.ID)
   pR.Players[pPlayer.ID] = pPlayer
   pR.lazilyInitPlayerDownSyncChan(pPlayer.ID)
-  pR.updateScore()
-  if pR.Capacity == len(pR.Players) {
-    pR.StartBattle()
+  return true
+}
+
+func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
+  if RoomStateIns.WAITING != pR.State && RoomStateIns.IN_BATTLE != pR.State && RoomStateIns.IN_SETTLEMENT != pR.State {
+    return false
   }
-  /* TODO: Invoke r.StartBattle or update r.State accordingly. */
+  if _, existent := pR.Players[pPlayer.ID]; !existent {
+    return false
+  }
+  defer pR.onPlayerReAdded(pPlayer.ID)
+  // Note: All previous position and orientation info should just be recovered.
   return true
 }
 
@@ -102,7 +120,6 @@ func (pR *Room) StartBattle() {
   if RoomStateIns.WAITING != pR.State {
     return
   }
-  pR.State = RoomStateIns.IN_BATTLE
   millisPerFrame := 1000/int64(pR.ServerFPS)
   twiceMillisPerFrame := 2*millisPerFrame
   pR.Tick = 0
@@ -111,9 +128,18 @@ func (pR *Room) StartBattle() {
   * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
   */
   battleMainLoop := func () {
+    defer func() {
+      Logger.Info("The `battleMainLoop` is stopped for:", zap.Any("roomID", pR.ID))
+      pR.onBattleStoppedForSettlement()
+    }()
+    var totalElapsedMillis int64
+    totalElapsedMillis = 0
     for {
-      if (RoomStateIns.IN_BATTLE != pR.State) {
-        break
+      if totalElapsedMillis > pR.BattleDurationMillis {
+        pR.StopBattleForSettlement()
+      }
+      if RoomStateIns.IN_BATTLE != pR.State {
+        return
       }
       pR.Tick++
       stCalculation := utils.UnixtimeMilli()
@@ -123,38 +149,52 @@ func (pR *Room) StartBattle() {
           RefFrameID: 0, // Hardcoded for now.
           Players: pR.Players,
           SentAt: utils.UnixtimeMilli(),
+          CountdownMillis: (pR.BattleDurationMillis - totalElapsedMillis),
         }
         theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
         utils.SendSafely(assembledFrame, theForwardingChannel)
       }
       elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
+      totalElapsedMillis += elapsedMillisInCalculation
       time.Sleep(time.Millisecond * time.Duration(millisPerFrame - elapsedMillisInCalculation))
     }
-    pR.onBattleStoppedForSettlement()
   }
 
-  go battleMainLoop()
-
   cmdReceivingLoop := func() {
+    defer func() {
+      Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomID", pR.ID))
+    }()
     for {
       if (RoomStateIns.IN_BATTLE != pR.State) {
-        break
+        return
       }
       stCalculation := utils.UnixtimeMilli()
-      select {
-        case tmp := <-pR.CmdFromPlayersChan:
-          immediatePlayerData := tmp.(*Player)
-          // Update immediate player info for broadcasting or unicasting.
-          pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
-          pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
-        default:
+      hasMoreToRead := false
+      for {
+        select {
+          case tmp, tmpHasMoreToRead := <-pR.CmdFromPlayersChan:
+            immediatePlayerData := tmp.(*Player)
+            // Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
+            // Update immediate player info for broadcasting or unicasting.
+            pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
+            pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
+            pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
+            pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
+            hasMoreToRead = tmpHasMoreToRead
+          default:
+        }
+        if !hasMoreToRead {
+          break
+        }
       }
       elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
       time.Sleep(time.Millisecond * time.Duration(twiceMillisPerFrame - elapsedMillisInCalculation))
     }
   }
 
+  pR.onBattleStarted() // NOTE: Deliberately not using `defer`.
   go cmdReceivingLoop()
+  go battleMainLoop()
 }
 
 func (pR *Room) StopBattleForSettlement() {
@@ -162,15 +202,27 @@ func (pR *Room) StopBattleForSettlement() {
     return
   }
   pR.State = RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
+  Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomID", pR.ID))
+  // Note that `pR.onBattleStoppedForSettlement` will be called by `battleMainLoop`.
+}
+
+func (pR *Room) onBattleStarted() {
+  if RoomStateIns.WAITING != pR.State {
+    return
+  }
+  pR.State = RoomStateIns.IN_BATTLE
+  Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomID", pR.ID))
 }
 
 func (pR *Room) onBattleStoppedForSettlement() {
   if RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT != pR.State {
     return
   }
+  defer func() {
+    pR.onSettlementCompleted()
+  }()
   pR.State = RoomStateIns.IN_SETTLEMENT
-
-  pR.onSettlementCompleted()
+  // TODO: Some settlement labor.
 }
 
 func (pR *Room) onSettlementCompleted() {
@@ -191,6 +243,7 @@ func (pR *Room) Dismiss() {
 }
 
 func (pR *Room) onDismissed() {
+  pR.EffectivePlayerCount = 0
   pR.Players = nil
   pR.PlayerDownsyncChanDict = nil
   utils.CloseSafely(pR.CmdFromPlayersChan)
@@ -206,8 +259,8 @@ func (pR *Room) Broadcast(msg interface{}) {
 }
 
 func (pR *Room) expelPlayerDuringGame(playerId int) {
+  defer pR.onPlayerExpelledDuringGame(playerId)
   utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
-  pR.onPlayerExpelledDuringGame(playerId)
 }
 
 func (pR *Room) expelPlayerForDismissal(playerId int) {
@@ -215,14 +268,12 @@ func (pR *Room) expelPlayerForDismissal(playerId int) {
   pR.onPlayerExpelledForDismissal(playerId)
 }
 
-func (pR *Room) onPlayerRejoined(playerId int) {
-  // TODO
-}
-
 func (pR *Room) onPlayerExpelledDuringGame(playerId int) {
+  pR.EffectivePlayerCount--
 }
 
 func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
+  pR.EffectivePlayerCount--
   pR.DismissalWaitGroup.Done()
 }
 
@@ -235,4 +286,21 @@ func (pR *Room) onPlayerDisconnected(playerId int) {
 
 func (pR *Room) onPlayerLost(playerId int) {
   utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
+  pR.EffectivePlayerCount--
+}
+
+func (pR *Room) onPlayerAdded(playerId int) {
+  pR.EffectivePlayerCount++
+  if (pR.EffectivePlayerCount == 1) {
+    pR.State = RoomStateIns.WAITING
+  }
+  pR.updateScore()
+  Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomState", pR.State))
+  if pR.Capacity == len(pR.Players) {
+    pR.StartBattle()
+  }
+}
+
+func (pR *Room) onPlayerReAdded(playerId int) {
+  // TODO
 }

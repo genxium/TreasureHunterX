@@ -529,11 +529,6 @@
     "meta": 1539244356560,
     "relativePath": "resources/prefabs/SmsWaitcountdown.prefab"
   },
-  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
-    "asset": 1539252803457,
-    "meta": 1539252865973,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "1712c9ec-6940-4356-a87d-37887608f224": {
     "asset": 1539244575218,
     "meta": 1539244744724,
@@ -579,11 +574,6 @@
     "meta": 1539250215966,
     "relativePath": "resources/textures/ButtonNegative.png"
   },
-  "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539594877041,
-    "meta": 1539594877049,
-    "relativePath": "scenes/default_map.fire"
-  },
   "8e8c1a65-623d-42ba-97a7-820ce518ea11": {
     "asset": 1539252179012,
     "meta": 1539252179021,
@@ -620,28 +610,38 @@
     "relativePath": "scripts/SelfPlayer.js"
   },
   "2f591ab7-608a-4c2e-831c-53d88f49a36b": {
-    "asset": 1539615703732,
-    "meta": 1539616282403,
+    "asset": 1539657494463,
+    "meta": 1539657530754,
     "relativePath": "resources/protobuf/GameData.proto"
   },
+  "92160186-3e0d-4e0a-ae20-97286170ba58": {
+    "asset": 1539660004214,
+    "meta": 1539660004262,
+    "relativePath": "scenes/default_map.fire"
+  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1539616660254,
-    "meta": 1539616664562,
+    "asset": 1539664844553,
+    "meta": 1539664849167,
     "relativePath": "scripts/WsSessionMgr.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539617333570,
-    "meta": 1539617392039,
-    "relativePath": "scripts/Map.js"
+  "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
+    "asset": 1539666205951,
+    "meta": 1539666209192,
+    "relativePath": "scripts/TouchEventsManager.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539617393251,
-    "meta": 1539617393334,
+    "asset": 1539666792945,
+    "meta": 1539666792966,
     "relativePath": "scenes/login.fire"
   },
-  "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
-    "asset": 1539617301905,
-    "meta": 1539617392679,
-    "relativePath": "scripts/TouchEventsManager.js"
+  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
+    "asset": 1539666696136,
+    "meta": 1539666792837,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1539666788602,
+    "meta": 1539666792841,
+    "relativePath": "scripts/Map.js"
   }
 }

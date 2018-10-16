@@ -65,23 +65,24 @@ cc.Class({
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
+    },
+    countdownLabel: {
+      type: cc.Label,
+      default: null
     }
   },
 
-  // LIFE-CYCLE CALLBACKS:
-  onDestroy: function onDestroy() {
-    clearInterval(this.inputControlTimer);
-  },
   _onPerUpsyncFrame: function _onPerUpsyncFrame() {
     var instance = this;
+    if (null == instance.selfPlayerId || null == instance.selfPlayerScriptIns || null == instance.selfPlayerScriptIns.scheduledDirection) return;
     var upsyncFrameData = {
       id: instance.selfPlayerId,
       dir: {
-        dPjX: parseFloat(instance.ctrl.activeDirection.dPjX),
-        dPjY: parseFloat(instance.ctrl.activeDirection.dPjY)
+        dx: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dx),
+        dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy)
       },
-      x: instance.selfPlayer.x,
-      y: instance.selfPlayer.y
+      x: parseFloat(instance.selfPlayer.x),
+      y: parseFloat(instance.selfPlayer.y)
     };
     var wrapped = {
       msgId: Date.now(),
@@ -89,6 +90,18 @@ cc.Class({
       data: upsyncFrameData
     };
     window.clientSession.send(JSON.stringify(wrapped));
+  },
+
+
+  // LIFE-CYCLE CALLBACKS:
+  onDestroy: function onDestroy() {
+    var self = this;
+    if (self.upsyncLoopInterval) {
+      clearInterval(self.upsyncLoopInterval);
+    }
+    if (self.inputControlTimer) {
+      clearInterval(self.inputControlTimer);
+    }
   },
   onLoad: function onLoad() {
     var _this = this;
@@ -109,11 +122,19 @@ cc.Class({
     self.clientUpsyncFps = 24;
     self.upsyncLoopInterval = null;
 
+    window.handleClientSessionCloseOrError = function () {
+      if (null != cc.sys.localStorage.selfPlayer) {
+        cc.sys.localStorage.selfPlayer = null;
+        delete cc.sys.localStorage.selfPlayer;
+        cc.director.loadScene('login');
+      }
+    };
     initPersistentSessionClient(function () {
       self.state = ALL_MAP_STATES.VISUAL;
       var tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerId = JSON.parse(cc.sys.localStorage.selfPlayer).playerId;
       self.spawnSelfPlayer();
+      self.selfPlayerScriptIns = self.selfPlayer.getComponent("SelfPlayer");
       _this._inputControlEnabled = true;
       self.setupInputControls();
 
@@ -344,13 +365,17 @@ cc.Class({
 
       self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
       window.handleDownsyncRoomFrame = function (roomFrame) {
+        self.countdownLabel.string = (roomFrame.countdownMillis / 1000).toString();
         var frameId = roomFrame.id;
         var sentAt = roomFrame.sentAt;
         var refFrameId = roomFrame.refFrameId;
         var players = roomFrame.players;
-        for (var playerId in players) {
-          if (playerId == self.selfPlayer.id) break;
-          var anotherPlayer = players[playerId];
+        var playerIdStrList = Object.keys(players);
+        for (var i = 0; i < playerIdStrList.length; ++i) {
+          var k = playerIdStrList[i];
+          var playerId = parseInt(k);
+          if (playerId == self.selfPlayerId) continue;
+          var anotherPlayer = players[k];
           self.renderAnotherControlledPlayer(self, anotherPlayer);
         }
       };
@@ -361,7 +386,7 @@ cc.Class({
   renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayer) {
     var mapNode = mapIns.node;
 
-    cc.log("Rendering player " + anotherPlayer.id);
+    cc.log("Rendering anotherPlayer " + JSON.stringify(anotherPlayer));
     var targetNode = mapIns.otherPlayerNodeDict[anotherPlayer.id];
     if (!targetNode) {
       targetNode = cc.instantiate(mapIns.selfPlayerPrefab);
@@ -371,6 +396,10 @@ cc.Class({
       mapIns.otherPlayerNodeDict[anotherPlayer.id] = targetNode;
     }
     targetNode.setPosition(cc.v2(anotherPlayer.x, anotherPlayer.y));
+    var newScheduledDirection = mapIns.ctrl.discretizeDirection(anotherPlayer.dir.dx, anotherPlayer.dir.dy, mapIns.ctrl.joyStickEps);
+    if (0 != newScheduledDirection.dx || 0 != newScheduledDirection.dy) {
+      targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, true);
+    }
   },
 
   setupInputControls: function setupInputControls() {
@@ -380,10 +409,9 @@ cc.Class({
     var joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
     var inputControlPollerMillis = 1000 / joystickInputControllerScriptIns.pollerFps;
 
-    var selfPlayerScriptIns = instance.selfPlayer.getComponent("SelfPlayer");
-    var keyboardInputControllerScriptIns = instance.keyboardInputControllerNode.getComponent("KeyboardControls");
+    var selfPlayerScriptIns = instance.selfPlayerScriptIns;
 
-    var ctrl = keyboardInputControllerScriptIns.activeDirection.dPjX || keyboardInputControllerScriptIns.activeDirection.dPjY ? keyboardInputControllerScriptIns : joystickInputControllerScriptIns;
+    var ctrl = joystickInputControllerScriptIns;
     instance.ctrl = ctrl;
 
     instance.inputControlTimer = setInterval(function () {
