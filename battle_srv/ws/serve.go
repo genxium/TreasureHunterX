@@ -115,12 +115,23 @@ func Serve(c *gin.Context) {
   Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
   // Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
   var pRoom *models.Room
+  defer func() {
+    if pRoom != nil {
+      heap.Push(models.RoomHeapManagerIns, pRoom)
+      (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
+    }
+    (models.RoomHeapManagerIns).PrintInOrder()
+  }()
   if hasBoundRoomId {
-    pRoom = models.RoomMapManagerIns[boundRoomId]
-    Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
-    res := pRoom.ReAddPlayerIfPossible(pPlayer)
-    if !res {
-      panic(fmt.Sprintf("ReAddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+    if tmpPRoom, existent := models.RoomMapManagerIns[boundRoomId]; existent {
+      pRoom = tmpPRoom
+      Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
+      res := pRoom.ReAddPlayerIfPossible(pPlayer)
+      if !res {
+        panic(fmt.Sprintf("ReAddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+      }
+    } else {
+      panic(fmt.Sprintf("Cannot get a (*Room) for PresumedBoundRoomId == %v, playerId == %v!", boundRoomId, playerId))
     }
   } else {
     pRoom = heap.Pop(models.RoomHeapManagerIns).(*models.Room)
@@ -130,9 +141,6 @@ func Serve(c *gin.Context) {
       panic(fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
     }
   }
-  heap.Push(models.RoomHeapManagerIns, pRoom)
-  (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
-  (models.RoomHeapManagerIns).PrintInOrder()
 
   var connIOMux sync.RWMutex
 
@@ -184,11 +192,12 @@ func Serve(c *gin.Context) {
         // Logger.Info("Unmarshalled `PlayerUpsyncCmd`:", zap.Any("immediatePlayerData", immediatePlayerData))
         if immediatePlayerData.ID != playerId {
           // WARNING: This player is cheating!
-
+          Logger.Warn("Player cheats in reporting its own identity:", zap.Any("playerId", playerId), zap.Any("immediatePlayerData.ID", immediatePlayerData.ID))
           // TODO: Abort with specific message.
           signalToCloseConnOfThisPlayer()
+        } else {
+          utils.SendSafely(immediatePlayerData, pRoom.CmdFromPlayersChan)
         }
-        utils.SendSafely(immediatePlayerData, pRoom.CmdFromPlayersChan)
       } else {
         if pReq.Act != "HeartbeatPing" {
           Logger.Debug("recv:", zap.Any("req", pReq))
@@ -216,7 +225,10 @@ func Serve(c *gin.Context) {
         return nil
       }
       select {
-        case untypedRoomDownsyncFrame := <-dedicatedChanToForward:
+        case untypedRoomDownsyncFrame, hasRead := <-dedicatedChanToForward:
+          if !hasRead {
+            return nil
+          }
           typedRoomDownsyncFrame := untypedRoomDownsyncFrame.(*models.RoomDownsyncFrame)
           connIOMux.Lock()
           // Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("playerId", playerId))

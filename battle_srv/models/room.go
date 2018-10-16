@@ -65,7 +65,7 @@ type Room struct {
 	Index    int
   Tick     int
   ServerFPS int
-  BattleDurationMillis int64
+  BattleDurationNanos int64
   EffectivePlayerCount int
   DismissalWaitGroup sync.WaitGroup
 }
@@ -75,40 +75,39 @@ type RoomDownsyncFrame struct {
   RefFrameID    int   `json:"refFrameId"`
   Players       map[int]*Player  `json:"players"`
   SentAt        int64 `json:"sentAt"`
-  CountdownMillis int64 `json:"countdownMillis"`
+  CountdownNanos int64 `json:"countdownNanos"`
 }
 
 func (pR *Room) updateScore() {
-	pR.Score = calRoomScore(len(pR.Players), pR.Capacity, pR.State)
-}
-
-func (pR *Room) lazilyInitPlayerDownSyncChan(playerId int) {
-  r := *pR
-  if _, existent := r.PlayerDownsyncChanDict[playerId]; existent {
-    return
-  }
-  r.PlayerDownsyncChanDict[playerId] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
-  return
+	pR.Score = calRoomScore(pR.EffectivePlayerCount, pR.Capacity, pR.State)
 }
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
   if RoomStateIns.IDLE != pR.State && RoomStateIns.WAITING != pR.State {
+    Logger.Info("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   if _, existent := pR.Players[pPlayer.ID]; existent {
+    Logger.Info("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   defer pR.onPlayerAdded(pPlayer.ID)
   pR.Players[pPlayer.ID] = pPlayer
-  pR.lazilyInitPlayerDownSyncChan(pPlayer.ID)
+  // Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
+  if _, existent := pR.PlayerDownsyncChanDict[pPlayer.ID]; existent {
+    utils.CloseSafely(pR.PlayerDownsyncChanDict[pPlayer.ID])
+  }
+  pR.PlayerDownsyncChanDict[pPlayer.ID] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
   return true
 }
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
   if RoomStateIns.WAITING != pR.State && RoomStateIns.IN_BATTLE != pR.State && RoomStateIns.IN_SETTLEMENT != pR.State {
+    Logger.Info("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   if _, existent := pR.Players[pPlayer.ID]; !existent {
+    Logger.Info("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   defer pR.onPlayerReAdded(pPlayer.ID)
@@ -120,8 +119,10 @@ func (pR *Room) StartBattle() {
   if RoomStateIns.WAITING != pR.State {
     return
   }
-  millisPerFrame := 1000/int64(pR.ServerFPS)
-  twiceMillisPerFrame := 2*millisPerFrame
+  // Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
+  pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
+  nanosPerFrame := 1000000000/int64(pR.ServerFPS)
+  twiceTimePerFrame := 2*nanosPerFrame
   pR.Tick = 0
   /**
   * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached. 
@@ -132,31 +133,34 @@ func (pR *Room) StartBattle() {
       Logger.Info("The `battleMainLoop` is stopped for:", zap.Any("roomID", pR.ID))
       pR.onBattleStoppedForSettlement()
     }()
-    var totalElapsedMillis int64
-    totalElapsedMillis = 0
+    battleMainLoopStartedNanos := utils.UnixtimeNano()
+    var totalElapsedNanos int64
+    totalElapsedNanos = 0
     for {
-      if totalElapsedMillis > pR.BattleDurationMillis {
+      if totalElapsedNanos > pR.BattleDurationNanos {
         pR.StopBattleForSettlement()
       }
       if RoomStateIns.IN_BATTLE != pR.State {
         return
       }
       pR.Tick++
-      stCalculation := utils.UnixtimeMilli()
+      stCalculation := utils.UnixtimeNano()
       for playerId, _ := range pR.Players {
         assembledFrame := &RoomDownsyncFrame{
           ID: pR.Tick,
           RefFrameID: 0, // Hardcoded for now.
           Players: pR.Players,
           SentAt: utils.UnixtimeMilli(),
-          CountdownMillis: (pR.BattleDurationMillis - totalElapsedMillis),
+          CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
         }
         theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
         utils.SendSafely(assembledFrame, theForwardingChannel)
       }
-      elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
-      totalElapsedMillis += elapsedMillisInCalculation
-      time.Sleep(time.Millisecond * time.Duration(millisPerFrame - elapsedMillisInCalculation))
+      now := utils.UnixtimeNano()
+      elapsedInCalculation := now - stCalculation
+      totalElapsedNanos = (now - battleMainLoopStartedNanos)
+      // Logger.Info("Elapsed time statistics:", zap.Any("roomID", pR.ID), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
+      time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
     }
   }
 
@@ -168,11 +172,13 @@ func (pR *Room) StartBattle() {
       if (RoomStateIns.IN_BATTLE != pR.State) {
         return
       }
-      stCalculation := utils.UnixtimeMilli()
-      hasMoreToRead := false
+      stCalculation := utils.UnixtimeNano()
       for {
         select {
-          case tmp, tmpHasMoreToRead := <-pR.CmdFromPlayersChan:
+          case tmp, _ := <-pR.CmdFromPlayersChan:
+            if nil == tmp {
+              break
+            }
             immediatePlayerData := tmp.(*Player)
             // Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
             // Update immediate player info for broadcasting or unicasting.
@@ -180,15 +186,11 @@ func (pR *Room) StartBattle() {
             pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
             pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
             pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
-            hasMoreToRead = tmpHasMoreToRead
           default:
         }
-        if !hasMoreToRead {
-          break
-        }
       }
-      elapsedMillisInCalculation := utils.UnixtimeMilli() - stCalculation
-      time.Sleep(time.Millisecond * time.Duration(twiceMillisPerFrame - elapsedMillisInCalculation))
+      elapsedInCalculation := utils.UnixtimeNano() - stCalculation
+      time.Sleep(time.Nanosecond * time.Duration(twiceTimePerFrame - elapsedInCalculation))
     }
   }
 
@@ -203,6 +205,18 @@ func (pR *Room) StopBattleForSettlement() {
   }
   pR.State = RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
   Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomID", pR.ID))
+  pR.Tick++
+  for playerId, _ := range pR.Players {
+    assembledFrame := &RoomDownsyncFrame{
+      ID: pR.Tick,
+      RefFrameID: 0, // Hardcoded for now.
+      Players: pR.Players,
+      SentAt: utils.UnixtimeMilli(),
+      CountdownNanos: -1, // TODO: Replace this magic constant!
+    }
+    theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+    utils.SendSafely(assembledFrame, theForwardingChannel)
+  }
   // Note that `pR.onBattleStoppedForSettlement` will be called by `battleMainLoop`.
 }
 
@@ -222,6 +236,7 @@ func (pR *Room) onBattleStoppedForSettlement() {
     pR.onSettlementCompleted()
   }()
   pR.State = RoomStateIns.IN_SETTLEMENT
+  Logger.Info("The room is in settlement:", zap.Any("roomID", pR.ID))
   // TODO: Some settlement labor.
 }
 
@@ -238,15 +253,17 @@ func (pR *Room) Dismiss() {
     pR.DismissalWaitGroup.Add(1)
     pR.expelPlayerForDismissal(playerId)
   }
+  Logger.Info("The room is in dismissal:", zap.Any("roomID", pR.ID))
   pR.DismissalWaitGroup.Wait()
   pR.onDismissed()
 }
 
 func (pR *Room) onDismissed() {
+  Logger.Info("The room is completely dismissed:", zap.Any("roomID", pR.ID))
+  pR.State = RoomStateIns.IDLE
   pR.EffectivePlayerCount = 0
-  pR.Players = nil
-  pR.PlayerDownsyncChanDict = nil
-  utils.CloseSafely(pR.CmdFromPlayersChan)
+  pR.Players = make(map[int]*Player)
+  pR.PlayerDownsyncChanDict = make(map[int]chan interface{})
   pR.CmdFromPlayersChan = nil
 }
 

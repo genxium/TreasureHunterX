@@ -615,33 +615,43 @@
     "relativePath": "resources/protobuf/GameData.proto"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539660004214,
-    "meta": 1539660004262,
+    "asset": 1539676259336,
+    "meta": 1539676259365,
     "relativePath": "scenes/default_map.fire"
-  },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1539664844553,
-    "meta": 1539664849167,
-    "relativePath": "scripts/WsSessionMgr.js"
   },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
     "asset": 1539666205951,
     "meta": 1539666209192,
     "relativePath": "scripts/TouchEventsManager.js"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539666792945,
-    "meta": 1539666792966,
-    "relativePath": "scenes/login.fire"
-  },
   "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
     "asset": 1539666696136,
     "meta": 1539666792837,
     "relativePath": "plugin_scripts/conf.js"
   },
+  "670b477e-61a1-4778-879b-35913f7c79d2": {
+    "asset": 1539675970693,
+    "meta": 1539675970701,
+    "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
+  },
+  "27562abf-fe68-427f-b598-b8e53aca6e87": {
+    "asset": 1539675919217,
+    "meta": 1539675923691,
+    "relativePath": "scripts/SimplePressToGoDialog.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1539679757794,
+    "meta": 1539679763409,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1539680506997,
+    "meta": 1539680507053,
+    "relativePath": "scenes/login.fire"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539666788602,
-    "meta": 1539666792841,
+    "asset": 1539680499144,
+    "meta": 1539680506254,
     "relativePath": "scripts/Map.js"
   }
 }

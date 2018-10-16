@@ -9,7 +9,12 @@ window.closeWSConnection = function () {
   window.clientSession.close();
 };
 
-window.boundRoomId = cc.sys.localStorage.selfPlayer && cc.sys.localStorage.selfPlayer.boundRoomId ? cc.sys.localStorage.selfPlayer.boundRoomId : null;
+window.getBoundRoomIdFromPersistentStorage = function () {
+  var existingBoundRoomIdInPersistentStorage = null != cc.sys.localStorage.selfPlayer ? JSON.parse(cc.sys.localStorage.selfPlayer).boundRoomId : null;
+  return existingBoundRoomIdInPersistentStorage;
+};
+
+window.boundRoomId = getBoundRoomIdFromPersistentStorage();
 window.handleHbRequirements = function (resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
@@ -52,11 +57,11 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   var intAuthToken = cc.sys.localStorage.selfPlayer ? JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken : "";
 
-  var existingBoundRoomId = cc.sys.localStorage.selfPlayer && cc.sys.localStorage.selfPlayer.boundRoomId ? cc.sys.localStorage.selfPlayer.boundRoomId : null;
-
   var urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
-  if (null != existingBoundRoomId) {
-    urlToConnect = urlToConnect + "boundRoomId=" + existingBoundRoomId;
+
+  window.boundRoomId = getBoundRoomIdFromPersistentStorage();
+  if (null != window.boundRoomId) {
+    urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
   }
   var clientSession = new WebSocket(urlToConnect);
 

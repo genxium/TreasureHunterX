@@ -62,6 +62,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    simplePressToGoDialogPrefab: {
+      type: cc.Prefab,
+      default: null
+    },
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
@@ -103,11 +107,30 @@ cc.Class({
       clearInterval(self.inputControlTimer);
     }
   },
+  popupSimplePressToGo: function popupSimplePressToGo(labelString) {
+    var self = this;
+    var canvasNode = self.canvasNode;
+    var simplePressToGoDialogNode = cc.instantiate(self.simplePressToGoDialogPrefab);
+    simplePressToGoDialogNode.setPosition(cc.v2(0, 0));
+    simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
+    var simplePressToGoDialogScriptIns = simplePressToGoDialogNode.getComponent("SimplePressToGoDialog");
+    var yesButton = simplePressToGoDialogNode.getChildByName("Yes");
+    var postDismissalByYes = function postDismissalByYes() {
+      self.transitToState(ALL_MAP_STATES.VISUAL);
+      canvasNode.removeChild(simplePressToGoDialogNode);
+    };
+    simplePressToGoDialogNode.getChildByName("Hint").getComponent(cc.Label).string = labelString;
+    yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
+    yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
+    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
+    simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
+    safelyAddChild(canvasNode, simplePressToGoDialogNode);
+  },
   onLoad: function onLoad() {
     var _this = this;
 
     var self = this;
-    self.msgId = 0;
+    self.lastRoomDownsyncFrameId = 0;
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -124,11 +147,17 @@ cc.Class({
 
     window.handleClientSessionCloseOrError = function () {
       if (null != cc.sys.localStorage.selfPlayer) {
-        cc.sys.localStorage.selfPlayer = null;
-        delete cc.sys.localStorage.selfPlayer;
-        cc.director.loadScene('login');
+        window.handleDownsyncRoomFrame = null;
+        window.boundRoomId = null;
+        cc.sys.localStorage.removeItem("selfPlayer");
       }
+      var millisToGo = 3000;
+      self.popupSimplePressToGo(cc.js.formatStr("Client session closed unexpectedly! Will logout in %s seconds.", millisToGo / 1000));
+      setTimeout(function () {
+        cc.director.loadScene('login');
+      }, millisToGo);
     };
+
     initPersistentSessionClient(function () {
       self.state = ALL_MAP_STATES.VISUAL;
       var tiledMapIns = self.node.getComponent(cc.TiledMap);
@@ -364,12 +393,24 @@ cc.Class({
       }
 
       self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
-      window.handleDownsyncRoomFrame = function (roomFrame) {
-        self.countdownLabel.string = (roomFrame.countdownMillis / 1000).toString();
-        var frameId = roomFrame.id;
-        var sentAt = roomFrame.sentAt;
-        var refFrameId = roomFrame.refFrameId;
-        var players = roomFrame.players;
+      window.handleDownsyncRoomFrame = function (roomDownsyncFrame) {
+        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
+        var frameId = roomDownsyncFrame.id;
+        if (frameId <= self.lastRoomDownsyncFrameId) return;
+        if (roomDownsyncFrame.countdownNanos == -1) {
+          var millisToGo = 3000;
+          self.popupSimplePressToGo(cc.js.formatStr("Battle stopped! Will logout in %s seconds.", millisToGo / 1000));
+          setTimeout(function () {
+            self.logout();
+          }, millisToGo);
+        }
+        if (0 == self.lastRoomDownsyncFrameId) {
+          self.popupSimplePressToGo("Battle started!");
+        }
+        self.lastRoomDownsyncFrameId = frameId;
+        var sentAt = roomDownsyncFrame.sentAt;
+        var refFrameId = roomDownsyncFrame.refFrameId;
+        var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
         for (var i = 0; i < playerIdStrList.length; ++i) {
           var k = playerIdStrList[i];
@@ -386,18 +427,20 @@ cc.Class({
   renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayer) {
     var mapNode = mapIns.node;
 
-    cc.log("Rendering anotherPlayer " + JSON.stringify(anotherPlayer));
     var targetNode = mapIns.otherPlayerNodeDict[anotherPlayer.id];
     if (!targetNode) {
       targetNode = cc.instantiate(mapIns.selfPlayerPrefab);
       targetNode.getComponent("SelfPlayer").mapNode = mapNode;
+      targetNode.getComponent("SelfPlayer").speed = 0; // To prevent jittering.
       mapNode.addChild(targetNode);
       setLocalZOrder(targetNode, 5);
       mapIns.otherPlayerNodeDict[anotherPlayer.id] = targetNode;
     }
-    targetNode.setPosition(cc.v2(anotherPlayer.x, anotherPlayer.y));
-    var newScheduledDirection = mapIns.ctrl.discretizeDirection(anotherPlayer.dir.dx, anotherPlayer.dir.dy, mapIns.ctrl.joyStickEps);
-    if (0 != newScheduledDirection.dx || 0 != newScheduledDirection.dy) {
+    var newPos = cc.v2(parseFloat(parseFloat(anotherPlayer.x).toFixed(6)), parseFloat(parseFloat(anotherPlayer.y).toFixed(6)));
+    cc.log("Rendering anotherPlayer " + anotherPlayer.id + " at <" + newPos.x + ", " + newPos.y + "> and orientation " + JSON.stringify(anotherPlayer.dir));
+    targetNode.setPosition(newPos);
+    if (0 != anotherPlayer.dir.dx || 0 != anotherPlayer.dir.dy) {
+      var newScheduledDirection = mapIns.ctrl.discretizeDirection(anotherPlayer.dir.dx, anotherPlayer.dir.dy, mapIns.ctrl.joyStickEps);
       targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, true);
     }
   },

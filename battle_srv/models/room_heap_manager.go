@@ -82,21 +82,19 @@ func InitRoomHeapManager() {
 
 	roomCapacity := 2
 	for i := 0; i < initialCountOfRooms; i++ {
-		players := make(map[int]*Player)
-    playerDownsyncChanDict := make(map[int]chan interface{})
 		currentRoomState := RoomStateIns.IDLE
 		pq[i] = &Room{
-			Players:  players,
-      PlayerDownsyncChanDict: playerDownsyncChanDict,
+			Players: make(map[int]*Player),
+      PlayerDownsyncChanDict: make(map[int]chan interface{}),
 			Capacity: roomCapacity,
-			Score:    calRoomScore(len(players) /* Initially 0. */, roomCapacity, currentRoomState),
+			Score:    calRoomScore(0, roomCapacity, currentRoomState),
 			State:    currentRoomState,
-      CmdFromPlayersChan: make(chan interface{}, 2048 /* Hardcoded temporarily. */),
+      CmdFromPlayersChan: nil,
 			ID:       i,
 			Index:    i,
       Tick:     0,
       EffectivePlayerCount: 0,
-      BattleDurationMillis: int64(30*1000),
+      BattleDurationNanos: int64(30*1000*1000*1000),
       ServerFPS: 30,
 		}
     RoomMapManagerIns[pq[i].ID] = pq[i]
@@ -104,4 +102,5 @@ func InitRoomHeapManager() {
 	heap.Init(&pq)
   RoomHeapManagerIns = &pq
   Logger.Info("The RoomHeapManagerIns has been initialized:", zap.Any("addr", fmt.Sprintf("%p", RoomHeapManagerIns)), zap.Any("size", len(*RoomHeapManagerIns)))
+  Logger.Info("The RoomMapManagerIns has been initialized:", zap.Any("size", len(RoomMapManagerIns)))
 }
