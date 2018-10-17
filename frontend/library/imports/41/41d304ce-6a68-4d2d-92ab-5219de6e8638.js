@@ -13,6 +13,13 @@ window.ALL_MAP_STATES = {
   SHOWING_MODAL_POPUP: 2
 };
 
+window.ALL_BATTLE_STATES = {
+  WAITING: 0,
+  IN_BATTLE: 1,
+  IN_SETTLEMENT: 2,
+  IN_DISMISSAL: 3
+};
+
 cc.Class({
   extends: cc.Component,
 
@@ -109,6 +116,11 @@ cc.Class({
   },
   popupSimplePressToGo: function popupSimplePressToGo(labelString) {
     var self = this;
+    if (ALL_MAP_STATES.VISUAL != self.state) {
+      return;
+    }
+    self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
+
     var canvasNode = self.canvasNode;
     var simplePressToGoDialogNode = cc.instantiate(self.simplePressToGoDialogPrefab);
     simplePressToGoDialogNode.setPosition(cc.v2(0, 0));
@@ -126,6 +138,13 @@ cc.Class({
     simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
     safelyAddChild(canvasNode, simplePressToGoDialogNode);
   },
+  alertForGoingBackToLoginScene: function alertForGoingBackToLoginScene(labelString, mapIns) {
+    var millisToGo = 3000;
+    mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo / 1000));
+    setTimeout(function () {
+      mapIns.logout();
+    }, millisToGo);
+  },
   onLoad: function onLoad() {
     var _this = this;
 
@@ -136,7 +155,9 @@ cc.Class({
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
+    self.battleState = ALL_BATTLE_STATES.WAITING;
     self.otherPlayerNodeDict = {};
+    self.otherPlayerCachedDataDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
@@ -146,16 +167,7 @@ cc.Class({
     self.upsyncLoopInterval = null;
 
     window.handleClientSessionCloseOrError = function () {
-      if (null != cc.sys.localStorage.selfPlayer) {
-        window.handleDownsyncRoomFrame = null;
-        window.boundRoomId = null;
-        cc.sys.localStorage.removeItem("selfPlayer");
-      }
-      var millisToGo = 3000;
-      self.popupSimplePressToGo(cc.js.formatStr("Client session closed unexpectedly! Will logout in %s seconds.", millisToGo / 1000));
-      setTimeout(function () {
-        cc.director.loadScene('login');
-      }, millisToGo);
+      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self);
     };
 
     initPersistentSessionClient(function () {
@@ -394,17 +406,17 @@ cc.Class({
 
       self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
       window.handleDownsyncRoomFrame = function (roomDownsyncFrame) {
+        if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
+
         self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
         var frameId = roomDownsyncFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) return;
         if (roomDownsyncFrame.countdownNanos == -1) {
-          var millisToGo = 3000;
-          self.popupSimplePressToGo(cc.js.formatStr("Battle stopped! Will logout in %s seconds.", millisToGo / 1000));
-          setTimeout(function () {
-            self.logout();
-          }, millisToGo);
+          self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
+          self.alertForGoingBackToLoginScene("Battle stopped!", self);
         }
         if (0 == self.lastRoomDownsyncFrameId) {
+          self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           self.popupSimplePressToGo("Battle started!");
         }
         self.lastRoomDownsyncFrameId = frameId;
@@ -417,7 +429,8 @@ cc.Class({
           var playerId = parseInt(k);
           if (playerId == self.selfPlayerId) continue;
           var anotherPlayer = players[k];
-          self.renderAnotherControlledPlayer(self, anotherPlayer);
+          // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
+          self.otherPlayerCachedDataDict[playerId] = anotherPlayer;
         }
         // TODO: Cope with removed players.
         // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
@@ -427,29 +440,8 @@ cc.Class({
   },
 
 
-  renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayer) {
+  renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayerCachedData, targetNode) {
     var mapNode = mapIns.node;
-    var newPos = cc.v2(parseFloat(parseFloat(anotherPlayer.x).toFixed(6)), parseFloat(parseFloat(anotherPlayer.y).toFixed(6)));
-
-    var targetNode = mapIns.otherPlayerNodeDict[anotherPlayer.id];
-    if (!targetNode) {
-      targetNode = cc.instantiate(mapIns.selfPlayerPrefab);
-      targetNode.getComponent("SelfPlayer").mapNode = mapNode;
-      targetNode.getComponent("SelfPlayer").speed = 0; // A dirty fix to prevent jittering.
-      mapIns.otherPlayerNodeDict[anotherPlayer.id] = targetNode;
-      safelyAddChild(mapNode, targetNode);
-      targetNode.setPosition(newPos);
-      setLocalZOrder(targetNode, 5);
-    }
-    cc.log("Rendering anotherPlayer " + anotherPlayer.id + " at <" + newPos.x + ", " + newPos.y + "> and orientation " + JSON.stringify(anotherPlayer.dir));
-    var durationSeconds = newPos.sub(targetNode.position).mag() / mapIns.selfPlayerScriptIns.speed;
-    cc.log("Moving targetNode from <" + targetNode.position.x + ", " + targetNode.position.y + "> to <" + newPos.x + ", " + newPos.y + "> in " + durationSeconds + " seconds.");
-    // targetNode.runAction(cc.moveTo(durationSeconds, newPos));
-    targetNode.setPosition(newPos);
-    if (0 != anotherPlayer.dir.dx || 0 != anotherPlayer.dir.dy) {
-      var newScheduledDirection = mapIns.ctrl.discretizeDirection(anotherPlayer.dir.dx, anotherPlayer.dir.dy, mapIns.ctrl.joyStickEps);
-      targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, true);
-    }
   },
 
   setupInputControls: function setupInputControls() {
@@ -496,35 +488,70 @@ cc.Class({
   },
   update: function update(dt) {
     var self = this;
+    var mapNode = self.node;
+    var canvasNode = mapNode.parent;
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
+    for (var k in self.otherPlayerCachedDataDict) {
+      var playerId = parseInt(k);
+      var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
+      var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
+      var targetNode = self.otherPlayerNodeDict[playerId];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.selfPlayerPrefab);
+        targetNode.getComponent("SelfPlayer").mapNode = mapNode;
+        targetNode.getComponent("SelfPlayer").speed = 0; // A dirty fix to prevent jittering.
+        self.otherPlayerNodeDict[playerId] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
+      }
+
+      if (0 < targetNode.getNumberOfRunningActions()) {
+        continue;
+      }
+      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
+        var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, true);
+      }
+      var oldPos = cc.v2(targetNode.x, targetNode.y);
+      var toMoveByVec = newPos.sub(oldPos);
+      var durationSeconds = toMoveByVec.mag() / self.selfPlayerScriptIns.speed;
+      // cc.log(`Moving targetNode from <${oldPos.x}, ${oldPos.y}> to <${newPos.x}, ${newPos.y}> in ${durationSeconds} seconds.`);
+      targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+    }
+    // TODO: Cope with removed players.
   },
   transitToState: function transitToState(s) {
     var self = this;
     self.state = s;
   },
   logout: function logout() {
-    // Will be called within "ConfirmLogou.js".
+    // Will be called within "ConfirmLogout.js".
     var self = this;
-    var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
-    var requestContent = {
-      intAuthToken: selfPlayer.intAuthToken
-    };
-    NetworkUtils.ajax({
-      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
-      type: "POST",
-      data: requestContent,
-      success: function success(res) {
-        if (res.ret != constants.RET_CODE.OK) {
-          cc.log("Logout failed: " + res + ".");
+    if (null != cc.sys.localStorage.selfPlayer) {
+      var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+      var requestContent = {
+        intAuthToken: selfPlayer.intAuthToken
+      };
+      NetworkUtils.ajax({
+        url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
+        type: "POST",
+        data: requestContent,
+        success: function success(res) {
+          if (res.ret != constants.RET_CODE.OK) {
+            cc.log("Logout failed: " + res + ".");
+          }
+          window.closeWSConnection();
+          cc.sys.localStorage.removeItem('selfPlayer');
+          cc.director.loadScene('login');
         }
-        self.closeFlag = true;
-        window.closeWSConnection();
-        cc.sys.localStorage.removeItem('selfPlayer');
-        cc.director.loadScene('login');
-      }
-    });
+      });
+    } else {
+      cc.sys.localStorage.removeItem('selfPlayer');
+      cc.director.loadScene('login');
+    }
   },
   onLogoutClicked: function onLogoutClicked(evt) {
     var self = this;

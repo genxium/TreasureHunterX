@@ -245,7 +245,7 @@
     "relativePath": "prefab/webview.prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1539684400504,
+    "asset": 1539764287420,
     "meta": 1539182620513,
     "relativePath": "plugin_scripts"
   },
@@ -325,7 +325,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1539741600355,
+    "asset": 1539764272872,
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
@@ -639,19 +639,24 @@
     "meta": 1539741804155,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539750789224,
-    "meta": 1539750789243,
-    "relativePath": "scenes/login.fire"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539750785544,
-    "meta": 1539750788297,
-    "relativePath": "scripts/Map.js"
-  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
     "asset": 1539748218578,
     "meta": 1539750788298,
     "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
+    "asset": 1539763870679,
+    "meta": 1539764289256,
+    "relativePath": "plugin_scripts/NetworkDoctor.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1539789520981,
+    "meta": 1539789521087,
+    "relativePath": "scenes/login.fire"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1539789514421,
+    "meta": 1539789518174,
+    "relativePath": "scripts/Map.js"
   }
 }
