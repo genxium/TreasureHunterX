@@ -94,6 +94,9 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   clientSession.onerror = function (event) {
     cc.error("Error caught on the WS clientSession: " + event);
+    if (window.clientSessionPingInterval) {
+      clearInterval(clientSessionPingInterval);
+    }
     if (window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError();
     }
@@ -101,6 +104,9 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   clientSession.onclose = function (event) {
     cc.log("The WS clientSession is closed: " + event);
+    if (window.clientSessionPingInterval) {
+      clearInterval(clientSessionPingInterval);
+    }
     if (window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError();
     }

@@ -419,6 +419,9 @@ cc.Class({
           var anotherPlayer = players[k];
           self.renderAnotherControlledPlayer(self, anotherPlayer);
         }
+        // TODO: Cope with removed players.
+        // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
+        // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
     });
   },
@@ -426,18 +429,22 @@ cc.Class({
 
   renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayer) {
     var mapNode = mapIns.node;
+    var newPos = cc.v2(parseFloat(parseFloat(anotherPlayer.x).toFixed(6)), parseFloat(parseFloat(anotherPlayer.y).toFixed(6)));
 
     var targetNode = mapIns.otherPlayerNodeDict[anotherPlayer.id];
     if (!targetNode) {
       targetNode = cc.instantiate(mapIns.selfPlayerPrefab);
       targetNode.getComponent("SelfPlayer").mapNode = mapNode;
-      targetNode.getComponent("SelfPlayer").speed = 0; // To prevent jittering.
-      mapNode.addChild(targetNode);
-      setLocalZOrder(targetNode, 5);
+      targetNode.getComponent("SelfPlayer").speed = 0; // A dirty fix to prevent jittering.
       mapIns.otherPlayerNodeDict[anotherPlayer.id] = targetNode;
+      safelyAddChild(mapNode, targetNode);
+      targetNode.setPosition(newPos);
+      setLocalZOrder(targetNode, 5);
     }
-    var newPos = cc.v2(parseFloat(parseFloat(anotherPlayer.x).toFixed(6)), parseFloat(parseFloat(anotherPlayer.y).toFixed(6)));
     cc.log("Rendering anotherPlayer " + anotherPlayer.id + " at <" + newPos.x + ", " + newPos.y + "> and orientation " + JSON.stringify(anotherPlayer.dir));
+    var durationSeconds = newPos.sub(targetNode.position).mag() / mapIns.selfPlayerScriptIns.speed;
+    cc.log("Moving targetNode from <" + targetNode.position.x + ", " + targetNode.position.y + "> to <" + newPos.x + ", " + newPos.y + "> in " + durationSeconds + " seconds.");
+    // targetNode.runAction(cc.moveTo(durationSeconds, newPos));
     targetNode.setPosition(newPos);
     if (0 != anotherPlayer.dir.dx || 0 != anotherPlayer.dir.dy) {
       var newScheduledDirection = mapIns.ctrl.discretizeDirection(anotherPlayer.dir.dx, anotherPlayer.dir.dy, mapIns.ctrl.joyStickEps);

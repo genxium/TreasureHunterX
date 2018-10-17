@@ -37,6 +37,7 @@ type constants struct {
 		MysqlError                                       int    `json:"MYSQL_ERROR"`
 		NewHandleConflict                                int    `json:"NEW_HANDLE_CONFLICT"`
 		NonexistentAct                                   int    `json:"NONEXISTENT_ACT"`
+		NonexistentActHandler                            int    `json:"NONEXISTENT_ACT_HANDLER"`
 		NonexistentKiosk                                 int    `json:"NONEXISTENT_KIOSK"`
 		NotImplementedYet                                int    `json:"NOT_IMPLEMENTED_YET"`
 		NoAssociatedEmail                                int    `json:"NO_ASSOCIATED_EMAIL"`

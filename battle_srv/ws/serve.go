@@ -30,6 +30,14 @@ var upgrader = websocket.Upgrader{
   },
 }
 
+func startOrFeedHeartbeatWatchdog(conn *websocket.Conn) bool {
+  if nil == conn {
+    return false
+  }
+  conn.SetReadDeadline(time.Now().Add(time.Millisecond*(ConstVals.Ws.WillKickIfInactiveFor)))
+  return true
+}
+
 func Serve(c *gin.Context) {
   token, ok := c.GetQuery("intAuthToken")
   if !ok {
@@ -173,8 +181,6 @@ func Serve(c *gin.Context) {
       if shouldStopAllGoroutinesOfThisPlayer {
         return nil
       }
-      // Refreshes the handling of `HeartbeatRequirements`.
-      conn.SetReadDeadline(time.Now().Add(ConstVals.Ws.WillKickIfInactiveFor))
 
       // Tries to receive from client-side in a non-blocking manner.
       var pReq *wsReq
@@ -186,6 +192,7 @@ func Serve(c *gin.Context) {
         }
         signalToStopGoroutinesOfThisPlayer()
       }
+      startOrFeedHeartbeatWatchdog(conn)
       if pReq.Act == "PlayerUpsyncCmd" {
         immediatePlayerData := new(models.Player)
         json.Unmarshal([]byte(pReq.Data), immediatePlayerData)
@@ -200,7 +207,7 @@ func Serve(c *gin.Context) {
         }
       } else {
         if pReq.Act != "HeartbeatPing" {
-          Logger.Debug("recv:", zap.Any("req", pReq))
+          Logger.Info("recv:", zap.Any("req", pReq))
         }
         resp := wsGenerateRespectiveResp(conn, pReq)
         connIOMux.Lock()
@@ -239,6 +246,7 @@ func Serve(c *gin.Context) {
     }
     return nil
   }
+  startOrFeedHeartbeatWatchdog(conn)
   go receivingLoopAgainstPlayer()
   go forwardingLoopAgainstBoundRoom(pRoom.PlayerDownsyncChanDict[playerId])
 }

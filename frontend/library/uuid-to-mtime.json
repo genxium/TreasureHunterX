@@ -245,7 +245,7 @@
     "relativePath": "prefab/webview.prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1539581072073,
+    "asset": 1539684400504,
     "meta": 1539182620513,
     "relativePath": "plugin_scripts"
   },
@@ -255,7 +255,7 @@
     "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1539579824077,
+    "asset": 1539684400507,
     "meta": 1539182620484,
     "relativePath": "resources"
   },
@@ -320,12 +320,12 @@
     "relativePath": "resources/textures"
   },
   "8c047451-39ef-4152-8134-b019287bff60": {
-    "asset": 1539249121745,
+    "asset": 1539684400510,
     "meta": 1539182620514,
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1539582158895,
+    "asset": 1539741600355,
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
@@ -445,7 +445,7 @@
     "relativePath": "resources/maps/map03.tsx"
   },
   "6f0263fa-1a06-4133-98dc-34281dea54ce": {
-    "asset": 1539252094959,
+    "asset": 1539684400506,
     "meta": 1539243072088,
     "relativePath": "resources/prefabs"
   },
@@ -580,28 +580,28 @@
     "relativePath": "resources/prefabs/ConfirmLogout.prefab"
   },
   "70ed3639-e9c8-42eb-9832-a465369e3bef": {
-    "asset": 1539580575279,
-    "meta": 1539580577473,
+    "asset": 1539684400514,
+    "meta": 1539741616989,
     "relativePath": "scripts/PBCodec.js"
   },
   "eb30df05-3917-49f5-a40f-0ddce03121d0": {
-    "asset": 1539581069615,
-    "meta": 1539581073634,
+    "asset": 1539684400500,
+    "meta": 1539741615980,
     "relativePath": "plugin_scripts/protobuf.js"
   },
   "7754aaae-2816-4803-b0c9-199ffaeaa433": {
-    "asset": 1539581069618,
-    "meta": 1539581073668,
+    "asset": 1539684400503,
+    "meta": 1539741616010,
     "relativePath": "plugin_scripts/protobuf.js.map"
   },
   "1a4cd958-d06d-4f7c-8c12-f3c908409097": {
-    "asset": 1539586464448,
-    "meta": 1539586464447,
+    "asset": 1539684400507,
+    "meta": 1539684400507,
     "relativePath": "resources/protobuf"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1539609759054,
-    "meta": 1539610946628,
+    "asset": 1539684400511,
+    "meta": 1539741616959,
     "relativePath": "scripts/Login.js"
   },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
@@ -610,48 +610,48 @@
     "relativePath": "scripts/SelfPlayer.js"
   },
   "2f591ab7-608a-4c2e-831c-53d88f49a36b": {
-    "asset": 1539657494463,
-    "meta": 1539657530754,
+    "asset": 1539684400507,
+    "meta": 1539741616007,
     "relativePath": "resources/protobuf/GameData.proto"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539676259336,
-    "meta": 1539676259365,
+    "asset": 1539684400509,
+    "meta": 1539741616015,
     "relativePath": "scenes/default_map.fire"
   },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
-    "asset": 1539666205951,
-    "meta": 1539666209192,
+    "asset": 1539684400517,
+    "meta": 1539741617377,
     "relativePath": "scripts/TouchEventsManager.js"
   },
-  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
-    "asset": 1539666696136,
-    "meta": 1539666792837,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
-    "asset": 1539675970693,
-    "meta": 1539675970701,
+    "asset": 1539684400505,
+    "meta": 1539741615997,
     "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
   },
   "27562abf-fe68-427f-b598-b8e53aca6e87": {
-    "asset": 1539675919217,
-    "meta": 1539675923691,
+    "asset": 1539684400515,
+    "meta": 1539741617271,
     "relativePath": "scripts/SimplePressToGoDialog.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1539679757794,
-    "meta": 1539679763409,
-    "relativePath": "scripts/WsSessionMgr.js"
+  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
+    "asset": 1539741788605,
+    "meta": 1539741804155,
+    "relativePath": "plugin_scripts/conf.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539683250541,
-    "meta": 1539683250552,
+    "asset": 1539750789224,
+    "meta": 1539750789243,
     "relativePath": "scenes/login.fire"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539680499144,
-    "meta": 1539680506254,
+    "asset": 1539750785544,
+    "meta": 1539750788297,
     "relativePath": "scripts/Map.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1539748218578,
+    "meta": 1539750788298,
+    "relativePath": "scripts/WsSessionMgr.js"
   }
 }

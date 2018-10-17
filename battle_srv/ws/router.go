@@ -33,11 +33,12 @@ type wsHandler interface {
 
 var wsRouter = make(map[string]*wsHandleInfo, 50)
 func regHandleInfo(reqAct string, info *wsHandleInfo) {
+  Logger.Info("Adding into wsRouter dict", zap.Any("act", reqAct))
 	wsRouter[reqAct] = info
 }
 
 func wsGenerateRespectiveResp(conn *websocket.Conn, req *wsReq) *wsResp {
-	var body interface{}
+	var reqBody interface{}
 	resp := &wsResp{
 		MsgId: req.MsgId,
 	}
@@ -46,16 +47,16 @@ func wsGenerateRespectiveResp(conn *websocket.Conn, req *wsReq) *wsResp {
 		resp.Ret = Constants.RetCode.NonexistentAct
 		return resp
 	}
-	body = reflect.New(info.reqType).Interface()
-	err := json.Unmarshal(req.Data, &body)
+	reqBody = reflect.New(info.reqType).Interface()
+	err := json.Unmarshal(req.Data, &reqBody)
 	if err != nil {
 		Logger.Warn("json.Unmarshal", zap.Error(err))
 		resp.Ret = Constants.RetCode.InvalidRequestParam
 		return resp
 	}
-	h, ok := body.(wsHandler)
+	h, ok := reqBody.(wsHandler)
 	if !ok {
-		resp.Ret = Constants.RetCode.NonexistentAct
+		resp.Ret = Constants.RetCode.NonexistentActHandler
 		return resp
 	}
 	resp.Act = info.respAct
