@@ -649,14 +649,14 @@
     "meta": 1539764289256,
     "relativePath": "plugin_scripts/NetworkDoctor.js"
   },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1539789619854,
+    "meta": 1539789854092,
+    "relativePath": "scripts/Map.js"
+  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
     "asset": 1539789520981,
-    "meta": 1539789521087,
+    "meta": 1539789854095,
     "relativePath": "scenes/login.fire"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539789514421,
-    "meta": 1539789518174,
-    "relativePath": "scripts/Map.js"
   }
 }

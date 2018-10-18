@@ -509,6 +509,7 @@ cc.Class({
       }
 
       if (0 < targetNode.getNumberOfRunningActions()) {
+        // A significant trick to smooth the position sync performance!
         continue;
       }
       if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {

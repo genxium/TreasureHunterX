@@ -72,6 +72,7 @@ func Serve(c *gin.Context) {
     return
   }
   Logger.Debug("ConstVals.Ws.WillKickIfInactiveFor", zap.Duration("v", ConstVals.Ws.WillKickIfInactiveFor))
+  var connIOMux sync.RWMutex
 
   shouldStopAllGoroutinesOfThisPlayer := false
   signalToStopGoroutinesOfThisPlayer := func() {
@@ -81,7 +82,6 @@ func Serve(c *gin.Context) {
   signalToCloseConnOfThisPlayer := func() {
     // TODO: Allow to specify reasons.
     conn.Close()
-    signalToStopGoroutinesOfThisPlayer()
   }
   onConnClosed := func(code int, text string) error {
     // Reference of `code` https://godoc.org/github.com/gorilla/websocket#pkg-constants.
@@ -143,14 +143,28 @@ func Serve(c *gin.Context) {
     }
   } else {
     pRoom = heap.Pop(models.RoomHeapManagerIns).(*models.Room)
-    Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
-    res := pRoom.AddPlayerIfPossible(pPlayer)
-    if !res {
-      panic(fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+    if nil == pRoom {
+      tmpResp := wsResp{
+        Ret:   Constants.RetCode.LocallyNoAvailableRoom,
+        MsgId: 0,
+        Act:   "Join",
+        Data: nil,
+      }
+      connIOMux.Lock()
+      tmpErr := conn.WriteJSON(tmpResp)
+      connIOMux.Unlock()
+      if tmpErr != nil {
+        Logger.Warn("RetCode resp not written:", zap.Any("RetCode", Constants.RetCode.LocallyNoAvailableRoom), zap.Any("playerId", playerId), zap.Error(err))
+        c.Abort() // Cannot abort and override http response status after upgrading to http1.1/websocket.
+      }
+    } else {
+      Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
+      res := pRoom.AddPlayerIfPossible(pPlayer)
+      if !res {
+        panic(fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+      }
     }
   }
-
-  var connIOMux sync.RWMutex
 
   resp := wsResp{
     Ret:   Constants.RetCode.Ok,
@@ -168,8 +182,7 @@ func Serve(c *gin.Context) {
   connIOMux.Unlock()
   if err != nil {
     Logger.Warn("HeartbeatRequirements resp not written:", zap.Any("playerId", playerId), zap.Error(err))
-    // TODO: Abort with specific message.
-    c.AbortWithStatus(http.StatusBadRequest)
+    c.Abort() // Cannot abort and override http response status after upgrading to http1.1/websocket.
   }
 
   // Starts the receiving loop against the client-side 

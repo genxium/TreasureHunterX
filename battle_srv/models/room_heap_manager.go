@@ -8,7 +8,6 @@ import (
   "fmt"
 )
 
-
 // Reference https://github.com/genxium/GoStructPrac.
 type RoomHeap []*Room
 var (
@@ -50,11 +49,11 @@ func (pq *RoomHeap) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	if n == 0 {
-		panic("Popping on an empty heap is not allowed.\n")
+    return nil
 	}
 	pItem := old[n-1]
   if pItem.Score <= float32(0.0) {
-		panic("No available room at the moment.\n")
+    return nil
   }
 	pItem.Index = -1 // for safety
 	*pq = old[0 : n-1]
