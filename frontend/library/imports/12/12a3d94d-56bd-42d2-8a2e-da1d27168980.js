@@ -182,7 +182,6 @@ cc.Class({
     var phoneNumberRegexp = self.regexList.PHONE;
     var phoneNumberString = self.phoneNumberInput.getComponent(cc.EditBox).string;
     if (phoneNumberString) {
-      //TODO DEMO阶段，由后端校验手机号格式，过滤测试账号
       return true;
       if (!phoneNumberRegexp.test(phoneNumberString)) {
         self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.PHONE_ERR");
@@ -226,6 +225,13 @@ cc.Class({
       },
       success: function success(resp) {
         self.onLoggedIn(resp);
+      },
+      error: function error(resp) {
+        cc.log('Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      },
+      timeout: function timeout(resp) {
+        self.enableInteractiveControls(true);
       }
     });
   },
@@ -260,6 +266,10 @@ cc.Class({
       success: function success(resp) {
         self.onLoggedIn(resp);
       },
+      error: function error(resp) {
+        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      },
       timeout: function timeout() {
         self.enableInteractiveControls(true);
       }
@@ -277,7 +287,7 @@ cc.Class({
         intAuthToken: res.intAuthToken
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      console.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
+      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }

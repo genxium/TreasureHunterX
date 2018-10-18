@@ -13,7 +13,6 @@ type constants struct {
 		SmsValidResendPeriodSeconds int `json:"SMS_VALID_RESEND_PERIOD_SECONDS"`
 	} `json:"PLAYER"`
 	RetCode struct {
-		CookAlreadyGeted                                 int    `json:"COOK_ALREADY_GETED"`
 		Duplicated                                       int    `json:"DUPLICATED"`
 		FailedToCreate                                   int    `json:"FAILED_TO_CREATE"`
 		FailedToDelete                                   int    `json:"FAILED_TO_DELETE"`
@@ -25,11 +24,9 @@ type constants struct {
 		IncorrectPhoneNumber                             int    `json:"INCORRECT_PHONE_NUMBER"`
 		InsufficientMemToAllocateConnection              int    `json:"INSUFFICIENT_MEM_TO_ALLOCATE_CONNECTION"`
 		InvalidEmailLiteral                              int    `json:"INVALID_EMAIL_LITERAL"`
-		InvalidKioskCredentials                          int    `json:"INVALID_KIOSK_CREDENTIALS"`
 		InvalidRequestParam                              int    `json:"INVALID_REQUEST_PARAM"`
 		InvalidToken                                     int    `json:"INVALID_TOKEN"`
 		IsTestAcc                                        int    `json:"IS_TEST_ACC"`
-		KioskAlreadyConnected                            int    `json:"KIOSK_ALREADY_CONNECTED"`
 		LackOfDiamond                                    int    `json:"LACK_OF_DIAMOND"`
 		LackOfEnergy                                     int    `json:"LACK_OF_ENERGY"`
 		LackOfGold                                       int    `json:"LACK_OF_GOLD"`
@@ -39,7 +36,11 @@ type constants struct {
 		NonexistentAct                                   int    `json:"NONEXISTENT_ACT"`
 		NonexistentActHandler                            int    `json:"NONEXISTENT_ACT_HANDLER"`
     LocallyNoAvailableRoom                           int    `json:"LOCALLY_NO_AVAILABLE_ROOM"`
-		NonexistentKiosk                                 int    `json:"NONEXISTENT_KIOSK"`
+    LocallyNoSpecifiedRoom                           int    `json:"LOCALLY_NO_SPECIFIED_ROOM"`
+    PlayerNotAddableToRoom                           int    `json:"PLAYER_NOT_ADDABLE_TO_ROOM"`
+    PlayerNotReAddableToRoom                         int    `json:"PLAYER_NOT_READDABLE_TO_ROOM"`
+		PlayerNotFound                                   int    `json:"PLAYER_NOT_FOUND"`
+		PlayerCheating                                   int    `json:"PLAYER_CHEATING"`
 		NotImplementedYet                                int    `json:"NOT_IMPLEMENTED_YET"`
 		NoAssociatedEmail                                int    `json:"NO_ASSOCIATED_EMAIL"`
 		Ok                                               int    `json:"OK"`

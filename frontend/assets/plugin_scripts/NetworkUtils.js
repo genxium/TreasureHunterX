@@ -358,8 +358,6 @@ NetworkUtils.ajax = function(o) {
       url += "?" + NetworkUtils.formData(o.data);
       data = null;
     } else if (isPost && _typeof(o.data) === 'object') {
-      // o.data.token = cc.sys.localStorage.getItem('token');
-      //data = JSON.stringify(o.data);
       data = NetworkUtils.formData(o.data);
     } else {
       data = o.data;

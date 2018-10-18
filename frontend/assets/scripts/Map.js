@@ -18,7 +18,6 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    selfPlayer: null,
     canvasNode: {
       type: cc.Node,
       default: null,
@@ -67,6 +66,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    selfPlayerIdLabel: {
+      type: cc.Label,
+      default: null
+    },
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
@@ -90,8 +93,8 @@ cc.Class({
         dx: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dx),
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy),
       },
-      x: parseFloat(instance.selfPlayer.x),
-      y: parseFloat(instance.selfPlayer.y), 
+      x: parseFloat(instance.selfPlayerNode.x),
+      y: parseFloat(instance.selfPlayerNode.y), 
     };
     const wrapped = {
       msgId: Date.now(),
@@ -137,17 +140,22 @@ cc.Class({
     safelyAddChild(canvasNode, simplePressToGoDialogNode);
   },
 
-  alertForGoingBackToLoginScene(labelString, mapIns) {
+  alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const millisToGo = 3000;
     mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo/1000));
     setTimeout(() => {
-      mapIns.logout();
+      mapIns.logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
 
   onLoad() {
     const self = this;
     self.lastRoomDownsyncFrameId = 0;
+
+    self.selfPlayerNode = null;
+    self.selfPlayerScriptIns = null;
+    self.selfPlayerId = null;
+
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -164,16 +172,27 @@ cc.Class({
     self.clientUpsyncFps = 24;
     self.upsyncLoopInterval = null;
 
+    window.handleRoomJoinResp = function(resp) {
+      switch (resp.ret) {
+        case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
+        case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
+        case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
+          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          break;
+        default:
+          break;
+      }
+    };
+
     window.handleClientSessionCloseOrError = function() {
-      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self);
+      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     }; 
 
     initPersistentSessionClient(() => {
       self.state = ALL_MAP_STATES.VISUAL;
       const tiledMapIns = self.node.getComponent(cc.TiledMap); 
-      self.selfPlayerId = JSON.parse(cc.sys.localStorage.selfPlayer).playerId;
-      self.spawnSelfPlayer();
-      self.selfPlayerScriptIns = self.selfPlayer.getComponent("SelfPlayer");
+      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      self.spawnSelfPlayer(selfPlayerInfo);
       this._inputControlEnabled = true;
       self.setupInputControls();
 
@@ -261,7 +280,7 @@ cc.Class({
         if (frameId <= self.lastRoomDownsyncFrameId) return;
         if (roomDownsyncFrame.countdownNanos == -1) {
           self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-          self.alertForGoingBackToLoginScene("Battle stopped!", self)
+          self.alertForGoingBackToLoginScene("Battle stopped!", self, false)
         }
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
@@ -298,8 +317,6 @@ cc.Class({
     const joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
     const inputControlPollerMillis = (1000 / joystickInputControllerScriptIns.pollerFps);
 
-    const selfPlayerScriptIns = instance.selfPlayerScriptIns;
-
     const ctrl = joystickInputControllerScriptIns;
     instance.ctrl = ctrl;
 
@@ -312,7 +329,7 @@ cc.Class({
       };
 
       const newScheduledDirectionInLocalCoordinate = newScheduledDirectionInWorldCoordinate;
-      selfPlayerScriptIns.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+      instance.selfPlayerScriptIns.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
     }, inputControlPollerMillis);
   },
 
@@ -324,17 +341,18 @@ cc.Class({
     this._inputControlEnabled = false;
   },
 
-  spawnSelfPlayer() {
+  spawnSelfPlayer(selfPlayerInfo) {
     const instance = this;
-    const newPlayer = cc.instantiate(instance.selfPlayerPrefab);
-    newPlayer.uid = 0;
-    newPlayer.setPosition(cc.v2(0, 0));
-    newPlayer.getComponent("SelfPlayer").mapNode = instance.node;
+    const newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
+    newPlayerNode.setPosition(cc.v2(0, 0));
+    newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
-    instance.node.addChild(newPlayer);
+    instance.node.addChild(newPlayerNode);
 
-    setLocalZOrder(newPlayer, 5);
-    instance.selfPlayer = newPlayer;
+    setLocalZOrder(newPlayerNode, 5);
+    instance.selfPlayerNode = newPlayerNode;
+    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
+    instance.selfPlayerId = selfPlayerInfo.playerId;
   },
 
   update(dt) {
@@ -343,6 +361,9 @@ cc.Class({
     const canvasNode = mapNode.parent;
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;  
+    }
+    if (null != self.selfPlayerId) {
+      self.selfPlayerIdLabel.string = self.selfPlayerId; 
     }
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
@@ -387,7 +408,7 @@ cc.Class({
     self.state = s;
   },
 
-  logout() {
+  logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     // Will be called within "ConfirmLogout.js".
     const self = this;
     if (null != cc.sys.localStorage.selfPlayer) {
@@ -404,11 +425,17 @@ cc.Class({
             cc.log(`Logout failed: ${res}.`);
           }
           window.closeWSConnection();
+          if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+            window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          }
           cc.sys.localStorage.removeItem('selfPlayer');
           cc.director.loadScene('login');
         }
       });
     } else {
+      if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      }
       cc.sys.localStorage.removeItem('selfPlayer');
       cc.director.loadScene('login');
     }

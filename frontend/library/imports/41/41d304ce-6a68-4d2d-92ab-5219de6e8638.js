@@ -24,7 +24,6 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    selfPlayer: null,
     canvasNode: {
       type: cc.Node,
       default: null
@@ -73,6 +72,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    selfPlayerIdLabel: {
+      type: cc.Label,
+      default: null
+    },
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
@@ -92,8 +95,8 @@ cc.Class({
         dx: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dx),
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy)
       },
-      x: parseFloat(instance.selfPlayer.x),
-      y: parseFloat(instance.selfPlayer.y)
+      x: parseFloat(instance.selfPlayerNode.x),
+      y: parseFloat(instance.selfPlayerNode.y)
     };
     var wrapped = {
       msgId: Date.now(),
@@ -138,11 +141,11 @@ cc.Class({
     simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
     safelyAddChild(canvasNode, simplePressToGoDialogNode);
   },
-  alertForGoingBackToLoginScene: function alertForGoingBackToLoginScene(labelString, mapIns) {
+  alertForGoingBackToLoginScene: function alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     var millisToGo = 3000;
     mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo / 1000));
     setTimeout(function () {
-      mapIns.logout();
+      mapIns.logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
   onLoad: function onLoad() {
@@ -150,6 +153,11 @@ cc.Class({
 
     var self = this;
     self.lastRoomDownsyncFrameId = 0;
+
+    self.selfPlayerNode = null;
+    self.selfPlayerScriptIns = null;
+    self.selfPlayerId = null;
+
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -166,16 +174,27 @@ cc.Class({
     self.clientUpsyncFps = 24;
     self.upsyncLoopInterval = null;
 
+    window.handleRoomJoinResp = function (resp) {
+      switch (resp.ret) {
+        case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
+        case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
+        case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
+          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          break;
+        default:
+          break;
+      }
+    };
+
     window.handleClientSessionCloseOrError = function () {
-      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self);
+      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     };
 
     initPersistentSessionClient(function () {
       self.state = ALL_MAP_STATES.VISUAL;
       var tiledMapIns = self.node.getComponent(cc.TiledMap);
-      self.selfPlayerId = JSON.parse(cc.sys.localStorage.selfPlayer).playerId;
-      self.spawnSelfPlayer();
-      self.selfPlayerScriptIns = self.selfPlayer.getComponent("SelfPlayer");
+      var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      self.spawnSelfPlayer(selfPlayerInfo);
       _this._inputControlEnabled = true;
       self.setupInputControls();
 
@@ -413,7 +432,7 @@ cc.Class({
         if (frameId <= self.lastRoomDownsyncFrameId) return;
         if (roomDownsyncFrame.countdownNanos == -1) {
           self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-          self.alertForGoingBackToLoginScene("Battle stopped!", self);
+          self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
         }
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
@@ -451,8 +470,6 @@ cc.Class({
     var joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
     var inputControlPollerMillis = 1000 / joystickInputControllerScriptIns.pollerFps;
 
-    var selfPlayerScriptIns = instance.selfPlayerScriptIns;
-
     var ctrl = joystickInputControllerScriptIns;
     instance.ctrl = ctrl;
 
@@ -465,7 +482,7 @@ cc.Class({
       };
 
       var newScheduledDirectionInLocalCoordinate = newScheduledDirectionInWorldCoordinate;
-      selfPlayerScriptIns.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+      instance.selfPlayerScriptIns.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
     }, inputControlPollerMillis);
   },
   enableInputControls: function enableInputControls() {
@@ -474,17 +491,18 @@ cc.Class({
   disableInputControls: function disableInputControls() {
     this._inputControlEnabled = false;
   },
-  spawnSelfPlayer: function spawnSelfPlayer() {
+  spawnSelfPlayer: function spawnSelfPlayer(selfPlayerInfo) {
     var instance = this;
-    var newPlayer = cc.instantiate(instance.selfPlayerPrefab);
-    newPlayer.uid = 0;
-    newPlayer.setPosition(cc.v2(0, 0));
-    newPlayer.getComponent("SelfPlayer").mapNode = instance.node;
+    var newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
+    newPlayerNode.setPosition(cc.v2(0, 0));
+    newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
-    instance.node.addChild(newPlayer);
+    instance.node.addChild(newPlayerNode);
 
-    setLocalZOrder(newPlayer, 5);
-    instance.selfPlayer = newPlayer;
+    setLocalZOrder(newPlayerNode, 5);
+    instance.selfPlayerNode = newPlayerNode;
+    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
+    instance.selfPlayerId = selfPlayerInfo.playerId;
   },
   update: function update(dt) {
     var self = this;
@@ -492,6 +510,9 @@ cc.Class({
     var canvasNode = mapNode.parent;
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;
+    }
+    if (null != self.selfPlayerId) {
+      self.selfPlayerIdLabel.string = self.selfPlayerId;
     }
     for (var k in self.otherPlayerCachedDataDict) {
       var playerId = parseInt(k);
@@ -528,7 +549,7 @@ cc.Class({
     var self = this;
     self.state = s;
   },
-  logout: function logout() {
+  logout: function logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     // Will be called within "ConfirmLogout.js".
     var self = this;
     if (null != cc.sys.localStorage.selfPlayer) {
@@ -545,11 +566,17 @@ cc.Class({
             cc.log("Logout failed: " + res + ".");
           }
           window.closeWSConnection();
+          if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+            window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          }
           cc.sys.localStorage.removeItem('selfPlayer');
           cc.director.loadScene('login');
         }
       });
     } else {
+      if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      }
       cc.sys.localStorage.removeItem('selfPlayer');
       cc.director.loadScene('login');
     }

@@ -10,11 +10,12 @@ import (
 
 // Reference https://github.com/genxium/GoStructPrac.
 type RoomHeap []*Room
+type RoomMap map[int]*Room
 var (
   // NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types. 
   RoomHeapMux *sync.Mutex
   RoomHeapManagerIns *RoomHeap
-  RoomMapManagerIns map[int]*Room
+  RoomMapManagerIns *RoomMap
 )
 
 func (pPq *RoomHeap) PrintInOrder() {
@@ -70,6 +71,14 @@ func (pq *RoomHeap) Update(pItem *Room, Score float32) {
   pq.update(pItem, Score)
 }
 
+func PrintRoomMap() {
+	fmt.Printf("The RoomMap instance now contains:\n")
+	for _, pR := range *RoomMapManagerIns {
+		fmt.Printf("{roomID: %d, score: %.2f} ", pR.ID, pR.Score)
+	}
+	fmt.Printf("\n")
+}
+
 func InitRoomHeapManager() {
   RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
@@ -77,7 +86,7 @@ func InitRoomHeapManager() {
 
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
-  RoomMapManagerIns := make(map[int]*Room)
+  roomMap := make(RoomMap, initialCountOfRooms)
 
 	roomCapacity := 2
 	for i := 0; i < initialCountOfRooms; i++ {
@@ -96,10 +105,11 @@ func InitRoomHeapManager() {
       BattleDurationNanos: int64(30*1000*1000*1000),
       ServerFPS: 30,
 		}
-    RoomMapManagerIns[pq[i].ID] = pq[i]
+    roomMap[pq[i].ID] = pq[i]
 	}
 	heap.Init(&pq)
   RoomHeapManagerIns = &pq
+  RoomMapManagerIns = &roomMap
   Logger.Info("The RoomHeapManagerIns has been initialized:", zap.Any("addr", fmt.Sprintf("%p", RoomHeapManagerIns)), zap.Any("size", len(*RoomHeapManagerIns)))
-  Logger.Info("The RoomMapManagerIns has been initialized:", zap.Any("size", len(RoomMapManagerIns)))
+  Logger.Info("The RoomMapManagerIns has been initialized:", zap.Any("size", len(*RoomMapManagerIns)))
 }

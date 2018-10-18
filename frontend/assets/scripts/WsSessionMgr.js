@@ -4,8 +4,12 @@ window.closeWSConnection = function() {
 }
 
 window.getBoundRoomIdFromPersistentStorage = function() {
-  const existingBoundRoomIdInPersistentStorage = (null != cc.sys.localStorage.selfPlayer) ? JSON.parse(cc.sys.localStorage.selfPlayer).boundRoomId : null;
-  return existingBoundRoomIdInPersistentStorage;
+  return cc.sys.localStorage.boundRoomId;
+};
+
+window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function() {
+  window.boundRoomId = null;
+  cc.sys.localStorage.removeItem("boundRoomId");
 };
 
 window.boundRoomId = getBoundRoomIdFromPersistentStorage();
@@ -13,15 +17,7 @@ window.handleHbRequirements = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId; 
-    // By now, `cc.sys.localStorage.selfPlayer` shouldn't be null.
-
-    const oldVal = JSON.parse(cc.sys.localStorage.selfPlayer); 
-    const newVal = {};
-    Object.assign(newVal, oldVal);
-    Object.assign(newVal, {
-      boundRoomId: window.boundRoomId
-    });
-    cc.sys.localStorage.selfPlayer = JSON.stringify(newVal);
+    cc.sys.localStorage.boundRoomId = window.boundRoomId;
   }
 
   window.clientSessionPingInterval = setInterval(() => {
@@ -82,6 +78,11 @@ window.initPersistentSessionClient = function(onopenCb) {
           window.handleDownsyncRoomFrame(resp.data);
         }
         break; 
+      case "Join":
+        if (window.handleRoomJoinResp) {
+          window.handleRoomJoinResp(resp);
+        }
+        break;
       default:
         cc.log(`${JSON.stringify(resp)}`);
         break;

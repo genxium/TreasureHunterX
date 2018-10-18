@@ -245,7 +245,7 @@
     "relativePath": "prefab/webview.prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1539764287420,
+    "asset": 1539842989606,
     "meta": 1539182620513,
     "relativePath": "plugin_scripts"
   },
@@ -325,7 +325,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1539764272872,
+    "asset": 1539842969734,
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
@@ -535,14 +535,9 @@
     "relativePath": "plugin_scripts/conf.js.template"
   },
   "c116dddb-470e-47de-af9b-560adb7c78fb": {
-    "asset": 1539244803887,
-    "meta": 1539244939430,
+    "asset": 1539842989055,
+    "meta": 1539843110804,
     "relativePath": "plugin_scripts/NetworkUtils.js"
-  },
-  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
-    "asset": 1539245043094,
-    "meta": 1539245233428,
-    "relativePath": "plugin_scripts/constants.js"
   },
   "8ac0809b-f98d-4cff-a66c-3bd9e218ecd6": {
     "asset": 1539248423962,
@@ -600,8 +595,8 @@
     "relativePath": "resources/protobuf"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1539684400511,
-    "meta": 1539741616959,
+    "asset": 1539842951912,
+    "meta": 1539843111189,
     "relativePath": "scripts/Login.js"
   },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
@@ -615,8 +610,8 @@
     "relativePath": "resources/protobuf/GameData.proto"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539684400509,
-    "meta": 1539741616015,
+    "asset": 1539851979837,
+    "meta": 1539851979849,
     "relativePath": "scenes/default_map.fire"
   },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
@@ -639,24 +634,29 @@
     "meta": 1539741804155,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1539748218578,
-    "meta": 1539750788298,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
     "asset": 1539763870679,
     "meta": 1539764289256,
     "relativePath": "plugin_scripts/NetworkDoctor.js"
   },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1539847729178,
+    "meta": 1539847884839,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539789619854,
-    "meta": 1539789854092,
+    "asset": 1539848204572,
+    "meta": 1539849348338,
     "relativePath": "scripts/Map.js"
   },
+  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
+    "asset": 1539851547372,
+    "meta": 1539851554512,
+    "relativePath": "plugin_scripts/constants.js"
+  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539789520981,
-    "meta": 1539789854095,
+    "asset": 1539851985245,
+    "meta": 1539851985262,
     "relativePath": "scenes/login.fire"
   }
 }
