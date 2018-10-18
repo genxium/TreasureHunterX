@@ -234,11 +234,11 @@ cc.Class({
       success: function(resp) {
         self.onLoggedIn(resp)
       },
-      error: function(resp) {
+      error: function(xhr, status, errMsg) {
         cc.log(`Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
       },
-      timeout: function(resp) {
+      timeout: function() {
         self.enableInteractiveControls(true);
       },
     });
@@ -277,7 +277,7 @@ cc.Class({
       success: function(resp) {
         self.onLoggedIn(resp);
       },
-      error: function(resp) {
+      error: function(xhr, status, errMsg) {
         cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
       },

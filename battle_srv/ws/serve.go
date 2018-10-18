@@ -14,6 +14,7 @@ import (
 	"container/heap"
   "encoding/json"
   "fmt"
+  "sync/atomic"
 )
 
 const (
@@ -67,7 +68,7 @@ func Serve(c *gin.Context) {
 
   conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
   if err != nil {
-    Logger.Warn("upgrade:", zap.Error(err))
+    Logger.Error("upgrade:", zap.Error(err))
     c.AbortWithStatus(http.StatusBadRequest)
     return
   }
@@ -77,61 +78,67 @@ func Serve(c *gin.Context) {
   */
   var connIOMux sync.RWMutex
 
-  shouldStopAllGoroutinesOfThisPlayer := false
-  signalToStopGoroutinesOfThisPlayer := func() {
-    // To terminate ALL spawned goroutines, e.g. `receivingLoopAgainstPlayer`, `forwardingLoopAgainstBoundRoom`.
-    shouldStopAllGoroutinesOfThisPlayer = true
-  }
+  connHasBeenSignaledToClose := int32(0)
+  pConnHasBeenSignaledToClose := &connHasBeenSignaledToClose
+
+  var pRoom *models.Room
+  pRoom = nil
   signalToCloseConnOfThisPlayer := func(customRetCode int, customRetMsg string) {
+    if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 0, 1); !swapped {
+      return
+    }
+    Logger.Warn("signalToCloseConnOfThisPlayer:", zap.Any("playerId", playerId), zap.Any("customRetCode", customRetCode), zap.Any("customRetMsg", customRetMsg))
+    if nil != pRoom {
+      pRoom.OnPlayerDisconnected(playerId)
+    }
     defer func() {
       if r := recover(); r != nil {
         Logger.Warn("Recovered from: ", zap.Any("panic", r))
       }
-      conn.Close()
     }()
-    /*
-    * Please note that we're deliberately NOT USING the builtin "CloseCode"s from package "gorilla/websocket" https://godoc.org/github.com/gorilla/websocket#pkg-constants. 
+    /**
+    * References 
+    * - https://tools.ietf.org/html/rfc6455
+    * - https://godoc.org/github.com/gorilla/websocket#hdr-Control_Messages
+    * - https://godoc.org/github.com/gorilla/websocket#FormatCloseMessage 
+    * - https://godoc.org/github.com/gorilla/websocket#Conn.WriteControl
+    * - https://godoc.org/github.com/gorilla/websocket#hdr-Concurrency
+    *   - "The Close and WriteControl methods can be called concurrently with all other methods."  
     */
-    tmpResp := wsResp{
-      Ret:   Constants.RetCode.Ok,
-      MsgId: 0,
-      Act:   "Join",
-      Data: nil,
-    }
-    connIOMux.Lock()
-    tmpErr := conn.WriteJSON(tmpResp)
-    connIOMux.Unlock()
-    if tmpErr != nil {
-      panic(fmt.Sprintf("Pre-closing resp not written to playerId == %v!", playerId))
+
+    /** 
+    * References for the "WebsocketStdCloseCode"s. Note that we're using some "CustomCloseCode"s here as well. 
+    *
+    * - https://tools.ietf.org/html/rfc6455#section-7.4
+    * - https://godoc.org/github.com/gorilla/websocket#pkg-constants.
+    */
+    closeMessage := websocket.FormatCloseMessage(customRetCode, customRetMsg)
+    err := conn.WriteControl(websocket.CloseMessage, closeMessage, time.Now().Add(time.Millisecond*(ConstVals.Ws.WillKickIfInactiveFor)))
+    if err != nil {
+      Logger.Error("Unable to send the CloseFrame control message to player(client-side):", zap.Any("playerId", playerId), zap.Error(err))
     }
   }
-  var pRoom *models.Room
-  pRoom = nil
 
-  onConnClosed := func(code int, text string) error {
-    // Reference of `code` https://godoc.org/github.com/gorilla/websocket#pkg-constants.
-    Logger.Info("Close handler triggered:", zap.Any("code", code), zap.Any("playerId", playerId), zap.Any("message", text))
-    if nil != pRoom {
-      pRoom.OnPlayerDisconnected(playerId)
-    }
-    signalToStopGoroutinesOfThisPlayer()
+  onReceivedCloseMessageFromClient := func(code int, text string) error {
+    Logger.Warn("Triggered `onReceivedCloseMessageFromClient`:", zap.Any("code", code), zap.Any("playerId", playerId), zap.Any("message", text))
     return nil
   }
 
   /**
-  * "The default close handler sends a close message back to the peer." 
+  * - "SetCloseHandler sets the handler for close messages received from the peer."
   *
-  * "The connection read methods return a CloseError when a close message is received. Most applications should handle close messages as part of their normal error handling. Applications should only set a close handler when the application must perform some action before sending a close message back to the peer."
+  * - "The default close handler sends a close message back to the peer." 
+  *
+  * - "The connection read methods return a CloseError when a close message is received. Most applications should handle close messages as part of their normal error handling. Applications should only set a close handler when the application must perform some action before sending a close message back to the peer."
   *
   * from reference https://godoc.org/github.com/gorilla/websocket#Conn.SetCloseHandler. 
   */
-  conn.SetCloseHandler(onConnClosed);
+  conn.SetCloseHandler(onReceivedCloseMessageFromClient);
 
   pPlayer, err := models.GetPlayerById(playerId)
   if err != nil || pPlayer == nil {
     // TODO: Abort with specific message.
     signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotFound, "")
-    return
   }
 
   // Find a room to join.
@@ -149,25 +156,25 @@ func Serve(c *gin.Context) {
   }()
   Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
   // Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
-  defer func() {
-    if pRoom != nil {
-      heap.Push(models.RoomHeapManagerIns, pRoom)
-      (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
-    }
-    (models.RoomHeapManagerIns).PrintInOrder()
-  }()
   if hasBoundRoomId {
     if tmpPRoom, existent := (*models.RoomMapManagerIns)[boundRoomId]; existent {
       pRoom = tmpPRoom
       Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
       res := pRoom.ReAddPlayerIfPossible(pPlayer)
-      if res == false {
+      if false == res {
         signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("ReAddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId));
       }
     } else {
       signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoSpecifiedRoom, fmt.Sprintf("Cannot get a (*Room) for PresumedBoundRoomId == %d, playerId == %v!", boundRoomId, playerId));
     }
   } else {
+    defer func() {
+      if pRoom != nil {
+        heap.Push(models.RoomHeapManagerIns, pRoom)
+        (models.RoomHeapManagerIns).Update(pRoom, pRoom.Score)
+      }
+      (models.RoomHeapManagerIns).PrintInOrder()
+    }()
     pRoom = heap.Pop(models.RoomHeapManagerIns).(*models.Room)
     if nil == pRoom {
       signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoAvailableRoom, fmt.Sprintf("Cannot pop a (*Room) for playerId == %v!", playerId));
@@ -178,6 +185,10 @@ func Serve(c *gin.Context) {
         signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId));
       }
     }
+  }
+
+  if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
+    return
   }
 
   resp := wsResp{
@@ -195,16 +206,20 @@ func Serve(c *gin.Context) {
   err = conn.WriteJSON(resp)
   connIOMux.Unlock()
   if err != nil {
+    Logger.Error("HeartbeatRequirements resp not written:", zap.Any("playerId", playerId), zap.Error(err))
     signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v!", playerId))
   }
 
   // Starts the receiving loop against the client-side 
   receivingLoopAgainstPlayer := func() error{
     defer func() {
+      if r := recover(); r != nil {
+        Logger.Warn("Goroutine `receivingLoopAgainstPlayer`, recovery spot#1, recovered from: ", zap.Any("panic", r))
+      }
       Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId))
     }()
     for {
-      if shouldStopAllGoroutinesOfThisPlayer {
+      if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
         return nil
       }
 
@@ -213,12 +228,10 @@ func Serve(c *gin.Context) {
       pReq = new(wsReq)
       err := conn.ReadJSON(pReq)
       if err != nil {
-        if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure) {
-          Logger.Debug("read:", zap.Error(err))
-        }
-        signalToStopGoroutinesOfThisPlayer()
+        signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
+        return nil
       }
-      startOrFeedHeartbeatWatchdog(conn)
+      // startOrFeedHeartbeatWatchdog(conn)
       if pReq.Act == "PlayerUpsyncCmd" {
         immediatePlayerData := new(models.Player)
         json.Unmarshal([]byte(pReq.Data), immediatePlayerData)
@@ -227,51 +240,52 @@ func Serve(c *gin.Context) {
           // WARNING: This player is cheating!
           Logger.Warn("Player cheats in reporting its own identity:", zap.Any("playerId", playerId), zap.Any("immediatePlayerData.ID", immediatePlayerData.ID))
           signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerCheating, "")
+          return nil
         } else {
           utils.SendSafely(immediatePlayerData, pRoom.CmdFromPlayersChan)
         }
       } else {
-        if pReq.Act != "HeartbeatPing" {
-          Logger.Info("recv:", zap.Any("req", pReq))
-        }
-        resp := wsGenerateRespectiveResp(conn, pReq)
-        connIOMux.Lock()
-        err = conn.WriteJSON(resp)
-        connIOMux.Unlock()
-        if err != nil {
-          Logger.Debug("write:", zap.Error(err))
-          return nil
-        }
+        // Deliberately not responding to other `pReq.Act`s to avoid the use of `connIOMux` within `forwardingLoopAgainstBoundRoom`.
       }
     }
     return nil
   }
 
   // Starts the forwarding loop associated "(*pPlayer).boundRoom".
-  forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward chan interface{}) error {
+  forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan interface{}) error {
     defer func() {
+      if r := recover(); r != nil {
+        Logger.Warn("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ", zap.Any("panic", r))
+      }
       Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.ID))
     }()
     for {
-      if shouldStopAllGoroutinesOfThisPlayer {
+      if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
         return nil
       }
       select {
-        case untypedRoomDownsyncFrame, hasRead := <-dedicatedChanToForward:
-          if !hasRead {
-            return nil
+        case untypedRoomDownsyncFrame := <-dedicatedChanToForward:
+          if nil == untypedRoomDownsyncFrame {
+            break
           }
           typedRoomDownsyncFrame := untypedRoomDownsyncFrame.(*models.RoomDownsyncFrame)
-          // Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("playerId", playerId))
-          connIOMux.Lock()
-          wsSendAction(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
-          connIOMux.Unlock()
+          if nil == typedRoomDownsyncFrame {
+            break
+          }
+          // Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
+          if -1 == typedRoomDownsyncFrame.ID {
+            // Expelled from room for whatever reason.
+            signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
+            return nil
+          } else {
+            wsSendAction(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
+          }
         default:
       }
     }
     return nil
   }
   startOrFeedHeartbeatWatchdog(conn)
-  go receivingLoopAgainstPlayer()
   go forwardingLoopAgainstBoundRoom(pRoom.PlayerDownsyncChanDict[playerId])
+  go receivingLoopAgainstPlayer()
 }

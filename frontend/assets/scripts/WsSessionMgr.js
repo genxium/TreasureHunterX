@@ -1,5 +1,16 @@
+window.sendSafely = function(msgStr) {
+  /**
+  * - "If the data can't be sent (for example, because it needs to be buffered but the buffer is full), the socket is closed automatically."
+  *
+  * from https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/send.
+  */
+  if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) return false;
+  window.clientSession.send(msgStr);
+}
+
 window.closeWSConnection = function() {
   if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) return;
+  cc.log(`Closing "window.clientSession" from the client-side.`);
   window.clientSession.close();
 }
 
@@ -29,7 +40,7 @@ window.handleHbRequirements = function(resp) {
         clientTimestamp: Date.now()
       }
     };
-    clientSession.send(JSON.stringify(param));
+    window.sendSafely(JSON.stringify(param));
   }, resp.data.intervalToPing);
 };
 
@@ -74,15 +85,10 @@ window.initPersistentSessionClient = function(onopenCb) {
         window.handleHbPong(resp);
         break;
       case "RoomDownsyncFrame":
-        if (window.handleDownsyncRoomFrame) {
-          window.handleDownsyncRoomFrame(resp.data);
+        if (window.handleRoomDownsyncFrame) {
+          window.handleRoomDownsyncFrame(resp.data);
         }
         break; 
-      case "Join":
-        if (window.handleRoomJoinResp) {
-          window.handleRoomJoinResp(resp);
-        }
-        break;
       default:
         cc.log(`${JSON.stringify(resp)}`);
         break;
@@ -90,7 +96,7 @@ window.initPersistentSessionClient = function(onopenCb) {
   };
 
   clientSession.onerror = function(event) {
-    cc.error(`Error caught on the WS clientSession: ${event}`);
+    cc.error(`Error caught on the WS clientSession:`, event);
     if (window.clientSessionPingInterval) {
       clearInterval(clientSessionPingInterval);
     }
@@ -100,7 +106,22 @@ window.initPersistentSessionClient = function(onopenCb) {
   };
 
   clientSession.onclose = function(event) {
-    cc.log(`The WS clientSession is closed: ${event}`);
+    cc.log(`The WS clientSession is closed:`, event);
+    if (!event.wasClean) {
+      // Chrome doesn't allow the use of "CustomCloseCode"s (yet) and will callback with a "WebsocketStdCloseCode 1006" and "false == event.wasClean" here. See https://tools.ietf.org/html/rfc6455#section-7.4 for more information.
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+    }
+    switch (event.code) {
+      case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
+      case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
+      case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
+      case constants.RET_CODE.PLAYER_NOT_FOUND:
+      case constants.RET_CODE.PLAYER_CHEATING:
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        break;
+      default:
+        break;
+    }
     if (window.clientSessionPingInterval) {
       clearInterval(clientSessionPingInterval);
     }

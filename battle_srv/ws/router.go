@@ -78,6 +78,6 @@ func wsSendAction(conn *websocket.Conn, act string, data interface{}) {
 	}
   err := conn.WriteJSON(resp)
 	if err != nil {
-		Logger.Debug("write:", zap.Error(err))
+		Logger.Error("write:", zap.Error(err))
 	}
 }

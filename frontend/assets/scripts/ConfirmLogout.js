@@ -12,7 +12,7 @@ cc.Class({
     const mapScriptIns = this.mapNode.getComponent('Map');
     switch (customData) {
       case 'confirm':
-        mapScriptIns.logout.bind(mapScriptIns)();
+        mapScriptIns.logout.bind(mapScriptIns)(true, false);
         break;
       case 'cancel':
         mapScriptIns.onLogoutConfirmationDismissed.bind(mapScriptIns)();

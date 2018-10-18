@@ -50,23 +50,31 @@ var constants = {
     CLIENT_UPSYNC: 30
   },
   RET_CODE: {
+    /**
+    * NOTE: The "RET_CODE"s from 1000-1015 are reserved for the websocket "WebsocketStdCloseCode"s.
+    *
+    * References
+    * - https://tools.ietf.org/html/rfc6455#section-7.4
+    * - https://godoc.org/github.com/gorilla/websocket#pkg-constants.
+    */
     "__comment__": "基础",
-    "OK": 1000,
-    "UNKNOWN_ERROR":1001,
-    "INVALID_REQUEST_PARAM":1002,
-    "IS_TEST_ACC":1003,
-    "MYSQL_ERROR":1004,
-    "NONEXISTENT_ACT": 1005,
-    "LACK_OF_DIAMOND": 1006,
-    "LACK_OF_GOLD": 1007,
-    "LACK_OF_ENERGY": 1008,
-    "NONEXISTENT_ACT_HANDLER": 1009,
-    "LOCALLY_NO_AVAILABLE_ROOM": 1010,
-    "LOCALLY_NO_SPECIFIED_ROOM": 1011,
-    "PLAYER_NOT_ADDABLE_TO_ROOM": 1012,
-    "PLAYER_NOT_READDABLE_TO_ROOM": 1013,
-    "PLAYER_NOT_FOUND": 1014,
-    "PLAYER_CHEATING": 1015,
+    "OK": 9000,
+    "UNKNOWN_ERROR": 9001,
+    "INVALID_REQUEST_PARAM": 9002,
+    "IS_TEST_ACC": 9003,
+    "MYSQL_ERROR": 9004,
+    "NONEXISTENT_ACT": 9005,
+    "LACK_OF_DIAMOND": 9006,
+    "LACK_OF_GOLD": 9007,
+    "LACK_OF_ENERGY": 9008,
+    "NONEXISTENT_ACT_HANDLER": 9009,
+    "LOCALLY_NO_AVAILABLE_ROOM": 9010,
+    "LOCALLY_NO_SPECIFIED_ROOM": 9011,
+    "PLAYER_NOT_ADDABLE_TO_ROOM": 9012,
+    "PLAYER_NOT_READDABLE_TO_ROOM": 9013,
+    "PLAYER_NOT_FOUND": 9014,
+    "PLAYER_CHEATING": 9015,
+  
 
     "__comment__": "SMS",
     "SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY": 5001,

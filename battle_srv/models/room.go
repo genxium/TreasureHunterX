@@ -84,11 +84,11 @@ func (pR *Room) updateScore() {
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
   if RoomStateIns.IDLE != pR.State && RoomStateIns.WAITING != pR.State {
-    Logger.Warn("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+    Logger.Error("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   if _, existent := pR.Players[pPlayer.ID]; existent {
-    Logger.Warn("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+    Logger.Error("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   defer pR.onPlayerAdded(pPlayer.ID)
@@ -100,11 +100,11 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
   if RoomStateIns.WAITING != pR.State && RoomStateIns.IN_BATTLE != pR.State && RoomStateIns.IN_SETTLEMENT != pR.State {
-    Logger.Info("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+    Logger.Error("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   if _, existent := pR.Players[pPlayer.ID]; !existent {
-    Logger.Info("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+    Logger.Error("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
     return false
   }
   defer pR.onPlayerReAdded(pPlayer.ID)
@@ -119,7 +119,6 @@ func (pR *Room) StartBattle() {
   // Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
   pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
   nanosPerFrame := 1000000000/int64(pR.ServerFPS)
-  twiceTimePerFrame := 2*nanosPerFrame
   pR.Tick = 0
   /**
   * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached. 
@@ -138,6 +137,7 @@ func (pR *Room) StartBattle() {
         pR.StopBattleForSettlement()
       }
       if RoomStateIns.IN_BATTLE != pR.State {
+        // TODO: Replace with `pRoomState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomState`.
         return
       }
       pR.Tick++
@@ -151,6 +151,7 @@ func (pR *Room) StartBattle() {
           CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
         }
         theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+        // Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
         utils.SendSafely(assembledFrame, theForwardingChannel)
       }
       now := utils.UnixtimeNano()
@@ -163,44 +164,35 @@ func (pR *Room) StartBattle() {
 
   cmdReceivingLoop := func() {
     defer func() {
+      if r := recover(); r != nil {
+       Logger.Warn("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
+      }
       Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomID", pR.ID))
     }()
     for {
       if (RoomStateIns.IN_BATTLE != pR.State) {
+        // TODO: Replace with `pRoomState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomState`.
         return
       }
-      defer func() {
-        if r := recover(); r != nil {
-         Logger.Warn("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
-        }
-      }()
-      stCalculation := utils.UnixtimeNano()
-      for {
-        defer func() {
-          if r := recover(); r != nil {
-           Logger.Warn("Room cmdReceivingLoop, recovery spot#2, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
+      // stCalculation := utils.UnixtimeNano()
+      select {
+        case tmp, _ := <-pR.CmdFromPlayersChan:
+          if nil == tmp {
+            break
           }
-        }()
-        select {
-          case tmp, _ := <-pR.CmdFromPlayersChan:
-            if nil == tmp {
-              break
-            }
-            immediatePlayerData := tmp.(*Player)
-            if nil == immediatePlayerData {
-              break
-            }
-            // Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
-            // Update immediate player info for broadcasting or unicasting.
-            pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
-            pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
-            pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
-            pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
-          default:
-        }
+          immediatePlayerData := tmp.(*Player)
+          if nil == immediatePlayerData {
+            break
+          }
+          // Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
+          // Update immediate player info for broadcasting or unicasting.
+          pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
+          pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
+          pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
+          pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
+        default:
       }
-      elapsedInCalculation := utils.UnixtimeNano() - stCalculation
-      time.Sleep(time.Nanosecond * time.Duration(twiceTimePerFrame - elapsedInCalculation))
+      // elapsedInCalculation := utils.UnixtimeNano() - stCalculation
     }
   }
 
@@ -291,11 +283,9 @@ func (pR *Room) Broadcast(msg interface{}) {
 
 func (pR *Room) expelPlayerDuringGame(playerId int) {
   defer pR.onPlayerExpelledDuringGame(playerId)
-  utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
 }
 
 func (pR *Room) expelPlayerForDismissal(playerId int) {
-  utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
   pR.onPlayerExpelledForDismissal(playerId)
 }
 
@@ -304,8 +294,19 @@ func (pR *Room) onPlayerExpelledDuringGame(playerId int) {
 }
 
 func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
+  assembledFrame := &RoomDownsyncFrame{
+    ID: -1, // TODO: Replace this magic constant!
+    RefFrameID: 0, // Hardcoded for now.
+    Players: nil,
+    SentAt: utils.UnixtimeMilli(),
+    CountdownNanos: -1,
+  }
+  theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+  utils.SendSafely(assembledFrame, theForwardingChannel)
   pR.onPlayerLost(playerId)
   pR.DismissalWaitGroup.Done()
+
+  Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int) {

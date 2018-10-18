@@ -359,11 +359,6 @@
     "meta": 1539241827381,
     "relativePath": "scripts/Type2NPCPlayer.js"
   },
-  "e16000cb-4e57-44be-a791-e26298b480bb": {
-    "asset": 1539242095702,
-    "meta": 1539242156401,
-    "relativePath": "scripts/ConfirmLogout.js"
-  },
   "9c88608b-f02d-4bcc-b0e3-f486509e7fe1": {
     "asset": 1539242505720,
     "meta": 1539242512323,
@@ -594,11 +589,6 @@
     "meta": 1539684400507,
     "relativePath": "resources/protobuf"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1539842951912,
-    "meta": 1539843111189,
-    "relativePath": "scripts/Login.js"
-  },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
     "asset": 1539600469942,
     "meta": 1539610947677,
@@ -610,8 +600,8 @@
     "relativePath": "resources/protobuf/GameData.proto"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539851979837,
-    "meta": 1539851979849,
+    "asset": 1539858843461,
+    "meta": 1539858843477,
     "relativePath": "scenes/default_map.fire"
   },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
@@ -629,34 +619,44 @@
     "meta": 1539741617271,
     "relativePath": "scripts/SimplePressToGoDialog.js"
   },
-  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
-    "asset": 1539741788605,
-    "meta": 1539741804155,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
     "asset": 1539763870679,
     "meta": 1539764289256,
     "relativePath": "plugin_scripts/NetworkDoctor.js"
   },
+  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
+    "asset": 1539862418121,
+    "meta": 1539862674606,
+    "relativePath": "plugin_scripts/constants.js"
+  },
+  "e16000cb-4e57-44be-a791-e26298b480bb": {
+    "asset": 1539867947636,
+    "meta": 1539868071608,
+    "relativePath": "scripts/ConfirmLogout.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1539867585139,
+    "meta": 1539868072072,
+    "relativePath": "scripts/Login.js"
+  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1539847729178,
-    "meta": 1539847884839,
+    "asset": 1539870495636,
+    "meta": 1539870548454,
     "relativePath": "scripts/WsSessionMgr.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1539848204572,
-    "meta": 1539849348338,
+    "asset": 1539871105982,
+    "meta": 1539872621623,
     "relativePath": "scripts/Map.js"
   },
-  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
-    "asset": 1539851547372,
-    "meta": 1539851554512,
-    "relativePath": "plugin_scripts/constants.js"
+  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
+    "asset": 1539873097659,
+    "meta": 1539873102215,
+    "relativePath": "plugin_scripts/conf.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1539851985245,
-    "meta": 1539851985262,
+    "asset": 1539873105226,
+    "meta": 1539873105246,
     "relativePath": "scenes/login.fire"
   }
 }

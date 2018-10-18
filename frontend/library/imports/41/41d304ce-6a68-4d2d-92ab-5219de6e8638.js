@@ -103,7 +103,7 @@ cc.Class({
       act: "PlayerUpsyncCmd",
       data: upsyncFrameData
     };
-    window.clientSession.send(JSON.stringify(wrapped));
+    window.sendSafely(JSON.stringify(wrapped));
   },
 
 
@@ -145,7 +145,7 @@ cc.Class({
     var millisToGo = 3000;
     mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo / 1000));
     setTimeout(function () {
-      mapIns.logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
+      mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
   onLoad: function onLoad() {
@@ -171,20 +171,8 @@ cc.Class({
     self.confirmLogoutNode.width = canvasNode.width;
     self.confirmLogoutNode.height = canvasNode.height;
 
-    self.clientUpsyncFps = 24;
+    self.clientUpsyncFps = 15;
     self.upsyncLoopInterval = null;
-
-    window.handleRoomJoinResp = function (resp) {
-      switch (resp.ret) {
-        case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
-        case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
-        case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
-          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-          break;
-        default:
-          break;
-      }
-    };
 
     window.handleClientSessionCloseOrError = function () {
       self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
@@ -424,7 +412,7 @@ cc.Class({
       }
 
       self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
-      window.handleDownsyncRoomFrame = function (roomDownsyncFrame) {
+      window.handleRoomDownsyncFrame = function (roomDownsyncFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
 
         self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
@@ -549,36 +537,50 @@ cc.Class({
     var self = this;
     self.state = s;
   },
-  logout: function logout(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-    // Will be called within "ConfirmLogout.js".
+  logout: function logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+    var localClearance = function localClearance() {
+      if (byClick) {
+        /**
+        * WARNING: We MUST distinguish `byClick`, otherwise the `window.clientSession.onclose(event)` could be confused by local events!
+        */
+        window.closeWSConnection();
+      }
+      if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      }
+      cc.sys.localStorage.removeItem('selfPlayer');
+      cc.director.loadScene('login');
+    };
     var self = this;
     if (null != cc.sys.localStorage.selfPlayer) {
       var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
       var requestContent = {
         intAuthToken: selfPlayer.intAuthToken
       };
-      NetworkUtils.ajax({
-        url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
-        type: "POST",
-        data: requestContent,
-        success: function success(res) {
-          if (res.ret != constants.RET_CODE.OK) {
-            cc.log("Logout failed: " + res + ".");
+      try {
+        NetworkUtils.ajax({
+          url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
+          type: "POST",
+          data: requestContent,
+          success: function success(res) {
+            if (res.ret != constants.RET_CODE.OK) {
+              cc.log("Logout failed: " + res + ".");
+            }
+            localClearance();
+          },
+          error: function error(xhr, status, errMsg) {
+            localClearance();
+          },
+          timeout: function timeout() {
+            localClearance();
           }
-          window.closeWSConnection();
-          if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-            window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-          }
-          cc.sys.localStorage.removeItem('selfPlayer');
-          cc.director.loadScene('login');
-        }
-      });
-    } else {
-      if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        });
+      } catch (e) {} finally {
+        // For Safari (both desktop and mobile).
+        localClearance();
       }
-      cc.sys.localStorage.removeItem('selfPlayer');
-      cc.director.loadScene('login');
+    } else {
+      localClearance();
     }
   },
   onLogoutClicked: function onLogoutClicked(evt) {

@@ -57,23 +57,30 @@ var constants = {
     CLIENT_UPSYNC: 30
   },
   RET_CODE: (_RET_CODE = {
+    /**
+    * NOTE: The "RET_CODE"s from 1000-1015 are reserved for the websocket "WebsocketStdCloseCode"s.
+    *
+    * References
+    * - https://tools.ietf.org/html/rfc6455#section-7.4
+    * - https://godoc.org/github.com/gorilla/websocket#pkg-constants.
+    */
     "__comment__": "基础",
-    "OK": 1000,
-    "UNKNOWN_ERROR": 1001,
-    "INVALID_REQUEST_PARAM": 1002,
-    "IS_TEST_ACC": 1003,
-    "MYSQL_ERROR": 1004,
-    "NONEXISTENT_ACT": 1005,
-    "LACK_OF_DIAMOND": 1006,
-    "LACK_OF_GOLD": 1007,
-    "LACK_OF_ENERGY": 1008,
-    "NONEXISTENT_ACT_HANDLER": 1009,
-    "LOCALLY_NO_AVAILABLE_ROOM": 1010,
-    "LOCALLY_NO_SPECIFIED_ROOM": 1011,
-    "PLAYER_NOT_ADDABLE_TO_ROOM": 1012,
-    "PLAYER_NOT_READDABLE_TO_ROOM": 1013,
-    "PLAYER_NOT_FOUND": 1014,
-    "PLAYER_CHEATING": 1015
+    "OK": 9000,
+    "UNKNOWN_ERROR": 9001,
+    "INVALID_REQUEST_PARAM": 9002,
+    "IS_TEST_ACC": 9003,
+    "MYSQL_ERROR": 9004,
+    "NONEXISTENT_ACT": 9005,
+    "LACK_OF_DIAMOND": 9006,
+    "LACK_OF_GOLD": 9007,
+    "LACK_OF_ENERGY": 9008,
+    "NONEXISTENT_ACT_HANDLER": 9009,
+    "LOCALLY_NO_AVAILABLE_ROOM": 9010,
+    "LOCALLY_NO_SPECIFIED_ROOM": 9011,
+    "PLAYER_NOT_ADDABLE_TO_ROOM": 9012,
+    "PLAYER_NOT_READDABLE_TO_ROOM": 9013,
+    "PLAYER_NOT_FOUND": 9014,
+    "PLAYER_CHEATING": 9015
 
   }, _defineProperty2(_RET_CODE, "__comment__", "SMS"), _defineProperty2(_RET_CODE, "SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY", 5001), _defineProperty2(_RET_CODE, "SMS_CAPTCHA_NOT_MATCH", 5002), _defineProperty2(_RET_CODE, "INVALID_TOKEN", 2001), _defineProperty2(_RET_CODE, "DUPLICATED", 2002), _defineProperty2(_RET_CODE, "INCORRECT_HANDLE", 2004), _defineProperty2(_RET_CODE, "NONEXISTENT_HANDLE", 2005), _defineProperty2(_RET_CODE, "INCORRECT_PASSWORD", 2006), _defineProperty2(_RET_CODE, "INCORRECT_CAPTCHA", 2007), _defineProperty2(_RET_CODE, "INVALID_EMAIL_LITERAL", 2008), _defineProperty2(_RET_CODE, "NO_ASSOCIATED_EMAIL", 2009), _defineProperty2(_RET_CODE, "SEND_EMAIL_TIMEOUT", 2010), _defineProperty2(_RET_CODE, "INCORRECT_PHONE_COUNTRY_CODE", 2011), _defineProperty2(_RET_CODE, "NEW_HANDLE_CONFLICT", 2013), _defineProperty2(_RET_CODE, "FAILED_TO_UPDATE", 2014), _defineProperty2(_RET_CODE, "FAILED_TO_DELETE", 2015), _defineProperty2(_RET_CODE, "FAILED_TO_CREATE", 2016), _defineProperty2(_RET_CODE, "INCORRECT_PHONE_NUMBER", 2018), _defineProperty2(_RET_CODE, "PASSWORD_RESET_CODE_GENERATION_PER_EMAIL_TOO_FREQUENTLY", 4000), _defineProperty2(_RET_CODE, "TRADE_CREATION_TOO_FREQUENTLY", 4002), _defineProperty2(_RET_CODE, "MAP_NOT_UNLOCKED", 4003), _defineProperty2(_RET_CODE, "NOT_IMPLEMENTED_YET", 65535), _RET_CODE),
   ALERT: {
