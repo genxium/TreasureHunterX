@@ -1,11 +1,11 @@
 package ws
 
 import (
-	. "server/common"
 	"encoding/json"
-	"reflect"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
+	"reflect"
+	. "server/common"
 )
 
 type wsHandleInfo struct {
@@ -27,13 +27,14 @@ type wsResp struct {
 }
 
 type wsHandler interface {
-  // To be implemented by "subclasses".
+	// To be implemented by "subclasses".
 	handle(*websocket.Conn, *wsResp) error
 }
 
 var wsRouter = make(map[string]*wsHandleInfo, 50)
+
 func regHandleInfo(reqAct string, info *wsHandleInfo) {
-  Logger.Info("Adding into wsRouter dict", zap.Any("act", reqAct))
+	Logger.Info("Adding into wsRouter dict", zap.Any("act", reqAct))
 	wsRouter[reqAct] = info
 }
 
@@ -76,7 +77,7 @@ func wsSendAction(conn *websocket.Conn, act string, data interface{}) {
 		Data: data,
 		Ret:  Constants.RetCode.Ok,
 	}
-  err := conn.WriteJSON(resp)
+	err := conn.WriteJSON(resp)
 	if err != nil {
 		Logger.Error("write:", zap.Error(err))
 	}

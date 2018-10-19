@@ -35,10 +35,10 @@ type constants struct {
 		NewHandleConflict                                int    `json:"NEW_HANDLE_CONFLICT"`
 		NonexistentAct                                   int    `json:"NONEXISTENT_ACT"`
 		NonexistentActHandler                            int    `json:"NONEXISTENT_ACT_HANDLER"`
-    LocallyNoAvailableRoom                           int    `json:"LOCALLY_NO_AVAILABLE_ROOM"`
-    LocallyNoSpecifiedRoom                           int    `json:"LOCALLY_NO_SPECIFIED_ROOM"`
-    PlayerNotAddableToRoom                           int    `json:"PLAYER_NOT_ADDABLE_TO_ROOM"`
-    PlayerNotReAddableToRoom                         int    `json:"PLAYER_NOT_READDABLE_TO_ROOM"`
+		LocallyNoAvailableRoom                           int    `json:"LOCALLY_NO_AVAILABLE_ROOM"`
+		LocallyNoSpecifiedRoom                           int    `json:"LOCALLY_NO_SPECIFIED_ROOM"`
+		PlayerNotAddableToRoom                           int    `json:"PLAYER_NOT_ADDABLE_TO_ROOM"`
+		PlayerNotReAddableToRoom                         int    `json:"PLAYER_NOT_READDABLE_TO_ROOM"`
 		PlayerNotFound                                   int    `json:"PLAYER_NOT_FOUND"`
 		PlayerCheating                                   int    `json:"PLAYER_CHEATING"`
 		NotImplementedYet                                int    `json:"NOT_IMPLEMENTED_YET"`

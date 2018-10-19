@@ -171,7 +171,7 @@ cc.Class({
     self.confirmLogoutNode.width = canvasNode.width;
     self.confirmLogoutNode.height = canvasNode.height;
 
-    self.clientUpsyncFps = 15;
+    self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
     window.handleClientSessionCloseOrError = function () {

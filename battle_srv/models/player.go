@@ -9,23 +9,23 @@ import (
 
 // Use type `float64` for json unmarshalling of numbers.
 type Direction struct {
-  Dx           float64     `json:"dx"`
-  Dy           float64     `json:"dy"`
+	Dx float64 `json:"dx"`
+	Dy float64 `json:"dy"`
 }
 
 type Player struct {
-	ID            int        `json:"id" db:"id"`
-  X             float64    `json:"x"`
-  Y             float64    `json:"y"`
-  Dir           Direction  `json:"dir"`
-  Speed         int        `json:"speed"`
-  LastMoveGmtMillis int    `json:"lastMoveGmtMillis"`
-	Name          string     `json:"name" db:"name"`
-	DisplayName   NullString `json:"displayName" db:"display_name"`
-	CreatedAt     int64      `json:"createdAt" db:"created_at"`
-	UpdatedAt     int64      `json:"updatedAt" db:"updated_at"`
-	DeletedAt     NullInt64  `json:"deletedAt" db:"deleted_at"`
-  TutorialStage int        `json:"tutorialStage" db:"tutorial_stage"`
+	ID                int        `json:"id" db:"id"`
+	X                 float64    `json:"x"`
+	Y                 float64    `json:"y"`
+	Dir               Direction  `json:"dir"`
+	Speed             int        `json:"speed"`
+	LastMoveGmtMillis int        `json:"lastMoveGmtMillis"`
+	Name              string     `json:"name" db:"name"`
+	DisplayName       NullString `json:"displayName" db:"display_name"`
+	CreatedAt         int64      `json:"createdAt" db:"created_at"`
+	UpdatedAt         int64      `json:"updatedAt" db:"updated_at"`
+	DeletedAt         NullInt64  `json:"deletedAt" db:"deleted_at"`
+	TutorialStage     int        `json:"tutorialStage" db:"tutorial_stage"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

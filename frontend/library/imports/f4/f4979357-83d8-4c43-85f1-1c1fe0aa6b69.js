@@ -7,7 +7,7 @@ cc._RF.push(module, 'f4979NXg9hMQ4XxHB/gqmtp', 'conf');
 if (CC_DEBUG) {
   var backendAddress = {
     PROTOCOL: 'http',
-    HOST: '192.168.1.104',
+    HOST: 'localhost',
     PORT: "9992",
     WS_PATH_PREFIX: "/tsrht"
   };

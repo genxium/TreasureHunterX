@@ -1,12 +1,12 @@
 package env_tools
 
 import (
-	. "server/common"
-	"server/storage"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
+	. "server/common"
+	"server/storage"
 )
 
 func LoadPreConf() {
@@ -19,7 +19,7 @@ func LoadPreConf() {
 }
 
 func loadPreConfToMysql(db *sqlx.DB) {
-  // TODO
+	// TODO
 	tbs := []string{}
 	loadSqlite(db, tbs)
 }
@@ -45,12 +45,11 @@ func createMysqlData(rows *sqlx.Rows, v string) {
 	tx := storage.MySQLManagerIns.MustBegin()
 	defer Logger.Info("Loaded table " + v + " from PreConfSQLite successfully.")
 	switch v {
-    // TODO
+	// TODO
 	}
 	err := tx.Commit()
 	if err != nil {
-    defer tx.Rollback()
+		defer tx.Rollback()
 		Logger.Info(v+" load", zap.Any("tx.commit error", err))
 	}
 }
-

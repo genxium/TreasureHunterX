@@ -23,7 +23,7 @@ cc.Class({
         var mapNode = self.mapNode;
 
         var mapScriptIns = self.mapNode.getComponent("Map");
-        var selfPlayerNode = mapScriptIns.selfPlayer;
+        var selfPlayerNode = mapScriptIns.selfPlayerNode;
         if (null == selfPlayerNode) return;
 
         var selfPlayerPosDiffInMapNode = selfPlayerNode.position;

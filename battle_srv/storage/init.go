@@ -1,6 +1,6 @@
 package storage
 
-func Init()  {
-  initMySQL()
-  initRedis()
+func Init() {
+	initMySQL()
+	initRedis()
 }

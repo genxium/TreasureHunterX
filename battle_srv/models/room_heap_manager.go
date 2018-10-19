@@ -1,21 +1,22 @@
 package models
 
 import (
-  . "server/common"
-  "sync"
 	"container/heap"
-  "go.uber.org/zap"
-  "fmt"
+	"fmt"
+	"go.uber.org/zap"
+	. "server/common"
+	"sync"
 )
 
 // Reference https://github.com/genxium/GoStructPrac.
 type RoomHeap []*Room
 type RoomMap map[int]*Room
+
 var (
-  // NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types. 
-  RoomHeapMux *sync.Mutex
-  RoomHeapManagerIns *RoomHeap
-  RoomMapManagerIns *RoomMap
+	// NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types.
+	RoomHeapMux        *sync.Mutex
+	RoomHeapManagerIns *RoomHeap
+	RoomMapManagerIns  *RoomMap
 )
 
 func (pPq *RoomHeap) PrintInOrder() {
@@ -50,15 +51,15 @@ func (pq *RoomHeap) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	if n == 0 {
-    return nil
+		return nil
 	}
 	pItem := old[n-1]
-  if pItem.Score <= float32(0.0) {
-    return nil
-  }
+	if pItem.Score <= float32(0.0) {
+		return nil
+	}
 	pItem.Index = -1 // for safety
 	*pq = old[0 : n-1]
-  // NOTE: Must return instance which is directly castable to type `*Room` here.
+	// NOTE: Must return instance which is directly castable to type `*Room` here.
 	return pItem
 }
 
@@ -68,7 +69,7 @@ func (pq *RoomHeap) update(pItem *Room, Score float32) {
 }
 
 func (pq *RoomHeap) Update(pItem *Room, Score float32) {
-  pq.update(pItem, Score)
+	pq.update(pItem, Score)
 }
 
 func PrintRoomMap() {
@@ -80,36 +81,36 @@ func PrintRoomMap() {
 }
 
 func InitRoomHeapManager() {
-  RoomHeapMux = new(sync.Mutex)
+	RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
-  InitRoomStateIns()
+	InitRoomStateIns()
 
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
-  roomMap := make(RoomMap, initialCountOfRooms)
+	roomMap := make(RoomMap, initialCountOfRooms)
 
 	roomCapacity := 2
 	for i := 0; i < initialCountOfRooms; i++ {
 		currentRoomState := RoomStateIns.IDLE
 		pq[i] = &Room{
-			Players: make(map[int]*Player),
-      PlayerDownsyncChanDict: make(map[int]chan interface{}),
-			Capacity: roomCapacity,
-			Score:    calRoomScore(0, roomCapacity, currentRoomState),
-			State:    currentRoomState,
-      CmdFromPlayersChan: nil,
-			ID:       i,
-			Index:    i,
-      Tick:     0,
-      EffectivePlayerCount: 0,
-      BattleDurationNanos: int64(30*1000*1000*1000),
-      ServerFPS: 30,
+			Players:                make(map[int]*Player),
+			PlayerDownsyncChanDict: make(map[int]chan interface{}),
+			Capacity:               roomCapacity,
+			Score:                  calRoomScore(0, roomCapacity, currentRoomState),
+			State:                  currentRoomState,
+			CmdFromPlayersChan:     nil,
+			ID:                     i,
+			Index:                  i,
+			Tick:                   0,
+			EffectivePlayerCount:   0,
+			BattleDurationNanos:    int64(30 * 1000 * 1000 * 1000),
+			ServerFPS:              30,
 		}
-    roomMap[pq[i].ID] = pq[i]
+		roomMap[pq[i].ID] = pq[i]
 	}
 	heap.Init(&pq)
-  RoomHeapManagerIns = &pq
-  RoomMapManagerIns = &roomMap
-  Logger.Info("The RoomHeapManagerIns has been initialized:", zap.Any("addr", fmt.Sprintf("%p", RoomHeapManagerIns)), zap.Any("size", len(*RoomHeapManagerIns)))
-  Logger.Info("The RoomMapManagerIns has been initialized:", zap.Any("size", len(*RoomMapManagerIns)))
+	RoomHeapManagerIns = &pq
+	RoomMapManagerIns = &roomMap
+	Logger.Info("The RoomHeapManagerIns has been initialized:", zap.Any("addr", fmt.Sprintf("%p", RoomHeapManagerIns)), zap.Any("size", len(*RoomHeapManagerIns)))
+	Logger.Info("The RoomMapManagerIns has been initialized:", zap.Any("size", len(*RoomMapManagerIns)))
 }

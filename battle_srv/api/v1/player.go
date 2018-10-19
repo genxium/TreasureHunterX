@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"go.uber.org/zap"
 	"net/http"
 	"server/api"
 	. "server/common"
@@ -8,9 +11,6 @@ import (
 	"server/models"
 	"server/storage"
 	"strconv"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"go.uber.org/zap"
 )
 
 var Player = playerController{}
