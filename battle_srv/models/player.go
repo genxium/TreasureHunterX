@@ -13,19 +13,40 @@ type Direction struct {
 	Dy float64 `json:"dy"`
 }
 
+type PlayerBattleState struct {
+	ACTIVE                    int
+	DISCONNECTED              int
+	LOST                      int
+	EXPELLED_DURING_GAME      int
+	EXPELLED_IN_DISMISSAL     int
+}
+
+var PlayerBattleStateIns PlayerBattleState
+
+func InitPlayerBattleStateIns() {
+	PlayerBattleStateIns = PlayerBattleState{
+		ACTIVE:                           0,
+		DISCONNECTED:                     1,
+		LOST:                             2,
+		EXPELLED_DURING_GAME:             3,
+		EXPELLED_IN_DISMISSAL:            4,
+	}
+}
+
 type Player struct {
 	ID                int        `json:"id" db:"id"`
 	X                 float64    `json:"x"`
 	Y                 float64    `json:"y"`
 	Dir               Direction  `json:"dir"`
 	Speed             int        `json:"speed"`
+  BattleState       int        `json:"battleState"`
 	LastMoveGmtMillis int        `json:"lastMoveGmtMillis"`
 	Name              string     `json:"name" db:"name"`
 	DisplayName       NullString `json:"displayName" db:"display_name"`
-	CreatedAt         int64      `json:"createdAt" db:"created_at"`
-	UpdatedAt         int64      `json:"updatedAt" db:"updated_at"`
-	DeletedAt         NullInt64  `json:"deletedAt" db:"deleted_at"`
-	TutorialStage     int        `json:"tutorialStage" db:"tutorial_stage"`
+	CreatedAt         int64      `db:"created_at"`
+	UpdatedAt         int64      `db:"updated_at"`
+	DeletedAt         NullInt64  `db:"deleted_at"`
+	TutorialStage     int        `db:"tutorial_stage"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

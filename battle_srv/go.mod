@@ -1,6 +1,7 @@
 module server
 
 require (
+	github.com/ByteArena/box2d v1.0.2
 	github.com/ChimeraCoder/gojson v1.0.0 // indirect
 	github.com/Masterminds/squirrel v0.0.0-20180815162352-8a7e65843414
 	github.com/davecgh/go-spew v1.1.1

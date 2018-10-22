@@ -2,6 +2,7 @@ package models
 
 import (
 	"go.uber.org/zap"
+  "github.com/ByteArena/box2d"
 	. "server/common"
 	"server/common/utils"
 	"sync"
@@ -20,13 +21,6 @@ type RoomState struct {
 // A single instance containing only "named constant integers" to be shared by all threads.
 var RoomStateIns RoomState
 
-func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int) float32 {
-	x := float32(inRoomPlayerCount) / float32(roomCapacity)
-	d := (x - 0.5)
-	d2 := d * d
-	return -7.8125*d2 + 5.0 - float32(currentRoomState)
-}
-
 func InitRoomStateIns() {
 	RoomStateIns = RoomState{
 		IDLE:                           0,
@@ -36,6 +30,13 @@ func InitRoomStateIns() {
 		IN_SETTLEMENT:                  10000002,
 		IN_DISMISSAL:                   10000003,
 	}
+}
+
+func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int) float32 {
+	x := float32(inRoomPlayerCount) / float32(roomCapacity)
+	d := (x - 0.5)
+	d2 := d * d
+	return -7.8125*d2 + 5.0 - float32(currentRoomState)
 }
 
 type Room struct {
@@ -95,6 +96,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	pR.Players[pPlayer.ID] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.ID] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
+  pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	return true
 }
 
@@ -108,6 +110,7 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 		return false
 	}
 	defer pR.onPlayerReAdded(pPlayer.ID)
+  pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	// Note: All previous position and orientation info should just be recovered.
 	return true
 }
@@ -116,6 +119,31 @@ func (pR *Room) StartBattle() {
 	if RoomStateIns.WAITING != pR.State {
 		return
 	}
+
+  // Define the gravity vector.
+	gravity := box2d.MakeB2Vec2(0.0, 0.0)
+
+	// Construct a world object, which will hold and simulate the rigid bodies.
+	world := box2d.MakeB2World(gravity)
+
+  // Create collidable treasures.
+  {
+    bd := box2d.MakeB2BodyDef()
+		treasure := world.CreateBody(&bd)
+
+		polygonShape := box2d.MakeB2PolygonShape()
+    pointsCount := 5
+    vertices := make([]box2d.B2Vec2, pointsCount)
+    vertices[0] = box2d.MakeB2Vec2(200, 300)
+    vertices[1] = box2d.MakeB2Vec2(100, 200)
+    vertices[2] = box2d.MakeB2Vec2(150, 100)
+    vertices[3] = box2d.MakeB2Vec2(250, 100)
+    vertices[4] = box2d.MakeB2Vec2(300, 200)
+
+		polygonShape.Set(vertices, pointsCount)
+		treasure.CreateFixture(&polygonShape, 0.0)
+  }
+
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
 	nanosPerFrame := 1000000000 / int64(pR.ServerFPS)
@@ -316,6 +344,7 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 	switch pR.State {
 	case RoomStateIns.WAITING:
 		pR.onPlayerLost(playerId)
+    delete (pR.Players, playerId) // Note that this statement MUST be put AFTER `pR.onPlayerLost(...)` to avoid nil pointer exception.
 		if pR.EffectivePlayerCount == 0 {
 			pR.State = RoomStateIns.IDLE
 		}
@@ -323,13 +352,14 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 		Logger.Info("Player disconnected while room is at RoomStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 		break
 	default:
+    pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
 		break
 	}
 }
 
 func (pR *Room) onPlayerLost(playerId int) {
 	if _, existent := pR.Players[playerId]; existent {
-		delete(pR.Players, playerId)
+    pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
 		utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
 		delete(pR.PlayerDownsyncChanDict, playerId)
 		pR.EffectivePlayerCount--

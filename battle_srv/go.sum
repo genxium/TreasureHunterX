@@ -1,3 +1,5 @@
+github.com/ByteArena/box2d v1.0.2 h1:f7f9KEQWhCs1n516DMLzi5w6u0MeeE78Mes4fWMcj9k=
+github.com/ByteArena/box2d v1.0.2/go.mod h1:LzEuxY9iCz+tskfWCY3o0ywYBRafDDugdSj+/YGI6sE=
 github.com/ChimeraCoder/gojson v1.0.0 h1:gAYKGTV+xfQ4+l/4C/nazPbiQDUidG0G3ukAJnE7LNE=
 github.com/ChimeraCoder/gojson v1.0.0/go.mod h1:nYbTQlu6hv8PETM15J927yM0zGj3njIldp72UT1MqSw=
 github.com/Masterminds/squirrel v0.0.0-20180815162352-8a7e65843414 h1:VHdYPA0V0YgL97gdjHevN6IVPRX+fOoNMqcYvUAzwNU=

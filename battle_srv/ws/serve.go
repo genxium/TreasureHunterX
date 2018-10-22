@@ -121,6 +121,7 @@ func Serve(c *gin.Context) {
 
 	onReceivedCloseMessageFromClient := func(code int, text string) error {
 		Logger.Warn("Triggered `onReceivedCloseMessageFromClient`:", zap.Any("code", code), zap.Any("playerId", playerId), zap.Any("message", text))
+    signalToCloseConnOfThisPlayer(code, text)
 		return nil
 	}
 

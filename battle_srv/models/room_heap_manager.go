@@ -84,7 +84,7 @@ func InitRoomHeapManager() {
 	RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
 	InitRoomStateIns()
-
+  InitPlayerBattleStateIns()
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
 	roomMap := make(RoomMap, initialCountOfRooms)
