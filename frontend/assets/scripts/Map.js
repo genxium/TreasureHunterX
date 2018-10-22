@@ -83,12 +83,12 @@ cc.Class({
   _onPerUpsyncFrame() {
     const instance = this; 
     if (
-      null == instance.selfPlayerId ||
+      null == instance.selfPlayerInfo ||
       null == instance.selfPlayerScriptIns ||
       null == instance.selfPlayerScriptIns.scheduledDirection
     ) return;
     const upsyncFrameData = {
-      id: instance.selfPlayerId,
+      id: instance.selfPlayerInfo.id,
       dir: {
         dx: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dx),
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy),
@@ -154,7 +154,8 @@ cc.Class({
 
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
-    self.selfPlayerId = null;
+    self.selfPlayerInfo = null;
+    self.upsyncLoopInterval = null;
 
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
@@ -179,9 +180,11 @@ cc.Class({
     initPersistentSessionClient(() => {
       self.state = ALL_MAP_STATES.VISUAL;
       const tiledMapIns = self.node.getComponent(cc.TiledMap); 
-      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      self.spawnSelfPlayer(selfPlayerInfo);
-      this._inputControlEnabled = true;
+      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      Object.assign(self.selfPlayerInfo, {
+        id: self.selfPlayerInfo.playerId
+      });
+      this._inputControlEnabled = false;
       self.setupInputControls();
 
       const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node); 
@@ -259,22 +262,19 @@ cc.Class({
         }  
         self.node.addChild(newShelter);
       }
-      self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
       window.handleRoomDownsyncFrame = function(roomDownsyncFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
 
-        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos/1000000000).toString();
         const frameId = roomDownsyncFrame.id;
-        if (frameId <= self.lastRoomDownsyncFrameId) return;
+        if (frameId <= self.lastRoomDownsyncFrameId) {
+          // Log the obsolete frames?
+          return;
+        }
         if (roomDownsyncFrame.countdownNanos == -1) {
-          self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-          self.alertForGoingBackToLoginScene("Battle stopped!", self, false)
+          self.onBattleStopped();
+          return;
         }
-        if (0 == self.lastRoomDownsyncFrameId) {
-          self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
-          self.popupSimplePressToGo("Battle started!");
-        }
-        self.lastRoomDownsyncFrameId = frameId;
+        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos/1000000000).toString();
         const sentAt = roomDownsyncFrame.sentAt;
         const refFrameId = roomDownsyncFrame.refFrameId;
         const players = roomDownsyncFrame.players;
@@ -282,12 +282,29 @@ cc.Class({
         for (let i = 0; i < playerIdStrList.length; ++i) {
           const k = playerIdStrList[i];
           const playerId = parseInt(k);
-          if (playerId == self.selfPlayerId) continue;
+          if (playerId == self.selfPlayerInfo.id) {
+            const immediateSelfPlayerInfo = players[k]; 
+            Object.assign(self.selfPlayerInfo, {
+              x: immediateSelfPlayerInfo.x,
+              y: immediateSelfPlayerInfo.y,
+              speed: immediateSelfPlayerInfo.speed, 
+              battleState: immediateSelfPlayerInfo.battleState,
+            });
+            continue;
+          }
           const anotherPlayer = players[k]; 
           // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
           self.otherPlayerCachedDataDict[playerId] = anotherPlayer; 
         } 
-        // TODO: Cope with removed players.
+        if (0 == self.lastRoomDownsyncFrameId) {
+          self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
+          if (1 == frameId) {
+            // No need to prompt upon rejoined.
+            self.popupSimplePressToGo("Battle started!");
+          }
+          self.onBattleStarted();
+        }
+        self.lastRoomDownsyncFrameId = frameId;
         // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
         // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
@@ -329,10 +346,24 @@ cc.Class({
     this._inputControlEnabled = false;
   },
 
-  spawnSelfPlayer(selfPlayerInfo) {
+  onBattleStarted() {
+    const self = this;
+    self.spawnSelfPlayer();
+    self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
+    self.enableInputControls();
+  },
+
+  onBattleStopped() {
+    const self = this;
+    self.disableInputControls();
+    self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
+    self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
+  },
+
+  spawnSelfPlayer() {
     const instance = this;
     const newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
-    newPlayerNode.setPosition(cc.v2(0, 0));
+    newPlayerNode.setPosition(cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y));
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
     instance.node.addChild(newPlayerNode);
@@ -340,7 +371,6 @@ cc.Class({
     setLocalZOrder(newPlayerNode, 5);
     instance.selfPlayerNode = newPlayerNode;
     instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
-    instance.selfPlayerId = selfPlayerInfo.playerId;
   },
 
   update(dt) {
@@ -350,9 +380,12 @@ cc.Class({
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;  
     }
-    if (null != self.selfPlayerId) {
-      self.selfPlayerIdLabel.string = self.selfPlayerId; 
+    if (null != self.selfPlayerInfo) {
+      self.selfPlayerIdLabel.string = self.selfPlayerInfo.id; 
     }
+    let toRemovePlayerNodeDict = {};
+    Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
+
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
       const cachedPlayerData = self.otherPlayerCachedDataDict[playerId]; 
@@ -371,6 +404,9 @@ cc.Class({
         setLocalZOrder(targetNode, 5);
       }
 
+      if (null != toRemovePlayerNodeDict[playerId]) {
+        delete toRemovePlayerNodeDict[playerId];
+      }
       if (0 < targetNode.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
         continue; 
@@ -384,11 +420,16 @@ cc.Class({
         targetNode.y
       );
       const toMoveByVec = newPos.sub(oldPos);
-      const durationSeconds = toMoveByVec.mag()/self.selfPlayerScriptIns.speed;
-      // cc.log(`Moving targetNode from <${oldPos.x}, ${oldPos.y}> to <${newPos.x}, ${newPos.y}> in ${durationSeconds} seconds.`);
+      const durationSeconds = toMoveByVec.mag()/cachedPlayerData.speed; // WARNING: To interpolate in a smooth manner, don't just assign `dt` to `durationSeconds` here!
       targetNode.runAction(cc.moveTo(durationSeconds, newPos));
     }
-    // TODO: Cope with removed players.
+
+    // Coping with removed players.
+    for (let k in toRemovePlayerNodeDict) {
+      const playerId = parseInt(k);
+      toRemovePlayerNodeDict[k].parent.removeChild(toRemovePlayerNodeDict[k]);
+      delete self.otherPlayerNodeDict[playerId];
+    }
   },
 
   transitToState(s) {

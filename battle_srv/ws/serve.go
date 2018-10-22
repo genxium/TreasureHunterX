@@ -151,7 +151,7 @@ func Serve(c *gin.Context) {
 	}()
 	defer func() {
 		if r := recover(); r != nil {
-			Logger.Warn("Recovered from: ", zap.Any("panic", r))
+			Logger.Error("Recovered from: ", zap.Any("panic", r))
 			signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 		}
 	}()

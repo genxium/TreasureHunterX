@@ -83,7 +83,7 @@ func PrintRoomMap() {
 func InitRoomHeapManager() {
 	RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
-	InitRoomStateIns()
+	InitRoomBattleStateIns()
   InitPlayerBattleStateIns()
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
@@ -91,13 +91,13 @@ func InitRoomHeapManager() {
 
 	roomCapacity := 2
 	for i := 0; i < initialCountOfRooms; i++ {
-		currentRoomState := RoomStateIns.IDLE
+		currentRoomBattleState := RoomBattleStateIns.IDLE
 		pq[i] = &Room{
 			Players:                make(map[int]*Player),
 			PlayerDownsyncChanDict: make(map[int]chan interface{}),
 			Capacity:               roomCapacity,
-			Score:                  calRoomScore(0, roomCapacity, currentRoomState),
-			State:                  currentRoomState,
+			Score:                  calRoomScore(0, roomCapacity, currentRoomBattleState),
+			State:                  currentRoomBattleState,
 			CmdFromPlayersChan:     nil,
 			ID:                     i,
 			Index:                  i,

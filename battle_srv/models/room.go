@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type RoomState struct {
+type RoomBattleState struct {
 	IDLE                           int
 	WAITING                        int
 	IN_BATTLE                      int
@@ -19,10 +19,10 @@ type RoomState struct {
 }
 
 // A single instance containing only "named constant integers" to be shared by all threads.
-var RoomStateIns RoomState
+var RoomBattleStateIns RoomBattleState
 
-func InitRoomStateIns() {
-	RoomStateIns = RoomState{
+func InitRoomBattleStateIns() {
+	RoomBattleStateIns = RoomBattleState{
 		IDLE:                           0,
 		WAITING:                        -1,
 		IN_BATTLE:                      10000000,
@@ -32,11 +32,11 @@ func InitRoomStateIns() {
 	}
 }
 
-func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomState int) float32 {
+func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomBattleState int) float32 {
 	x := float32(inRoomPlayerCount) / float32(roomCapacity)
 	d := (x - 0.5)
 	d2 := d * d
-	return -7.8125*d2 + 5.0 - float32(currentRoomState)
+	return -7.8125*d2 + 5.0 - float32(currentRoomBattleState)
 }
 
 type Room struct {
@@ -84,7 +84,7 @@ func (pR *Room) updateScore() {
 }
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
-	if RoomStateIns.IDLE != pR.State && RoomStateIns.WAITING != pR.State {
+	if RoomBattleStateIns.IDLE != pR.State && RoomBattleStateIns.WAITING != pR.State {
 		Logger.Error("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
@@ -97,11 +97,12 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.ID] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
   pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+  pPlayer.Speed = 300; // Hardcoded temporarily.
 	return true
 }
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
-	if RoomStateIns.WAITING != pR.State && RoomStateIns.IN_BATTLE != pR.State && RoomStateIns.IN_SETTLEMENT != pR.State {
+	if RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
 		Logger.Error("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
@@ -116,7 +117,7 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 }
 
 func (pR *Room) StartBattle() {
-	if RoomStateIns.WAITING != pR.State {
+	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
 
@@ -164,8 +165,8 @@ func (pR *Room) StartBattle() {
 			if totalElapsedNanos > pR.BattleDurationNanos {
 				pR.StopBattleForSettlement()
 			}
-			if RoomStateIns.IN_BATTLE != pR.State {
-				// TODO: Replace with `pRoomState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomState`.
+			if RoomBattleStateIns.IN_BATTLE != pR.State {
+				// TODO: Replace with `pRoomBattleState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomBattleState`.
 				return
 			}
 			pR.Tick++
@@ -198,8 +199,8 @@ func (pR *Room) StartBattle() {
 			Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomID", pR.ID))
 		}()
 		for {
-			if RoomStateIns.IN_BATTLE != pR.State {
-				// TODO: Replace with `pRoomState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomState`.
+			if RoomBattleStateIns.IN_BATTLE != pR.State {
+				// TODO: Replace with `pRoomBattleState = (&pR.State)` and `atomic.CompareAndSwapInt32(...) on pRoomBattleState`.
 				return
 			}
 			// stCalculation := utils.UnixtimeNano()
@@ -230,10 +231,10 @@ func (pR *Room) StartBattle() {
 }
 
 func (pR *Room) StopBattleForSettlement() {
-	if RoomStateIns.IN_BATTLE != pR.State {
+	if RoomBattleStateIns.IN_BATTLE != pR.State {
 		return
 	}
-	pR.State = RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
+	pR.State = RoomBattleStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
 	Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomID", pR.ID))
 	pR.Tick++
 	for playerId, _ := range pR.Players {
@@ -251,22 +252,22 @@ func (pR *Room) StopBattleForSettlement() {
 }
 
 func (pR *Room) onBattleStarted() {
-	if RoomStateIns.WAITING != pR.State {
+	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
-	pR.State = RoomStateIns.IN_BATTLE
+	pR.State = RoomBattleStateIns.IN_BATTLE
 	Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomID", pR.ID))
 	pR.updateScore()
 }
 
 func (pR *Room) onBattleStoppedForSettlement() {
-	if RoomStateIns.STOPPING_BATTLE_FOR_SETTLEMENT != pR.State {
+	if RoomBattleStateIns.STOPPING_BATTLE_FOR_SETTLEMENT != pR.State {
 		return
 	}
 	defer func() {
 		pR.onSettlementCompleted()
 	}()
-	pR.State = RoomStateIns.IN_SETTLEMENT
+	pR.State = RoomBattleStateIns.IN_SETTLEMENT
 	Logger.Info("The room is in settlement:", zap.Any("roomID", pR.ID))
 	// TODO: Some settlement labor.
 }
@@ -276,10 +277,10 @@ func (pR *Room) onSettlementCompleted() {
 }
 
 func (pR *Room) Dismiss() {
-	if RoomStateIns.IN_SETTLEMENT != pR.State {
+	if RoomBattleStateIns.IN_SETTLEMENT != pR.State {
 		return
 	}
-	pR.State = RoomStateIns.IN_DISMISSAL
+	pR.State = RoomBattleStateIns.IN_DISMISSAL
 	for playerId, _ := range pR.Players {
 		pR.DismissalWaitGroup.Add(1)
 		pR.expelPlayerForDismissal(playerId)
@@ -291,7 +292,7 @@ func (pR *Room) Dismiss() {
 
 func (pR *Room) onDismissed() {
 	Logger.Info("The room is completely dismissed:", zap.Any("roomID", pR.ID))
-	pR.State = RoomStateIns.IDLE
+	pR.State = RoomBattleStateIns.IDLE
 	pR.EffectivePlayerCount = 0
 
 	// Always instantiates new HeapRAM blocks and let the old blocks die out due to not being retained by any root reference.
@@ -334,7 +335,7 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 	pR.onPlayerLost(playerId)
 	pR.DismissalWaitGroup.Done()
 
-	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int) {
@@ -342,17 +343,19 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 	 * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
 	 */
 	switch pR.State {
-	case RoomStateIns.WAITING:
+	case RoomBattleStateIns.WAITING:
 		pR.onPlayerLost(playerId)
     delete (pR.Players, playerId) // Note that this statement MUST be put AFTER `pR.onPlayerLost(...)` to avoid nil pointer exception.
 		if pR.EffectivePlayerCount == 0 {
-			pR.State = RoomStateIns.IDLE
+			pR.State = RoomBattleStateIns.IDLE
 		}
 		pR.updateScore()
-		Logger.Info("Player disconnected while room is at RoomStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Info("Player disconnected while room is at RoomBattleStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 		break
 	default:
-    pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
+    if _, existent := pR.Players[playerId]; existent {
+      pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
+    }
 		break
 	}
 }
@@ -369,10 +372,10 @@ func (pR *Room) onPlayerLost(playerId int) {
 func (pR *Room) onPlayerAdded(playerId int) {
 	pR.EffectivePlayerCount++
 	if pR.EffectivePlayerCount == 1 {
-		pR.State = RoomStateIns.WAITING
+		pR.State = RoomBattleStateIns.WAITING
 	}
 	pR.updateScore()
-	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomState", pR.State))
+	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 	if pR.Capacity == len(pR.Players) {
 		pR.StartBattle()
 	}
