@@ -194,7 +194,7 @@ func (pR *Room) StartBattle() {
 	cmdReceivingLoop := func() {
 		defer func() {
 			if r := recover(); r != nil {
-				Logger.Warn("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
+				Logger.Error("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
 			}
 			Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomID", pR.ID))
 		}()
@@ -339,6 +339,11 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int) {
+  defer func() {
+    if r := recover(); r != nil {
+      Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.ID), zap.Any("panic", r))
+    }
+  }()
 	/**
 	 * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
 	 */
@@ -355,6 +360,7 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 	default:
     if _, existent := pR.Players[playerId]; existent {
       pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
+      Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
     }
 		break
 	}
