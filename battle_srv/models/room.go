@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+const (
+  // You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
+  COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
+  COLLISION_CATEGORY_TREASURE = (1 << 2)
+
+  COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE)
+  COLLISION_MASK_FOR_TREASURE = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
+)
+
 type RoomBattleState struct {
 	IDLE                           int
 	WAITING                        int
@@ -69,6 +78,8 @@ type Room struct {
 	BattleDurationNanos    int64
 	EffectivePlayerCount   int
 	DismissalWaitGroup     sync.WaitGroup
+  Treasures              map[int]*Treasure
+  CollidableWorld        *box2d.B2World
 }
 
 type RoomDownsyncFrame struct {
@@ -77,6 +88,7 @@ type RoomDownsyncFrame struct {
 	Players        map[int]*Player `json:"players"`
 	SentAt         int64           `json:"sentAt"`
 	CountdownNanos int64           `json:"countdownNanos"`
+  Treasures      map[int]*Treasure `json:"treasures"`
 }
 
 func (pR *Room) updateScore() {
@@ -116,34 +128,112 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 	return true
 }
 
+func (pR *Room) InitTreasures() {
+  pR.Treasures = make(map[int]*Treasure, 1)
+  {
+    theAnchor := Vec2D{
+      X: float64(200),
+      Y: float64(200),
+    }
+    thePoints := make([]*Vec2D, 5)
+    thePoints[0] = &Vec2D{
+      X: float64(0),
+      Y: float64(100),
+    }
+    thePoints[1] = &Vec2D{
+      X: float64(100),
+      Y: float64(0),
+    }
+    thePoints[2] = &Vec2D{
+      X: float64(100),
+      Y: float64(100),
+    }
+    thePoints[3] = &Vec2D{
+      X: float64(-100),
+      Y: float64(-100),
+    }
+    thePoints[4] = &Vec2D{
+      X: float64(-100),
+      Y: float64(0),
+    }
+    thePolygon := Polygon2D{
+      Anchor: &theAnchor,
+      Points: thePoints,
+    }
+    theTreasure := Treasure{
+      ID: 0,
+      LocalIDInBattle: 0,
+      Score: 100,
+      PickupBoundary: &thePolygon,
+      CollidableBody: nil,
+    }
+    pR.Treasures[theTreasure.LocalIDInBattle] = &theTreasure
+  }
+  Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
+}
+
+func (pR *Room) InitCollidables() {
+	gravity := box2d.MakeB2Vec2(0.0, 0.0)
+  world := box2d.MakeB2World(gravity)
+  pR.CollidableWorld = &world
+
+  for _, player := range pR.Players {
+    var bdDef box2d.B2BodyDef
+    colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
+    bdDef = box2d.MakeB2BodyDef()
+    bdDef.Position.Set(player.X + colliderOffset.X, player.Y + colliderOffset.Y)
+
+		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+    b2CircleShape := box2d.MakeB2CircleShape()
+    b2CircleShape.M_radius = 32 // Matching that of client-side setting.
+
+    fd := box2d.MakeB2FixtureDef()
+    fd.Shape = &b2CircleShape
+    fd.Filter.CategoryBits = COLLISION_CATEGORY_CONTROLLED_PLAYER
+    fd.Filter.MaskBits = COLLISION_MASK_FOR_CONTROLLED_PLAYER
+    fd.Density = 0.0
+    b2PlayerBody.CreateFixtureFromDef(&fd)
+    b2PlayerBody.CreateFixture(&b2CircleShape, 0.0)
+
+    player.CollidableBody = b2PlayerBody
+  }
+
+  for _, treasure := range pR.Treasures {
+    var bdDef box2d.B2BodyDef
+    bdDef = box2d.MakeB2BodyDef()
+    bdDef.Position.Set(treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y)
+
+		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+    pointsCount := len(treasure.PickupBoundary.Points)
+
+    b2Vertices := make([]box2d.B2Vec2, pointsCount)
+    for vIndex, v2 := range treasure.PickupBoundary.Points {
+      b2Vertices[vIndex] = v2.ToB2Vec2()
+    }
+
+		b2PolygonShape := box2d.MakeB2PolygonShape()
+		b2PolygonShape.Set(b2Vertices, pointsCount)
+
+    fd := box2d.MakeB2FixtureDef()
+    fd.Shape = &b2PolygonShape
+    fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
+    fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
+    fd.Density = 0.0
+		b2TreasureBody.CreateFixtureFromDef(&fd)
+
+    treasure.CollidableBody = b2TreasureBody
+  }
+}
+
 func (pR *Room) StartBattle() {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
 
-  // Define the gravity vector.
-	gravity := box2d.MakeB2Vec2(0.0, 0.0)
-
-	// Construct a world object, which will hold and simulate the rigid bodies.
-	world := box2d.MakeB2World(gravity)
-
-  // Create collidable treasures.
-  {
-    bd := box2d.MakeB2BodyDef()
-		treasure := world.CreateBody(&bd)
-
-		polygonShape := box2d.MakeB2PolygonShape()
-    pointsCount := 5
-    vertices := make([]box2d.B2Vec2, pointsCount)
-    vertices[0] = box2d.MakeB2Vec2(200, 300)
-    vertices[1] = box2d.MakeB2Vec2(100, 200)
-    vertices[2] = box2d.MakeB2Vec2(150, 100)
-    vertices[3] = box2d.MakeB2Vec2(250, 100)
-    vertices[4] = box2d.MakeB2Vec2(300, 200)
-
-		polygonShape.Set(vertices, pointsCount)
-		treasure.CreateFixture(&polygonShape, 0.0)
-  }
+  pR.InitTreasures()
+  pR.InitCollidables()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
@@ -178,6 +268,7 @@ func (pR *Room) StartBattle() {
 					Players:        pR.Players,
 					SentAt:         utils.UnixtimeMilli(),
 					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
+          Treasures:      pR.Treasures,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
@@ -186,6 +277,18 @@ func (pR *Room) StartBattle() {
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
+      pR.CollidableWorld.Step(0, 0, 0)
+      itContacts := pR.CollidableWorld.GetContactList()
+      for itContacts != nil {
+        if itContacts.IsTouching() {
+          Logger.Info("Found a touching contact:", zap.Any("roomID", pR.ID))
+          /*
+          bodyA := itContacts.GetFixtureA().GetBody()
+          bodyB := itContacts.GetFixtureB().GetBody()
+          */
+        }
+        itContacts = itContacts.GetNext()
+      }
 			// Logger.Info("Elapsed time statistics:", zap.Any("roomID", pR.ID), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
 			time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
 		}
@@ -213,12 +316,16 @@ func (pR *Room) StartBattle() {
 				if nil == immediatePlayerData {
 					break
 				}
+        if _, existent := pR.Players[immediatePlayerData.ID]; !existent {
+          break
+        }
 				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
 				// Update immediate player info for broadcasting or unicasting.
 				pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
 				pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
 				pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
 				pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
+        pR.Players[immediatePlayerData.ID].CollidableBody.SetTransform(box2d.MakeB2Vec2(immediatePlayerData.X, immediatePlayerData.Y), 0);
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
@@ -244,6 +351,7 @@ func (pR *Room) StopBattleForSettlement() {
 			Players:        pR.Players,
 			SentAt:         utils.UnixtimeMilli(),
 			CountdownNanos: -1, // TODO: Replace this magic constant!
+      Treasures:      pR.Treasures,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		utils.SendSafely(assembledFrame, theForwardingChannel)
@@ -297,6 +405,7 @@ func (pR *Room) onDismissed() {
 
 	// Always instantiates new HeapRAM blocks and let the old blocks die out due to not being retained by any root reference.
 	pR.Players = make(map[int]*Player)
+	pR.Treasures = make(map[int]*Treasure)
 	pR.PlayerDownsyncChanDict = make(map[int]chan interface{})
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
@@ -329,6 +438,7 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 		Players:        nil,
 		SentAt:         utils.UnixtimeMilli(),
 		CountdownNanos: -1,
+    Treasures:      pR.Treasures,
 	}
 	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 	utils.SendSafely(assembledFrame, theForwardingChannel)

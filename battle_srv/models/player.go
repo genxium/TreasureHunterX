@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-
+  "github.com/ByteArena/box2d"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
@@ -43,10 +43,11 @@ type Player struct {
 	LastMoveGmtMillis int        `json:"lastMoveGmtMillis"`
 	Name              string     `json:"name" db:"name"`
 	DisplayName       NullString `json:"displayName" db:"display_name"`
-	CreatedAt         int64      `db:"created_at"`
-	UpdatedAt         int64      `db:"updated_at"`
-	DeletedAt         NullInt64  `db:"deleted_at"`
-	TutorialStage     int        `db:"tutorial_stage"`
+	CreatedAt         int64      `json:"-" db:"created_at"`
+	UpdatedAt         int64      `json:"-" db:"updated_at"`
+	DeletedAt         NullInt64  `json:"-" db:"deleted_at"`
+	TutorialStage     int        `json:"-" db:"tutorial_stage"`
+  CollidableBody    *box2d.B2Body `json:"-"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

@@ -36,6 +36,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    treasurePrefab: {
+      type: cc.Prefab,
+      default: null
+    },
     npcPlayerPrefab: {
       type: cc.Prefab,
       default: null
@@ -165,8 +169,12 @@ cc.Class({
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
-    self.otherPlayerNodeDict = {};
     self.otherPlayerCachedDataDict = {};
+    self.otherPlayerNodeDict = {};
+
+    self.treasureInfoDict = {};
+    self.treasureNodeDict = {};
+
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
@@ -431,6 +439,7 @@ cc.Class({
         var refFrameId = roomDownsyncFrame.refFrameId;
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
+        self.otherPlayerCachedDataDict = {};
         for (var i = 0; i < playerIdStrList.length; ++i) {
           var k = playerIdStrList[i];
           var playerId = parseInt(k);
@@ -447,6 +456,15 @@ cc.Class({
           var anotherPlayer = players[k];
           // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
           self.otherPlayerCachedDataDict[playerId] = anotherPlayer;
+        }
+        self.treasureInfoDict = {};
+        var treasures = roomDownsyncFrame.treasures;
+        var treasuresLocalIdStrList = Object.keys(treasures);
+        for (var _i = 0; _i < treasuresLocalIdStrList.length; ++_i) {
+          var _k = treasuresLocalIdStrList[_i];
+          var treasureLocalIdInBattle = parseInt(_k);
+          var treasureInfo = treasures[_k];
+          self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
@@ -504,6 +522,10 @@ cc.Class({
   },
   onBattleStopped: function onBattleStopped() {
     var self = this;
+    self.selfPlayerScriptIns.scheduleNewDirection({
+      dx: 0,
+      dy: 0
+    });
     self.disableInputControls();
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
@@ -532,6 +554,9 @@ cc.Class({
     }
     var toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
+
+    var toRemoveTreasureNodeDict = {};
+    Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
 
     for (var k in self.otherPlayerCachedDataDict) {
       var playerId = parseInt(k);
@@ -565,11 +590,44 @@ cc.Class({
       targetNode.runAction(cc.moveTo(durationSeconds, newPos));
     }
 
+    for (var _k2 in self.treasureInfoDict) {
+      var treasureLocalIdInBattle = parseInt(_k2);
+      var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
+      var _newPos = cc.v2(treasureInfo.pickupBoundary.anchor.x, treasureInfo.pickupBoundary.anchor.y);
+      var _targetNode = self.treasureNodeDict[treasureLocalIdInBattle];
+      if (!_targetNode) {
+        _targetNode = cc.instantiate(self.treasurePrefab);
+        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode;
+        safelyAddChild(mapNode, _targetNode);
+        _targetNode.setPosition(_newPos);
+        setLocalZOrder(_targetNode, 5);
+      }
+
+      if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
+        delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
+      }
+      if (0 < _targetNode.getNumberOfRunningActions()) {
+        // A significant trick to smooth the position sync performance!
+        continue;
+      }
+      var _oldPos = cc.v2(_targetNode.x, _targetNode.y);
+      var _toMoveByVec = _newPos.sub(_oldPos);
+      var _durationSeconds = dt; // Using `dt` temporarily!
+      _targetNode.runAction(cc.moveTo(_durationSeconds, _newPos));
+    }
+
     // Coping with removed players.
-    for (var _k in toRemovePlayerNodeDict) {
-      var _playerId = parseInt(_k);
-      toRemovePlayerNodeDict[_k].parent.removeChild(toRemovePlayerNodeDict[_k]);
+    for (var _k3 in toRemovePlayerNodeDict) {
+      var _playerId = parseInt(_k3);
+      toRemovePlayerNodeDict[_k3].parent.removeChild(toRemovePlayerNodeDict[_k3]);
       delete self.otherPlayerNodeDict[_playerId];
+    }
+
+    // Coping with removed treasures.
+    for (var _k4 in toRemoveTreasureNodeDict) {
+      var _treasureLocalIdInBattle = parseInt(_k4);
+      toRemoveTreasureNodeDict[_k4].parent.removeChild(toRemoveTreasureNodeDict[_k4]);
+      delete self.treasureNodeDict[_treasureLocalIdInBattle];
     }
   },
   transitToState: function transitToState(s) {

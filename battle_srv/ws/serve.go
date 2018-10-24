@@ -142,6 +142,8 @@ func Serve(c *gin.Context) {
 		signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotFound, "")
 	}
 
+	Logger.Info("Player has logged in and its profile is found from persistent storage:", zap.Any("playerId", playerId), zap.Any("play", pPlayer))
+
 	// Find a room to join.
 	Logger.Info("About to acquire RoomHeapMux for player:", zap.Any("playerId", playerId))
 	(*(models.RoomHeapMux)).Lock()

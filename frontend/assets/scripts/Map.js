@@ -30,6 +30,10 @@ cc.Class({
       type: cc.Prefab,
       default: null, 
     },
+    treasurePrefab: {
+      type: cc.Prefab,
+      default: null, 
+    },
     npcPlayerPrefab: {
       type: cc.Prefab,
       default: null, 
@@ -163,8 +167,12 @@ cc.Class({
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
-    self.otherPlayerNodeDict = {};
     self.otherPlayerCachedDataDict = {};
+    self.otherPlayerNodeDict = {};
+
+    self.treasureInfoDict = {};
+    self.treasureNodeDict = {};
+
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
@@ -279,6 +287,7 @@ cc.Class({
         const refFrameId = roomDownsyncFrame.refFrameId;
         const players = roomDownsyncFrame.players;
         const playerIdStrList = Object.keys(players);
+        self.otherPlayerCachedDataDict = {};
         for (let i = 0; i < playerIdStrList.length; ++i) {
           const k = playerIdStrList[i];
           const playerId = parseInt(k);
@@ -296,6 +305,15 @@ cc.Class({
           // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
           self.otherPlayerCachedDataDict[playerId] = anotherPlayer; 
         } 
+        self.treasureInfoDict = {};
+        const treasures = roomDownsyncFrame.treasures;
+        const treasuresLocalIdStrList = Object.keys(treasures);
+        for (let i = 0; i < treasuresLocalIdStrList.length; ++i) {
+          const k = treasuresLocalIdStrList[i];
+          const treasureLocalIdInBattle = parseInt(k);
+          const treasureInfo = treasures[k]; 
+          self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
+        }
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -355,6 +373,10 @@ cc.Class({
 
   onBattleStopped() {
     const self = this;
+    self.selfPlayerScriptIns.scheduleNewDirection({
+      dx: 0,
+      dy: 0
+    });
     self.disableInputControls();
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
@@ -385,6 +407,9 @@ cc.Class({
     }
     let toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
+
+    let toRemoveTreasureNodeDict = {};
+    Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
 
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
@@ -424,11 +449,50 @@ cc.Class({
       targetNode.runAction(cc.moveTo(durationSeconds, newPos));
     }
 
+    for (let k in self.treasureInfoDict) {
+      const treasureLocalIdInBattle = parseInt(k);
+      const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle]; 
+      const newPos = cc.v2(
+        treasureInfo.pickupBoundary.anchor.x, 
+        treasureInfo.pickupBoundary.anchor.y
+      );
+      let targetNode = self.treasureNodeDict[treasureLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.treasurePrefab);
+        self.treasureNodeDict[treasureLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
+      }
+
+      if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
+        delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
+      }
+      if (0 < targetNode.getNumberOfRunningActions()) {
+        // A significant trick to smooth the position sync performance!
+        continue; 
+      }
+      const oldPos = cc.v2(
+        targetNode.x,
+        targetNode.y
+      );
+      const toMoveByVec = newPos.sub(oldPos);
+      const durationSeconds = dt; // Using `dt` temporarily!
+      targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+    }
+
     // Coping with removed players.
     for (let k in toRemovePlayerNodeDict) {
       const playerId = parseInt(k);
       toRemovePlayerNodeDict[k].parent.removeChild(toRemovePlayerNodeDict[k]);
       delete self.otherPlayerNodeDict[playerId];
+    }
+
+    // Coping with removed treasures.
+    for (let k in toRemoveTreasureNodeDict) {
+      const treasureLocalIdInBattle = parseInt(k);
+      toRemoveTreasureNodeDict[k].parent.removeChild(toRemoveTreasureNodeDict[k]);
+      delete self.treasureNodeDict[treasureLocalIdInBattle];
     }
   },
 

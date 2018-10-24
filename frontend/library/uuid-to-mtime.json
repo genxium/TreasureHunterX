@@ -325,7 +325,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1540215567145,
+    "asset": 1540217336708,
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
@@ -475,8 +475,8 @@
     "relativePath": "resources/prefabs/TiledAnim.prefab"
   },
   "f704650b-e322-45f6-a7c8-2d485f021372": {
-    "asset": 1539182620396,
-    "meta": 1539243072899,
+    "asset": 1540387535756,
+    "meta": 1540387535796,
     "relativePath": "resources/prefabs/Type2NPCPlayer.prefab"
   },
   "dab2b7f2-5745-42d9-86a5-47c17ae5ec92": {
@@ -544,11 +544,6 @@
     "meta": 1539249103809,
     "relativePath": "scripts/TileCollisionManagerSingleton.js"
   },
-  "58a48605-6082-4066-8df3-0a81f9bfb6d9": {
-    "asset": 1539249117408,
-    "meta": 1539249121750,
-    "relativePath": "scenes/waiting.fire"
-  },
   "ad099186-d6ce-4634-a291-cb0dc63aeed8": {
     "asset": 1538233340456,
     "meta": 1539250215948,
@@ -600,8 +595,8 @@
     "relativePath": "resources/protobuf/GameData.proto"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1539858843461,
-    "meta": 1539858843477,
+    "asset": 1540387626550,
+    "meta": 1540387626570,
     "relativePath": "scenes/default_map.fire"
   },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
@@ -650,13 +645,23 @@
     "relativePath": "plugin_scripts/conf.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1540217078979,
-    "meta": 1540217078997,
+    "asset": 1540388336693,
+    "meta": 1540388336729,
     "relativePath": "scenes/login.fire"
   },
+  "e75377af-4197-4805-9e76-fa0cc6626ba9": {
+    "asset": 1538233340620,
+    "meta": 1540387535535,
+    "relativePath": "resources/textures/dish.png"
+  },
+  "e108b9e7-e8b0-465d-8bf1-a850560c3b0f": {
+    "asset": 1540387569589,
+    "meta": 1540387583108,
+    "relativePath": "resources/prefabs/TreasurePrefab.prefab"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1540217336297,
-    "meta": 1540217359821,
+    "asset": 1540388332338,
+    "meta": 1540388335905,
     "relativePath": "scripts/Map.js"
   }
 }
