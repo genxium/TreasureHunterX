@@ -6,6 +6,8 @@ github.com/Masterminds/squirrel v0.0.0-20180815162352-8a7e65843414 h1:VHdYPA0V0Y
 github.com/Masterminds/squirrel v0.0.0-20180815162352-8a7e65843414/go.mod h1:xnKTFzjGUiZtiOagBsfnvomW+nJg2usB1ZpordQWqNM=
 github.com/Pallinder/go-randomdata v0.0.0-20180616180521-15df0648130a h1:0OnS8GR4uI3nau+f/juCZlAq+zCrsHXRJlENrUQ4eU8=
 github.com/Pallinder/go-randomdata v0.0.0-20180616180521-15df0648130a/go.mod h1:yHmJgulpD2Nfrm0cR9tI/+oAgRqCQQixsA8HyRZfV9Y=
+github.com/Tarliton/collision2d v0.0.0-20160527013055-f7a088279920 h1:0IrTIOtqYxunLFS7/NZtdHDXifo0sjOnw2y2EhvDIFE=
+github.com/Tarliton/collision2d v0.0.0-20160527013055-f7a088279920/go.mod h1:xQkVqGFqY6zzdXxydhfUfJQfmSIAyx0XavFZgQK0F5o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=

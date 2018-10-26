@@ -2,20 +2,11 @@ package models
 
 import (
 	"go.uber.org/zap"
-  "github.com/ByteArena/box2d"
 	. "server/common"
 	"server/common/utils"
 	"sync"
 	"time"
-)
-
-const (
-  // You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
-  COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
-  COLLISION_CATEGORY_TREASURE = (1 << 2)
-
-  COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE)
-  COLLISION_MASK_FOR_TREASURE = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
+  "github.com/Tarliton/collision2d"
 )
 
 type RoomBattleState struct {
@@ -79,7 +70,6 @@ type Room struct {
 	EffectivePlayerCount   int
 	DismissalWaitGroup     sync.WaitGroup
   Treasures              map[int]*Treasure
-  CollidableWorld        *box2d.B2World
 }
 
 type RoomDownsyncFrame struct {
@@ -128,103 +118,69 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 	return true
 }
 
+func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Treasure {
+  thePoints := make([]*Vec2D, 5)
+  thePoints[0] = &Vec2D{
+    X: float64(0),
+    Y: float64(100),
+  }
+  thePoints[1] = &Vec2D{
+    X: float64(-100),
+    Y: float64(0),
+  }
+  thePoints[2] = &Vec2D{
+    X: float64(-100),
+    Y: float64(-100),
+  }
+  thePoints[3] = &Vec2D{
+    X: float64(+100),
+    Y: float64(-100),
+  }
+  thePoints[4] = &Vec2D{
+    X: float64(+100),
+    Y: float64(0),
+  }
+  thePolygon := Polygon2D{
+    Anchor: pAnchor,
+    Points: thePoints,
+  }
+  theTreasure := Treasure{
+    ID: 0,
+    LocalIDInBattle: treasureLocalIDInBattle,
+    Score: 100,
+    PickupBoundary: &thePolygon,
+  }
+
+  return &theTreasure
+}
+
 func (pR *Room) InitTreasures() {
   pR.Treasures = make(map[int]*Treasure, 1)
   {
-    theAnchor := Vec2D{
+    pAnchor := &Vec2D{
       X: float64(200),
       Y: float64(200),
     }
-    thePoints := make([]*Vec2D, 5)
-    thePoints[0] = &Vec2D{
-      X: float64(0),
-      Y: float64(100),
+    theTreasure := pR.createTreasure(pAnchor, 0)
+    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+  }
+  {
+    pAnchor := &Vec2D{
+      X: float64(-200),
+      Y: float64(-200),
     }
-    thePoints[1] = &Vec2D{
-      X: float64(100),
-      Y: float64(0),
+    theTreasure := pR.createTreasure(pAnchor, 1)
+    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+  }
+  {
+    pAnchor := &Vec2D{
+      X: float64(200),
+      Y: float64(-200),
     }
-    thePoints[2] = &Vec2D{
-      X: float64(100),
-      Y: float64(100),
-    }
-    thePoints[3] = &Vec2D{
-      X: float64(-100),
-      Y: float64(-100),
-    }
-    thePoints[4] = &Vec2D{
-      X: float64(-100),
-      Y: float64(0),
-    }
-    thePolygon := Polygon2D{
-      Anchor: &theAnchor,
-      Points: thePoints,
-    }
-    theTreasure := Treasure{
-      ID: 0,
-      LocalIDInBattle: 0,
-      Score: 100,
-      PickupBoundary: &thePolygon,
-      CollidableBody: nil,
-    }
-    pR.Treasures[theTreasure.LocalIDInBattle] = &theTreasure
+    theTreasure := pR.createTreasure(pAnchor, 2)
+    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
   }
   Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
-}
-
-func (pR *Room) InitCollidables() {
-	gravity := box2d.MakeB2Vec2(0.0, 0.0)
-  world := box2d.MakeB2World(gravity)
-  pR.CollidableWorld = &world
-
-  for _, player := range pR.Players {
-    var bdDef box2d.B2BodyDef
-    colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
-    bdDef = box2d.MakeB2BodyDef()
-    bdDef.Position.Set(player.X + colliderOffset.X, player.Y + colliderOffset.Y)
-
-		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-    b2CircleShape := box2d.MakeB2CircleShape()
-    b2CircleShape.M_radius = 32 // Matching that of client-side setting.
-
-    fd := box2d.MakeB2FixtureDef()
-    fd.Shape = &b2CircleShape
-    fd.Filter.CategoryBits = COLLISION_CATEGORY_CONTROLLED_PLAYER
-    fd.Filter.MaskBits = COLLISION_MASK_FOR_CONTROLLED_PLAYER
-    fd.Density = 0.0
-    b2PlayerBody.CreateFixtureFromDef(&fd)
-    b2PlayerBody.CreateFixture(&b2CircleShape, 0.0)
-
-    player.CollidableBody = b2PlayerBody
-  }
-
-  for _, treasure := range pR.Treasures {
-    var bdDef box2d.B2BodyDef
-    bdDef = box2d.MakeB2BodyDef()
-    bdDef.Position.Set(treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y)
-
-		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-    pointsCount := len(treasure.PickupBoundary.Points)
-
-    b2Vertices := make([]box2d.B2Vec2, pointsCount)
-    for vIndex, v2 := range treasure.PickupBoundary.Points {
-      b2Vertices[vIndex] = v2.ToB2Vec2()
-    }
-
-		b2PolygonShape := box2d.MakeB2PolygonShape()
-		b2PolygonShape.Set(b2Vertices, pointsCount)
-
-    fd := box2d.MakeB2FixtureDef()
-    fd.Shape = &b2PolygonShape
-    fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
-    fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
-    fd.Density = 0.0
-		b2TreasureBody.CreateFixtureFromDef(&fd)
-
-    treasure.CollidableBody = b2TreasureBody
-  }
 }
 
 func (pR *Room) StartBattle() {
@@ -233,7 +189,6 @@ func (pR *Room) StartBattle() {
 	}
 
   pR.InitTreasures()
-  pR.InitCollidables()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
@@ -274,21 +229,38 @@ func (pR *Room) StartBattle() {
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
 				utils.SendSafely(assembledFrame, theForwardingChannel)
 			}
+
+      // Collision detection & resolution.
+			for treasureLocalIDInBattle, treasure := range pR.Treasures {
+        treasureColliderPointsCount := len(treasure.PickupBoundary.Points)
+        treasureColliderPoints := make([]float64, 2*treasureColliderPointsCount)
+        for i, pt := range treasure.PickupBoundary.Points {
+          treasureColliderPoints[2*i] = pt.X
+          treasureColliderPoints[2*i + 1] = pt.Y
+        }
+        treasureCollider := collision2d.NewPolygon(
+          collision2d.Vector{treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y},
+          collision2d.Vector{0.0, 0.0},
+          0.0,
+          treasureColliderPoints[:])
+        treasureRemoved := false
+        for _, player := range pR.Players {
+          playerCollider := collision2d.Circle{collision2d.Vector{player.X, player.Y}, 32.0} // Hardcoded for now
+          result, _ := collision2d.TestPolygonCircle(treasureCollider, playerCollider)
+          if result {
+            Logger.Info("Treasure is picked up by player:", zap.Any("playerId", player.ID), zap.Any("treasureLocalIDInBattle", treasureLocalIDInBattle))
+            treasureRemoved = true
+            break
+          }
+        }
+        if treasureRemoved {
+          delete (pR.Treasures, treasureLocalIDInBattle)
+          continue
+        }
+			}
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
-      pR.CollidableWorld.Step(0, 0, 0)
-      itContacts := pR.CollidableWorld.GetContactList()
-      for itContacts != nil {
-        if itContacts.IsTouching() {
-          Logger.Info("Found a touching contact:", zap.Any("roomID", pR.ID))
-          /*
-          bodyA := itContacts.GetFixtureA().GetBody()
-          bodyB := itContacts.GetFixtureB().GetBody()
-          */
-        }
-        itContacts = itContacts.GetNext()
-      }
 			// Logger.Info("Elapsed time statistics:", zap.Any("roomID", pR.ID), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
 			time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
 		}
@@ -325,7 +297,6 @@ func (pR *Room) StartBattle() {
 				pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
 				pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
 				pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
-        pR.Players[immediatePlayerData.ID].CollidableBody.SetTransform(box2d.MakeB2Vec2(immediatePlayerData.X, immediatePlayerData.Y), 0);
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation

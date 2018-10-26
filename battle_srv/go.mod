@@ -1,9 +1,9 @@
 module server
 
 require (
-	github.com/ByteArena/box2d v1.0.2
 	github.com/ChimeraCoder/gojson v1.0.0 // indirect
 	github.com/Masterminds/squirrel v0.0.0-20180815162352-8a7e65843414
+	github.com/Tarliton/collision2d v0.0.0-20160527013055-f7a088279920
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/gin-contrib/cors v0.0.0-20180514151808-6f0a820f94be
