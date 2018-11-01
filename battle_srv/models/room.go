@@ -92,11 +92,11 @@ type RoomDownsyncFrame struct {
 }
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
-  Logger.Info("Player has picked up treasure:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTreasure.LocalIDInBattle", contactingTreasure.LocalIDInBattle))
-  if _, existent := pR.Treasures[contactingTreasure.LocalIDInBattle]; existent {
-    pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
-    delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
-  }
+	if _, existent := pR.Treasures[contactingTreasure.LocalIDInBattle]; existent {
+		Logger.Info("Player has picked up treasure:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTreasure.LocalIDInBattle", contactingTreasure.LocalIDInBattle))
+		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
+		delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
+	}
 }
 
 func (pR *Room) updateScore() {
@@ -206,7 +206,7 @@ func (pR *Room) InitColliders() {
 	world := box2d.MakeB2World(gravity)
 	pR.CollidableWorld = &world
 
-  Logger.Info("InitColliders for pR.Players:", zap.Any("roomID", pR.ID))
+	Logger.Info("InitColliders for pR.Players:", zap.Any("roomID", pR.ID))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -228,11 +228,11 @@ func (pR *Room) InitColliders() {
 		b2PlayerBody.CreateFixture(&b2CircleShape, 0.0)
 
 		player.CollidableBody = b2PlayerBody
-    b2PlayerBody.SetUserData(player)
-    PrettyPrintBody(player.CollidableBody)
+		b2PlayerBody.SetUserData(player)
+		PrettyPrintBody(player.CollidableBody)
 	}
 
-  Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomID", pR.ID))
+	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomID", pR.ID))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -259,8 +259,8 @@ func (pR *Room) InitColliders() {
 		b2TreasureBody.CreateFixtureFromDef(&fd)
 
 		treasure.CollidableBody = b2TreasureBody
-    b2TreasureBody.SetUserData(treasure)
-    PrettyPrintBody(treasure.CollidableBody)
+		b2TreasureBody.SetUserData(treasure)
+		PrettyPrintBody(treasure.CollidableBody)
 	}
 }
 
@@ -316,31 +316,31 @@ func (pR *Room) StartBattle() {
 			}
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-      for _, player := range pR.Players {
-        /**
-         * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
-         */
-        newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
-        MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
-      }
+			for _, player := range pR.Players {
+				/**
+				 * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
+				 */
+				newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
+				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
+			}
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
 			for itContacts != nil {
-        // Logger.Info("Found an AABB contact:", zap.Any("roomID", pR.ID))
+				// Logger.Info("Found an AABB contact:", zap.Any("roomID", pR.ID))
 				if itContacts.IsTouching() {
-           bodyA := itContacts.GetFixtureA().GetBody()
-           bodyB := itContacts.GetFixtureB().GetBody()
-           if contactingPlayer, validPlayer := bodyA.GetUserData().(*Player); validPlayer {
-              if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
-                pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-              }
-           } else {
-             if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
-                if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
-                  pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-                }
-             }
-           }
+					bodyA := itContacts.GetFixtureA().GetBody()
+					bodyB := itContacts.GetFixtureB().GetBody()
+					if contactingPlayer, validPlayer := bodyA.GetUserData().(*Player); validPlayer {
+						if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
+							pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
+						}
+					} else {
+						if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
+							if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
+								pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
+							}
+						}
+					}
 				}
 				itContacts = itContacts.GetNext()
 			}

@@ -1,7 +1,7 @@
 package models
 
 import (
-  "fmt"
+	"fmt"
 	"github.com/ByteArena/box2d"
 )
 
