@@ -480,12 +480,6 @@ cc.Class({
       };
     });
   },
-
-
-  renderAnotherControlledPlayer: function renderAnotherControlledPlayer(mapIns, anotherPlayerCachedData, targetNode) {
-    var mapNode = mapIns.node;
-  },
-
   setupInputControls: function setupInputControls() {
     var instance = this;
     var mapNode = instance.node;
@@ -576,17 +570,18 @@ cc.Class({
       if (null != toRemovePlayerNodeDict[playerId]) {
         delete toRemovePlayerNodeDict[playerId];
       }
+      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
+        var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
+      }
       if (0 < targetNode.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
         continue;
       }
-      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
-        var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
-        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, true);
-      }
       var oldPos = cc.v2(targetNode.x, targetNode.y);
       var toMoveByVec = newPos.sub(oldPos);
-      var durationSeconds = toMoveByVec.mag() / cachedPlayerData.speed; // WARNING: To interpolate in a smooth manner, don't just assign `dt` to `durationSeconds` here!
+      var durationSeconds = 0.1;
+      // const durationSeconds = toMoveByVec.mag()/cachedPlayerData.speed; // WARNING: To interpolate in a smooth manner, DON'T just assign `dt` to `durationSeconds` here!
       targetNode.runAction(cc.moveTo(durationSeconds, newPos));
     }
 

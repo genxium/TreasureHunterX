@@ -460,8 +460,8 @@
     "relativePath": "resources/prefabs/PolygonBoundaryShelterZReducer.prefab"
   },
   "8b400cb3-9119-4269-b86b-0aa2a659b691": {
-    "asset": 1539182620393,
-    "meta": 1539243072892,
+    "asset": 1541081800924,
+    "meta": 1541081800943,
     "relativePath": "resources/prefabs/SelfPlayer.prefab"
   },
   "0a634d7e-2c5d-45db-896f-e3de32ff0ac8": {
@@ -544,11 +544,6 @@
     "meta": 1539252179021,
     "relativePath": "resources/prefabs/ConfirmLogout.prefab"
   },
-  "b74b0e58-0ea6-4546-8e0e-919445657f24": {
-    "asset": 1539600469942,
-    "meta": 1539610947677,
-    "relativePath": "scripts/SelfPlayer.js"
-  },
   "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
     "asset": 1539911931643,
     "meta": 1539911934528,
@@ -624,11 +619,6 @@
     "meta": 1541064721828,
     "relativePath": "scripts/Login.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1541062896743,
-    "meta": 1541064721840,
-    "relativePath": "scripts/Map.js"
-  },
   "70ed3639-e9c8-42eb-9832-a465369e3bef": {
     "asset": 1541062896744,
     "meta": 1541064721854,
@@ -655,13 +645,23 @@
     "relativePath": "scripts/WsSessionMgr.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1541080666337,
-    "meta": 1541080666359,
+    "asset": 1541081834473,
+    "meta": 1541081834488,
     "relativePath": "scenes/login.fire"
   },
   "78830fc7-4e25-49a1-a7fc-9f9d3883f278": {
     "asset": 1541080627231,
     "meta": 1541080634737,
     "relativePath": "scripts/CameraTracker.js"
+  },
+  "b74b0e58-0ea6-4546-8e0e-919445657f24": {
+    "asset": 1541081961214,
+    "meta": 1541082046421,
+    "relativePath": "scripts/SelfPlayer.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1541082178628,
+    "meta": 1541082181150,
+    "relativePath": "scripts/Map.js"
   }
 }
