@@ -1,12 +1,21 @@
 package models
 
 import (
+	"github.com/ByteArena/box2d"
 	"go.uber.org/zap"
 	. "server/common"
 	"server/common/utils"
 	"sync"
 	"time"
-  "github.com/Tarliton/collision2d"
+)
+
+const (
+	// You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
+	COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
+	COLLISION_CATEGORY_TREASURE          = (1 << 2)
+
+	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE)
+	COLLISION_MASK_FOR_TREASURE          = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 )
 
 type RoomBattleState struct {
@@ -69,16 +78,25 @@ type Room struct {
 	BattleDurationNanos    int64
 	EffectivePlayerCount   int
 	DismissalWaitGroup     sync.WaitGroup
-  Treasures              map[int]*Treasure
+	Treasures              map[int]*Treasure
+	CollidableWorld        *box2d.B2World
 }
 
 type RoomDownsyncFrame struct {
-	ID             int             `json:"id"`
-	RefFrameID     int             `json:"refFrameId"`
-	Players        map[int]*Player `json:"players"`
-	SentAt         int64           `json:"sentAt"`
-	CountdownNanos int64           `json:"countdownNanos"`
-  Treasures      map[int]*Treasure `json:"treasures"`
+	ID             int               `json:"id"`
+	RefFrameID     int               `json:"refFrameId"`
+	Players        map[int]*Player   `json:"players"`
+	SentAt         int64             `json:"sentAt"`
+	CountdownNanos int64             `json:"countdownNanos"`
+	Treasures      map[int]*Treasure `json:"treasures"`
+}
+
+func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
+  Logger.Info("Player has picked up treasure:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTreasure.LocalIDInBattle", contactingTreasure.LocalIDInBattle))
+  if _, existent := pR.Treasures[contactingTreasure.LocalIDInBattle]; existent {
+    pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
+    delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
+  }
 }
 
 func (pR *Room) updateScore() {
@@ -98,8 +116,8 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	pR.Players[pPlayer.ID] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.ID] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
-  pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
-  pPlayer.Speed = 300; // Hardcoded temporarily.
+	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+	pPlayer.Speed = 300 // Hardcoded temporarily.
 	return true
 }
 
@@ -113,74 +131,137 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 		return false
 	}
 	defer pR.onPlayerReAdded(pPlayer.ID)
-  pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	// Note: All previous position and orientation info should just be recovered.
 	return true
 }
 
 func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Treasure {
-  thePoints := make([]*Vec2D, 5)
-  thePoints[0] = &Vec2D{
-    X: float64(0),
-    Y: float64(100),
-  }
-  thePoints[1] = &Vec2D{
-    X: float64(-100),
-    Y: float64(0),
-  }
-  thePoints[2] = &Vec2D{
-    X: float64(-100),
-    Y: float64(-100),
-  }
-  thePoints[3] = &Vec2D{
-    X: float64(+100),
-    Y: float64(-100),
-  }
-  thePoints[4] = &Vec2D{
-    X: float64(+100),
-    Y: float64(0),
-  }
-  thePolygon := Polygon2D{
-    Anchor: pAnchor,
-    Points: thePoints,
-  }
-  theTreasure := Treasure{
-    ID: 0,
-    LocalIDInBattle: treasureLocalIDInBattle,
-    Score: 100,
-    PickupBoundary: &thePolygon,
-  }
+	thePoints := make([]*Vec2D, 5)
+	thePoints[0] = &Vec2D{
+		X: float64(0),
+		Y: float64(100),
+	}
+	thePoints[1] = &Vec2D{
+		X: float64(-100),
+		Y: float64(0),
+	}
+	thePoints[2] = &Vec2D{
+		X: float64(-100),
+		Y: float64(-100),
+	}
+	thePoints[3] = &Vec2D{
+		X: float64(+100),
+		Y: float64(-100),
+	}
+	thePoints[4] = &Vec2D{
+		X: float64(+100),
+		Y: float64(0),
+	}
+	thePolygon := Polygon2D{
+		Anchor: pAnchor,
+		Points: thePoints,
+	}
+	theTreasure := Treasure{
+		ID:              0,
+		LocalIDInBattle: treasureLocalIDInBattle,
+		Score:           100,
+		PickupBoundary:  &thePolygon,
+	}
 
-  return &theTreasure
+	return &theTreasure
 }
 
 func (pR *Room) InitTreasures() {
-  pR.Treasures = make(map[int]*Treasure, 1)
-  {
-    pAnchor := &Vec2D{
-      X: float64(200),
-      Y: float64(200),
-    }
-    theTreasure := pR.createTreasure(pAnchor, 0)
-    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-  }
-  {
-    pAnchor := &Vec2D{
-      X: float64(-200),
-      Y: float64(-200),
-    }
-    theTreasure := pR.createTreasure(pAnchor, 1)
-    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-  }
-  {
-    pAnchor := &Vec2D{
-      X: float64(200),
-      Y: float64(-200),
-    }
-    theTreasure := pR.createTreasure(pAnchor, 2)
-    pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-  }
-  Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
+	pR.Treasures = make(map[int]*Treasure, 1)
+	{
+		pAnchor := &Vec2D{
+			X: float64(200),
+			Y: float64(200),
+		}
+		theTreasure := pR.createTreasure(pAnchor, 0)
+		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+	}
+	{
+		pAnchor := &Vec2D{
+			X: float64(-200),
+			Y: float64(-200),
+		}
+		theTreasure := pR.createTreasure(pAnchor, 1)
+		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+	}
+	{
+		pAnchor := &Vec2D{
+			X: float64(200),
+			Y: float64(-200),
+		}
+		theTreasure := pR.createTreasure(pAnchor, 2)
+		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+	}
+	Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
+}
+
+func (pR *Room) InitColliders() {
+	gravity := box2d.MakeB2Vec2(0.0, 0.0)
+	world := box2d.MakeB2World(gravity)
+	pR.CollidableWorld = &world
+
+  Logger.Info("InitColliders for pR.Players:", zap.Any("roomID", pR.ID))
+	for _, player := range pR.Players {
+		var bdDef box2d.B2BodyDef
+		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef.Position.Set(player.X+colliderOffset.X, player.Y+colliderOffset.Y)
+
+		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		b2CircleShape := box2d.MakeB2CircleShape()
+		b2CircleShape.M_radius = 32 // Matching that of client-side setting.
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2CircleShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_CONTROLLED_PLAYER
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_CONTROLLED_PLAYER
+		fd.Density = 0.0
+		b2PlayerBody.CreateFixtureFromDef(&fd)
+		b2PlayerBody.CreateFixture(&b2CircleShape, 0.0)
+
+		player.CollidableBody = b2PlayerBody
+    b2PlayerBody.SetUserData(player)
+    PrettyPrintBody(player.CollidableBody)
+	}
+
+  Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomID", pR.ID))
+	for _, treasure := range pR.Treasures {
+		var bdDef box2d.B2BodyDef
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Position.Set(treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y)
+
+		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		pointsCount := len(treasure.PickupBoundary.Points)
+
+		b2Vertices := make([]box2d.B2Vec2, pointsCount)
+		for vIndex, v2 := range treasure.PickupBoundary.Points {
+			b2Vertices[vIndex] = v2.ToB2Vec2()
+		}
+
+		b2PolygonShape := box2d.MakeB2PolygonShape()
+		b2PolygonShape.Set(b2Vertices, pointsCount)
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2PolygonShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
+		fd.Density = 0.0
+		b2TreasureBody.CreateFixtureFromDef(&fd)
+
+		treasure.CollidableBody = b2TreasureBody
+    b2TreasureBody.SetUserData(treasure)
+    PrettyPrintBody(treasure.CollidableBody)
+	}
 }
 
 func (pR *Room) StartBattle() {
@@ -188,11 +269,15 @@ func (pR *Room) StartBattle() {
 		return
 	}
 
-  pR.InitTreasures()
+	pR.InitTreasures()
+	pR.InitColliders()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
 	nanosPerFrame := 1000000000 / int64(pR.ServerFPS)
+	secondsPerFrame := float64(1) / float64(pR.ServerFPS)
+	velocityIterationsPerFrame := 0
+	positionIterationsPerFrame := 0
 	pR.Tick = 0
 	/**
 	 * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached.
@@ -223,40 +308,41 @@ func (pR *Room) StartBattle() {
 					Players:        pR.Players,
 					SentAt:         utils.UnixtimeMilli(),
 					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
-          Treasures:      pR.Treasures,
+					Treasures:      pR.Treasures,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
 				utils.SendSafely(assembledFrame, theForwardingChannel)
 			}
 
-      // Collision detection & resolution.
-			for treasureLocalIDInBattle, treasure := range pR.Treasures {
-        treasureColliderPointsCount := len(treasure.PickupBoundary.Points)
-        treasureColliderPoints := make([]float64, 2*treasureColliderPointsCount)
-        for i, pt := range treasure.PickupBoundary.Points {
-          treasureColliderPoints[2*i] = pt.X
-          treasureColliderPoints[2*i + 1] = pt.Y
-        }
-        treasureCollider := collision2d.NewPolygon(
-          collision2d.Vector{treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y},
-          collision2d.Vector{0.0, 0.0},
-          0.0,
-          treasureColliderPoints[:])
-        treasureRemoved := false
-        for _, player := range pR.Players {
-          playerCollider := collision2d.Circle{collision2d.Vector{player.X, player.Y}, 32.0} // Hardcoded for now
-          result, _ := collision2d.TestPolygonCircle(treasureCollider, playerCollider)
-          if result {
-            Logger.Info("Treasure is picked up by player:", zap.Any("playerId", player.ID), zap.Any("treasureLocalIDInBattle", treasureLocalIDInBattle))
-            treasureRemoved = true
-            break
-          }
-        }
-        if treasureRemoved {
-          delete (pR.Treasures, treasureLocalIDInBattle)
-          continue
-        }
+			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
+      for _, player := range pR.Players {
+        /**
+         * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
+         */
+        newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
+        MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
+      }
+			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
+			itContacts := pR.CollidableWorld.GetContactList()
+			for itContacts != nil {
+        // Logger.Info("Found an AABB contact:", zap.Any("roomID", pR.ID))
+				if itContacts.IsTouching() {
+           bodyA := itContacts.GetFixtureA().GetBody()
+           bodyB := itContacts.GetFixtureB().GetBody()
+           if contactingPlayer, validPlayer := bodyA.GetUserData().(*Player); validPlayer {
+              if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
+                pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
+              }
+           } else {
+             if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
+                if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
+                  pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
+                }
+             }
+           }
+				}
+				itContacts = itContacts.GetNext()
 			}
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
@@ -288,9 +374,9 @@ func (pR *Room) StartBattle() {
 				if nil == immediatePlayerData {
 					break
 				}
-        if _, existent := pR.Players[immediatePlayerData.ID]; !existent {
-          break
-        }
+				if _, existent := pR.Players[immediatePlayerData.ID]; !existent {
+					break
+				}
 				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
 				// Update immediate player info for broadcasting or unicasting.
 				pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
@@ -322,7 +408,7 @@ func (pR *Room) StopBattleForSettlement() {
 			Players:        pR.Players,
 			SentAt:         utils.UnixtimeMilli(),
 			CountdownNanos: -1, // TODO: Replace this magic constant!
-      Treasures:      pR.Treasures,
+			Treasures:      pR.Treasures,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		utils.SendSafely(assembledFrame, theForwardingChannel)
@@ -409,7 +495,7 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 		Players:        nil,
 		SentAt:         utils.UnixtimeMilli(),
 		CountdownNanos: -1,
-    Treasures:      pR.Treasures,
+		Treasures:      pR.Treasures,
 	}
 	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 	utils.SendSafely(assembledFrame, theForwardingChannel)
@@ -420,18 +506,18 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int) {
-  defer func() {
-    if r := recover(); r != nil {
-      Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.ID), zap.Any("panic", r))
-    }
-  }()
+	defer func() {
+		if r := recover(); r != nil {
+			Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.ID), zap.Any("panic", r))
+		}
+	}()
 	/**
 	 * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
 	 */
 	switch pR.State {
 	case RoomBattleStateIns.WAITING:
 		pR.onPlayerLost(playerId)
-    delete (pR.Players, playerId) // Note that this statement MUST be put AFTER `pR.onPlayerLost(...)` to avoid nil pointer exception.
+		delete(pR.Players, playerId) // Note that this statement MUST be put AFTER `pR.onPlayerLost(...)` to avoid nil pointer exception.
 		if pR.EffectivePlayerCount == 0 {
 			pR.State = RoomBattleStateIns.IDLE
 		}
@@ -439,17 +525,17 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 		Logger.Info("Player disconnected while room is at RoomBattleStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 		break
 	default:
-    if _, existent := pR.Players[playerId]; existent {
-      pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
-      Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
-    }
+		if _, existent := pR.Players[playerId]; existent {
+			pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
+			Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+		}
 		break
 	}
 }
 
 func (pR *Room) onPlayerLost(playerId int) {
 	if _, existent := pR.Players[playerId]; existent {
-    pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
+		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
 		utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
 		delete(pR.PlayerDownsyncChanDict, playerId)
 		pR.EffectivePlayerCount--

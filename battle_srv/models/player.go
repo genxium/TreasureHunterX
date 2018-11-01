@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"github.com/ByteArena/box2d"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
@@ -13,39 +14,40 @@ type Direction struct {
 }
 
 type PlayerBattleState struct {
-	ACTIVE                    int
-	DISCONNECTED              int
-	LOST                      int
-	EXPELLED_DURING_GAME      int
-	EXPELLED_IN_DISMISSAL     int
+	ACTIVE                int
+	DISCONNECTED          int
+	LOST                  int
+	EXPELLED_DURING_GAME  int
+	EXPELLED_IN_DISMISSAL int
 }
 
 var PlayerBattleStateIns PlayerBattleState
 
 func InitPlayerBattleStateIns() {
 	PlayerBattleStateIns = PlayerBattleState{
-		ACTIVE:                           0,
-		DISCONNECTED:                     1,
-		LOST:                             2,
-		EXPELLED_DURING_GAME:             3,
-		EXPELLED_IN_DISMISSAL:            4,
+		ACTIVE:                0,
+		DISCONNECTED:          1,
+		LOST:                  2,
+		EXPELLED_DURING_GAME:  3,
+		EXPELLED_IN_DISMISSAL: 4,
 	}
 }
 
 type Player struct {
-	ID                int        `json:"id" db:"id"`
-	X                 float64    `json:"x"`
-	Y                 float64    `json:"y"`
-	Dir               Direction  `json:"dir"`
-	Speed             int        `json:"speed"`
-  BattleState       int        `json:"battleState"`
-	LastMoveGmtMillis int        `json:"lastMoveGmtMillis"`
-	Name              string     `json:"name" db:"name"`
-	DisplayName       NullString `json:"displayName" db:"display_name"`
-	CreatedAt         int64      `json:"-" db:"created_at"`
-	UpdatedAt         int64      `json:"-" db:"updated_at"`
-	DeletedAt         NullInt64  `json:"-" db:"deleted_at"`
-	TutorialStage     int        `json:"-" db:"tutorial_stage"`
+	ID                int           `json:"id" db:"id"`
+	X                 float64       `json:"x"`
+	Y                 float64       `json:"y"`
+	Dir               Direction     `json:"dir"`
+	Speed             int           `json:"speed"`
+	BattleState       int           `json:"battleState"`
+	LastMoveGmtMillis int           `json:"lastMoveGmtMillis"`
+	Name              string        `json:"name" db:"name"`
+	DisplayName       NullString    `json:"displayName" db:"display_name"`
+	CreatedAt         int64         `json:"-" db:"created_at"`
+	UpdatedAt         int64         `json:"-" db:"updated_at"`
+	DeletedAt         NullInt64     `json:"-" db:"deleted_at"`
+	TutorialStage     int           `json:"-" db:"tutorial_stage"`
+	CollidableBody    *box2d.B2Body `json:"-"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

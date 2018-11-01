@@ -84,7 +84,7 @@ func InitRoomHeapManager() {
 	RoomHeapMux = new(sync.Mutex)
 	// Init "pseudo class constants".
 	InitRoomBattleStateIns()
-  InitPlayerBattleStateIns()
+	InitPlayerBattleStateIns()
 	initialCountOfRooms := 5
 	pq := make(RoomHeap, initialCountOfRooms)
 	roomMap := make(RoomMap, initialCountOfRooms)
@@ -105,7 +105,7 @@ func InitRoomHeapManager() {
 			EffectivePlayerCount:   0,
 			BattleDurationNanos:    int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:              35,
-      Treasures:              make(map[int]*Treasure),
+			Treasures:              make(map[int]*Treasure),
 		}
 		roomMap[pq[i].ID] = pq[i]
 	}
