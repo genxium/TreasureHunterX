@@ -34,5 +34,13 @@
     "orientation": "landscape"
   },
   "xxteaKey": "4d54a3d5-e6f3-49",
-  "zipCompressJs": true
+  "zipCompressJs": true,
+  "android-instant": {
+    "REMOTE_SERVER_ROOT": "",
+    "pathPattern": "",
+    "scheme": "https",
+    "host": "",
+    "skipRecord": false,
+    "recordPath": ""
+  }
 }

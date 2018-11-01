@@ -16,6 +16,10 @@ cc.Class({
       const self = this;
       const canvasNode = self.node;
       const mapNode = self.mapNode;
+  
+      if (0 < mapNode.getNumberOfRunningActions()) {
+        return;
+      }
 
       const mapScriptIns = self.mapNode.getComponent("Map");
       const selfPlayerNode = mapScriptIns.selfPlayerNode;
@@ -25,7 +29,7 @@ cc.Class({
       const canvasNodeScale = canvasNode.getScale();
       const targetPos = selfPlayerPosDiffInMapNode.mul(-1);  
       if (targetPos.x == mapNode.position.x && targetPos.y == mapNode.position.y) return;
-      mapNode.setPosition(targetPos);
+      mapNode.runAction(cc.moveTo(0.2 /* hardcoded, in seconds */, targetPos));
     }
 });
 
