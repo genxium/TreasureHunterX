@@ -558,7 +558,7 @@ cc.Class({
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
         targetNode.getComponent("SelfPlayer").mapNode = mapNode;
-        targetNode.getComponent("SelfPlayer").speed = 0; // A dirty fix to prevent jittering.
+        targetNode.getComponent("SelfPlayer").speed = cachedPlayerData.speed;
         self.otherPlayerNodeDict[playerId] = targetNode;
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
@@ -572,15 +572,34 @@ cc.Class({
         var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
         targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
       }
-      if (0 < targetNode.getNumberOfRunningActions()) {
-        // A significant trick to smooth the position sync performance!
-        continue;
-      }
       var oldPos = cc.v2(targetNode.x, targetNode.y);
       var toMoveByVec = newPos.sub(oldPos);
-      var durationSeconds = 0.1;
-      // const durationSeconds = toMoveByVec.mag()/cachedPlayerData.speed; // WARNING: To interpolate in a smooth manner, DON'T just assign `dt` to `durationSeconds` here!
-      targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+      var toMoveByVecMag = toMoveByVec.mag();
+      var toTeleportDisThreshold = cachedPlayerData.speed * dt * 100;
+      var notToMoveDisThreshold = cachedPlayerData.speed * dt * 0.5;
+      if (toMoveByVecMag < notToMoveDisThreshold) {
+        targetNode.getComponent("SelfPlayer").activeDirection = {
+          dx: 0,
+          dy: 0
+        };
+      } else {
+        if (toMoveByVecMag >= toTeleportDisThreshold) {
+          cc.log("Player " + cachedPlayerData.id + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
+          targetNode.getComponent("SelfPlayer").activeDirection = {
+            dx: 0,
+            dy: 0
+          };
+          // TODO: Use `cc.Action`?
+          targetNode.setPosition(newPos);
+        } else {
+          // The common case which is suitable for interpolation.
+          var normalizedDir = {
+            dx: toMoveByVec.x / toMoveByVecMag,
+            dy: toMoveByVec.y / toMoveByVecMag
+          };
+          targetNode.getComponent("SelfPlayer").activeDirection = normalizedDir;
+        }
+      }
     }
 
     for (var _k2 in self.treasureInfoDict) {
@@ -605,8 +624,8 @@ cc.Class({
       }
       var _oldPos = cc.v2(_targetNode.x, _targetNode.y);
       var _toMoveByVec = _newPos.sub(_oldPos);
-      var _durationSeconds = dt; // Using `dt` temporarily!
-      _targetNode.runAction(cc.moveTo(_durationSeconds, _newPos));
+      var durationSeconds = dt; // Using `dt` temporarily!
+      _targetNode.runAction(cc.moveTo(durationSeconds, _newPos));
     }
 
     // Coping with removed players.

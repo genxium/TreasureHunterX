@@ -644,24 +644,24 @@
     "meta": 1541082046421,
     "relativePath": "scripts/SelfPlayer.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1541121466174,
-    "meta": 1541121584854,
-    "relativePath": "scripts/Map.js"
-  },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
     "asset": 1541121604686,
     "meta": 1541121606579,
     "relativePath": "scripts/TouchEventsManager.js"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1541121933552,
-    "meta": 1541121933579,
-    "relativePath": "scenes/login.fire"
-  },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
     "asset": 1541121929835,
     "meta": 1541121932939,
     "relativePath": "scripts/BasePlayer.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1541124378032,
+    "meta": 1541124378057,
+    "relativePath": "scenes/login.fire"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1541124373036,
+    "meta": 1541124377319,
+    "relativePath": "scripts/Map.js"
   }
 }
