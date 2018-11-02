@@ -86,8 +86,8 @@ cc.Class({
   onLoad() {
     this.cachedStickHeadPosition = cc.v2(0.0, 0.0);
     this.activeDirection = {
-      dPjX: 0.0,
-      dPjY: 0.0
+      dx: 0.0,
+      dy: 0.0
     };
     this.maxHeadDistance = (0.5 * this.base.width);
 
@@ -282,14 +282,18 @@ cc.Class({
     const eps = this.joyStickEps;
 
     if (Math.abs(this.cachedStickHeadPosition.x) < eps && Math.abs(this.cachedStickHeadPosition.y) < eps) {
-      this.activeDirection.dPjX = 0;
-      this.activeDirection.dPjY = 0;
+      this.activeDirection.dx = 0;
+      this.activeDirection.dy = 0;
       return;
     }
 
-    const res = this.discretizeDirection(this.cachedStickHeadPosition.x, this.cachedStickHeadPosition.y, eps);
-    this.activeDirection.dPjX = res.dx;
-    this.activeDirection.dPjY = res.dy;
+    // TODO: Really normalize the following `normalizedDir`.
+    const cachedStickHeadPositionMag = this.cachedStickHeadPosition.mag(); 
+    const normalizedDir = {
+      dx: this.cachedStickHeadPosition.x/cachedStickHeadPositionMag,
+      dy: this.cachedStickHeadPosition.y/cachedStickHeadPositionMag,
+    }; 
+    this.activeDirection = normalizedDir;
   },
 
   discretizeDirection(continuousDx, continuousDy, eps) {
@@ -322,5 +326,5 @@ cc.Class({
       }
     }
     return ret;
-  }
+  },
 });

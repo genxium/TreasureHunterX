@@ -93,6 +93,11 @@ cc.Class({
     ) return;
     const upsyncFrameData = {
       id: instance.selfPlayerInfo.id,
+      /**
+      * WARNING
+      *
+      * Deliberately NOT upsyncing the `instance.selfPlayerScriptIns.activeDirection` here, because it'll be deduced by other players from the position differences of `RoomDownsyncFrame`s.
+      */
       dir: {
         dx: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dx),
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy),
@@ -341,14 +346,7 @@ cc.Class({
 
     instance.inputControlTimer = setInterval(function() {
       if (false == instance._inputControlEnabled) return;
-
-      const newScheduledDirectionInWorldCoordinate = {
-        dx: ctrl.activeDirection.dPjX,
-        dy: ctrl.activeDirection.dPjY
-      };
-
-      const newScheduledDirectionInLocalCoordinate = newScheduledDirectionInWorldCoordinate;
-      instance.selfPlayerScriptIns.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+      instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;  
     }, inputControlPollerMillis);
   },
 

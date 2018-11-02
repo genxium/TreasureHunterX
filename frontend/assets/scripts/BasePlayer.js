@@ -55,6 +55,9 @@ module.export = cc.Class({
 
   onLoad() {
     const self = this;
+    const canvasNode = self.mapNode.parent;
+    const joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
+    self.ctrl = joystickInputControllerScriptIns;
     self.animComp = self.node.getComponent(cc.Animation);
     self.animComp.play();
   },
@@ -163,7 +166,7 @@ module.export = cc.Class({
       return false;
     }
 
-    const currentSelfColliderCircle = self.node.getComponent("cc.CircleCollider");
+    const currentSelfColliderCircle = self.node.getComponent(cc.CircleCollider);
     let nextSelfColliderCircle = null;
     if (0 < self.contactedBarriers.length || 0 < self.contactedNPCPlayers.length) {
       /* To avoid unexpected buckling. */
@@ -205,7 +208,7 @@ module.export = cc.Class({
 
   _calculateVecToMoveBy(elapsedTime) {
     const self = this;
-    const sDir = self.scheduledDirection;
+    const sDir = self.activeDirection;
 
     if (0 == sDir.dx && 0 == sDir.dy) {
       return cc.v2();
@@ -231,8 +234,11 @@ module.export = cc.Class({
 
   lateUpdate(dt) {
     const self = this;
+    if (0 != self.activeDirection.dx || 0 != self.activeDirection.dy) {
+      const newScheduledDirectionInLocalCoordinate = self.ctrl.discretizeDirection(self.activeDirection.dx, self.activeDirection.dy, self.eps);
+      self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+    }
     const now = new Date().getTime();
-    self.activeDirection = self.scheduledDirection;
     self.lastMovedAt = now;
   },
 
@@ -286,48 +292,6 @@ module.export = cc.Class({
       default:
         break;
     }
-  },
-
-  _discretizeDirection(proposedContinuousDirection) {
-    // Normalization? Is this step even needed when `self.speed` is not large?
-
-    // Discretization.
-    const sDir = {};
-    // 停留原地
-    if (Math.abs(proposedContinuousDirection.dx) < this.eps && Math.abs(proposedContinuousDirection.dy) < this.eps) {
-      sDir.dx = 0;
-      sDir.dy = 0;
-      return sDir;
-    }
-    if (Math.abs(proposedContinuousDirection.dx) < this.eps) {
-      sDir.dx = 0;
-      sDir.dy = proposedContinuousDirection.dy > 0 ? +1 : -1;
-    } else if (Math.abs(sDir.dy) < this.eps) {
-      sDir.dx = proposedContinuousDirection.dx > 0 ? +2 : -2;
-      sDir.dy = 0;
-    } else {
-      // 45度方向
-      const criticalRatio = proposedContinuousDirection.dy / proposedContinuousDirection.dx;
-      if (criticalRatio > this.magicLeanLowerBound && criticalRatio < this.magicLeanUpperBound) {
-        // 一三象限
-        sDir.dx = proposedContinuousDirection.dx > 0 ? +2 : -2;
-        sDir.dy = proposedContinuousDirection.dx > 0 ? +1 : -1;
-      } else if (criticalRatio > -this.magicLeanUpperBound && criticalRatio < -this.magicLeanLowerBound) {
-        // 二四象限
-        sDir.dx = proposedContinuousDirection.dx > 0 ? +2 : -2;
-        sDir.dy = proposedContinuousDirection.dx > 0 ? -1 : +1;
-      } else {
-        // 上下左右四个方向(1即是45度方向)
-        if (Math.abs(criticalRatio) < 1) {
-          sDir.dx = proposedContinuousDirection.dx > 0 ? +2 : -2;
-          sDir.dy = 0;
-        } else {
-          sDir.dx = 0;
-          sDir.dy = proposedContinuousDirection.dy > 0 ? +1 : -1;
-        }
-      }
-    }
-    return sDir;
   },
 
   _generateRandomDirection() {

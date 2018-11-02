@@ -329,11 +329,6 @@
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
-  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
-    "asset": 1539182620489,
-    "meta": 1539241826160,
-    "relativePath": "scripts/BasePlayer.js"
-  },
   "247b7613-6c6e-4f01-b1d6-5f8f041b5688": {
     "asset": 1539182620496,
     "meta": 1539241826393,
@@ -634,20 +629,10 @@
     "meta": 1541064722682,
     "relativePath": "scripts/TileCollisionManagerSingleton.js"
   },
-  "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
-    "asset": 1541062896750,
-    "meta": 1541064722744,
-    "relativePath": "scripts/TouchEventsManager.js"
-  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
     "asset": 1541062896751,
     "meta": 1541064722753,
     "relativePath": "scripts/WsSessionMgr.js"
-  },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1541081834473,
-    "meta": 1541081834488,
-    "relativePath": "scenes/login.fire"
   },
   "78830fc7-4e25-49a1-a7fc-9f9d3883f278": {
     "asset": 1541080627231,
@@ -660,8 +645,23 @@
     "relativePath": "scripts/SelfPlayer.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1541082178628,
-    "meta": 1541082181150,
+    "asset": 1541121466174,
+    "meta": 1541121584854,
     "relativePath": "scripts/Map.js"
+  },
+  "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
+    "asset": 1541121604686,
+    "meta": 1541121606579,
+    "relativePath": "scripts/TouchEventsManager.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1541121933552,
+    "meta": 1541121933579,
+    "relativePath": "scenes/login.fire"
+  },
+  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
+    "asset": 1541121929835,
+    "meta": 1541121932939,
+    "relativePath": "scripts/BasePlayer.js"
   }
 }
