@@ -24,35 +24,35 @@ cc.Class({
     },
     tiledAnimPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     selfPlayerPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     treasurePrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     npcPlayerPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     type2NpcPlayerPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     barrierPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     shelterPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     shelterZReducerPrefab: {
       type: cc.Prefab,
-      default: null, 
+      default: null,
     },
     keyboardInputControllerNode: {
       type: cc.Node,
@@ -85,12 +85,12 @@ cc.Class({
   },
 
   _onPerUpsyncFrame() {
-    const instance = this; 
+    const instance = this;
     if (
       null == instance.selfPlayerInfo ||
       null == instance.selfPlayerScriptIns ||
       null == instance.selfPlayerScriptIns.scheduledDirection
-    ) return;
+      ) return;
     const upsyncFrameData = {
       id: instance.selfPlayerInfo.id,
       /**
@@ -103,14 +103,14 @@ cc.Class({
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy),
       },
       x: parseFloat(instance.selfPlayerNode.x),
-      y: parseFloat(instance.selfPlayerNode.y), 
+      y: parseFloat(instance.selfPlayerNode.y),
     };
     const wrapped = {
       msgId: Date.now(),
       act: "PlayerUpsyncCmd",
-      data: upsyncFrameData, 
+      data: upsyncFrameData,
     }
-    window.sendSafely(JSON.stringify(wrapped)); 
+    window.sendSafely(JSON.stringify(wrapped));
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -151,12 +151,13 @@ cc.Class({
 
   alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const millisToGo = 3000;
-    mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo/1000));
+    mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo / 1000));
     setTimeout(() => {
       mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
 
+  //onLoad
   onLoad() {
     const self = this;
     self.lastRoomDownsyncFrameId = 0;
@@ -188,11 +189,11 @@ cc.Class({
 
     window.handleClientSessionCloseOrError = function() {
       self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
-    }; 
+    };
 
     initPersistentSessionClient(() => {
       self.state = ALL_MAP_STATES.VISUAL;
-      const tiledMapIns = self.node.getComponent(cc.TiledMap); 
+      const tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
@@ -200,39 +201,39 @@ cc.Class({
       this._inputControlEnabled = false;
       self.setupInputControls();
 
-      const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node); 
+      const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
       for (let frameAnim of boundaryObjs.frameAnimations) {
-        const animNode = cc.instantiate(self.tiledAnimPrefab);  
-        const anim = animNode.getComponent(cc.Animation); 
+        const animNode = cc.instantiate(self.tiledAnimPrefab);
+        const anim = animNode.getComponent(cc.Animation);
         animNode.setPosition(frameAnim.posInMapNode);
         animNode.width = frameAnim.sizeInMapNode.width;
         animNode.height = frameAnim.sizeInMapNode.height;
-        animNode.setScale(frameAnim.sizeInMapNode.width/frameAnim.origSize.width, frameAnim.sizeInMapNode.height/frameAnim.origSize.height);
+        animNode.setScale(frameAnim.sizeInMapNode.width / frameAnim.origSize.width, frameAnim.sizeInMapNode.height / frameAnim.origSize.height);
         animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
-        safelyAddChild(self.node, animNode);  
-        setLocalZOrder(animNode, 5);  
+        safelyAddChild(self.node, animNode);
+        setLocalZOrder(animNode, 5);
         anim.addClip(frameAnim.animationClip, "default");
         anim.play("default");
-      } 
+      }
 
       self.barrierColliders = [];
       for (let boundaryObj of boundaryObjs.barriers) {
         const newBarrier = cc.instantiate(self.barrierPrefab);
-        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
+        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
         newBarrier.setPosition(newBoundaryOffsetInMapNode);
         newBarrier.setAnchorPoint(cc.v2(0, 0));
-        const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider); 
+        const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
         newBarrierColliderIns.points = [];
         for (let p of boundaryObj) {
-          newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
-        }  
+          newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+        }
         self.barrierColliders.push(newBarrierColliderIns);
         self.node.addChild(newBarrier);
       }
 
       const allLayers = tiledMapIns.getLayers();
       for (let layer of allLayers) {
-        const layerType = layer.getProperty("type"); 
+        const layerType = layer.getProperty("type");
         switch (layerType) {
           case "normal":
             setLocalZOrder(layer.node, 0);
@@ -245,9 +246,9 @@ cc.Class({
         }
       }
 
-      const allObjectGroups = tiledMapIns.getObjectGroups(); 
+      const allObjectGroups = tiledMapIns.getObjectGroups();
       for (let objectGroup of allObjectGroups) {
-        const objectGroupType = objectGroup.getProperty("type"); 
+        const objectGroupType = objectGroup.getProperty("type");
         switch (objectGroupType) {
           case "barrier_and_shelter":
             setLocalZOrder(objectGroup.node, 3);
@@ -265,14 +266,14 @@ cc.Class({
 
       for (let boundaryObj of boundaryObjs.sheltersZReducer) {
         const newShelter = cc.instantiate(self.shelterZReducerPrefab);
-        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y); 
+        const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
         newShelter.setPosition(newBoundaryOffsetInMapNode);
         newShelter.setAnchorPoint(cc.v2(0, 0));
-        const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider); 
+        const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
         newShelterColliderIns.points = [];
         for (let p of boundaryObj) {
-          newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode)); 
-        }  
+          newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+        }
         self.node.addChild(newShelter);
       }
       window.handleRoomDownsyncFrame = function(roomDownsyncFrame) {
@@ -287,7 +288,7 @@ cc.Class({
           self.onBattleStopped();
           return;
         }
-        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos/1000000000).toString();
+        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
         const sentAt = roomDownsyncFrame.sentAt;
         const refFrameId = roomDownsyncFrame.refFrameId;
         const players = roomDownsyncFrame.players;
@@ -297,26 +298,26 @@ cc.Class({
           const k = playerIdStrList[i];
           const playerId = parseInt(k);
           if (playerId == self.selfPlayerInfo.id) {
-            const immediateSelfPlayerInfo = players[k]; 
+            const immediateSelfPlayerInfo = players[k];
             Object.assign(self.selfPlayerInfo, {
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
-              speed: immediateSelfPlayerInfo.speed, 
+              speed: immediateSelfPlayerInfo.speed,
               battleState: immediateSelfPlayerInfo.battleState,
             });
             continue;
           }
-          const anotherPlayer = players[k]; 
+          const anotherPlayer = players[k];
           // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
-          self.otherPlayerCachedDataDict[playerId] = anotherPlayer; 
-        } 
+          self.otherPlayerCachedDataDict[playerId] = anotherPlayer;
+        }
         self.treasureInfoDict = {};
         const treasures = roomDownsyncFrame.treasures;
         const treasuresLocalIdStrList = Object.keys(treasures);
         for (let i = 0; i < treasuresLocalIdStrList.length; ++i) {
           const k = treasuresLocalIdStrList[i];
           const treasureLocalIdInBattle = parseInt(k);
-          const treasureInfo = treasures[k]; 
+          const treasureInfo = treasures[k];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
         if (0 == self.lastRoomDownsyncFrameId) {
@@ -328,8 +329,8 @@ cc.Class({
           self.onBattleStarted();
         }
         self.lastRoomDownsyncFrameId = frameId;
-        // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
-        // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
+      // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
+      // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
     });
   },
@@ -346,12 +347,12 @@ cc.Class({
 
     instance.inputControlTimer = setInterval(function() {
       if (false == instance._inputControlEnabled) return;
-      instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;  
+      instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;
     }, inputControlPollerMillis);
   },
 
   enableInputControls() {
-    this._inputControlEnabled = true; 
+    this._inputControlEnabled = true;
   },
 
   disableInputControls() {
@@ -394,10 +395,10 @@ cc.Class({
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     if (null != window.boundRoomId) {
-      self.boundRoomIdLabel.string = window.boundRoomId;  
+      self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
-      self.selfPlayerIdLabel.string = self.selfPlayerInfo.id; 
+      self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
     }
     let toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
@@ -407,9 +408,9 @@ cc.Class({
 
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
-      const cachedPlayerData = self.otherPlayerCachedDataDict[playerId]; 
+      const cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
       const newPos = cc.v2(
-        cachedPlayerData.x, 
+        cachedPlayerData.x,
         cachedPlayerData.y
       );
       let targetNode = self.otherPlayerNodeDict[playerId];
@@ -426,16 +427,16 @@ cc.Class({
       if (null != toRemovePlayerNodeDict[playerId]) {
         delete toRemovePlayerNodeDict[playerId];
       }
-      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) { 
-        const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);  
-        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
+      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
+        const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
       }
       const oldPos = cc.v2(
         targetNode.x,
         targetNode.y
       );
       const toMoveByVec = newPos.sub(oldPos);
-      const toMoveByVecMag = toMoveByVec.mag(); 
+      const toMoveByVecMag = toMoveByVec.mag();
       const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
       const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
       if (toMoveByVecMag < notToMoveDisThreshold) {
@@ -455,19 +456,19 @@ cc.Class({
         } else {
           // The common case which is suitable for interpolation.
           const normalizedDir = {
-            dx: toMoveByVec.x/toMoveByVecMag,
-            dy: toMoveByVec.y/toMoveByVecMag,
+            dx: toMoveByVec.x / toMoveByVecMag,
+            dy: toMoveByVec.y / toMoveByVecMag,
           };
-          targetNode.getComponent("SelfPlayer").activeDirection = normalizedDir; 
+          targetNode.getComponent("SelfPlayer").activeDirection = normalizedDir;
         }
-      } 
+      }
     }
 
     for (let k in self.treasureInfoDict) {
       const treasureLocalIdInBattle = parseInt(k);
-      const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle]; 
+      const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
       const newPos = cc.v2(
-        treasureInfo.pickupBoundary.anchor.x, 
+        treasureInfo.pickupBoundary.anchor.x,
         treasureInfo.pickupBoundary.anchor.y
       );
       let targetNode = self.treasureNodeDict[treasureLocalIdInBattle];
@@ -484,7 +485,7 @@ cc.Class({
       }
       if (0 < targetNode.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
-        continue; 
+        continue;
       }
       const oldPos = cc.v2(
         targetNode.x,
@@ -515,7 +516,7 @@ cc.Class({
     self.state = s;
   },
 
-  logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+  logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/ , shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const localClearance = function() {
       if (byClick) {
         /**
@@ -553,9 +554,7 @@ cc.Class({
             localClearance();
           }
         });
-      } catch (e) {
-
-      } finally {
+      } catch (e) {} finally {
         // For Safari (both desktop and mobile).
         localClearance();
       }
@@ -582,4 +581,3 @@ cc.Class({
     self.enableInputControls();
   },
 });
-
