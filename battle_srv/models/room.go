@@ -268,7 +268,12 @@ func (pR *Room) StartBattle() {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
-
+  //hardCode startAt
+	for _, player := range pR.Players {
+				player.X = -12.125
+        player.Y = 2942.425
+	}
+  Logger.Info("------");
 	pR.InitTreasures()
 	pR.InitColliders()
 

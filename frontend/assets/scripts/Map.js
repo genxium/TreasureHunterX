@@ -380,7 +380,16 @@ cc.Class({
   spawnSelfPlayer() {
     const instance = this;
     const newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
-    newPlayerNode.setPosition(cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y));
+    const tiledMapIns = instance.node.getComponent(cc.TiledMap);
+    //读取标记
+    let npcStartAtPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y)
+    const startAtObjLayer = tiledMapIns.getObjectGroup("Type2NPCStartAt");
+    if (startAtObjLayer) {
+      const startAtObj = startAtObjLayer.getObject("selfPlayer");
+      const startAtPostionWrtMapNode = tileCollisionManager.continuousObjLayerOffsetToContinuousMapNodePos(instance.node, startAtObj.offset);
+      npcStartAtPos = cc.v2(startAtPostionWrtMapNode.x, startAtPostionWrtMapNode.y);
+    }
+    newPlayerNode.setPosition(npcStartAtPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
     instance.node.addChild(newPlayerNode);

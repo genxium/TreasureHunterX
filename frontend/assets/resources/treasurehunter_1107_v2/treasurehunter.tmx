@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="200" height="200" tilewidth="64" tileheight="64" infinite="0" nextobjectid="19">
+ <tileset firstgid="1" source="tile_1.tsx"/>
+ <tileset firstgid="10" source="treasure.tsx"/>
+ <tileset firstgid="12" source="E:/动画/map/treasurehunter/tile_1.tsx"/>
+ <layer name="tile_1 floor" width="200" height="200">
+  <properties>
+   <property name="type" value="normal"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt08GO2zgARMGZ///pnAwYwdiWbYndJKsAYg/JxpTU7+cHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAByfh8c2N2jNrTC7o62oQ928k4XGmEnn7ahEVb3bRsaYVVntaERVnN2GxphFVe1oRFmd3UbOmFGI7vQCDNJtaER2qXb0Ait0k1ohFbpFjRCq3QDGqFVevv6oFV69zqhVXrrGqFVeuMaoVF61xqhVXrPGqFZessaoVF6v/qgWXq/GqFVercaoVF6q/qgWXqrGqFVeqPpA4+kt9lw4C/pXTYduJfeY9uBm/QWWw+kN9h+2Fd6ezMc9pTe3SyHPaV3N8thP+nNzXjYQ3pnsx7WN9vG0vfVyD5m31b6/hpZ14qbWu15yEi3cfWeVnwmxkh3MWpHKz8b19mhjZtdnpNzNLZx9QYbn5k+TTsZub/0c2ukX9M+EvtLP79GeqV3cb+N1P7Sz6+RTuk9NO0vfTeNdEnvoGl36btppEv6+zduLn0/jXRIf/fGvaXvpo8O6e+d/v3G96KRDi3fOv37je9GI1lN3zj9+43vRx85Td+34Q5t70cbOU3ft+EObe9HHzlN37bhDm3vRx85Td+14Q5t70cbOU3fteEObe9HHzlN37TlHi130kZe2zd1F320aPue7qKPFo3fsuU+6a1rI6/xezbdKb15bWQ1ftPZtpa+rz6u0/hNZ9zaTHfluLYdptuYrRGu1bjBdBuP7th2d67Xsr2WO53xDNpYx47bmv05GGuXXY16Dm2spWVXybtog0datjXiLmf+TurujLVLH2f/VurejLVrH9/8XvLOjLVLH2dte9R96ZDqY8ZGRt2THm19jLjTu78z8n70aWvk03/nk9/UBq8k+/i2kXf/v3f+/sj3RLe2Pl7d6dNneOfvj3o/9Ev2ccZGPvkNbXBUuo9vtvLNv68Njkr38clmzvj3H/1Z03OSl27j6H5+7/571S61wf/STTS0d/V7YG7p7aY70QXPpDebbGR0i8wnvddUI7rgiPRWVzqsJ72pVQ7rSm9r9sPa0vua+bC+9MZmPewjvbUZD3tJ722Ww57Su5vhsK/09toPpDfYeuAmvcW2A/fSe2w68Jf0LlsOPJPepzZol96pLmiX3qw+aJferS6YQXrH2qBdes/6oF1609pgBul9a4MZpLeuC5qlN68N2qW3rw/apfevC9qlW9AG7dJNaIN22oDn9AHP6QJe0wY8pw14ThfwmjbgNW3AcXoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA8/wDyLQgPQ==
+  </data>
+ </layer>
+ <layer name="tile_1 human skeleton" width="200" height="200">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt3Elu40AQBECd9P8nDwzOHESMLIpsdtcSAfhOVmZ6AWw/HgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwzfPvB/DqufsANvtN2Ahs3m3BRuju0wZshK6Odt9G6ObbztsIXZztuo1Q3dWO2whVjeq2jVDN6E7bCFXc1WUbIbu7O2wjZDWzu3ZCJiv6aiNksLKnNkJkEfoZ4RlgL1IvIz0LROxjxGein8g9jPxs1Be9f/5el1Wy9M5GmC1j3zI+M/lk7lnmZye+Cv2q8A7EU6lXld6F9Sr2qeI7MV/lHlV+N+7XoT8d3pHxuvSmy3syTrfOdHtfzuvcla7vzTGdt/Gj+/vznm5s3IE9nXjlHvzwu63vuU1v8j/GjXqS+3Fu1Yu8v+dmPcj5HN+P1iff69ywHp/7xnk+3LMSWd7DXWuQ4b3cNy/ZzeHO+chsLvfOQ1ZruHt8MlrDz+vxyWcN24hPPmu4e3wyWsPXjRzkM59t5CCj+WwjD1nN5d75yGwOd85Ldvdy3/xkeA93rUOWY7lnLfIcx99C1STT62yjPvmeYxs9yPl7btaPvI+xjb7k/jvbQP7/Zxv8owevbIM9XdjYBu9074Rt8EnXbtgGR3XriG3wrS5dsQ3Oqt4Z2+Cqqt2xDUap1iG7YKRKffJ1gztU6JRtcKfM3bINZsnWMdtgtixdswtWid4722C1qP2zDaKI1kPbIJoofbQNolrdS9sgulX9tA2ymN1T2yCbWX21DbK6u7e2QXZ39dc2qGJ0j22Dakb12S6o6mq3bYPqznbcNuji267bBt0c7bxt0NWn7tsG3b3bgG3AZr8F24BX/ocC/M42AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAODx+AN0bAtT
+  </data>
+ </layer>
+ <layer name="tile_1 board" width="200" height="200">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt3M1uhCAUBtDZzPu/chfdNA0iyL0ges5mEkfBJnzKX+fzAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAID3+q6+Abg5GYG6/xmRGfj1PfiEt/PegDJZgDLZAAAAAGAXR+uDZ5/wdFezITM83dU2LSM83WhblhGeKqsNywi7y267MsKujtps9FhcRtjN0T72rPkqGWEXrdnoLU9G2F3W/z/1ZgQyjTyLs57jMsJTrJ7TlREy3bkvLxu8zdUxe1R50CPj/XG2HjJaztXyIFrUHO3Z8d76ZYMZau+P3ndLbybOyq/VKx+s8v3kP+cj+k4yQrZSDqKy0fr9letkg9kystF7Xsv5ssFsmdnoPV82uJMZ2ei5l9l1Qo1sQNnVfbhZexKz65IzWo2uvc3ISEZ7XvX3sY9Ze0BGyslsnzLCkbNs9Lad0TY0Oxu9dcjI+0T3rTIzcvYZXW/P9zxP1rhjt4yM7P9iL1Hjhtbn6Yo53pnXyMbzZD//o/tUrfX8PR7xrJeN95n1/hg9v7fc0vtq5N5l47my2/Sqcs7K75nfGsmIbOzvqI8z2rbvlo3se5jVV2S+o0zMnn9aPR4ZvYfsuQbWucv6RU8bi95jFfE3yMb7XB2Djmak5ZyojOgfkWlm++qpy9iB1VaMraMyIhvMEDUPFlFn7dzauodskGmnjMgGM531sTLX0XvnvGSDFaIyMjLHe3atbLDS1YxcWaPsbeuywR20ZqC2Z7BWTq3M1nuSDVbqzUjr9bVz9KnYyYz187PjssGdzZi3OjouG+ygddwRuR9QNthJRjb+l331e7ijyHa7Yg8Y7ESfCupm7PmCnckGAAAAAMD+zPVCmbVCKJMNqJMNKJMNKJMNKJMNKJMNKJMNKJMNKJMNKJMN3spv9kCd3+yBOr/ZA3X2GkKdbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADRfgCNOQit
+  </data>
+ </layer>
+ <layer name="tile_1 blue mogu" width="200" height="200">
+  <properties>
+   <property name="type" value="One off Treasure"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt3LENAEAIAzE69t+YEV5fIJCwJ0h7TSIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHjJ6QEAAACwgD4GAAAu0UAAAADQQ3MDAAAAAAAAAAAAAAAAAAAAAACwnc8sAAAAAAAAAAAAAAAAAAAA4DLfCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAjwIfUQAr
+  </data>
+ </layer>
+ <layer name="tile_1 red mogu" width="200" height="200">
+  <properties>
+   <property name="type" value="One off Treasure"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt3TEOgCAMBVBH739iByeIiJoYSnlvMU7W2C8woNsGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAG3vnHAAAAAAAAAAAAAAAAAAAAAAAAIAYfC8OvpEdgDV5/8O1vToCJRmBUut/BjLC6lpZkA041RkxfkBJNuDU6n3ZAAAyGDWXMYeC3GQ8P88YYpk9k7PXDzU9zVNReiVKHV/NXj99o5/xiOuPvmcAgKfMW+BelIxEqQNqehMAAMjIWofV9fbjAgAAAAAAAAAAAAAAAABAdvbWAvCGcQMAAPiL9QYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMC6DvxrAYE=
+  </data>
+ </layer>
+ <layer name="tile_1 stone" width="200" height="200">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt3EEOgjAQQFFD4v2v7IK4gJShkUKn9r2NO2Ax31pUXi8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGq9e18ABJaO59YGlGmDEfRYP7QBZdpgJD33H0cyXhMAWxnfqzNeE7Rgtvkny+41y7Egi5ZtXD2mtsjkjjZaHht6ubONlueAEdXOvkaYjTYgZvYhphGI1Tbit4nM6uy7wSxtWO9orXa2s7fxpRFauzrjWRrRBlllaQSy0gjENMKonvp8rhFG8/Te9awRe2lmZx0BAAAA4BfurULsiUZ0yMiOnmtlrmGlCQAAAAAAAAAAAAAAAAAAuM7/dZlV7exrhFmdzb42mN3Rs0+0Aat9I9qALW1AmTYgpg0o0wazO2pAG7ByDxdi9uIQ0wYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABl8AL33AOA=
+  </data>
+ </layer>
+ <objectgroup name="barrier">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <object id="15" x="2548" y="6604">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 3644,-3716 3316,-3972 -244,-308 -80,-72"/>
+  </object>
+  <object id="16" x="5708" y="3116">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 3268,3124 3468,2900 220,-236 96,-104"/>
+  </object>
+  <object id="17" x="2356" y="6644">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 3224,2968 3344,2848 288,-296 68,-124"/>
+  </object>
+  <object id="18" x="5224" y="9648">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 160,152 3992,-3568 3764,-3772 24,-104"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Type2NPCStartAt">
+  <object id="13" name="selfPlayer" x="4725.45" y="5069.7">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Type2NPCPatrolSrc">
+  <object id="9" name="pt_prefab" x="4710.3" y="5012.12">
+   <properties>
+    <property name="type" value="anchor"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="frame anim">
+  <properties>
+   <property name="type" value="frame_anim"/>
+  </properties>
+  <object id="6" gid="10" x="5448" y="5768" width="128" height="128"/>
+ </objectgroup>
+</map>

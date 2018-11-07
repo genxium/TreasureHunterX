@@ -43,7 +43,6 @@ module.export = cc.Class({
     var self = this;
     self.contactedControlledPlayers = [];
     self.contactedNPCPlayers = [];
-    self.contactedBarriers = [];
     self.coveringShelterZReducers = [];
 
     self.computedNewDifferentPosLocalToParentWithinCurrentFrame = null;
@@ -61,6 +60,7 @@ module.export = cc.Class({
   onLoad: function onLoad() {
     var self = this;
     var canvasNode = self.mapNode.parent;
+    self.contactedBarriers = [];
     var joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
     self.ctrl = joystickInputControllerScriptIns;
     self.animComp = self.node.getComponent(cc.Animation);
@@ -125,6 +125,9 @@ module.export = cc.Class({
   },
   _addContactedBarrier: function _addContactedBarrier(collider) {
     var self = this;
+    if (!self.contactedBarriers) {
+      cc.log("self.contactedBarriers is null or undefined" + self.contactedBarriers);
+    }
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
     var _iteratorError2 = undefined;

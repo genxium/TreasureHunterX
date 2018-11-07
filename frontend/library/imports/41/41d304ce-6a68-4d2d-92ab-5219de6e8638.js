@@ -157,6 +157,9 @@ cc.Class({
       mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
+
+
+  //onLoad
   onLoad: function onLoad() {
     var _this = this;
 
@@ -525,7 +528,16 @@ cc.Class({
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;
     var newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
-    newPlayerNode.setPosition(cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y));
+    var tiledMapIns = instance.node.getComponent(cc.TiledMap);
+    //读取标记
+    var npcStartAtPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y);
+    var startAtObjLayer = tiledMapIns.getObjectGroup("Type2NPCStartAt");
+    if (startAtObjLayer) {
+      var startAtObj = startAtObjLayer.getObject("selfPlayer");
+      var startAtPostionWrtMapNode = tileCollisionManager.continuousObjLayerOffsetToContinuousMapNodePos(instance.node, startAtObj.offset);
+      npcStartAtPos = cc.v2(startAtPostionWrtMapNode.x, startAtPostionWrtMapNode.y);
+    }
+    newPlayerNode.setPosition(npcStartAtPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
     instance.node.addChild(newPlayerNode);

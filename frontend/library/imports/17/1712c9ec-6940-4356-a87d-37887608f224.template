@@ -5,14 +5,14 @@ if (CC_DEBUG) {
     PROTOCOL: 'http',
     HOST: 'localhost',
     PORT: "9992",
-    WS_PATH_PREFIX: "/cuisineconn",
+    WS_PATH_PREFIX: "/tsrht",
   };
 } else {
   var backendAddress = {
     PROTOCOL: 'https',
-    HOST: 'mapdemo.red0769.com',
+    HOST: 'tsrht.lokcol.com',
     PORT: "443",
-    WS_PATH_PREFIX: "/cuisineconn",
+    WS_PATH_PREFIX: "/tsrht",
   };
 }
 window.language = "en";

@@ -37,7 +37,6 @@ module.export = cc.Class({
     const self = this;
     self.contactedControlledPlayers = [];
     self.contactedNPCPlayers = [];
-    self.contactedBarriers = [];
     self.coveringShelterZReducers = [];
 
     self.computedNewDifferentPosLocalToParentWithinCurrentFrame = null;
@@ -56,6 +55,7 @@ module.export = cc.Class({
   onLoad() {
     const self = this;
     const canvasNode = self.mapNode.parent;
+    self.contactedBarriers = [];
     const joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
     self.ctrl = joystickInputControllerScriptIns;
     self.animComp = self.node.getComponent(cc.Animation);
@@ -102,6 +102,9 @@ module.export = cc.Class({
 
   _addContactedBarrier(collider) {
     const self = this;
+    if (!self.contactedBarriers) {
+      cc.log("self.contactedBarriers is null or undefined" + self.contactedBarriers)
+    }
     for (let contactedBarrier of self.contactedBarriers) {
       if (contactedBarrier.id == collider.id) {
         return false;
@@ -194,16 +197,16 @@ module.export = cc.Class({
 
     return true;
 
-    /*
-     * In a subclass, use 
-     * 
-     * _canMoveBy(vecToMoveBy) {
-     *   BasePlayer.prototype._canMoveBy.call(this, vecToMoveBy);
-     *   // Customized codes.
-     * }
-     *
-     * Reference http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/class.html#override
-     */
+  /*
+   * In a subclass, use 
+   * 
+   * _canMoveBy(vecToMoveBy) {
+   *   BasePlayer.prototype._canMoveBy.call(this, vecToMoveBy);
+   *   // Customized codes.
+   * }
+   *
+   * Reference http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/class.html#override
+   */
   },
 
   _calculateVecToMoveBy(elapsedTime) {
@@ -246,7 +249,7 @@ module.export = cc.Class({
     const playerScriptIns = self.getComponent(self.node.name);
     switch (other.node.name) {
       case "NPCPlayer":
-        if("NPCPlayer" != self.node.name){
+        if ("NPCPlayer" != self.node.name) {
           other.node.getComponent('NPCPlayer').showProfileTrigger();
         }
         playerScriptIns._addContactedNPCPlayers(other);
