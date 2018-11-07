@@ -7,9 +7,9 @@ schema=tsrht
 [development]
 socket=/tmp/mysql.sock # Alternative for "Ubuntu16.04 + MySQL5.7" could be "/var/run/mysqld/mysqld.sock".
 user=root
-host=tsrht
+host=localhost
 allow-unsafe
 skip-alter-wrapper
 skip-alter-algorithm
 skip-alter-lock
-schema=cuisine_test
+schema=tsrht_test
