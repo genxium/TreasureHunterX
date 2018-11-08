@@ -9,22 +9,22 @@ gen-constants:
 
 ## ServerEnv == TEST部分 begins
 run-test: build
-	ServerEnv=TEST ./server
+	ServerEnv=TEST ./$(PROJECTNAME)
 
 run-test-and-hotreload:
-	ServerEnv=TEST CompileDaemon -log-prefix=false -build="go build"  -command="./server"
+	ServerEnv=TEST CompileDaemon -log-prefix=false -build="go build"  -command="./$(PROJECTNAME)"
 
 build:
-	go build -o $(ROOT_DIR)/server
+	go build -o $(ROOT_DIR)/$(PROJECTNAME)
 ## ServerEnv == TEST部分 ends
 
 ## ServerEnv == PROD部分 begins
 run-prod: build-prod
-	./server
+	./$(PROJECTNAME)
 
 ## build-prod: 可执行文件会被压缩，并新增版本号
 build-prod:
-	go build -ldflags "-s -w -X main.VERSION=$(shell git rev-parse --short HEAD)-$(shell date "+%Y%m%d-%H:%M:%S")" -o $(ROOT_DIR)/server
+	go build -ldflags "-s -w -X main.VERSION=$(shell git rev-parse --short HEAD)-$(shell date "+%Y%m%d-%H:%M:%S")" -o $(ROOT_DIR)/$(PROJECTNAME)
 ## ServerEnv == PROD部分 ends
 
 .PHONY: help
