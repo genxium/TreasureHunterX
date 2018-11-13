@@ -269,11 +269,14 @@ func (pR *Room) StartBattle() {
 		return
 	}
   //hardCode startAt
-	for _, player := range pR.Players {
-				player.X = -12.125
-        player.Y = 2942.425
-	}
-  Logger.Info("------");
+  var index = 0;
+  for _, player := range pR.Players {
+    tmp := loadTMX(index)
+    player.X = tmp.X 
+    player.Y = tmp.Y 
+    index++
+    Logger.Info("players",zap.Any("player",player))
+  }
 	pR.InitTreasures()
 	pR.InitColliders()
 
