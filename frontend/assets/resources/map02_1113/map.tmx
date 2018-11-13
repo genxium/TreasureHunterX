@@ -10,7 +10,6 @@
  <tileset firstgid="8" source="900x900.tsx"/>
  <tileset firstgid="12" source="256x256.tsx"/>
  <tileset firstgid="16" source="128x128.tsx"/>
- <tileset firstgid="32" source="900x900 03.tsx"/>
  <layer name=" background1" width="100" height="100">
   <data encoding="base64" compression="zlib">
    eJztzgENAAAIA6Dbv7Qx7iYkIAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAum3YAAAAAAAAAAAAAAAAAAJ5Z1BwAAg==
