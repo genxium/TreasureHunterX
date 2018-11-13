@@ -245,7 +245,7 @@
     "relativePath": "prefab/webview.prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1542107061000,
+    "asset": 1542108652000,
     "meta": 1541493575000,
     "relativePath": "plugin_scripts"
   },
@@ -255,7 +255,7 @@
     "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1542107604000,
+    "asset": 1542107995000,
     "meta": 1541493575000,
     "relativePath": "resources"
   },
@@ -320,7 +320,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1542100351000,
+    "asset": 1542108634000,
     "meta": 1541493575000,
     "relativePath": "scripts"
   },
@@ -610,12 +610,12 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542107072000,
-    "meta": 1542107445000,
+    "asset": 1542110223000,
+    "meta": 1542110223000,
     "relativePath": "scenes/login.fire"
   },
   "34cf879e-eae0-444b-9fb8-080c4f2e1b14": {
-    "asset": 1542106548000,
+    "asset": 1542109585000,
     "meta": 1542107441000,
     "relativePath": "resources/map02_1113"
   },
@@ -719,11 +719,6 @@
     "meta": 1542107443000,
     "relativePath": "resources/map02_1113/900x900.png"
   },
-  "7e5c4528-696b-41ca-8f09-320cfd5b6ace": {
-    "asset": 1542007456000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/900x900.psd"
-  },
   "46b249c2-cdba-41b3-a210-c4a8e86efcd8": {
     "asset": 1541751494000,
     "meta": 1542107443000,
@@ -740,7 +735,7 @@
     "relativePath": "resources/map02_1113/Buffet_01.tsx"
   },
   "f0cc205f-3537-42b4-bd82-d27e1c5bdb22": {
-    "asset": 1542106548000,
+    "asset": 1542109502000,
     "meta": 1542106548000,
     "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ"
   },
@@ -749,70 +744,25 @@
     "meta": 1542107443000,
     "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/128x128-02.png"
   },
-  "edbb8541-c193-46ee-a9ed-d2f934da02c1": {
-    "asset": 1542104830000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/128x128.psd"
-  },
   "0aeb2508-2db4-4867-a6a1-ac91f68af648": {
     "asset": 1541753530000,
     "meta": 1542107443000,
     "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/150x150.png"
-  },
-  "e6869465-84b8-4841-8885-c898b24f0ba9": {
-    "asset": 1541753540000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/150x150.psd"
-  },
-  "95b39dd4-c2a4-457d-83e4-e78ef7197b31": {
-    "asset": 1542104824000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/256x256.psd"
   },
   "b5fc4abc-a797-4a04-957f-f81b52d9adb0": {
     "asset": 1542104020000,
     "meta": 1542107443000,
     "relativePath": "resources/map02_1113/900x900 03.png"
   },
-  "c0222f6d-94f4-40b5-a731-9755f41d2b2d": {
-    "asset": 1541762556000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/900x900 02.psd"
-  },
-  "959b70b8-22d7-41ee-bfca-ab4dbca51dc0": {
-    "asset": 1542104822000,
-    "meta": 1542107443000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/900x900 03.psd"
-  },
   "c870db23-f5f4-48f5-9db5-6ec286b60151": {
     "asset": 1541753358000,
     "meta": 1542107444000,
     "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/900x900.png"
   },
-  "c16c972b-bc7a-4966-8452-91c295eadfdf": {
-    "asset": 1541762548000,
-    "meta": 1542107444000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/900x900.psd"
-  },
-  "ff97a5a5-799b-4986-a66b-f43d78aefd3d": {
-    "asset": 1541747332000,
-    "meta": 1542107444000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/Àÿ≤ƒ ‰≥ˆ05-128x128.psd"
-  },
-  "e01f79ce-d9eb-49ed-887f-e2e5d9a839a0": {
-    "asset": 1542104828000,
-    "meta": 1542107444000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/BG2.psd"
-  },
   "6db6edbe-f9e2-404d-af09-44a29f0befdd": {
     "asset": 1542100604000,
     "meta": 1542107444000,
     "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/900x900 03.png"
-  },
-  "18821c41-f40d-4c45-af02-0472c6f9dede": {
-    "asset": 1542103126000,
-    "meta": 1542107444000,
-    "relativePath": "resources/map02_1113/Õ¯∏ÒÀÿ≤ƒ/Buffet_01.psd"
   },
   "79ab14a3-2a41-48cc-a026-70798aaf92e3": {
     "asset": 1542102332000,
@@ -830,8 +780,8 @@
     "relativePath": "resources/treasurehunter_1107_v2"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1542108146000,
-    "meta": 1542108146000,
+    "asset": 1542110205000,
+    "meta": 1542110205000,
     "relativePath": "scenes/default_map.fire"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {

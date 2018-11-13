@@ -73,7 +73,7 @@ type TmxObject struct {
 }
 func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	err := xml.Unmarshal(byteArr, pTmxMapIns)
-
+  fmt.Printf("%s\n",byteArr)
   for _, objGroup := range pTmxMapIns.ObjectGroups {
     if "controlled_players_starting_pos_list" == objGroup.Name {
       pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))

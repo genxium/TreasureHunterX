@@ -259,7 +259,7 @@ func (pR *Room) StartBattle() {
 		return
 	}
    
-  relativePath := "../frontend/assets/resources/treasurehunter_1107_v2/treasurehunter.tmx"
+  relativePath := "../frontend/assets/resources/map02_1113/map.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
