@@ -21,28 +21,10 @@ func loadTMX(fp string, v interface{}) {
   ErrFatal(err)
   pTmxMapIns := v.(*models.TmxMap)
   models.LoadTMX(byteArr, pTmxMapIns)
-  objectGroups := pTmxMapIns.ObjectGroups
-  fmt.Printf("%v\n",pTmxMapIns.ObjectGroups)
-  for _, value := range objectGroups {
-    Logger.Info("objGroup",zap.Any("group",value))
-  }
-  continuousObjLayerVecToContinuousMap()  
+  continuousObjLayerVecToContinuousMap(pTmxMapIns)  
 }
 
-func continuousObjLayerVecToContinuousMap() {
-	execPath, err := os.Executable()
-	ErrFatal(err)
-
-	pwd, err := os.Getwd()
-	ErrFatal(err)
-
-  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
-
-  tmxMapIns := models.TmxMap{}
-  pTmxMapIns := &tmxMapIns
-  fp := filepath.Join(pwd, relativePath)
-  fmt.Printf("fp == %v\n", fp)
-  loadTMX(fp, pTmxMapIns)
+func continuousObjLayerVecToContinuousMap(pTmxMapIns *models.TmxMap) {
   for _, objGroup := range pTmxMapIns.ObjectGroups {
     if "controlled_players_starting_pos_list" != objGroup.Name {
       continue
@@ -54,7 +36,7 @@ func continuousObjLayerVecToContinuousMap() {
         Y: obj.Y,
       }
       controlledPlayerStartingPos := continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-      Logger.Info("Fuck", zap.Any("controlledPlayerStartingPos", controlledPlayerStartingPos))
+      Logger.Info("coverted", zap.Any("controlledPlayerStartingPos", controlledPlayerStartingPos))
     }
   }
 }
@@ -75,7 +57,6 @@ func continuousObjLayerVecToContinuousMapNodeVec(continuousObjLayerVec *models.V
       var converted models.Vec2D
       converted.X = convertedVecX+0 
       converted.Y = convertedVecY+1600
-      Logger.Info("converted",zap.Any("vec",converted))
       return converted
 }
 func main() {
