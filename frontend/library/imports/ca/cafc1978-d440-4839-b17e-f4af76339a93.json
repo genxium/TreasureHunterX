@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Buffet_01",
+    "texture": "3889be9f-f921-4af7-b3c6-2645ba023f87",
+    "atlas": "",
+    "rect": [
+      24,
+      15,
+      866,
+      603
+    ],
+    "offset": [
+      10.5,
+      -6
+    ],
+    "originalSize": [
+      893,
+      621
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
