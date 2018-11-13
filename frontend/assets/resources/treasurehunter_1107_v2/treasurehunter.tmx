@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="200" height="200" tilewidth="64" tileheight="64" infinite="0" nextobjectid="19">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="200" height="200" tilewidth="64" tileheight="64" infinite="0" nextobjectid="26">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
- <tileset firstgid="12" source="tile_1.tsx"/>
  <layer name="tile_1 floor" width="200" height="200">
   <properties>
    <property name="type" value="normal"/>
@@ -80,16 +79,11 @@
    <polyline points="0,0 160,152 3992,-3568 3764,-3772 24,-104"/>
   </object>
  </objectgroup>
- <objectgroup name="Type2NPCStartAt">
-  <object id="13" name="selfPlayer" x="4725.45" y="5069.7">
+ <objectgroup name="controlled_players_starting_pos_list">
+  <object id="24" x="3528" y="6176">
    <point/>
   </object>
- </objectgroup>
- <objectgroup name="Type2NPCPatrolSrc">
-  <object id="9" name="pt_prefab" x="4710.3" y="5012.12">
-   <properties>
-    <property name="type" value="anchor"/>
-   </properties>
+  <object id="25" x="7668" y="5596">
    <point/>
   </object>
  </objectgroup>

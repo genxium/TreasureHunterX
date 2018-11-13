@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "guest02",
+    "texture": "1086d877-2cc0-4a04-a90e-633713589b70",
+    "atlas": "",
+    "rect": [
+      3,
+      3,
+      59,
+      1159
+    ],
+    "offset": [
+      0.5,
+      -0.5
+    ],
+    "originalSize": [
+      64,
+      1164
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -61,8 +61,8 @@ type TmxObjectGroup struct {
 
 type TmxObject struct {
 	Type   string `xml:"type,attr"`
-	X      int    `xml:"x,attr"`
-	Y      int    `xml:"y,attr"`
+	X      float64    `xml:"x,attr"`
+	Y      float64    `xml:"y,attr"`
 	Width  int    `xml:"width,attr"`
 	Height int    `xml:"height,attr"`
 }

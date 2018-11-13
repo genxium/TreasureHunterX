@@ -1,0 +1,44 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "guest02.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "SitDown_back_left-SitDown_back": {
+      "__uuid__": "87579e54-26dc-4dd5-b541-6e1cb92d58f9"
+    },
+    "SitDown_back_right-SitDown_back": {
+      "__uuid__": "709f582e-25b2-41bf-80fc-f073349a88b6"
+    },
+    "SitDown_front_left-SitDown_front": {
+      "__uuid__": "13681957-7bfc-4cc0-8d1e-be3863ea83ca"
+    },
+    "SitDown_front_right-SitDown_front": {
+      "__uuid__": "be4da243-9336-463a-aaae-1dd4774abbbf"
+    },
+    "walk_back_left-walk_back01": {
+      "__uuid__": "33afb5f2-5445-4c87-9ac0-5841f43d2330"
+    },
+    "walk_back_left-walk_back02": {
+      "__uuid__": "554d2011-5ca3-426a-aa91-ebf790b738fe"
+    },
+    "walk_back_right-walk_back01": {
+      "__uuid__": "b05f70ba-f260-4309-8106-4f00c1b18c7d"
+    },
+    "walk_back_right-walk_back02": {
+      "__uuid__": "6070a861-0914-4927-9643-397827e45ce3"
+    },
+    "walk_front_left-LF01": {
+      "__uuid__": "cd0519dc-0853-4e26-b6be-76ac3f85fde1"
+    },
+    "walk_front_left-LF02": {
+      "__uuid__": "57c763ae-d823-4497-9968-526a82071b6a"
+    },
+    "walk_front_right-RF01": {
+      "__uuid__": "6c92e7fe-f18d-4e72-8bc5-476df276b9f7"
+    },
+    "walk_front_right-RF02": {
+      "__uuid__": "da343320-6f7f-4e42-8818-94f728781410"
+    }
+  }
+}
