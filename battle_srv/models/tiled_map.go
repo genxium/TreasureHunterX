@@ -1,12 +1,6 @@
 package models
 
 import (
-	. "server/common"
-	"path/filepath"
-	"io/ioutil"
-  "os"
-	"fmt"
-	"go.uber.org/zap"
 	"encoding/xml"
   "math"
 )
@@ -23,6 +17,9 @@ type TmxMap struct {
 	Tilesets     []TmxTileset     `xml:"tileset"`
 	Layers       []TmxLayer       `xml:"layer"`
 	ObjectGroups []TmxObjectGroup `xml:"objectgroup"`
+
+  ControlledPlayersInitPosList []Vec2D
+  TreasuresInitPosList []Vec2D
 }
 
 type TmxProperties struct {
@@ -74,9 +71,34 @@ type TmxObject struct {
 	Width  int    `xml:"width,attr"`
 	Height int    `xml:"height,attr"`
 }
+func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
+	err := xml.Unmarshal(byteArr, pTmxMapIns)
 
-func LoadTMX(byteArr []byte,pTmxMap *TmxMap) error {
-	err := xml.Unmarshal(byteArr,pTmxMap)
+
+  for _, objGroup := range pTmxMapIns.ObjectGroups {
+    if "controlled_players_starting_pos_list" == objGroup.Name {
+      pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
+      for index, obj := range objGroup.Objects {
+        tmp := Vec2D{
+          X: obj.X,
+          Y: obj.Y,
+        }
+        controlledPlayerStartingPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+        pTmxMapIns.ControlledPlayersInitPosList[index] = controlledPlayerStartingPos
+      }
+    }
+    if "treasures" == objGroup.Name {
+      pTmxMapIns.TreasuresInitPosList = make([]Vec2D, len(objGroup.Objects))
+      for index, obj := range objGroup.Objects {
+        tmp := Vec2D{
+          X: obj.X,
+          Y: obj.Y,
+        }
+        treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+        pTmxMapIns.TreasuresInitPosList[index] = treasurePos
+      }
+    }
+  }
 	return err
 }
 
@@ -85,53 +107,12 @@ func (pTmxMap *TmxMap) ToXML() (string, error) {
 	return string(ret[:]), err
 }
 
-func loadTMX(playerIndex int) Vec2D{
-  relativePath = "../frontend/assets/resources/treasurehunter_1107_v2/treasurehunter.tmx" 
-	execPath, err := os.Executable()
-	ErrFatal(err)
-
-	pwd, err := os.Getwd()
-	ErrFatal(err)
-
-  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
-
-  fp := filepath.Join(pwd, relativePath)
-  fmt.Printf("fp == %v\n", fp)
-	if !filepath.IsAbs(fp) {
-    panic("Tmx filepath must be absolute!")
-	}
-
-  byteArr, err := ioutil.ReadFile(fp)
-  ErrFatal(err)
-  tmxMapIns := TmxMap{}
-  pTmxMapIns := &tmxMapIns
-  LoadTMX(byteArr, pTmxMapIns)
-  return ContinuousObjLayerVecToContinuousMap(pTmxMapIns, playerIndex)
-}
-
-func ContinuousObjLayerVecToContinuousMap(pTmxMapIns *TmxMap, playerIndex int) Vec2D{
-  var controlledPlayerStartingPos Vec2D
-  for _, objGroup := range pTmxMapIns.ObjectGroups {
-    if "controlled_players_starting_pos_list" != objGroup.Name {
-      continue
-    }
-    Logger.Info("objGroup named controlled_players_starting_pos_list", zap.Any("group", objGroup))
-    obj := objGroup.Objects[playerIndex]
-      tmp := Vec2D{
-        X: obj.X,
-        Y: obj.Y,
-      }
-      controlledPlayerStartingPos = continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-      Logger.Info("controlledPlayerStartingPos", zap.Any("controlledPlayerStartingPos", controlledPlayerStartingPos))
-    }
-   return controlledPlayerStartingPos
-}
-
 type TileRectilinearSize struct {
   Width float64 
   Height float64
 }
-func continuousObjLayerVecToContinuousMapNodeVec(continuousObjLayerVec *Vec2D) Vec2D {
+
+func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuousObjLayerVec *Vec2D) Vec2D {
       var  tileRectilinearSize TileRectilinearSize
       tileRectilinearSize.Width = 64.00
       tileRectilinearSize.Height = 64.00

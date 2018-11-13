@@ -684,24 +684,24 @@
     "meta": 1542089617000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "8b400cb3-9119-4269-b86b-0aa2a659b691": {
-    "asset": 1542100358000,
-    "meta": 1542100358000,
-    "relativePath": "resources/prefabs/SelfPlayer.prefab"
-  },
-  "a7880898-f0eb-4957-892c-d8157c15efe2": {
-    "asset": 1542100064000,
-    "meta": 1542100072000,
-    "relativePath": "resources/treasurehunter_1107_v2/treasurehunter.tmx"
-  },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542100079000,
-    "meta": 1542100214000,
-    "relativePath": "scenes/login.fire"
-  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1542100351000,
     "meta": 1542100356000,
     "relativePath": "scripts/Map.js"
+  },
+  "8b400cb3-9119-4269-b86b-0aa2a659b691": {
+    "asset": 1542100358000,
+    "meta": 1542100392000,
+    "relativePath": "resources/prefabs/SelfPlayer.prefab"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1542104321000,
+    "meta": 1542104321000,
+    "relativePath": "scenes/login.fire"
+  },
+  "a7880898-f0eb-4957-892c-d8157c15efe2": {
+    "asset": 1542104316000,
+    "meta": 1542104317000,
+    "relativePath": "resources/treasurehunter_1107_v2/treasurehunter.tmx"
   }
 }

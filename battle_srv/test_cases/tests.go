@@ -11,17 +11,16 @@ import (
 
 var relativePath string
 
-func loadTMX(fp string, v interface{}) {
+func loadTMX(fp string, pTmxMapIns *models.TmxMap) {
 	if !filepath.IsAbs(fp) {
     panic("Tmx filepath must be absolute!")
 	}
 
   byteArr, err := ioutil.ReadFile(fp)
   ErrFatal(err)
-  pTmxMapIns := v.(*models.TmxMap)
-  models.LoadTMX(byteArr, pTmxMapIns)
-  for index := 0; index < 2; index++ {
-    models.ContinuousObjLayerVecToContinuousMap(pTmxMapIns, index)
+  models.DeserializeToTmxMapIns(byteArr, pTmxMapIns)
+  for _, playerPos := range pTmxMapIns.TreasuresInitPosList {
+    fmt.Printf("%v\n", playerPos)
   }
 }
 

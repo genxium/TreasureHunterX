@@ -6,6 +6,10 @@ import (
 	. "server/common"
 	"server/common/utils"
 	"sync"
+	"path/filepath"
+	"io/ioutil"
+  "os"
+	"fmt"
 	"time"
 )
 
@@ -172,32 +176,18 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Tre
 	return &theTreasure
 }
 
-func (pR *Room) InitTreasures() {
-	pR.Treasures = make(map[int]*Treasure, 1)
+func (pR *Room) InitTreasures(pTmxMapIns *TmxMap) {
+ for key,value := range pTmxMapIns.TreasuresInitPosList {
 	{
 		pAnchor := &Vec2D{
-			X: float64(200),
-			Y: float64(200),
+			X: float64(value.X),
+			Y: float64(value.Y),
 		}
-		theTreasure := pR.createTreasure(pAnchor, 0)
+		theTreasure := pR.createTreasure(pAnchor, key)
 		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+    Logger.Info("test",zap.Any("treasures",key))
 	}
-	{
-		pAnchor := &Vec2D{
-			X: float64(-200),
-			Y: float64(-200),
-		}
-		theTreasure := pR.createTreasure(pAnchor, 1)
-		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-	}
-	{
-		pAnchor := &Vec2D{
-			X: float64(200),
-			Y: float64(-200),
-		}
-		theTreasure := pR.createTreasure(pAnchor, 2)
-		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-	}
+  }
 	Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
 }
 
@@ -268,16 +258,35 @@ func (pR *Room) StartBattle() {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
-  //hardCode startAt
-  var index = 0;
+   
+  relativePath := "../frontend/assets/resources/treasurehunter_1107_v2/treasurehunter.tmx"
+	execPath, err := os.Executable()
+	ErrFatal(err)
+
+	pwd, err := os.Getwd()
+	ErrFatal(err)
+
+  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+
+  tmxMapIns := TmxMap{}
+  pTmxMapIns := &tmxMapIns
+  fp := filepath.Join(pwd, relativePath)
+  fmt.Printf("fp == %v\n", fp)
+	if !filepath.IsAbs(fp) {
+    panic("Tmx filepath must be absolute!")
+	}
+
+  byteArr, err := ioutil.ReadFile(fp)
+  ErrFatal(err)
+  DeserializeToTmxMapIns(byteArr, pTmxMapIns)
+  var index = 0
   for _, player := range pR.Players {
-    tmp := loadTMX(index)
-    player.X = tmp.X 
-    player.Y = tmp.Y 
+    tmp := pTmxMapIns.ControlledPlayersInitPosList[index]
     index++
-    Logger.Info("players",zap.Any("player",player))
+    player.X = tmp.X
+    player.Y = tmp.Y
   }
-	pR.InitTreasures()
+	pR.InitTreasures(pTmxMapIns)
 	pR.InitColliders()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
