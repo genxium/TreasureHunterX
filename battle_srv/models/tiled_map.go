@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/xml"
   "math"
+	"fmt"
 )
 
 type TmxMap struct {
@@ -116,7 +117,7 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
       tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
       tileSizeUnifiedLength := math.Sqrt(tileRectilinearSize.Width * tileRectilinearSize.Width * 0.25 + tileRectilinearSize.Height * tileRectilinearSize.Height * 0.25)
       isometricObjectLayerPointOffsetScaleFactor := (tileSizeUnifiedLength / tileRectilinearSize.Height);
-
+  fmt.Printf("tileWidth = %d,tileHeight = %d\n", pTmxMapIns.TileWidth, pTmxMapIns.TileHeight)
       cosineThetaRadian := (tileRectilinearSize.Width * 0.5) / tileSizeUnifiedLength
       sineThetaRadian := (tileRectilinearSize.Height * 0.5) / tileSizeUnifiedLength
 
