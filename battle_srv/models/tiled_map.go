@@ -5,7 +5,6 @@ import (
   "math"
 )
 
-var relativePath string
 type TmxMap struct {
 	Version      string           `xml:"version,attr"`
 	Orientation  string           `xml:"orientation,attr"`
@@ -74,7 +73,6 @@ type TmxObject struct {
 func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	err := xml.Unmarshal(byteArr, pTmxMapIns)
 
-
   for _, objGroup := range pTmxMapIns.ObjectGroups {
     if "controlled_players_starting_pos_list" == objGroup.Name {
       pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
@@ -108,14 +106,14 @@ func (pTmxMap *TmxMap) ToXML() (string, error) {
 }
 
 type TileRectilinearSize struct {
-  Width float64 
+  Width float64
   Height float64
 }
 
 func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuousObjLayerVec *Vec2D) Vec2D {
       var  tileRectilinearSize TileRectilinearSize
-      tileRectilinearSize.Width = 64.00
-      tileRectilinearSize.Height = 64.00
+      tileRectilinearSize.Width = float64(pTmxMapIns.TileWidth)
+      tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
       tileSizeUnifiedLength := math.Sqrt(tileRectilinearSize.Width * tileRectilinearSize.Width * 0.25 + tileRectilinearSize.Height * tileRectilinearSize.Height * 0.25)
       isometricObjectLayerPointOffsetScaleFactor := (tileSizeUnifiedLength / tileRectilinearSize.Height);
 
@@ -129,7 +127,7 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
        convertedVecX := transMat[0][0] * continuousObjLayerVec.X + transMat[0][1] * continuousObjLayerVec.Y;
        convertedVecY := transMat[1][0] * continuousObjLayerVec.X + transMat[1][1] * continuousObjLayerVec.Y;
       var converted Vec2D
-      converted.X = convertedVecX+0 
-      converted.Y = convertedVecY+6400
+      converted.X = convertedVecX + 0
+      converted.Y = convertedVecY + 0.5*float64(pTmxMapIns.Height * pTmxMapIns.TileHeight)
       return converted
 }
