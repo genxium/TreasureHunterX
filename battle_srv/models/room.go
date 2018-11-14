@@ -141,27 +141,36 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 }
 
 func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Treasure {
-	thePoints := make([]*Vec2D, 5)
-	thePoints[0] = &Vec2D{
-		X: float64(0),
-		Y: float64(100),
+  relativePath := "../frontend/assets/resources/map/tile_1.tsx"
+	execPath, err := os.Executable()
+	ErrFatal(err)
+
+	pwd, err := os.Getwd()
+	ErrFatal(err)
+
+  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+  tsxIns := Tsx{}
+  pTsxIns := &tsxIns
+  fp := filepath.Join(pwd, relativePath)
+  fmt.Printf("fp == %v\n", fp)
+	if !filepath.IsAbs(fp) {
+    panic("Tmx filepath must be absolute!")
 	}
-	thePoints[1] = &Vec2D{
-		X: float64(-100),
-		Y: float64(0),
-	}
-	thePoints[2] = &Vec2D{
-		X: float64(-100),
-		Y: float64(-100),
-	}
-	thePoints[3] = &Vec2D{
-		X: float64(+100),
-		Y: float64(-100),
-	}
-	thePoints[4] = &Vec2D{
-		X: float64(+100),
-		Y: float64(0),
-	}
+
+  byteArr, err := ioutil.ReadFile(fp)
+  ErrFatal(err)
+  DeserializeToTsxIns(byteArr, pTsxIns)
+
+  polyLine :=  pTsxIns.PolyLineList[0]
+  
+	thePoints := make([]*Vec2D, len(polyLine.Points))
+  for index, value := range polyLine.Points{
+	  thePoints[index] = &Vec2D{
+	  	X: polyLine.InitPos.X + value.X,
+	  	Y: polyLine.InitPos.Y + value.Y,
+	  }
+  }
+
 	thePolygon := Polygon2D{
 		Anchor: pAnchor,
 		Points: thePoints,
@@ -259,7 +268,7 @@ func (pR *Room) StartBattle() {
 		return
 	}
    
-  relativePath := "../frontend/assets/resources/map02_1113/map.tmx"
+  relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 

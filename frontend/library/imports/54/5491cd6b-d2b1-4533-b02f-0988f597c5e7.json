@@ -1,7 +1,0 @@
-{
-  "__type__": "cc.TextAsset",
-  "_name": "1536_05",
-  "_objFlags": 0,
-  "_native": "",
-  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<tileset name=\"1536_05\" tilewidth=\"1536\" tileheight=\"1536\" tilecount=\"1\" columns=\"1\">\r\n <image source=\"1536_05.png\" width=\"1536\" height=\"1536\"/>\r\n</tileset>\r\n"
-}

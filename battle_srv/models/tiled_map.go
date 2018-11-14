@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
   "math"
 	"fmt"
+  "strings"
+  "strconv"
 )
 
 type TmxMap struct {
@@ -22,8 +24,41 @@ type TmxMap struct {
   TreasuresInitPosList []Vec2D
 }
 
+type Tsx struct {
+	Name         string           `xml:"name,attr"`
+	TileWidth    int              `xml:"tilewidth,attr"`
+	TileHeight   int              `xml:"tileheight,attr"`
+	TileCount    int              `xml:"tilecount,attr"`
+	Columns      int              `xml:"columns,attr"`
+	Image        []TmxImage       `xml:"image"`
+	Tiles        []TsxTile        `xml:"tile"`
+  PolyLineList []TreasurePolyline
+}
+
+type TsxTile struct {
+  Id           int           `xml:"id,attr"`
+  ObjectGroup  TsxObjectGroup   `xml:"objectgroup"` 
+}
+
+type TsxObjectGroup struct{
+  Draworder    string           `xml:"draworder,attr"`
+  TsxObjects   []TsxObject      `xml:"object"`
+}
+
+type TsxObject struct {
+  Id           int                  `xml:"id,attr"`
+  X            float64              `xml:"x,attr"`
+  Y            float64              `xml:"y,attr"`
+	Properties   []TmxProperties      `xml:"properties"`
+	Polyline     TsxPolyline          `xml:"polyline"`
+}
+
 type TmxProperties struct {
 	Property []TmxProperty `xml:"property"`
+}
+
+type TsxPolyline struct {
+	Points  string `xml:"points,attr"`
 }
 
 type TmxProperty struct {
@@ -71,6 +106,53 @@ type TmxObject struct {
 	Width  int    `xml:"width,attr"`
 	Height int    `xml:"height,attr"`
 }
+
+type TreasurePolyline struct {
+  InitPos Vec2D
+  Points []Vec2D 
+}
+
+
+func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
+	err := xml.Unmarshal(byteArr, pTsxIns)
+  for _, tile := range pTsxIns.Tiles {
+    if 7 == tile.Id {
+      tileObjectGroup := tile.ObjectGroup
+      pTsxIns.PolyLineList = make([]TreasurePolyline, len(tileObjectGroup.TsxObjects))
+      for index, obj := range tileObjectGroup.TsxObjects {
+        initPos := Vec2D{
+          X: obj.X,
+          Y: obj.Y,
+        }
+        fmt.Printf("%s\n",obj.Polyline.Points)
+        singleValueArray := strings.Split(obj.Polyline.Points, " ")
+        pointsArray := make([]Vec2D, len(singleValueArray))
+        fmt.Printf("%v\n",singleValueArray)
+        for key, value := range singleValueArray{
+          for k, v := range strings.Split(value,","){
+             n, err := strconv.ParseFloat(v, 64);
+             if err != nil {
+	               return err
+             }
+            if  k % 2 == 0{
+              pointsArray[key].X = n
+            }else {
+              pointsArray[key].Y = n 
+            }
+          }
+        }
+        pTsxIns.PolyLineList[index] =  TreasurePolyline{
+          InitPos: initPos,
+          Points: pointsArray,
+        } 
+    }
+  }
+  }
+	return err
+}
+
+
+
 func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	err := xml.Unmarshal(byteArr, pTmxMapIns)
   fmt.Printf("%s\n",byteArr)

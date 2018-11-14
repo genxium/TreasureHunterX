@@ -1,7 +1,0 @@
-{
-  "__type__": "cc.TextAsset",
-  "_name": "Buffet_01",
-  "_objFlags": 0,
-  "_native": "",
-  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<tileset name=\"Buffet_01\" tilewidth=\"893\" tileheight=\"621\" tilecount=\"1\" columns=\"1\">\r\n <image source=\"Buffet_01.png\" width=\"893\" height=\"621\"/>\r\n</tileset>\r\n"
-}
