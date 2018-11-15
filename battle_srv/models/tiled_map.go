@@ -126,7 +126,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
         }
         fmt.Printf("%s\n",obj.Polyline.Points)
         singleValueArray := strings.Split(obj.Polyline.Points, " ")
-        pointsArray := make([]Vec2D, len(singleValueArray))
+        pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
         fmt.Printf("%v\n",singleValueArray)
         for key, value := range singleValueArray{
           for k, v := range strings.Split(value,","){
@@ -135,15 +135,21 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	               return err
              }
             if  k % 2 == 0{
-              pointsArray[key].X = n
+              pointsArrayWrtInit[key].X = n + initPos.X
             }else {
-              pointsArray[key].Y = n 
+              pointsArrayWrtInit[key].Y = n + initPos.Y 
             }
           }
         }
+        pointsArrayTransted := make([]Vec2D, len(pointsArrayWrtInit))
+         var scale float64 = 0.5
+        for key, value := range pointsArrayWrtInit{
+           pointsArrayTransted[key].X =  value.X - scale * float64(pTsxIns.TileWidth) 
+           pointsArrayTransted[key].Y =   scale * float64(pTsxIns.TileHeight)-value.Y 
+        }
         pTsxIns.PolyLineList[index] =  TreasurePolyline{
           InitPos: initPos,
-          Points: pointsArray,
+          Points: pointsArrayTransted,
         } 
     }
   }

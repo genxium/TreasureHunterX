@@ -37,7 +37,7 @@
  </layer>
  <layer name="tile_1 red mogu" width="80" height="80">
   <properties>
-   <property name="type" value="One off Treasure"/>
+   <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2DEOgCAMBVBG739idwyBagQr7y2u5UOb2FIAAMjuWF0A2/HmAOYxc4FdmHcAAAAwl3/x98iWJ7yf+47qS5wM4+qsZDiulZXsxtUZen9xshvXykZ2kIMehZz0bj5/vLM/nmm2FRm6N7jSF899JcOv1HFH5toBsjBr+3r7fgAAAAD21NsPRfdK9k0AUMoJsuABYQ==
@@ -60,7 +60,7 @@
   </object>
  </objectgroup>
  <objectgroup name="treasures">
-  <object id="31" x="1414" y="2466">
+  <object id="31" x="1926" y="2034">
    <point/>
   </object>
   <object id="32" x="1426" y="2598">

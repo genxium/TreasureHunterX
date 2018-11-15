@@ -162,6 +162,8 @@ cc.Class({
     const self = this;
     self.lastRoomDownsyncFrameId = 0;
 
+    cc.director.getCollisionManager().enabled = true;
+    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
@@ -263,7 +265,6 @@ cc.Class({
       }
       this.joystickInputControllerNode.parent.width = this.node.parent.width * 0.5;
       this.joystickInputControllerNode.parent.height = this.node.parent.height;
-
       for (let boundaryObj of boundaryObjs.sheltersZReducer) {
         const newShelter = cc.instantiate(self.shelterZReducerPrefab);
         const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
@@ -276,6 +277,7 @@ cc.Class({
         }
         self.node.addChild(newShelter);
       }
+
       window.handleRoomDownsyncFrame = function(roomDownsyncFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
 
@@ -320,6 +322,7 @@ cc.Class({
           const treasureInfo = treasures[k];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -381,7 +384,6 @@ cc.Class({
     const instance = this;
     const newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
     const tiledMapIns = instance.node.getComponent(cc.TiledMap);
-    //读取标记
     let toStartWithPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y)
     newPlayerNode.setPosition(toStartWithPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
@@ -481,6 +483,15 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
+        //初始化treasure的标记
+        const pickupBoundary = treasureInfo.pickupBoundary;
+        const anchor = pickupBoundary.anchor; 
+        const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
+        newColliderIns.points = [];
+           for (let point of pickupBoundary.points) {
+             const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+             newColliderIns.points.push(p);
+           }
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

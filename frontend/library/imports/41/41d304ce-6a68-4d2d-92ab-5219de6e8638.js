@@ -166,6 +166,8 @@ cc.Class({
     var self = this;
     self.lastRoomDownsyncFrameId = 0;
 
+    cc.director.getCollisionManager().enabled = true;
+    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
@@ -373,7 +375,6 @@ cc.Class({
       }
       _this.joystickInputControllerNode.parent.width = _this.node.parent.width * 0.5;
       _this.joystickInputControllerNode.parent.height = _this.node.parent.height;
-
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
@@ -386,8 +387,8 @@ cc.Class({
           var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
           newShelter.setPosition(newBoundaryOffsetInMapNode);
           newShelter.setAnchorPoint(cc.v2(0, 0));
-          var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
-          newShelterColliderIns.points = [];
+          var _newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+          _newShelterColliderIns.points = [];
           var _iteratorNormalCompletion7 = true;
           var _didIteratorError7 = false;
           var _iteratorError7 = undefined;
@@ -396,7 +397,7 @@ cc.Class({
             for (var _iterator7 = _boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
               var _p = _step7.value;
 
-              newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
+              _newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
             }
           } catch (err) {
             _didIteratorError7 = true;
@@ -474,6 +475,7 @@ cc.Class({
           var treasureInfo = treasures[_k];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -529,7 +531,6 @@ cc.Class({
     var instance = this;
     var newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
     var tiledMapIns = instance.node.getComponent(cc.TiledMap);
-    //读取标记
     var toStartWithPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y);
     newPlayerNode.setPosition(toStartWithPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
@@ -619,6 +620,38 @@ cc.Class({
         safelyAddChild(mapNode, _targetNode);
         _targetNode.setPosition(_newPos);
         setLocalZOrder(_targetNode, 5);
+        //初始化treasure的标记
+        var pickupBoundary = treasureInfo.pickupBoundary;
+        var anchor = pickupBoundary.anchor;
+        var newColliderIns = _targetNode.getComponent(cc.PolygonCollider);
+        newColliderIns.points = [];
+        var _iteratorNormalCompletion8 = true;
+        var _didIteratorError8 = false;
+        var _iteratorError8 = undefined;
+
+        try {
+          for (var _iterator8 = pickupBoundary.points[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+            var point = _step8.value;
+
+            var p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+            newColliderIns.points.push(p);
+          }
+        } catch (err) {
+          _didIteratorError8 = true;
+          _iteratorError8 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion8 && _iterator8.return) {
+              _iterator8.return();
+            }
+          } finally {
+            if (_didIteratorError8) {
+              throw _iteratorError8;
+            }
+          }
+        }
+
+        cc.log(newShelterColliderIns.points);
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

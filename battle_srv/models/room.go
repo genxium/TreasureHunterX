@@ -166,8 +166,8 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Tre
 	thePoints := make([]*Vec2D, len(polyLine.Points))
   for index, value := range polyLine.Points{
 	  thePoints[index] = &Vec2D{
-	  	X: polyLine.InitPos.X + value.X,
-	  	Y: polyLine.InitPos.Y + value.Y,
+	  	X: /*polyLine.InitPos.X +*/ value.X,
+	  	Y: /*polyLine.InitPos.Y +*/ value.Y,
 	  }
   }
 
@@ -175,6 +175,7 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Tre
 		Anchor: pAnchor,
 		Points: thePoints,
 	}
+
 	theTreasure := Treasure{
 		ID:              0,
 		LocalIDInBattle: treasureLocalIDInBattle,

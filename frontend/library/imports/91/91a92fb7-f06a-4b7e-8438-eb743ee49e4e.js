@@ -421,13 +421,6 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               }
               gidBoundariesMap[parentGID].sheltersZReducer.push(shzrToPushTmp);
               break;
-            case "lounge_entry":
-              var shzrToPushTmp = [];
-              for (var shzridx = 0; shzridx < polylinePoints.length; ++shzridx) {
-                shzrToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[shzridx]));
-              }
-              gidBoundariesMap[parentGID].loungeEntry.push(shzrToPushTmp);
-              break;
             default:
               break;
           }

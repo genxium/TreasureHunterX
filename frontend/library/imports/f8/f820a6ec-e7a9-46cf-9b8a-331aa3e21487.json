@@ -3,7 +3,7 @@
     "__type__": "cc.Prefab",
     "_name": "PolygonBoundaryShelter",
     "_objFlags": 0,
-    "_rawFiles": null,
+    "_native": "",
     "data": {
       "__id__": 1
     },
@@ -16,8 +16,8 @@
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
-    "_tag": -1,
     "_active": true,
+    "_level": 1,
     "_components": [
       {
         "__id__": 2
@@ -26,7 +26,6 @@
     "_prefab": {
       "__id__": 3
     },
-    "_id": "",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -35,32 +34,42 @@
       "b": 255,
       "a": 255
     },
-    "_cascadeOpacityEnabled": true,
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
       "height": 0
     },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_position": {
+      "__type__": "cc.Vec3",
+      "x": -192,
+      "y": 43,
+      "z": 0
+    },
+    "_scale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": 1,
-    "_scaleY": 1,
-    "_position": {
-      "__type__": "cc.Vec2",
-      "x": -192,
-      "y": 43
+    "_quat": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_localZOrder": 0,
-    "_globalZOrder": 0,
-    "_opacityModifyRGB": false,
-    "groupIndex": 4
+    "_zIndex": 0,
+    "groupIndex": 4,
+    "_id": ""
   },
   {
     "__type__": "cc.PolygonCollider",
@@ -97,7 +106,8 @@
         "x": -50,
         "y": 50
       }
-    ]
+    ],
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -105,7 +115,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "f820a6ec-e7a9-46cf-9b8a-331aa3e21487"
     },
     "fileId": "f8scmoFllMboAtkaldeiym",
     "sync": false
