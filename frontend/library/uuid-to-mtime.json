@@ -639,25 +639,10 @@
     "meta": 1542250100000,
     "relativePath": "scripts/TileCollisionManagerSingleton.js"
   },
-  "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1542267504000,
-    "meta": 1542267504000,
-    "relativePath": "scenes/default_map.fire"
-  },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
     "asset": 1542255015000,
     "meta": 1542255016000,
     "relativePath": "resources/map/treasurehunter.tmx"
-  },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542266307000,
-    "meta": 1542266307000,
-    "relativePath": "scenes/login.fire"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1542267118000,
-    "meta": 1542267120000,
-    "relativePath": "scripts/Map.js"
   },
   "e108b9e7-e8b0-465d-8bf1-a850560c3b0f": {
     "asset": 1542267160000,
@@ -668,5 +653,25 @@
     "asset": 1542267201000,
     "meta": 1542267457000,
     "relativePath": "resources/map/tile_1.tsx"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1542272035000,
+    "meta": 1542272035000,
+    "relativePath": "scenes/login.fire"
+  },
+  "92160186-3e0d-4e0a-ae20-97286170ba58": {
+    "asset": 1542275464000,
+    "meta": 1542275464000,
+    "relativePath": "scenes/default_map.fire"
+  },
+  "a209444d-edef-46ea-b9b4-9ceb522bf2e8": {
+    "asset": 1542275417000,
+    "meta": 1542275417000,
+    "relativePath": "resources/prefabs/OtherScoreIndicator.prefab"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1542275353000,
+    "meta": 1542275355000,
+    "relativePath": "scripts/Map.js"
   }
 }

@@ -48,6 +48,7 @@ type Player struct {
 	DeletedAt         NullInt64     `json:"-" db:"deleted_at"`
 	TutorialStage     int           `json:"-" db:"tutorial_stage"`
 	CollidableBody    *box2d.B2Body `json:"-"`
+  Score             int           `json:"score"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

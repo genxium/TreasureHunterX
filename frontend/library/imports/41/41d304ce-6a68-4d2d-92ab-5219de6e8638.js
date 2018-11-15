@@ -87,6 +87,14 @@ cc.Class({
     countdownLabel: {
       type: cc.Label,
       default: null
+    },
+    selfPlayerScoreLabel: {
+      type: cc.Label,
+      default: null
+    },
+    otherPlayerScoreIndicatorPrefab: {
+      type: cc.Prefab,
+      default: null
     }
   },
 
@@ -181,10 +189,9 @@ cc.Class({
     self.battleState = ALL_BATTLE_STATES.WAITING;
     self.otherPlayerCachedDataDict = {};
     self.otherPlayerNodeDict = {};
-
     self.treasureInfoDict = {};
     self.treasureNodeDict = {};
-
+    self.scoreInfoDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
@@ -387,8 +394,8 @@ cc.Class({
           var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
           newShelter.setPosition(newBoundaryOffsetInMapNode);
           newShelter.setAnchorPoint(cc.v2(0, 0));
-          var _newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
-          _newShelterColliderIns.points = [];
+          var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+          newShelterColliderIns.points = [];
           var _iteratorNormalCompletion7 = true;
           var _didIteratorError7 = false;
           var _iteratorError7 = undefined;
@@ -397,7 +404,7 @@ cc.Class({
             for (var _iterator7 = _boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
               var _p = _step7.value;
 
-              _newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
+              newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
             }
           } catch (err) {
             _didIteratorError7 = true;
@@ -458,7 +465,8 @@ cc.Class({
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
-              battleState: immediateSelfPlayerInfo.battleState
+              battleState: immediateSelfPlayerInfo.battleState,
+              score: immediateSelfPlayerInfo.score
             });
             continue;
           }
@@ -545,12 +553,15 @@ cc.Class({
     var self = this;
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
+    var canvasParentNode = canvasNode.parent;
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
+      if (self.selfPlayerInfo.score) self.selfPlayerScoreLabel.string = self.selfPlayerInfo.score;
     }
+
     var toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
 
@@ -561,6 +572,17 @@ cc.Class({
       var playerId = parseInt(k);
       var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
       var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
+      //显示分数
+      if (!self.scoreInfoDict[playerId]) {
+        var scoreNode = cc.instantiate(self.otherPlayerScoreIndicatorPrefab);
+        var debugInfoNode = canvasParentNode.getChildByName("DebugInfo");
+        scoreNode.getChildByName("title").getComponent(cc.Label).string = "player" + cachedPlayerData.id + "'s score:";
+        safelyAddChild(debugInfoNode, scoreNode);
+        self.scoreInfoDict[playerId] = scoreNode;
+      }
+      if (cachedPlayerData.score) {
+        self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = cachedPlayerData.score;
+      }
       var targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
@@ -650,8 +672,6 @@ cc.Class({
             }
           }
         }
-
-        cc.log(newShelterColliderIns.points);
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

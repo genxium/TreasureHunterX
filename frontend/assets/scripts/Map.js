@@ -82,6 +82,14 @@ cc.Class({
       type: cc.Label,
       default: null
     },
+    selfPlayerScoreLabel: {
+      type: cc.Label,
+      default: null
+    },
+    otherPlayerScoreIndicatorPrefab: {
+      type:cc.Prefab,
+      default: null
+    },
   },
 
   _onPerUpsyncFrame() {
@@ -177,10 +185,9 @@ cc.Class({
     self.battleState = ALL_BATTLE_STATES.WAITING;
     self.otherPlayerCachedDataDict = {};
     self.otherPlayerNodeDict = {};
-
     self.treasureInfoDict = {};
     self.treasureNodeDict = {};
-
+    self.scoreInfoDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
@@ -306,6 +313,7 @@ cc.Class({
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
               battleState: immediateSelfPlayerInfo.battleState,
+              score: immediateSelfPlayerInfo.score,
             });
             continue;
           }
@@ -399,12 +407,16 @@ cc.Class({
     const self = this;
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
+    const canvasParentNode = canvasNode.parent;
     if (null != window.boundRoomId) {
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
+      if(self.selfPlayerInfo.score)
+      self.selfPlayerScoreLabel.string = self.selfPlayerInfo.score;
     }
+
     let toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
 
@@ -418,6 +430,17 @@ cc.Class({
         cachedPlayerData.x,
         cachedPlayerData.y
       );
+     //显示分数
+     if(!self.scoreInfoDict[playerId]){
+        const scoreNode = cc.instantiate(self.otherPlayerScoreIndicatorPrefab);  
+        const debugInfoNode = canvasParentNode.getChildByName("DebugInfo");
+        scoreNode.getChildByName("title").getComponent(cc.Label).string = "player"+cachedPlayerData.id+"'s score:";
+        safelyAddChild(debugInfoNode,scoreNode);
+        self.scoreInfoDict[playerId] = scoreNode;
+      }
+      if(cachedPlayerData.score){
+        self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = cachedPlayerData.score;
+      }
       let targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);

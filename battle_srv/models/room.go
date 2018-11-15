@@ -100,6 +100,7 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 		Logger.Info("Player has picked up treasure:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTreasure.LocalIDInBattle", contactingTreasure.LocalIDInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
 		delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
+    pR.Players[contactingPlayer.ID].Score += contactingTreasure.Score 
 	}
 }
 
@@ -166,8 +167,8 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Tre
 	thePoints := make([]*Vec2D, len(polyLine.Points))
   for index, value := range polyLine.Points{
 	  thePoints[index] = &Vec2D{
-	  	X: /*polyLine.InitPos.X +*/ value.X,
-	  	Y: /*polyLine.InitPos.Y +*/ value.Y,
+	  	X:  value.X,
+	  	Y:  value.Y,
 	  }
   }
 
@@ -295,7 +296,9 @@ func (pR *Room) StartBattle() {
     index++
     player.X = tmp.X
     player.Y = tmp.Y
+    player.Score = 0
   }
+
 	pR.InitTreasures(pTmxMapIns)
 	pR.InitColliders()
 
