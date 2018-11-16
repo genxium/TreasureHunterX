@@ -40,6 +40,10 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    trapPrefab: {
+      type: cc.Prefab,
+      default: null
+    },
     npcPlayerPrefab: {
       type: cc.Prefab,
       default: null
@@ -191,6 +195,8 @@ cc.Class({
     self.otherPlayerNodeDict = {};
     self.treasureInfoDict = {};
     self.treasureNodeDict = {};
+    self.trapInfoDict = {};
+    self.trapNodeDict = {};
     self.scoreInfoDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
@@ -484,6 +490,17 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
+        //初始化trapInfo
+        self.trapInfoDict = {};
+        var traps = roomDownsyncFrame.traps;
+        var trapsLocalIdStrList = Object.keys(traps);
+        for (var _i2 = 0; _i2 < trapsLocalIdStrList.length; ++_i2) {
+          var _k2 = trapsLocalIdStrList[_i2];
+          var trapLocalIdInBattle = parseInt(_k2);
+          var trapInfo = traps[_k2];
+          self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
+        }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -559,7 +576,8 @@ cc.Class({
     }
     if (null != self.selfPlayerInfo) {
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
-      if (self.selfPlayerInfo.score) self.selfPlayerScoreLabel.string = self.selfPlayerInfo.score;
+      var score = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0;
+      self.selfPlayerScoreLabel.string = score;
     }
 
     var toRemovePlayerNodeDict = {};
@@ -567,6 +585,9 @@ cc.Class({
 
     var toRemoveTreasureNodeDict = {};
     Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
+
+    var toRemoveTrapNodeDict = {};
+    Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
 
     for (var k in self.otherPlayerCachedDataDict) {
       var playerId = parseInt(k);
@@ -580,9 +601,8 @@ cc.Class({
         safelyAddChild(debugInfoNode, scoreNode);
         self.scoreInfoDict[playerId] = scoreNode;
       }
-      if (cachedPlayerData.score) {
-        self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = cachedPlayerData.score;
-      }
+      var playerScore = !cachedPlayerData.score ? cachedPlayerData.score : 0;
+      self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = playerScore;
       var targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
@@ -631,19 +651,20 @@ cc.Class({
       }
     }
 
-    for (var _k2 in self.treasureInfoDict) {
-      var treasureLocalIdInBattle = parseInt(_k2);
-      var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
-      var _newPos = cc.v2(treasureInfo.pickupBoundary.anchor.x, treasureInfo.pickupBoundary.anchor.y);
-      var _targetNode = self.treasureNodeDict[treasureLocalIdInBattle];
+    // 更新陷阱显示 
+    for (var _k3 in self.trapInfoDict) {
+      var trapLocalIdInBattle = parseInt(_k3);
+      var trapInfo = self.trapInfoDict[trapLocalIdInBattle];
+      var _newPos = cc.v2(trapInfo.pickupBoundary.anchor.x, trapInfo.pickupBoundary.anchor.y);
+      var _targetNode = self.trapNodeDict[trapLocalIdInBattle];
       if (!_targetNode) {
-        _targetNode = cc.instantiate(self.treasurePrefab);
-        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode;
+        _targetNode = cc.instantiate(self.trapPrefab);
+        self.trapNodeDict[trapLocalIdInBattle] = _targetNode;
         safelyAddChild(mapNode, _targetNode);
         _targetNode.setPosition(_newPos);
         setLocalZOrder(_targetNode, 5);
-        //初始化treasure的标记
-        var pickupBoundary = treasureInfo.pickupBoundary;
+        //初始化trap的标记
+        var pickupBoundary = trapInfo.pickupBoundary;
         var anchor = pickupBoundary.anchor;
         var newColliderIns = _targetNode.getComponent(cc.PolygonCollider);
         newColliderIns.points = [];
@@ -674,8 +695,8 @@ cc.Class({
         }
       }
 
-      if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
-        delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
+      if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
+        delete toRemoveTrapNodeDict[trapLocalIdInBattle];
       }
       if (0 < _targetNode.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
@@ -687,18 +708,82 @@ cc.Class({
       _targetNode.runAction(cc.moveTo(durationSeconds, _newPos));
     }
 
+    // 更新宝物显示 
+    for (var _k4 in self.treasureInfoDict) {
+      var treasureLocalIdInBattle = parseInt(_k4);
+      var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
+      var _newPos2 = cc.v2(treasureInfo.pickupBoundary.anchor.x, treasureInfo.pickupBoundary.anchor.y);
+      var _targetNode2 = self.treasureNodeDict[treasureLocalIdInBattle];
+      if (!_targetNode2) {
+        _targetNode2 = cc.instantiate(self.treasurePrefab);
+        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode2;
+        safelyAddChild(mapNode, _targetNode2);
+        _targetNode2.setPosition(_newPos2);
+        setLocalZOrder(_targetNode2, 5);
+        //初始化treasure的标记
+        var _pickupBoundary = treasureInfo.pickupBoundary;
+        var _anchor = _pickupBoundary.anchor;
+        var _newColliderIns = _targetNode2.getComponent(cc.PolygonCollider);
+        _newColliderIns.points = [];
+        var _iteratorNormalCompletion9 = true;
+        var _didIteratorError9 = false;
+        var _iteratorError9 = undefined;
+
+        try {
+          for (var _iterator9 = _pickupBoundary.points[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+            var _point = _step9.value;
+
+            var _p2 = cc.v2(parseFloat(_point.x), parseFloat(_point.y));
+            _newColliderIns.points.push(_p2);
+          }
+        } catch (err) {
+          _didIteratorError9 = true;
+          _iteratorError9 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion9 && _iterator9.return) {
+              _iterator9.return();
+            }
+          } finally {
+            if (_didIteratorError9) {
+              throw _iteratorError9;
+            }
+          }
+        }
+      }
+
+      if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
+        delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
+      }
+      if (0 < _targetNode2.getNumberOfRunningActions()) {
+        // A significant trick to smooth the position sync performance!
+        continue;
+      }
+      var _oldPos2 = cc.v2(_targetNode2.x, _targetNode2.y);
+      var _toMoveByVec2 = _newPos2.sub(_oldPos2);
+      var _durationSeconds = dt; // Using `dt` temporarily!
+      _targetNode2.runAction(cc.moveTo(_durationSeconds, _newPos2));
+    }
+
     // Coping with removed players.
-    for (var _k3 in toRemovePlayerNodeDict) {
-      var _playerId = parseInt(_k3);
-      toRemovePlayerNodeDict[_k3].parent.removeChild(toRemovePlayerNodeDict[_k3]);
+    for (var _k5 in toRemovePlayerNodeDict) {
+      var _playerId = parseInt(_k5);
+      toRemovePlayerNodeDict[_k5].parent.removeChild(toRemovePlayerNodeDict[_k5]);
       delete self.otherPlayerNodeDict[_playerId];
     }
 
     // Coping with removed treasures.
-    for (var _k4 in toRemoveTreasureNodeDict) {
-      var _treasureLocalIdInBattle = parseInt(_k4);
-      toRemoveTreasureNodeDict[_k4].parent.removeChild(toRemoveTreasureNodeDict[_k4]);
+    for (var _k6 in toRemoveTreasureNodeDict) {
+      var _treasureLocalIdInBattle = parseInt(_k6);
+      toRemoveTreasureNodeDict[_k6].parent.removeChild(toRemoveTreasureNodeDict[_k6]);
       delete self.treasureNodeDict[_treasureLocalIdInBattle];
+    }
+
+    // Coping with removed traps.
+    for (var _k7 in toRemoveTrapNodeDict) {
+      var _trapLocalIdInBattle = parseInt(_k7);
+      toRemoveTrapNodeDict[_k7].parent.removeChild(toRemoveTrapNodeDict[_k7]);
+      delete self.trapNodeDict[_trapLocalIdInBattle];
     }
   },
   transitToState: function transitToState(s) {

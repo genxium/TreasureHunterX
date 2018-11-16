@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "tile_1",
-    "texture": "99d993ec-7299-43cf-9716-64c2b29ff58c",
+    "name": "mikado_outline_shadow",
+    "texture": "71a46ef1-d7bc-4b93-b56d-1c0d1cd7bfee",
     "atlas": "",
     "rect": [
-      0,
-      0,
-      192,
-      192
+      3,
+      3,
+      497,
+      232
     ],
     "offset": [
-      0,
-      0
+      -4.5,
+      9
     ],
     "originalSize": [
-      192,
-      192
+      512,
+      256
     ],
     "capInsets": [
       0,

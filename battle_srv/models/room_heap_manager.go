@@ -106,6 +106,7 @@ func InitRoomHeapManager() {
 			BattleDurationNanos:    int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:              35,
 			Treasures:              make(map[int]*Treasure),
+			Traps:                  make(map[int]*Trap),
 		}
 		roomMap[pq[i].ID] = pq[i]
 	}

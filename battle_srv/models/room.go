@@ -83,6 +83,7 @@ type Room struct {
 	EffectivePlayerCount   int
 	DismissalWaitGroup     sync.WaitGroup
 	Treasures              map[int]*Treasure
+  Traps                  map[int]*Trap
 	CollidableWorld        *box2d.B2World
 }
 
@@ -93,6 +94,7 @@ type RoomDownsyncFrame struct {
 	SentAt         int64             `json:"sentAt"`
 	CountdownNanos int64             `json:"countdownNanos"`
 	Treasures      map[int]*Treasure `json:"treasures"`
+  Traps          map[int]*Trap     `json:"traps"`
 }
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
@@ -101,6 +103,15 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
 		delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
     pR.Players[contactingPlayer.ID].Score += contactingTreasure.Score 
+	}
+}
+
+func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
+	if _, existent := pR.Traps[contactingTrap.LocalIDInBattle]; existent {
+		Logger.Info("Player has met trap:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTrap.LocalIDInBattle", contactingTrap.LocalIDInBattle))
+		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
+		delete(pR.Traps, contactingTrap.LocalIDInBattle)
+    pR.Players[contactingPlayer.ID].Score -=  100
 	}
 }
 
@@ -141,28 +152,34 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 	return true
 }
 
-func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Treasure {
-  relativePath := "../frontend/assets/resources/map/tile_1.tsx"
-	execPath, err := os.Executable()
-	ErrFatal(err)
+func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIDInBattle int, pTsxIns *Tsx) *Trap {
 
-	pwd, err := os.Getwd()
-	ErrFatal(err)
+  polyLine :=  pTsxIns.TrapPolyLineList[0]
+  
+	thePoints := make([]*Vec2D, len(polyLine.Points))
+  for index, value := range polyLine.Points{
+	  thePoints[index] = &Vec2D{
+	  	X:  value.X,
+	  	Y:  value.Y,
+	  }
+  }
 
-  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
-  tsxIns := Tsx{}
-  pTsxIns := &tsxIns
-  fp := filepath.Join(pwd, relativePath)
-  fmt.Printf("fp == %v\n", fp)
-	if !filepath.IsAbs(fp) {
-    panic("Tmx filepath must be absolute!")
+	thePolygon := Polygon2D{
+		Anchor: pAnchor,
+		Points: thePoints,
 	}
 
-  byteArr, err := ioutil.ReadFile(fp)
-  ErrFatal(err)
-  DeserializeToTsxIns(byteArr, pTsxIns)
+	theTrap := Trap{
+		ID:              0,
+		LocalIDInBattle: trapLocalIDInBattle,
+		PickupBoundary:  &thePolygon,
+	}
 
-  polyLine :=  pTsxIns.PolyLineList[0]
+	return &theTrap
+}
+func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int, pTsxIns *Tsx) *Treasure {
+
+  polyLine :=  pTsxIns.TreasurePolyLineList[0]
   
 	thePoints := make([]*Vec2D, len(polyLine.Points))
   for index, value := range polyLine.Points{
@@ -187,16 +204,29 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int) *Tre
 	return &theTreasure
 }
 
-func (pR *Room) InitTreasures(pTmxMapIns *TmxMap) {
+func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
+ for key,value := range pTmxMapIns.TrapsInitPosList {
+	{
+		pAnchor := &Vec2D{
+			X: float64(value.X),
+			Y: float64(value.Y),
+		}
+		theTrap := pR.createTrap(pAnchor, key, pTsxIns)
+		pR.Traps[theTrap.LocalIDInBattle] = theTrap
+	}
+  }
+	Logger.Info("InitTraps finished:", zap.Any("roomID", pR.ID), zap.Any("traps", pR.Traps))
+}
+
+func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
  for key,value := range pTmxMapIns.TreasuresInitPosList {
 	{
 		pAnchor := &Vec2D{
 			X: float64(value.X),
 			Y: float64(value.Y),
 		}
-		theTreasure := pR.createTreasure(pAnchor, key)
+		theTreasure := pR.createTreasure(pAnchor, key, pTsxIns)
 		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
-    Logger.Info("test",zap.Any("treasures",key))
 	}
   }
 	Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
@@ -263,6 +293,38 @@ func (pR *Room) InitColliders() {
 		b2TreasureBody.SetUserData(treasure)
 		PrettyPrintBody(treasure.CollidableBody)
 	}
+
+
+	Logger.Info("InitColliders for pR.Traps:", zap.Any("roomID", pR.ID))
+	for _, trap := range pR.Traps {
+		var bdDef box2d.B2BodyDef
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Position.Set(trap.PickupBoundary.Anchor.X, trap.PickupBoundary.Anchor.Y)
+
+		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		pointsCount := len(trap.PickupBoundary.Points)
+
+		b2Vertices := make([]box2d.B2Vec2, pointsCount)
+		for vIndex, v2 := range trap.PickupBoundary.Points {
+			b2Vertices[vIndex] = v2.ToB2Vec2()
+		}
+
+		b2PolygonShape := box2d.MakeB2PolygonShape()
+		b2PolygonShape.Set(b2Vertices, pointsCount)
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2PolygonShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
+		fd.Density = 0.0
+		b2TreasureBody.CreateFixtureFromDef(&fd)
+
+		trap.CollidableBody = b2TreasureBody
+		b2TreasureBody.SetUserData(trap)
+		PrettyPrintBody(trap.CollidableBody)
+	}
 }
 
 func (pR *Room) StartBattle() {
@@ -299,7 +361,28 @@ func (pR *Room) StartBattle() {
     player.Score = 0
   }
 
-	pR.InitTreasures(pTmxMapIns)
+  relativePath = "../frontend/assets/resources/map/tile_1.tsx"
+	execPath, err = os.Executable()
+	ErrFatal(err)
+
+	pwd, err = os.Getwd()
+	ErrFatal(err)
+
+  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+  tsxIns := Tsx{}
+  pTsxIns := &tsxIns
+  fp = filepath.Join(pwd, relativePath)
+  fmt.Printf("fp == %v\n", fp)
+	if !filepath.IsAbs(fp) {
+    panic("Tmx filepath must be absolute!")
+	}
+
+  byteArr, err = ioutil.ReadFile(fp)
+  ErrFatal(err)
+  DeserializeToTsxIns(byteArr, pTsxIns)
+
+	pR.InitTreasures(pTmxMapIns,pTsxIns)
+	pR.InitTraps(pTmxMapIns,pTsxIns)
 	pR.InitColliders()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
@@ -339,6 +422,7 @@ func (pR *Room) StartBattle() {
 					SentAt:         utils.UnixtimeMilli(),
 					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
 					Treasures:      pR.Treasures,
+					Traps:          pR.Traps,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
@@ -363,12 +447,16 @@ func (pR *Room) StartBattle() {
 					if contactingPlayer, validPlayer := bodyA.GetUserData().(*Player); validPlayer {
 						if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
 							pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-						}
+						} else if contactingTrap, validTrap := bodyB.GetUserData().(*Trap); validTrap {
+							  pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+              }
 					} else {
 						if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
 							if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
 								pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-							}
+						  } else if contactingTrap, validTrap := bodyA.GetUserData().(*Trap); validTrap {
+						  	pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+              }
 						}
 					}
 				}
@@ -439,6 +527,7 @@ func (pR *Room) StopBattleForSettlement() {
 			SentAt:         utils.UnixtimeMilli(),
 			CountdownNanos: -1, // TODO: Replace this magic constant!
 			Treasures:      pR.Treasures,
+			Traps:          pR.Traps,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		utils.SendSafely(assembledFrame, theForwardingChannel)
@@ -493,6 +582,7 @@ func (pR *Room) onDismissed() {
 	// Always instantiates new HeapRAM blocks and let the old blocks die out due to not being retained by any root reference.
 	pR.Players = make(map[int]*Player)
 	pR.Treasures = make(map[int]*Treasure)
+	pR.Traps = make(map[int]*Trap)
 	pR.PlayerDownsyncChanDict = make(map[int]chan interface{})
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()

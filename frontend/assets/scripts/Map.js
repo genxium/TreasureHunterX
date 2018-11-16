@@ -34,6 +34,10 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
+    trapPrefab: {
+      type: cc.Prefab,
+      default: null,
+    },
     npcPlayerPrefab: {
       type: cc.Prefab,
       default: null,
@@ -187,6 +191,8 @@ cc.Class({
     self.otherPlayerNodeDict = {};
     self.treasureInfoDict = {};
     self.treasureNodeDict = {};
+    self.trapInfoDict = {};
+    self.trapNodeDict = {};
     self.scoreInfoDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
@@ -331,6 +337,17 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
+//初始化trapInfo
+        self.trapInfoDict = {};
+        const traps = roomDownsyncFrame.traps;
+        const trapsLocalIdStrList = Object.keys(traps);
+        for (let i = 0; i < trapsLocalIdStrList.length; ++i) {
+          const k = trapsLocalIdStrList[i];
+          const trapLocalIdInBattle = parseInt(k);
+          const trapInfo = traps[k];
+          self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
+        }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -413,8 +430,8 @@ cc.Class({
     }
     if (null != self.selfPlayerInfo) {
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
-      if(self.selfPlayerInfo.score)
-      self.selfPlayerScoreLabel.string = self.selfPlayerInfo.score;
+      const score  = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0 
+      self.selfPlayerScoreLabel.string = score;
     }
 
     let toRemovePlayerNodeDict = {};
@@ -422,6 +439,9 @@ cc.Class({
 
     let toRemoveTreasureNodeDict = {};
     Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
+
+    let toRemoveTrapNodeDict = {};
+    Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
 
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
@@ -438,9 +458,8 @@ cc.Class({
         safelyAddChild(debugInfoNode,scoreNode);
         self.scoreInfoDict[playerId] = scoreNode;
       }
-      if(cachedPlayerData.score){
-        self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = cachedPlayerData.score;
-      }
+      const playerScore  = !cachedPlayerData.score ? cachedPlayerData.score  : 0 
+      self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = playerScore;
       let targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
@@ -492,6 +511,49 @@ cc.Class({
       }
     }
 
+   // 更新陷阱显示 
+    for (let k in self.trapInfoDict) {
+      const trapLocalIdInBattle = parseInt(k);
+      const trapInfo = self.trapInfoDict[trapLocalIdInBattle];
+      const newPos = cc.v2(
+        trapInfo.pickupBoundary.anchor.x,
+        trapInfo.pickupBoundary.anchor.y
+      );
+      let targetNode = self.trapNodeDict[trapLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.trapPrefab);
+        self.trapNodeDict[trapLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
+        //初始化trap的标记
+        const pickupBoundary = trapInfo.pickupBoundary;
+        const anchor = pickupBoundary.anchor; 
+        const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
+        newColliderIns.points = [];
+           for (let point of pickupBoundary.points) {
+             const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+             newColliderIns.points.push(p);
+           }
+      }
+
+      if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
+        delete toRemoveTrapNodeDict[trapLocalIdInBattle];
+      }
+      if (0 < targetNode.getNumberOfRunningActions()) {
+        // A significant trick to smooth the position sync performance!
+        continue;
+      }
+      const oldPos = cc.v2(
+        targetNode.x,
+        targetNode.y
+      );
+      const toMoveByVec = newPos.sub(oldPos);
+      const durationSeconds = dt; // Using `dt` temporarily!
+      targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+    }
+
+   // 更新宝物显示 
     for (let k in self.treasureInfoDict) {
       const treasureLocalIdInBattle = parseInt(k);
       const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
@@ -545,6 +607,13 @@ cc.Class({
       const treasureLocalIdInBattle = parseInt(k);
       toRemoveTreasureNodeDict[k].parent.removeChild(toRemoveTreasureNodeDict[k]);
       delete self.treasureNodeDict[treasureLocalIdInBattle];
+    }
+
+    // Coping with removed traps.
+    for (let k in toRemoveTrapNodeDict) {
+      const trapLocalIdInBattle = parseInt(k);
+      toRemoveTrapNodeDict[k].parent.removeChild(toRemoveTrapNodeDict[k]);
+      delete self.trapNodeDict[trapLocalIdInBattle];
     }
   },
 

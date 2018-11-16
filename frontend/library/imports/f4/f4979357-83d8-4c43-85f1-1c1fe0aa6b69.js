@@ -10,10 +10,10 @@ var backendAddress = {
   PORT: "9990",
   WS_PATH_PREFIX: "/tsrht"
 };
-/*
+/**
 var backendAddress = {
   PROTOCOL: 'https',
-  HOST: 'tmlmoba.lokcol.com',
+  HOST: 'tsrht.lokcol.com',
   PORT: "443",
   WS_PATH_PREFIX: "/tsrht",
 };

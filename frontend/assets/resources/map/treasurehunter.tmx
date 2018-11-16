@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="41">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="51">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
- <tileset firstgid="12" source="../tile_1.tsx"/>
  <layer name="tile_1 floor" width="80" height="80">
   <properties>
    <property name="type" value="normal"/>
@@ -59,10 +58,21 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="treasures">
-  <object id="31" x="1926" y="2034">
+ <objectgroup name="traps">
+  <object id="41" x="1948" y="2044">
    <point/>
   </object>
+  <object id="45" x="1908" y="2196">
+   <point/>
+  </object>
+  <object id="46" x="2080" y="2004">
+   <point/>
+  </object>
+  <object id="47" x="1956" y="1868">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="treasures">
   <object id="32" x="1426" y="2598">
    <point/>
   </object>
@@ -90,6 +100,7 @@
   <object id="40" x="1892" y="3028">
    <point/>
   </object>
+  <object id="50" gid="8" x="1830" y="2148" width="64" height="64" visible="0"/>
  </objectgroup>
  <objectgroup name="barrier">
   <properties>

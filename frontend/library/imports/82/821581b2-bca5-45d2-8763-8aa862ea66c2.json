@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "tile_1",
-    "texture": "99d993ec-7299-43cf-9716-64c2b29ff58c",
+    "name": "Armature_run_01",
+    "texture": "edb2963c-8153-4597-8bc4-554c0195ee62",
     "atlas": "",
     "rect": [
-      0,
-      0,
-      192,
-      192
+      1,
+      2,
+      146,
+      115
     ],
     "offset": [
-      0,
-      0
+      -0.5,
+      2.5
     ],
     "originalSize": [
-      192,
-      192
+      149,
+      124
     ],
     "capInsets": [
       0,

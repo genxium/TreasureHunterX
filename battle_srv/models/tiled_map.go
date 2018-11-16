@@ -22,6 +22,7 @@ type TmxMap struct {
 
   ControlledPlayersInitPosList []Vec2D
   TreasuresInitPosList []Vec2D
+  TrapsInitPosList []Vec2D
 }
 
 type Tsx struct {
@@ -32,7 +33,8 @@ type Tsx struct {
 	Columns      int              `xml:"columns,attr"`
 	Image        []TmxImage       `xml:"image"`
 	Tiles        []TsxTile        `xml:"tile"`
-  PolyLineList []TreasurePolyline
+  TreasurePolyLineList []TreasurePolyline
+  TrapPolyLineList []TreasurePolyline
 }
 
 type TsxTile struct {
@@ -116,9 +118,9 @@ type TreasurePolyline struct {
 func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	err := xml.Unmarshal(byteArr, pTsxIns)
   for _, tile := range pTsxIns.Tiles {
-    if 7 == tile.Id {
+    if 7 == tile.Id || 8 == tile.Id {
       tileObjectGroup := tile.ObjectGroup
-      pTsxIns.PolyLineList = make([]TreasurePolyline, len(tileObjectGroup.TsxObjects))
+      pPolyLineList := make([]TreasurePolyline, len(tileObjectGroup.TsxObjects))
       for index, obj := range tileObjectGroup.TsxObjects {
         initPos := Vec2D{
           X: obj.X,
@@ -147,10 +149,15 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
            pointsArrayTransted[key].X =  value.X - scale * float64(pTsxIns.TileWidth) 
            pointsArrayTransted[key].Y =   scale * float64(pTsxIns.TileHeight)-value.Y 
         }
-        pTsxIns.PolyLineList[index] =  TreasurePolyline{
+        pPolyLineList[index] =  TreasurePolyline{
           InitPos: initPos,
           Points: pointsArrayTransted,
         } 
+    }
+    if tile.Id == 7 {
+      pTsxIns.TreasurePolyLineList = pPolyLineList
+    }else {
+      pTsxIns.TrapPolyLineList = pPolyLineList
     }
   }
   }
@@ -183,6 +190,18 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
         }
         treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
         pTmxMapIns.TreasuresInitPosList[index] = treasurePos
+      }
+    }
+
+    if "traps" == objGroup.Name {
+      pTmxMapIns.TrapsInitPosList = make([]Vec2D, len(objGroup.Objects))
+      for index, obj := range objGroup.Objects {
+        tmp := Vec2D{
+          X: obj.X,
+          Y: obj.Y,
+        }
+        treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+        pTmxMapIns.TrapsInitPosList[index] = treasurePos
       }
     }
   }

@@ -19,7 +19,7 @@ func loadTMX(fp string, pTmxMapIns *models.TmxMap) {
   byteArr, err := ioutil.ReadFile(fp)
   ErrFatal(err)
   models.DeserializeToTmxMapIns(byteArr, pTmxMapIns)
-  for _, playerPos := range pTmxMapIns.TreasuresInitPosList {
+  for _, playerPos := range pTmxMapIns.TrapsInitPosList {
     fmt.Printf("%v\n", playerPos)
   }
 }
@@ -32,13 +32,13 @@ func loadTSX(fp string, pTsxIns *models.Tsx) {
   byteArr, err := ioutil.ReadFile(fp)
   ErrFatal(err)
   models.DeserializeToTsxIns(byteArr, pTsxIns)
-  for _, Pos := range pTsxIns.PolyLineList {
+  for _, Pos := range pTsxIns.TrapPolyLineList {
     fmt.Printf("%v\n", Pos)
   }
 }
 
 func getTMXInfo() {
-  relativePath = "../../frontend/assets/resources/treasurehunter_1107_v2/treasurehunter.tmx"
+  relativePath = "../../frontend/assets/resources/map/treasurehunter.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
