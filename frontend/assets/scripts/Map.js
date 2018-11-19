@@ -94,6 +94,11 @@ cc.Class({
       type:cc.Prefab,
       default: null
     },
+    trapBulletPrefab: {
+      type:cc.Prefab,
+      default: null
+    },
+
   },
 
   _onPerUpsyncFrame() {
@@ -192,6 +197,8 @@ cc.Class({
     self.treasureInfoDict = {};
     self.treasureNodeDict = {};
     self.trapInfoDict = {};
+    self.trapBulletInfoDict = {};
+    self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
     self.scoreInfoDict = {};
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
@@ -348,6 +355,16 @@ cc.Class({
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
         }
 
+//初始化trapBulletsInfo
+        self.trapBulletInfoDict = {};
+        const bullets = roomDownsyncFrame.bullets;
+        const bulletsLocalIdStrList = Object.keys(bullets);
+        for (let i = 0; i < bulletsLocalIdStrList.length; ++i) {
+          const k = bulletsLocalIdStrList[i];
+          const bulletLocalIdInBattle = parseInt(k);
+          const bulletInfo = bullets[k];
+          self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
+        }
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -443,6 +460,9 @@ cc.Class({
     let toRemoveTrapNodeDict = {};
     Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
 
+    let toRemoveBulletNodeDict = {};
+    Object.assign(toRemoveBulletNodeDict, self.trapBulletNodeDict);
+
     for (let k in self.otherPlayerCachedDataDict) {
       const playerId = parseInt(k);
       const cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
@@ -536,10 +556,34 @@ cc.Class({
              newColliderIns.points.push(p);
            }
       }
-
       if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
         delete toRemoveTrapNodeDict[trapLocalIdInBattle];
       }
+      
+    }
+
+   // 更新bullet显示 
+    for (let k in self.trapBulletInfoDict) {
+      const bulletLocalIdInBattle = parseInt(k);
+      const bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
+      const newPos = cc.v2(
+        bulletInfo.immediatePosition.x,
+        bulletInfo.immediatePosition.y
+      );
+      let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.trapBulletPrefab);
+        self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
+      }else {
+        targetNode.setPosition(newPos);
+      }
+      if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
+        delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
+      }
+
       if (0 < targetNode.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
         continue;
@@ -614,6 +658,13 @@ cc.Class({
       const trapLocalIdInBattle = parseInt(k);
       toRemoveTrapNodeDict[k].parent.removeChild(toRemoveTrapNodeDict[k]);
       delete self.trapNodeDict[trapLocalIdInBattle];
+    }
+
+    // Coping with removed bullets.
+    for (let k in toRemoveBulletNodeDict) {
+      const bulletLocalIdInBattle = parseInt(k);
+      toRemoveBulletNodeDict[k].parent.removeChild(toRemoveBulletNodeDict[k]);
+      delete self.trapBulletNodeDict[bulletLocalIdInBattle];
     }
   },
 

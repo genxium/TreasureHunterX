@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "trapBullet",
+    "texture": "be9252d7-18db-470a-9f5c-654c60403d36",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      1000,
+      834
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      1000,
+      834
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

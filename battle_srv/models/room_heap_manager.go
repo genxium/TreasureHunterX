@@ -107,6 +107,8 @@ func InitRoomHeapManager() {
 			ServerFPS:              35,
 			Treasures:              make(map[int]*Treasure),
 			Traps:                  make(map[int]*Trap),
+      Bullets:                make(map[int]*Bullet),
+      AccumulatedLocalIDForBullets: 0,
 		}
 		roomMap[pq[i].ID] = pq[i]
 	}

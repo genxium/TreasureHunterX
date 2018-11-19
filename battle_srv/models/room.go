@@ -7,6 +7,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"path/filepath"
+  "math"
 	"io/ioutil"
   "os"
 	"fmt"
@@ -17,9 +18,13 @@ const (
 	// You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
 	COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
 	COLLISION_CATEGORY_TREASURE          = (1 << 2)
+  COLLISION_CATEGORY_TRAP              = (1 << 3)
+	COLLISION_CATEGORY_TRAP_BULLET       = (1 << 4)
 
-	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE)
+	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET)
 	COLLISION_MASK_FOR_TREASURE          = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
+	COLLISION_MASK_FOR_TRAP              = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
+	COLLISION_MASK_FOR_TRAP_BULLET       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 )
 
 type RoomBattleState struct {
@@ -84,6 +89,8 @@ type Room struct {
 	DismissalWaitGroup     sync.WaitGroup
 	Treasures              map[int]*Treasure
   Traps                  map[int]*Trap
+  Bullets                map[int]*Bullet
+  AccumulatedLocalIDForBullets  int
 	CollidableWorld        *box2d.B2World
 }
 
@@ -95,6 +102,7 @@ type RoomDownsyncFrame struct {
 	CountdownNanos int64             `json:"countdownNanos"`
 	Treasures      map[int]*Treasure `json:"treasures"`
   Traps          map[int]*Trap     `json:"traps"`
+  Bullets        map[int]*Bullet  `json:"bullets"`
 }
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
@@ -111,7 +119,17 @@ func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 		Logger.Info("Player has met trap:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTrap.LocalIDInBattle", contactingTrap.LocalIDInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
 		delete(pR.Traps, contactingTrap.LocalIDInBattle)
-    pR.Players[contactingPlayer.ID].Score -=  100
+
+    pR.createTrapBullet(contactingPlayer, contactingTrap)
+	}
+}
+
+func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
+  Logger.Info("Player has picked up bullet:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingBullet.LocalIDInBattle", contactingBullet.LocalIDInBattle))
+	if _, existent := pR.Bullets[contactingBullet.LocalIDInBattle]; existent {
+		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
+		delete(pR.Bullets, contactingBullet.LocalIDInBattle)
+    pR.Players[contactingPlayer.ID].Score -= 100
 	}
 }
 
@@ -177,6 +195,61 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIDInBattle int, pTsxIns *Tsx
 
 	return &theTrap
 }
+
+func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
+  startPos := Vec2D{
+    X: pTrap.CollidableBody.GetPosition().X,
+    Y: pTrap.CollidableBody.GetPosition().Y,
+  }
+  endPos := Vec2D{
+    X: pPlayer.CollidableBody.GetPosition().X,
+    Y: pPlayer.CollidableBody.GetPosition().Y,
+  }
+
+  pR.AccumulatedLocalIDForBullets++
+
+  var bdDef box2d.B2BodyDef
+  colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
+  bdDef = box2d.MakeB2BodyDef()
+  bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+  bdDef.Position.Set(startPos.X + colliderOffset.X, startPos.Y + colliderOffset.Y)
+
+  b2Body := pR.CollidableWorld.CreateBody(&bdDef)
+
+  b2CircleShape := box2d.MakeB2CircleShape()
+  b2CircleShape.M_radius = 32 // Matching that of client-side setting.
+
+  fd := box2d.MakeB2FixtureDef()
+  fd.Shape = &b2CircleShape
+  fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
+  fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
+  fd.Density = 0.0
+  b2Body.CreateFixtureFromDef(&fd)
+  b2Body.CreateFixture(&b2CircleShape, 0.0)
+
+  diffVecX := (endPos.X - startPos.X) 
+  diffVecY := (endPos.Y - startPos.Y) 
+  tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
+  linearUnitVector := Vec2D{
+    X: diffVecX/tempMag,
+    Y: diffVecY/tempMag,
+  }
+  bullet := &Bullet{
+    LocalIDInBattle: pR.AccumulatedLocalIDForBullets,
+    LinearSpeed:  0.0000001,
+    ImmediatePosition: startPos,
+    StartAtPoint: startPos,
+    EndAtPoint: endPos,
+    LinearUnitVector: linearUnitVector,
+  }
+
+  bullet.CollidableBody = b2Body
+  b2Body.SetUserData(bullet)
+
+  pR.Bullets[bullet.LocalIDInBattle] = bullet
+  return bullet
+}
+
 func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int, pTsxIns *Tsx) *Treasure {
 
   polyLine :=  pTsxIns.TreasurePolyLineList[0]
@@ -316,8 +389,8 @@ func (pR *Room) InitColliders() {
 
 		fd := box2d.MakeB2FixtureDef()
 		fd.Shape = &b2PolygonShape
-		fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
-		fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
 		fd.Density = 0.0
 		b2TreasureBody.CreateFixtureFromDef(&fd)
 
@@ -423,6 +496,7 @@ func (pR *Room) StartBattle() {
 					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
 					Treasures:      pR.Treasures,
 					Traps:          pR.Traps,
+          Bullets:        pR.Bullets,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
@@ -437,6 +511,17 @@ func (pR *Room) StartBattle() {
 				newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
 				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
 			}
+
+			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant. 
+			for _, bullet := range pR.Bullets {
+        elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
+				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.ImmediatePosition.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.ImmediatePosition.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
+				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
+        bullet.ImmediatePosition = Vec2D{
+          X: newB2Vec2Pos.X,
+          Y: newB2Vec2Pos.Y,
+        }
+			}
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
 			for itContacts != nil {
@@ -449,13 +534,23 @@ func (pR *Room) StartBattle() {
 							pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
 						} else if contactingTrap, validTrap := bodyB.GetUserData().(*Trap); validTrap {
 							  pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+            } else {
+              if contactingBullet, validBullet := bodyB.GetUserData().(*Bullet); validBullet {
+                // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomID", pR.ID))
+                pR.onBulletCrashed(contactingPlayer, contactingBullet)
               }
+            }
 					} else {
 						if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
 							if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
 								pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
 						  } else if contactingTrap, validTrap := bodyA.GetUserData().(*Trap); validTrap {
-						  	pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+						    pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+              } else {
+                if contactingBullet, validBullet := bodyA.GetUserData().(*Bullet); validBullet {
+                  // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomID", pR.ID))
+                  pR.onBulletCrashed(contactingPlayer, contactingBullet)
+                }
               }
 						}
 					}
@@ -528,6 +623,7 @@ func (pR *Room) StopBattleForSettlement() {
 			CountdownNanos: -1, // TODO: Replace this magic constant!
 			Treasures:      pR.Treasures,
 			Traps:          pR.Traps,
+      Bullets:        pR.Bullets,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		utils.SendSafely(assembledFrame, theForwardingChannel)
@@ -583,6 +679,7 @@ func (pR *Room) onDismissed() {
 	pR.Players = make(map[int]*Player)
 	pR.Treasures = make(map[int]*Treasure)
 	pR.Traps = make(map[int]*Trap)
+	pR.Bullets = make(map[int]*Bullet)
 	pR.PlayerDownsyncChanDict = make(map[int]chan interface{})
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
@@ -616,6 +713,8 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 		SentAt:         utils.UnixtimeMilli(),
 		CountdownNanos: -1,
 		Treasures:      pR.Treasures,
+	  Traps:          pR.Traps,
+    Bullets:        pR.Bullets,
 	}
 	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 	utils.SendSafely(assembledFrame, theForwardingChannel)

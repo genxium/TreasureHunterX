@@ -40,8 +40,8 @@
  </tile>
  <tile id="8">
   <objectgroup draworder="index">
-   <object id="1" x="33" y="10">
-    <polyline points="0,0 -35,14 -33,42 32,42 32,14 9,-5"/>
+   <object id="1" x="32" y="10">
+    <polyline points="-90,-119 -216,17 -97,181 177,168 234,3 55,-118"/>
    </object>
   </objectgroup>
  </tile>

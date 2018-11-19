@@ -1294,6 +1294,9 @@
     "otherPlayerScoreIndicatorPrefab": {
       "__uuid__": "a209444d-edef-46ea-b9b4-9ceb522bf2e8"
     },
+    "trapBulletPrefab": {
+      "__uuid__": "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f"
+    },
     "_id": "3f2GBMOYlPyqHCTWn7imfd"
   },
   {
