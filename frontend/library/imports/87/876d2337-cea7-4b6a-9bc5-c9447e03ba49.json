@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "tile_1",
-    "texture": "99d993ec-7299-43cf-9716-64c2b29ff58c",
+    "name": "trapBullet",
+    "texture": "c9aaf2c8-f020-4ad1-8998-5745ecd94993",
     "atlas": "",
     "rect": [
       0,
       0,
-      191,
-      192
+      1000,
+      834
     ],
     "offset": [
-      -0.5,
+      0,
       0
     ],
     "originalSize": [
-      192,
-      192
+      1000,
+      834
     ],
     "capInsets": [
       0,

@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "trapBullet",
-    "texture": "be9252d7-18db-470a-9f5c-654c60403d36",
+    "name": "tickTime",
+    "texture": "ca82737f-c9a7-4350-a499-a90d6916bfc9",
     "atlas": "",
     "rect": [
-      0,
-      0,
-      1000,
-      834
+      34,
+      98,
+      436,
+      292
     ],
     "offset": [
-      0,
-      0
+      2,
+      6
     ],
     "originalSize": [
-      1000,
-      834
+      500,
+      500
     ],
     "capInsets": [
       0,

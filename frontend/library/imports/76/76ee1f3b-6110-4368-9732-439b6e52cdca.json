@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "tile_1",
-    "texture": "99d993ec-7299-43cf-9716-64c2b29ff58c",
+    "name": "infoBG",
+    "texture": "19a0f7ec-9e54-4fb3-b6d4-2afb0d205f42",
     "atlas": "",
     "rect": [
-      0,
-      0,
-      191,
-      192
+      39,
+      193,
+      422,
+      69
     ],
     "offset": [
-      -0.5,
-      0
+      0,
+      22.5
     ],
     "originalSize": [
-      192,
-      192
+      500,
+      500
     ],
     "capInsets": [
       0,
