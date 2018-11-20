@@ -35,7 +35,7 @@
     "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1542692806795,
+    "asset": 1542699532008,
     "meta": 1539182620484,
     "relativePath": "resources"
   },
@@ -100,7 +100,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1542692513338,
+    "asset": 1542699520522,
     "meta": 1539182620473,
     "relativePath": "scripts"
   },
@@ -665,7 +665,7 @@
     "relativePath": "resources/maps"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
-    "asset": 1542691899071,
+    "asset": 1542695988660,
     "meta": 1542691789780,
     "relativePath": "resources/pbfiles"
   },
@@ -710,8 +710,8 @@
     "relativePath": "scripts/WsSessionMgr.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542695769359,
-    "meta": 1542695769422,
+    "asset": 1542699872497,
+    "meta": 1542699872528,
     "relativePath": "scenes/login.fire"
   }
 }
