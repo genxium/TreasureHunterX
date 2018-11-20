@@ -240,6 +240,7 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     X: diffVecX/tempMag,
     Y: diffVecY/tempMag,
   }
+
   bullet := &Bullet{
     LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
     LinearSpeed:  0.0000001,
