@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1542356373000,
+    "asset": 1542630028000,
     "meta": 1541493575000,
     "relativePath": "plugin_scripts"
   },
@@ -35,7 +35,7 @@
     "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1542352729000,
+    "asset": 1542679752000,
     "meta": 1541493575000,
     "relativePath": "resources"
   },
@@ -90,7 +90,7 @@
     "relativePath": "resources/animation/flatHeadSister/FlatHeadSisterRunTopRight.anim"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1542361026000,
+    "asset": 1542613894000,
     "meta": 1541493575000,
     "relativePath": "resources/textures"
   },
@@ -100,7 +100,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1542363225000,
+    "asset": 1542625777000,
     "meta": 1541493575000,
     "relativePath": "scripts"
   },
@@ -170,7 +170,7 @@
     "relativePath": "resources/textures/flatHeadSister/flatHeadSister.png"
   },
   "6f0263fa-1a06-4133-98dc-34281dea54ce": {
-    "asset": 1542352918000,
+    "asset": 1542613672000,
     "meta": 1541493575000,
     "relativePath": "resources/prefabs"
   },
@@ -376,23 +376,18 @@
   },
   "4e92c135-6b07-4ab2-9d20-7c05eaf0f1ad": {
     "asset": 1541555618000,
-    "meta": 1542163729000,
-    "relativePath": "resources/map/treasure.tsx"
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120/treasure.tsx"
   },
   "f40ab057-dbf4-418b-990a-4afeb21d3eb1": {
     "asset": 1541494558000,
-    "meta": 1542163729000,
-    "relativePath": "resources/map/treasure3.png"
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120/treasure3.png"
   },
   "8b400cb3-9119-4269-b86b-0aa2a659b691": {
     "asset": 1542266399000,
     "meta": 1542266399000,
     "relativePath": "resources/prefabs/SelfPlayer.prefab"
-  },
-  "1884f622-b2cb-48f0-8c48-32b88602c939": {
-    "asset": 1542363346000,
-    "meta": 1542163729000,
-    "relativePath": "resources/map"
   },
   "0a5ac9d8-078c-402d-a7da-f1ce7c54ee1b": {
     "asset": 1542165031000,
@@ -415,8 +410,8 @@
     "relativePath": "resources/prefabs/TreasurePrefab.prefab"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1542614995000,
-    "meta": 1542614995000,
+    "asset": 1542680053000,
+    "meta": 1542680053000,
     "relativePath": "scenes/default_map.fire"
   },
   "a209444d-edef-46ea-b9b4-9ceb522bf2e8": {
@@ -655,14 +650,9 @@
     "relativePath": "resources/prefabs/TrapPrefab.prefab"
   },
   "99d993ec-7299-43cf-9716-64c2b29ff58c": {
-    "asset": 1542355792000,
-    "meta": 1542356226000,
-    "relativePath": "resources/map/tile_1.png"
-  },
-  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
-    "asset": 1542356337000,
-    "meta": 1542356339000,
-    "relativePath": "plugin_scripts/conf.js"
+    "asset": 1542679394000,
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120/tile_1.png"
   },
   "a564b3db-b8cb-48b4-952e-25bb56949116": {
     "asset": 1523991280000,
@@ -685,23 +675,33 @@
     "relativePath": "resources/textures/trapBullet.png"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
-    "asset": 1542621219000,
-    "meta": 1542621385000,
-    "relativePath": "resources/map/tile_1.tsx"
+    "asset": 1542621220000,
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120/tile_1.tsx"
   },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
-    "asset": 1542621220000,
-    "meta": 1542621386000,
-    "relativePath": "resources/map/treasurehunter.tmx"
+    "asset": 1542679554000,
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120/treasurehunter.tmx"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1542625724000,
     "meta": 1542625728000,
     "relativePath": "scripts/Map.js"
   },
+  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
+    "asset": 1542628717000,
+    "meta": 1542628718000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542625730000,
-    "meta": 1542625730000,
+    "asset": 1542679764000,
+    "meta": 1542679764000,
     "relativePath": "scenes/login.fire"
+  },
+  "1a802cdc-3337-47b1-923b-2a69719615d8": {
+    "asset": 1542679554000,
+    "meta": 1542679752000,
+    "relativePath": "resources/map1120"
   }
 }

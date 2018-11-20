@@ -234,6 +234,8 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     X: diffVecX/tempMag,
     Y: diffVecY/tempMag,
   }
+
+  distance := math.Sqrt(math.Pow((endPos.X-startPos.X),2)+math.Pow((endPos.Y-startPos.Y),2))
   bullet := &Bullet{
     LocalIDInBattle: pR.AccumulatedLocalIDForBullets,
     LinearSpeed:  0.0000001,
@@ -241,7 +243,10 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     StartAtPoint: startPos,
     EndAtPoint: endPos,
     LinearUnitVector: linearUnitVector,
+    SendAt: utils.UnixtimeNano(),
   }
+
+  bullet.DestinateDuration = distance / bullet.LinearSpeed
 
   bullet.CollidableBody = b2Body
   b2Body.SetUserData(bullet)
@@ -514,6 +519,12 @@ func (pR *Room) StartBattle() {
 
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant. 
 			for _, bullet := range pR.Bullets {
+        if (int64(bullet.DestinateDuration) + bullet.SendAt) < utils.UnixtimeNano() {
+		      pR.CollidableWorld.DestroyBody(bullet.CollidableBody)
+	  	    delete(pR.Bullets, bullet.LocalIDInBattle)
+	        Logger.Info("bullet has arrived destination", zap.Any("bullet:", bullet))
+          continue
+        }
         elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
 				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.ImmediatePosition.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.ImmediatePosition.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
