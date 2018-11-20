@@ -6,8 +6,8 @@ import (
 )
 
 type Vec2D struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
+	X                    float64  `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y                    float64  `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
 }
 
 func CreateVec2DFromB2Vec2(b2V2 box2d.B2Vec2) *Vec2D {
@@ -22,9 +22,8 @@ func (v2 *Vec2D) ToB2Vec2() box2d.B2Vec2 {
 }
 
 type Polygon2D struct {
-	// Using coordinates under the "MapNode".
-	Anchor *Vec2D   `json:"anchor"`
-	Points []*Vec2D `json:"points"`
+	Anchor               *Vec2D   `protobuf:"bytes,1,opt,name=anchor,proto3" json:"anchor,omitempty"`
+	Points               []*Vec2D `json:"-"`
 }
 
 func MoveDynamicBody(body *box2d.B2Body, pToTargetPos *box2d.B2Vec2, inSeconds float64) {

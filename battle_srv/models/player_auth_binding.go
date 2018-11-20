@@ -8,12 +8,12 @@ import (
 )
 
 type PlayerAuthBinding struct {
-	Channel   int       `json:"channel" db:"channel"`
-	CreatedAt int64     `json:"created_at" db:"created_at"`
-	DeletedAt NullInt64 `json:"deleted_at" db:"deleted_at"`
-	ExtAuthID string    `json:"ext_auth_id" db:"ext_auth_id"`
-	PlayerID  int       `json:"player_id" db:"player_id"`
-	UpdatedAt int64     `json:"updated_at" db:"updated_at"`
+	Channel   int       `db:"channel"`
+	CreatedAt int64     `db:"created_at"`
+	DeletedAt NullInt64 `db:"deleted_at"`
+	ExtAuthID string    `db:"ext_auth_id"`
+	PlayerID  int       `db:"player_id"`
+	UpdatedAt int64     `db:"updated_at"`
 }
 
 func (p *PlayerAuthBinding) Insert(tx *sqlx.Tx) error {

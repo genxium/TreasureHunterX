@@ -546,15 +546,17 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
+        /*
         //初始化trap的标记
         const pickupBoundary = trapInfo.pickupBoundary;
         const anchor = pickupBoundary.anchor; 
         const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
         newColliderIns.points = [];
-           for (let point of pickupBoundary.points) {
-             const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
-             newColliderIns.points.push(p);
-           }
+        for (let point of pickupBoundary.points) {
+          const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+          newColliderIns.points.push(p);
+        }
+        */
       }
       if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
         delete toRemoveTrapNodeDict[trapLocalIdInBattle];
@@ -612,15 +614,18 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
+        
+        /* 
         //初始化treasure的标记
         const pickupBoundary = treasureInfo.pickupBoundary;
         const anchor = pickupBoundary.anchor; 
         const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
         newColliderIns.points = [];
-           for (let point of pickupBoundary.points) {
-             const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
-             newColliderIns.points.push(p);
-           }
+        for (let point of pickupBoundary.points) {
+          const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+          newColliderIns.points.push(p);
+        }
+        */
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

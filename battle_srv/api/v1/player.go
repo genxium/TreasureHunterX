@@ -71,13 +71,13 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 		return
 	}
 	if player != nil {
-		tokenExist, err := models.EnsuredPlayerLoginById(player.ID)
+		tokenExist, err := models.EnsuredPlayerLoginById(int(player.Id))
 		if err != nil {
 			c.Set(api.RET, Constants.RetCode.MysqlError)
 			return
 		}
 		if tokenExist {
-			playerLogin, err := models.GetPlayerLoginByPlayerId(player.ID)
+			playerLogin, err := models.GetPlayerLoginByPlayerId(int(player.Id))
 			if err != nil {
 				c.Set(api.RET, Constants.RetCode.MysqlError)
 				return
@@ -153,8 +153,8 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		CreatedAt:    now,
 		FromPublicIP: models.NewNullString(c.ClientIP()),
 		IntAuthToken: token,
-		PlayerID:     player.ID,
-		DisplayName:  player.DisplayName,
+		PlayerID:     int(player.Id),
+		DisplayName:  models.NewNullString(player.DisplayName),
 		UpdatedAt:    now,
 	}
 	err = playerLogin.Insert()
@@ -169,7 +169,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		Token     string `json:"intAuthToken"`
 		ExpiresAt int64  `json:"expiresAt"`
 		PlayerID  int    `json:"playerId"`
-	}{Constants.RetCode.Ok, token, expiresAt, player.ID}
+	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id)}
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -250,7 +250,7 @@ func (p *playerController) TokenWithPlayerIdAuth(c *gin.Context) {
 	}
 	err := c.ShouldBindWith(&req, binding.FormPost)
 	if err == nil {
-		exist, err := models.EnsuredPlayerLoginByToken(req.PlayerId, req.Token)
+		exist, err := models.EnsuredPlayerLoginByToken(int(req.PlayerId), req.Token)
 		api.CErr(c, err)
 		if err == nil && exist {
 			c.Set(api.PLAYER_ID, req.PlayerId)
@@ -287,9 +287,11 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
 		player, err := models.GetPlayerByName(req.Num)
 		if err != nil {
+      Logger.Error("Seeking test env player error:", zap.Error(err))
 			return nil, err
 		}
 		if player != nil {
+      Logger.Info("Got a test env player:", zap.Any("phonenum", req.Num), zap.Any("playerId", player.Id))
 			return player, nil
 		}
 	}
@@ -327,7 +329,7 @@ func (p *playerController) createNewPlayer(extAuthID string) (*models.Player, er
 		UpdatedAt: now,
 		Channel:   int(Constants.AuthChannel.Sms),
 		ExtAuthID: extAuthID,
-		PlayerID:  player.ID,
+		PlayerID:  int(player.Id),
 	}
 	err = playerAuthBinding.Insert(tx)
 	if err != nil {
@@ -336,7 +338,7 @@ func (p *playerController) createNewPlayer(extAuthID string) (*models.Player, er
 	wallet := models.PlayerWallet{
 		CreatedAt: now,
 		UpdatedAt: now,
-		ID:        player.ID,
+		ID:        int(player.Id),
 	}
 	err = wallet.Insert(tx)
 	if err != nil {

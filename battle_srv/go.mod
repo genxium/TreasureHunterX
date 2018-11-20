@@ -12,7 +12,7 @@ require (
 	github.com/githubnemo/CompileDaemon v1.0.0 // indirect
 	github.com/go-redis/redis v6.13.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.0
-	github.com/golang/protobuf v1.1.0 // indirect
+	github.com/golang/protobuf v1.1.0
 	github.com/gorilla/websocket v1.2.0
 	github.com/hashicorp/go-cleanhttp v0.0.0-20171218145408-d5fe4b57a186
 	github.com/howeyc/fsnotify v0.9.0 // indirect

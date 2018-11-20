@@ -70,15 +70,14 @@ cc.Class({
     self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
     self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
 
-    cc.loader.loadRes("protobuf/GameData", function(err, textAsset /* cc.TextAsset */) {
+    cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */) {
       if (err) {
         cc.error(err.message || err);
         return;
       }
       let protoRoot = new protobuf.Root; 
       protobuf.parse(textAsset.text, protoRoot);
-      window.FrameSync = protoRoot.lookupType("tsrht.FrameSync");
-      window.FrameAck  = protoRoot.lookupType("tsrht.FrameAck");
+      window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
       self.checkIntAuthTokenExpire().then(
         () => {
           const intAuthToken = JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken;

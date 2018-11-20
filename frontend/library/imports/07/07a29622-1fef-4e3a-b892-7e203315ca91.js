@@ -90,7 +90,9 @@ window.initPersistentSessionClient = function (onopenCb) {
         break;
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
-          window.handleRoomDownsyncFrame(resp.data);
+          var typedArray = new Uint8Array(resp.data);
+          var parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
+          window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
         break;
       default:

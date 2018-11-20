@@ -683,36 +683,17 @@ cc.Class({
         safelyAddChild(mapNode, _targetNode);
         _targetNode.setPosition(_newPos);
         setLocalZOrder(_targetNode, 5);
+        /*
         //初始化trap的标记
-        var pickupBoundary = trapInfo.pickupBoundary;
-        var anchor = pickupBoundary.anchor;
-        var newColliderIns = _targetNode.getComponent(cc.PolygonCollider);
+        const pickupBoundary = trapInfo.pickupBoundary;
+        const anchor = pickupBoundary.anchor; 
+        const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
         newColliderIns.points = [];
-        var _iteratorNormalCompletion8 = true;
-        var _didIteratorError8 = false;
-        var _iteratorError8 = undefined;
-
-        try {
-          for (var _iterator8 = pickupBoundary.points[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-            var point = _step8.value;
-
-            var p = cc.v2(parseFloat(point.x), parseFloat(point.y));
-            newColliderIns.points.push(p);
-          }
-        } catch (err) {
-          _didIteratorError8 = true;
-          _iteratorError8 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion8 && _iterator8.return) {
-              _iterator8.return();
-            }
-          } finally {
-            if (_didIteratorError8) {
-              throw _iteratorError8;
-            }
-          }
+        for (let point of pickupBoundary.points) {
+          const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+          newColliderIns.points.push(p);
         }
+        */
       }
       if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
         delete toRemoveTrapNodeDict[trapLocalIdInBattle];
@@ -760,36 +741,18 @@ cc.Class({
         safelyAddChild(mapNode, _targetNode3);
         _targetNode3.setPosition(_newPos3);
         setLocalZOrder(_targetNode3, 5);
+
+        /* 
         //初始化treasure的标记
-        var _pickupBoundary = treasureInfo.pickupBoundary;
-        var _anchor = _pickupBoundary.anchor;
-        var _newColliderIns = _targetNode3.getComponent(cc.PolygonCollider);
-        _newColliderIns.points = [];
-        var _iteratorNormalCompletion9 = true;
-        var _didIteratorError9 = false;
-        var _iteratorError9 = undefined;
-
-        try {
-          for (var _iterator9 = _pickupBoundary.points[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-            var _point = _step9.value;
-
-            var _p2 = cc.v2(parseFloat(_point.x), parseFloat(_point.y));
-            _newColliderIns.points.push(_p2);
-          }
-        } catch (err) {
-          _didIteratorError9 = true;
-          _iteratorError9 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-              _iterator9.return();
-            }
-          } finally {
-            if (_didIteratorError9) {
-              throw _iteratorError9;
-            }
-          }
+        const pickupBoundary = treasureInfo.pickupBoundary;
+        const anchor = pickupBoundary.anchor; 
+        const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
+        newColliderIns.points = [];
+        for (let point of pickupBoundary.points) {
+          const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
+          newColliderIns.points.push(p);
         }
+        */
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

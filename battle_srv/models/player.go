@@ -9,16 +9,16 @@ import (
 
 // Use type `float64` for json unmarshalling of numbers.
 type Direction struct {
-	Dx float64 `json:"dx"`
-	Dy float64 `json:"dy"`
+	Dx                   float64  `protobuf:"fixed64,1,opt,name=dx,proto3" json:"dx,omitempty"`
+	Dy                   float64  `protobuf:"fixed64,2,opt,name=dy,proto3" json:"dy,omitempty"`
 }
 
 type PlayerBattleState struct {
-	ACTIVE                int
-	DISCONNECTED          int
-	LOST                  int
-	EXPELLED_DURING_GAME  int
-	EXPELLED_IN_DISMISSAL int
+	ACTIVE                int32
+	DISCONNECTED          int32
+	LOST                  int32
+	EXPELLED_DURING_GAME  int32
+	EXPELLED_IN_DISMISSAL int32
 }
 
 var PlayerBattleStateIns PlayerBattleState
@@ -34,21 +34,21 @@ func InitPlayerBattleStateIns() {
 }
 
 type Player struct {
-	ID                int           `json:"id" db:"id"`
-	X                 float64       `json:"x"`
-	Y                 float64       `json:"y"`
-	Dir               Direction     `json:"dir"`
-	Speed             int           `json:"speed"`
-	BattleState       int           `json:"battleState"`
-	LastMoveGmtMillis int           `json:"lastMoveGmtMillis"`
-	Name              string        `json:"name" db:"name"`
-	DisplayName       NullString    `json:"displayName" db:"display_name"`
+	Id                   int32      `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" db:"id"`
+	X                    float64    `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
+	Y                    float64    `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
+	Dir                  *Direction `protobuf:"bytes,4,opt,name=dir,proto3" json:"dir,omitempty"`
+	Speed                int32      `protobuf:"varint,5,opt,name=speed,proto3" json:"speed,omitempty"`
+	BattleState          int32      `protobuf:"varint,6,opt,name=battleState,proto3" json:"battleState,omitempty"`
+	LastMoveGmtMillis    int32      `protobuf:"varint,7,opt,name=lastMoveGmtMillis,proto3" json:"lastMoveGmtMillis,omitempty"`
+	Name                 string     `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty" db:"name"`
+	DisplayName          string     `protobuf:"bytes,9,opt,name=displayName,proto3" json:"displayName,omitempty" db:"display_name"`
+	Score                int32      `protobuf:"varint,10,opt,name=score,proto3" json:"score,omitempty"`
 	CreatedAt         int64         `json:"-" db:"created_at"`
 	UpdatedAt         int64         `json:"-" db:"updated_at"`
 	DeletedAt         NullInt64     `json:"-" db:"deleted_at"`
 	TutorialStage     int           `json:"-" db:"tutorial_stage"`
 	CollidableBody    *box2d.B2Body `json:"-"`
-  Score             int           `json:"score"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {
@@ -82,7 +82,7 @@ func (p *Player) Insert(tx *sqlx.Tx) error {
 	if err != nil {
 		return err
 	}
-	p.ID = int(id)
+	p.Id = int32(id)
 	return nil
 }
 func UpdatePlayerTutorialStage(tx *sqlx.Tx, id int) (bool, error) {

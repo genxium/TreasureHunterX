@@ -12,6 +12,7 @@ import (
   "os"
 	"fmt"
 	"time"
+  "github.com/golang/protobuf/proto"
 )
 
 const (
@@ -28,12 +29,12 @@ const (
 )
 
 type RoomBattleState struct {
-	IDLE                           int
-	WAITING                        int
-	IN_BATTLE                      int
-	STOPPING_BATTLE_FOR_SETTLEMENT int
-	IN_SETTLEMENT                  int
-	IN_DISMISSAL                   int
+	IDLE                           int32
+	WAITING                        int32
+	IN_BATTLE                      int32
+	STOPPING_BATTLE_FOR_SETTLEMENT int32
+	IN_SETTLEMENT                  int32
+	IN_DISMISSAL                   int32
 }
 
 // A single instance containing only "named constant integers" to be shared by all threads.
@@ -50,7 +51,7 @@ func InitRoomBattleStateIns() {
 	}
 }
 
-func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomBattleState int) float32 {
+func calRoomScore(inRoomPlayerCount int32, roomCapacity int, currentRoomBattleState int32) float32 {
 	x := float32(inRoomPlayerCount) / float32(roomCapacity)
 	d := (x - 0.5)
 	d2 := d * d
@@ -58,9 +59,9 @@ func calRoomScore(inRoomPlayerCount int, roomCapacity int, currentRoomBattleStat
 }
 
 type Room struct {
-	ID       int `json:"id"`
-	Capacity int `json:"capacity"`
-	Players  map[int]*Player
+	Id       int32
+	Capacity int
+	Players  map[int32]*Player
 	/**
 	 * The following `PlayerDownsyncChanDict` is NOT individually put
 	 * under `type Player struct` for a reason.
@@ -77,59 +78,62 @@ type Room struct {
 	 *
 	 * to avoid chaotic flaws.
 	 */
-	PlayerDownsyncChanDict map[int]chan interface{}
+	PlayerDownsyncChanDict map[int32]chan interface{}
 	CmdFromPlayersChan     chan interface{}
 	Score                  float32
-	State                  int
+	State                  int32
 	Index                  int
-	Tick                   int
-	ServerFPS              int
+	Tick                   int32
+	ServerFPS              int32
 	BattleDurationNanos    int64
-	EffectivePlayerCount   int
+	EffectivePlayerCount   int32
 	DismissalWaitGroup     sync.WaitGroup
-	Treasures              map[int]*Treasure
-  Traps                  map[int]*Trap
-  Bullets                map[int]*Bullet
-  AccumulatedLocalIDForBullets  int
+	Treasures              map[int32]*Treasure
+  Traps                  map[int32]*Trap
+  Bullets                map[int32]*Bullet
+  AccumulatedLocalIdForBullets  int32
 	CollidableWorld        *box2d.B2World
 }
 
 type RoomDownsyncFrame struct {
-	ID             int               `json:"id"`
-	RefFrameID     int               `json:"refFrameId"`
-	Players        map[int]*Player   `json:"players"`
-	SentAt         int64             `json:"sentAt"`
-	CountdownNanos int64             `json:"countdownNanos"`
-	Treasures      map[int]*Treasure `json:"treasures"`
-  Traps          map[int]*Trap     `json:"traps"`
-  Bullets        map[int]*Bullet  `json:"bullets"`
+	Id                   int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId           int32               `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players              map[int32]*Player   `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt               int64               `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
+	CountdownNanos       int64               `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures            map[int32]*Treasure `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps                map[int32]*Trap     `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets              map[int32]*Bullet   `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
+func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
+func (m *RoomDownsyncFrame) String() string { return proto.CompactTextString(m) }
+func (m *RoomDownsyncFrame) ProtoMessage()    {}
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
-	if _, existent := pR.Treasures[contactingTreasure.LocalIDInBattle]; existent {
-		Logger.Info("Player has picked up treasure:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTreasure.LocalIDInBattle", contactingTreasure.LocalIDInBattle))
+	if _, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent {
+		Logger.Info("Player has picked up treasure:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTreasure.LocalIdInBattle", contactingTreasure.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
-		delete(pR.Treasures, contactingTreasure.LocalIDInBattle)
-    pR.Players[contactingPlayer.ID].Score += contactingTreasure.Score 
+		delete(pR.Treasures, contactingTreasure.LocalIdInBattle)
+    pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score 
 	}
 }
 
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
-	if _, existent := pR.Traps[contactingTrap.LocalIDInBattle]; existent {
-		Logger.Info("Player has met trap:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingTrap.LocalIDInBattle", contactingTrap.LocalIDInBattle))
+	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
+		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
-		delete(pR.Traps, contactingTrap.LocalIDInBattle)
+		delete(pR.Traps, contactingTrap.LocalIdInBattle)
 
     pR.createTrapBullet(contactingPlayer, contactingTrap)
 	}
 }
 
 func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
-  Logger.Info("Player has picked up bullet:", zap.Any("roomID", pR.ID), zap.Any("contactingPlayer.ID", contactingPlayer.ID), zap.Any("contactingBullet.LocalIDInBattle", contactingBullet.LocalIDInBattle))
-	if _, existent := pR.Bullets[contactingBullet.LocalIDInBattle]; existent {
+  Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
+	if _, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent {
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
-		delete(pR.Bullets, contactingBullet.LocalIDInBattle)
-    pR.Players[contactingPlayer.ID].Score -= 100
+		delete(pR.Bullets, contactingBullet.LocalIdInBattle)
+    pR.Players[contactingPlayer.Id].Score -= 100
 	}
 }
 
@@ -139,17 +143,17 @@ func (pR *Room) updateScore() {
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	if RoomBattleStateIns.IDLE != pR.State && RoomBattleStateIns.WAITING != pR.State {
-		Logger.Error("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Error("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	if _, existent := pR.Players[pPlayer.ID]; existent {
-		Logger.Error("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+	if _, existent := pR.Players[pPlayer.Id]; existent {
+		Logger.Error("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	defer pR.onPlayerAdded(pPlayer.ID)
-	pR.Players[pPlayer.ID] = pPlayer
+	defer pR.onPlayerAdded(pPlayer.Id)
+	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
-	pR.PlayerDownsyncChanDict[pPlayer.ID] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
+	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	pPlayer.Speed = 300 // Hardcoded temporarily.
 	return true
@@ -157,20 +161,20 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 	if RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
-		Logger.Error("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Error("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	if _, existent := pR.Players[pPlayer.ID]; !existent {
-		Logger.Error("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.ID), zap.Any("roomID", pR.ID), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+	if _, existent := pR.Players[pPlayer.Id]; !existent {
+		Logger.Error("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	defer pR.onPlayerReAdded(pPlayer.ID)
+	defer pR.onPlayerReAdded(pPlayer.Id)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	// Note: All previous position and orientation info should just be recovered.
 	return true
 }
 
-func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIDInBattle int, pTsxIns *Tsx) *Trap {
+func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *Tsx) *Trap {
 
   polyLine :=  pTsxIns.TrapPolyLineList[0]
   
@@ -188,8 +192,8 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIDInBattle int, pTsxIns *Tsx
 	}
 
 	theTrap := Trap{
-		ID:              0,
-		LocalIDInBattle: trapLocalIDInBattle,
+		Id:              0,
+		LocalIdInBattle: trapLocalIdInBattle,
 		PickupBoundary:  &thePolygon,
 	}
 
@@ -206,7 +210,7 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     Y: pPlayer.CollidableBody.GetPosition().Y,
   }
 
-  pR.AccumulatedLocalIDForBullets++
+  pR.AccumulatedLocalIdForBullets++
 
   var bdDef box2d.B2BodyDef
   colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -234,23 +238,27 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     X: diffVecX/tempMag,
     Y: diffVecY/tempMag,
   }
+  immediatePosition := Vec2D{
+    X: startPos.X,
+    Y: startPos.Y,
+  }
   bullet := &Bullet{
-    LocalIDInBattle: pR.AccumulatedLocalIDForBullets,
+    LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
     LinearSpeed:  0.0000001,
-    ImmediatePosition: startPos,
-    StartAtPoint: startPos,
-    EndAtPoint: endPos,
+    ImmediatePosition: &immediatePosition,
+    StartAtPoint: &startPos,
+    EndAtPoint: &endPos,
     LinearUnitVector: linearUnitVector,
   }
 
   bullet.CollidableBody = b2Body
   b2Body.SetUserData(bullet)
 
-  pR.Bullets[bullet.LocalIDInBattle] = bullet
+  pR.Bullets[bullet.LocalIdInBattle] = bullet
   return bullet
 }
 
-func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int, pTsxIns *Tsx) *Treasure {
+func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
 
   polyLine :=  pTsxIns.TreasurePolyLineList[0]
   
@@ -268,8 +276,8 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIDInBattle int, pTsx
 	}
 
 	theTreasure := Treasure{
-		ID:              0,
-		LocalIDInBattle: treasureLocalIDInBattle,
+		Id:              0,
+		LocalIdInBattle: treasureLocalIdInBattle,
 		Score:           100,
 		PickupBoundary:  &thePolygon,
 	}
@@ -284,11 +292,11 @@ func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			X: float64(value.X),
 			Y: float64(value.Y),
 		}
-		theTrap := pR.createTrap(pAnchor, key, pTsxIns)
-		pR.Traps[theTrap.LocalIDInBattle] = theTrap
+		theTrap := pR.createTrap(pAnchor, int32(key), pTsxIns)
+		pR.Traps[theTrap.LocalIdInBattle] = theTrap
 	}
   }
-	Logger.Info("InitTraps finished:", zap.Any("roomID", pR.ID), zap.Any("traps", pR.Traps))
+	Logger.Info("InitTraps finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
 }
 
 func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
@@ -298,11 +306,11 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			X: float64(value.X),
 			Y: float64(value.Y),
 		}
-		theTreasure := pR.createTreasure(pAnchor, key, pTsxIns)
-		pR.Treasures[theTreasure.LocalIDInBattle] = theTreasure
+		theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+		pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 	}
   }
-	Logger.Info("InitTreasures finished:", zap.Any("roomID", pR.ID), zap.Any("treasures", pR.Treasures))
+	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.Treasures))
 }
 
 func (pR *Room) InitColliders() {
@@ -310,7 +318,7 @@ func (pR *Room) InitColliders() {
 	world := box2d.MakeB2World(gravity)
 	pR.CollidableWorld = &world
 
-	Logger.Info("InitColliders for pR.Players:", zap.Any("roomID", pR.ID))
+	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -336,7 +344,7 @@ func (pR *Room) InitColliders() {
 		PrettyPrintBody(player.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomID", pR.ID))
+	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -368,7 +376,7 @@ func (pR *Room) InitColliders() {
 	}
 
 
-	Logger.Info("InitColliders for pR.Traps:", zap.Any("roomID", pR.ID))
+	Logger.Info("InitColliders for pR.Traps:", zap.Any("roomId", pR.Id))
 	for _, trap := range pR.Traps {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -471,7 +479,7 @@ func (pR *Room) StartBattle() {
 	 */
 	battleMainLoop := func() {
 		defer func() {
-			Logger.Info("The `battleMainLoop` is stopped for:", zap.Any("roomID", pR.ID))
+			Logger.Info("The `battleMainLoop` is stopped for:", zap.Any("roomId", pR.Id))
 			pR.onBattleStoppedForSettlement()
 		}()
 		battleMainLoopStartedNanos := utils.UnixtimeNano()
@@ -489,8 +497,8 @@ func (pR *Room) StartBattle() {
 			stCalculation := utils.UnixtimeNano()
 			for playerId, _ := range pR.Players {
 				assembledFrame := &RoomDownsyncFrame{
-					ID:             pR.Tick,
-					RefFrameID:     0, // Hardcoded for now.
+					Id:             pR.Tick,
+					RefFrameId:     0, // Hardcoded for now.
 					Players:        pR.Players,
 					SentAt:         utils.UnixtimeMilli(),
 					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
@@ -499,7 +507,7 @@ func (pR *Room) StartBattle() {
           Bullets:        pR.Bullets,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomID", pR.ID), zap.Any("playerId", playerId))
+				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 				utils.SendSafely(assembledFrame, theForwardingChannel)
 			}
 
@@ -517,15 +525,13 @@ func (pR *Room) StartBattle() {
         elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
 				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.ImmediatePosition.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.ImmediatePosition.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
-        bullet.ImmediatePosition = Vec2D{
-          X: newB2Vec2Pos.X,
-          Y: newB2Vec2Pos.Y,
-        }
+        bullet.ImmediatePosition.X = newB2Vec2Pos.X
+        bullet.ImmediatePosition.Y = newB2Vec2Pos.Y
 			}
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
 			for itContacts != nil {
-				// Logger.Info("Found an AABB contact:", zap.Any("roomID", pR.ID))
+				// Logger.Info("Found an AABB contact:", zap.Any("roomId", pR.Id))
 				if itContacts.IsTouching() {
 					bodyA := itContacts.GetFixtureA().GetBody()
 					bodyB := itContacts.GetFixtureB().GetBody()
@@ -536,7 +542,7 @@ func (pR *Room) StartBattle() {
 							  pR.onTrapPickedUp(contactingPlayer, contactingTrap)
             } else {
               if contactingBullet, validBullet := bodyB.GetUserData().(*Bullet); validBullet {
-                // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomID", pR.ID))
+                // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomId", pR.Id))
                 pR.onBulletCrashed(contactingPlayer, contactingBullet)
               }
             }
@@ -548,7 +554,7 @@ func (pR *Room) StartBattle() {
 						    pR.onTrapPickedUp(contactingPlayer, contactingTrap)
               } else {
                 if contactingBullet, validBullet := bodyA.GetUserData().(*Bullet); validBullet {
-                  // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomID", pR.ID))
+                  // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomId", pR.Id))
                   pR.onBulletCrashed(contactingPlayer, contactingBullet)
                 }
               }
@@ -560,7 +566,7 @@ func (pR *Room) StartBattle() {
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
-			// Logger.Info("Elapsed time statistics:", zap.Any("roomID", pR.ID), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
+			// Logger.Info("Elapsed time statistics:", zap.Any("roomId", pR.Id), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
 			time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
 		}
 	}
@@ -568,9 +574,9 @@ func (pR *Room) StartBattle() {
 	cmdReceivingLoop := func() {
 		defer func() {
 			if r := recover(); r != nil {
-				Logger.Error("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.ID), zap.Any("panic", r))
+				Logger.Error("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.Id), zap.Any("panic", r))
 			}
-			Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomID", pR.ID))
+			Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomId", pR.Id))
 		}()
 		for {
 			if RoomBattleStateIns.IN_BATTLE != pR.State {
@@ -587,15 +593,15 @@ func (pR *Room) StartBattle() {
 				if nil == immediatePlayerData {
 					break
 				}
-				if _, existent := pR.Players[immediatePlayerData.ID]; !existent {
+				if _, existent := pR.Players[immediatePlayerData.Id]; !existent {
 					break
 				}
-				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomID", pR.ID))
+				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomId", pR.Id))
 				// Update immediate player info for broadcasting or unicasting.
-				pR.Players[immediatePlayerData.ID].X = immediatePlayerData.X
-				pR.Players[immediatePlayerData.ID].Y = immediatePlayerData.Y
-				pR.Players[immediatePlayerData.ID].Dir.Dx = immediatePlayerData.Dir.Dx
-				pR.Players[immediatePlayerData.ID].Dir.Dy = immediatePlayerData.Dir.Dy
+				pR.Players[immediatePlayerData.Id].X = immediatePlayerData.X
+				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
+				pR.Players[immediatePlayerData.Id].Dir.Dx = immediatePlayerData.Dir.Dx
+				pR.Players[immediatePlayerData.Id].Dir.Dy = immediatePlayerData.Dir.Dy
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
@@ -612,12 +618,12 @@ func (pR *Room) StopBattleForSettlement() {
 		return
 	}
 	pR.State = RoomBattleStateIns.STOPPING_BATTLE_FOR_SETTLEMENT
-	Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomID", pR.ID))
+	Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomId", pR.Id))
 	pR.Tick++
 	for playerId, _ := range pR.Players {
 		assembledFrame := &RoomDownsyncFrame{
-			ID:             pR.Tick,
-			RefFrameID:     0, // Hardcoded for now.
+			Id:             pR.Tick,
+			RefFrameId:     0, // Hardcoded for now.
 			Players:        pR.Players,
 			SentAt:         utils.UnixtimeMilli(),
 			CountdownNanos: -1, // TODO: Replace this magic constant!
@@ -636,7 +642,7 @@ func (pR *Room) onBattleStarted() {
 		return
 	}
 	pR.State = RoomBattleStateIns.IN_BATTLE
-	Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomID", pR.ID))
+	Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomId", pR.Id))
 	pR.updateScore()
 }
 
@@ -648,7 +654,7 @@ func (pR *Room) onBattleStoppedForSettlement() {
 		pR.onSettlementCompleted()
 	}()
 	pR.State = RoomBattleStateIns.IN_SETTLEMENT
-	Logger.Info("The room is in settlement:", zap.Any("roomID", pR.ID))
+	Logger.Info("The room is in settlement:", zap.Any("roomId", pR.Id))
 	// TODO: Some settlement labor.
 }
 
@@ -665,27 +671,27 @@ func (pR *Room) Dismiss() {
 		pR.DismissalWaitGroup.Add(1)
 		pR.expelPlayerForDismissal(playerId)
 	}
-	Logger.Info("The room is in dismissal:", zap.Any("roomID", pR.ID))
+	Logger.Info("The room is in dismissal:", zap.Any("roomId", pR.Id))
 	pR.DismissalWaitGroup.Wait()
 	pR.onDismissed()
 }
 
 func (pR *Room) onDismissed() {
-	Logger.Info("The room is completely dismissed:", zap.Any("roomID", pR.ID))
+	Logger.Info("The room is completely dismissed:", zap.Any("roomId", pR.Id))
 	pR.State = RoomBattleStateIns.IDLE
 	pR.EffectivePlayerCount = 0
 
 	// Always instantiates new HeapRAM blocks and let the old blocks die out due to not being retained by any root reference.
-	pR.Players = make(map[int]*Player)
-	pR.Treasures = make(map[int]*Treasure)
-	pR.Traps = make(map[int]*Trap)
-	pR.Bullets = make(map[int]*Bullet)
-	pR.PlayerDownsyncChanDict = make(map[int]chan interface{})
+	pR.Players = make(map[int32]*Player)
+	pR.Treasures = make(map[int32]*Treasure)
+	pR.Traps = make(map[int32]*Trap)
+	pR.Bullets = make(map[int32]*Bullet)
+	pR.PlayerDownsyncChanDict = make(map[int32]chan interface{})
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
 }
 
-func (pR *Room) Unicast(toPlayerId int, msg interface{}) {
+func (pR *Room) Unicast(toPlayerId int32, msg interface{}) {
 	// TODO
 }
 
@@ -693,22 +699,22 @@ func (pR *Room) Broadcast(msg interface{}) {
 	// TODO
 }
 
-func (pR *Room) expelPlayerDuringGame(playerId int) {
+func (pR *Room) expelPlayerDuringGame(playerId int32) {
 	defer pR.onPlayerExpelledDuringGame(playerId)
 }
 
-func (pR *Room) expelPlayerForDismissal(playerId int) {
+func (pR *Room) expelPlayerForDismissal(playerId int32) {
 	pR.onPlayerExpelledForDismissal(playerId)
 }
 
-func (pR *Room) onPlayerExpelledDuringGame(playerId int) {
+func (pR *Room) onPlayerExpelledDuringGame(playerId int32) {
 	pR.onPlayerLost(playerId)
 }
 
-func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
+func (pR *Room) onPlayerExpelledForDismissal(playerId int32) {
 	assembledFrame := &RoomDownsyncFrame{
-		ID:             -1, // TODO: Replace this magic constant!
-		RefFrameID:     0,  // Hardcoded for now.
+		Id:             -1, // TODO: Replace this magic constant!
+		RefFrameId:     0,  // Hardcoded for now.
 		Players:        nil,
 		SentAt:         utils.UnixtimeMilli(),
 		CountdownNanos: -1,
@@ -721,13 +727,13 @@ func (pR *Room) onPlayerExpelledForDismissal(playerId int) {
 	pR.onPlayerLost(playerId)
 	pR.DismissalWaitGroup.Done()
 
-	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 }
 
-func (pR *Room) OnPlayerDisconnected(playerId int) {
+func (pR *Room) OnPlayerDisconnected(playerId int32) {
 	defer func() {
 		if r := recover(); r != nil {
-			Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.ID), zap.Any("panic", r))
+			Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("panic", r))
 		}
 	}()
 	/**
@@ -741,18 +747,18 @@ func (pR *Room) OnPlayerDisconnected(playerId int) {
 			pR.State = RoomBattleStateIns.IDLE
 		}
 		pR.updateScore()
-		Logger.Info("Player disconnected while room is at RoomBattleStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Info("Player disconnected while room is at RoomBattleStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 		break
 	default:
 		if _, existent := pR.Players[playerId]; existent {
 			pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
-			Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomID", pR.ID), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+			Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 		}
 		break
 	}
 }
 
-func (pR *Room) onPlayerLost(playerId int) {
+func (pR *Room) onPlayerLost(playerId int32) {
 	if _, existent := pR.Players[playerId]; existent {
 		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
 		utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
@@ -761,18 +767,18 @@ func (pR *Room) onPlayerLost(playerId int) {
 	}
 }
 
-func (pR *Room) onPlayerAdded(playerId int) {
+func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
 	if pR.EffectivePlayerCount == 1 {
 		pR.State = RoomBattleStateIns.WAITING
 	}
 	pR.updateScore()
-	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomID", pR.ID), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
+	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 	if pR.Capacity == len(pR.Players) {
 		pR.StartBattle()
 	}
 }
 
-func (pR *Room) onPlayerReAdded(playerId int) {
+func (pR *Room) onPlayerReAdded(playerId int32) {
 	// TODO
 }

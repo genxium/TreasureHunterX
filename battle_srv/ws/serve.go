@@ -58,6 +58,8 @@ func Serve(c *gin.Context) {
 		boundRoomId = tmpBoundRoomId
 	}
 
+	Logger.Info("Finding PlayerLogin record for ws authentication:", zap.Any("intAuthToken", token))
+
 	// TODO: Wrap the following 2 stmts by sql transaction!
 	playerId, err := models.GetPlayerIdByToken(token)
 	if err != nil || playerId == 0 {
@@ -65,6 +67,8 @@ func Serve(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
+
+	Logger.Info("PlayerLogin record has been found for ws authentication:", zap.Any("playerId", playerId))
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -89,7 +93,7 @@ func Serve(c *gin.Context) {
 		}
 		Logger.Warn("signalToCloseConnOfThisPlayer:", zap.Any("playerId", playerId), zap.Any("customRetCode", customRetCode), zap.Any("customRetMsg", customRetMsg))
 		if nil != pRoom {
-			pRoom.OnPlayerDisconnected(playerId)
+			pRoom.OnPlayerDisconnected(int32(playerId))
 		}
 		defer func() {
 			if r := recover(); r != nil {
@@ -160,12 +164,12 @@ func Serve(c *gin.Context) {
 	Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
 	// Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
 	if hasBoundRoomId {
-		if tmpPRoom, existent := (*models.RoomMapManagerIns)[boundRoomId]; existent {
+		if tmpPRoom, existent := (*models.RoomMapManagerIns)[int32(boundRoomId)]; existent {
 			pRoom = tmpPRoom
-			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
+			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
 			res := pRoom.ReAddPlayerIfPossible(pPlayer)
 			if false == res {
-				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("ReAddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("ReAddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
 			}
 		} else {
 			signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoSpecifiedRoom, fmt.Sprintf("Cannot get a (*Room) for PresumedBoundRoomId == %d, playerId == %v!", boundRoomId, playerId))
@@ -182,10 +186,10 @@ func Serve(c *gin.Context) {
 		if nil == pRoom {
 			signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoAvailableRoom, fmt.Sprintf("Cannot pop a (*Room) for playerId == %v!", playerId))
 		} else {
-			Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
+			Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
 			res := pRoom.AddPlayerIfPossible(pPlayer)
 			if !res {
-				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.ID, playerId))
+				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
 			}
 		}
 	}
@@ -195,14 +199,14 @@ func Serve(c *gin.Context) {
 	}
 
 	resp := wsResp{
-		Ret:   Constants.RetCode.Ok,
-		MsgId: 0,
+		Ret:   int32(Constants.RetCode.Ok),
+		EchoedMsgId: int32(0),
 		Act:   "HeartbeatRequirements",
 		Data: struct {
 			IntervalToPing        int `json:"intervalToPing"`
 			WillKickIfInactiveFor int `json:"willKickIfInactiveFor"`
 			BoundRoomId           int `json:"boundRoomId"`
-		}{Constants.Ws.IntervalToPing, Constants.Ws.WillKickIfInactiveFor, pRoom.ID},
+		}{Constants.Ws.IntervalToPing, Constants.Ws.WillKickIfInactiveFor, int(pRoom.Id)},
 	}
 
 	connIOMux.Lock()
@@ -219,7 +223,7 @@ func Serve(c *gin.Context) {
 			if r := recover(); r != nil {
 				Logger.Warn("Goroutine `receivingLoopAgainstPlayer`, recovery spot#1, recovered from: ", zap.Any("panic", r))
 			}
-			Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.ID))
+			Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
 		}()
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
@@ -239,9 +243,9 @@ func Serve(c *gin.Context) {
 				immediatePlayerData := new(models.Player)
 				json.Unmarshal([]byte(pReq.Data), immediatePlayerData)
 				// Logger.Info("Unmarshalled `PlayerUpsyncCmd`:", zap.Any("immediatePlayerData", immediatePlayerData))
-				if immediatePlayerData.ID != playerId {
+				if int(immediatePlayerData.Id) != playerId {
 					// WARNING: This player is cheating!
-					Logger.Warn("Player cheats in reporting its own identity:", zap.Any("playerId", playerId), zap.Any("immediatePlayerData.ID", immediatePlayerData.ID))
+					Logger.Warn("Player cheats in reporting its own identity:", zap.Any("playerId", playerId), zap.Any("immediatePlayerData.Id", immediatePlayerData.Id))
 					signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerCheating, "")
 					return nil
 				} else {
@@ -258,9 +262,9 @@ func Serve(c *gin.Context) {
 	forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan interface{}) error {
 		defer func() {
 			if r := recover(); r != nil {
-				Logger.Warn("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ", zap.Any("panic", r))
+				Logger.Error("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ")
 			}
-			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.ID))
+			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
 		}()
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
@@ -275,13 +279,13 @@ func Serve(c *gin.Context) {
 				if nil == typedRoomDownsyncFrame {
 					break
 				}
-				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.ID), zap.Any("playerId", playerId))
-				if -1 == typedRoomDownsyncFrame.ID {
+				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+				if -1 == typedRoomDownsyncFrame.Id {
 					// Expelled from room for whatever reason.
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 					return nil
 				} else {
-					wsSendAction(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
+					wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 				}
 			default:
 			}
@@ -289,6 +293,6 @@ func Serve(c *gin.Context) {
 		return nil
 	}
 	startOrFeedHeartbeatWatchdog(conn)
-	go forwardingLoopAgainstBoundRoom(pRoom.PlayerDownsyncChanDict[playerId])
+	go forwardingLoopAgainstBoundRoom(pRoom.PlayerDownsyncChanDict[int32(playerId)])
 	go receivingLoopAgainstPlayer()
 }

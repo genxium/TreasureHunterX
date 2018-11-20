@@ -81,7 +81,7 @@ func createNewPlayer(p *dbTestPlayer) error {
 		UpdatedAt: now,
 		Channel:   int(Constants.AuthChannel.Sms),
 		ExtAuthID: p.MagicPhoneCountryCode + p.MagicPhoneNum,
-		PlayerID:  player.ID,
+		PlayerID:  int(player.Id),
 	}
 	err = playerAuthBinding.Insert(tx)
 	if err != nil {
@@ -91,7 +91,7 @@ func createNewPlayer(p *dbTestPlayer) error {
 	wallet := models.PlayerWallet{
 		CreatedAt: now,
 		UpdatedAt: now,
-		ID:        player.ID,
+		ID:        int(player.Id),
 	}
 	err = wallet.Insert(tx)
 	if err != nil {

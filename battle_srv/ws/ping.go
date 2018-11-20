@@ -17,7 +17,7 @@ func init() {
 }
 
 func (req *heartbeatPingReq) handle(conn *websocket.Conn, resp *wsResp) error {
-	resp.Ret = Constants.RetCode.Ok
+	resp.Ret = int32(Constants.RetCode.Ok)
 	data := struct {
 		ServerTimestamp int64 `json:"serverTimestamp"`
 	}{utils.UnixtimeMilli()}

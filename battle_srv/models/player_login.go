@@ -10,14 +10,14 @@ import (
 )
 
 type PlayerLogin struct {
-	CreatedAt    int64      `json:"created_at" db:"created_at"`
-	DeletedAt    NullInt64  `json:"deleted_at" db:"deleted_at"`
-	DisplayName  NullString `json:"display_name" db:"display_name"`
-	FromPublicIP NullString `json:"from_public_ip" db:"from_public_ip"`
-	ID           int        `json:"id" db:"id"`
-	IntAuthToken string     `json:"int_auth_token" db:"int_auth_token"`
-	PlayerID     int        `json:"player_id" db:"player_id"`
-	UpdatedAt    int64      `json:"updated_at" db:"updated_at"`
+	CreatedAt    int64      `db:"created_at"`
+	DeletedAt    NullInt64  `db:"deleted_at"`
+	DisplayName  NullString `db:"display_name"`
+	FromPublicIP NullString `db:"from_public_ip"`
+	ID           int        `db:"id"`
+	IntAuthToken string     `db:"int_auth_token"`
+	PlayerID     int        `db:"player_id"`
+	UpdatedAt    int64      `db:"updated_at"`
 }
 
 func (p *PlayerLogin) Insert() error {

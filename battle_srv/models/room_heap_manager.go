@@ -10,7 +10,7 @@ import (
 
 // Reference https://github.com/genxium/GoStructPrac.
 type RoomHeap []*Room
-type RoomMap map[int]*Room
+type RoomMap map[int32]*Room
 
 var (
 	// NOTE: For the package exported instances of non-primitive types to be accessed as singletons, they must be of pointer types.
@@ -23,7 +23,7 @@ func (pPq *RoomHeap) PrintInOrder() {
 	pq := *pPq
 	fmt.Printf("The RoomHeap instance now contains:\n")
 	for i := 0; i < len(pq); i++ {
-		fmt.Printf("{index: %d, roomID: %d, score: %.2f} ", i, pq[i].ID, pq[i].Score)
+		fmt.Printf("{index: %d, roomID: %d, score: %.2f} ", i, pq[i].Id, pq[i].Score)
 	}
 	fmt.Printf("\n")
 }
@@ -75,7 +75,7 @@ func (pq *RoomHeap) Update(pItem *Room, Score float32) {
 func PrintRoomMap() {
 	fmt.Printf("The RoomMap instance now contains:\n")
 	for _, pR := range *RoomMapManagerIns {
-		fmt.Printf("{roomID: %d, score: %.2f} ", pR.ID, pR.Score)
+		fmt.Printf("{roomID: %d, score: %.2f} ", pR.Id, pR.Score)
 	}
 	fmt.Printf("\n")
 }
@@ -93,24 +93,24 @@ func InitRoomHeapManager() {
 	for i := 0; i < initialCountOfRooms; i++ {
 		currentRoomBattleState := RoomBattleStateIns.IDLE
 		pq[i] = &Room{
-			Players:                make(map[int]*Player),
-			PlayerDownsyncChanDict: make(map[int]chan interface{}),
+			Id:                     int32(i),
+			Players:                make(map[int32]*Player),
+			PlayerDownsyncChanDict: make(map[int32]chan interface{}),
 			Capacity:               roomCapacity,
 			Score:                  calRoomScore(0, roomCapacity, currentRoomBattleState),
 			State:                  currentRoomBattleState,
 			CmdFromPlayersChan:     nil,
-			ID:                     i,
 			Index:                  i,
 			Tick:                   0,
 			EffectivePlayerCount:   0,
 			BattleDurationNanos:    int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:              35,
-			Treasures:              make(map[int]*Treasure),
-			Traps:                  make(map[int]*Trap),
-      Bullets:                make(map[int]*Bullet),
-      AccumulatedLocalIDForBullets: 0,
+			Treasures:              make(map[int32]*Treasure),
+			Traps:                  make(map[int32]*Trap),
+      Bullets:                make(map[int32]*Bullet),
+      AccumulatedLocalIdForBullets: 0,
 		}
-		roomMap[pq[i].ID] = pq[i]
+		roomMap[pq[i].Id] = pq[i]
 	}
 	heap.Init(&pq)
 	RoomHeapManagerIns = &pq
