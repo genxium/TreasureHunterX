@@ -1,4 +1,5 @@
-tests
+battle_srv/test_cases/test_cases
+battle_srv/test_cases/tests
 *.pid
 local
 local/*
