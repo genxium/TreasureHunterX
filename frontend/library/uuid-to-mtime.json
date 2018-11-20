@@ -377,12 +377,12 @@
   "4e92c135-6b07-4ab2-9d20-7c05eaf0f1ad": {
     "asset": 1541555618000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120/treasure.tsx"
+    "relativePath": "resources/map/treasure.tsx"
   },
   "f40ab057-dbf4-418b-990a-4afeb21d3eb1": {
     "asset": 1541494558000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120/treasure3.png"
+    "relativePath": "resources/map/treasure3.png"
   },
   "8b400cb3-9119-4269-b86b-0aa2a659b691": {
     "asset": 1542266399000,
@@ -409,14 +409,9 @@
     "meta": 1542267160000,
     "relativePath": "resources/prefabs/TreasurePrefab.prefab"
   },
-  "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1542680053000,
-    "meta": 1542680053000,
-    "relativePath": "scenes/default_map.fire"
-  },
   "a209444d-edef-46ea-b9b4-9ceb522bf2e8": {
-    "asset": 1542361468000,
-    "meta": 1542361468000,
+    "asset": 1542685193000,
+    "meta": 1542685193000,
     "relativePath": "resources/prefabs/OtherScoreIndicator.prefab"
   },
   "71561142-4c83-4933-afca-cb7a17f67053": {
@@ -652,7 +647,7 @@
   "99d993ec-7299-43cf-9716-64c2b29ff58c": {
     "asset": 1542679394000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120/tile_1.png"
+    "relativePath": "resources/map/tile_1.png"
   },
   "a564b3db-b8cb-48b4-952e-25bb56949116": {
     "asset": 1523991280000,
@@ -677,12 +672,12 @@
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
     "asset": 1542621220000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120/tile_1.tsx"
+    "relativePath": "resources/map/tile_1.tsx"
   },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
     "asset": 1542679554000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120/treasurehunter.tmx"
+    "relativePath": "resources/map/treasurehunter.tmx"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1542625724000,
@@ -695,13 +690,28 @@
     "relativePath": "plugin_scripts/conf.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1542679764000,
-    "meta": 1542679764000,
+    "asset": 1542685198000,
+    "meta": 1542685198000,
     "relativePath": "scenes/login.fire"
   },
   "1a802cdc-3337-47b1-923b-2a69719615d8": {
     "asset": 1542679554000,
     "meta": 1542679752000,
-    "relativePath": "resources/map1120"
+    "relativePath": "resources/map"
+  },
+  "19a0f7ec-9e54-4fb3-b6d4-2afb0d205f42": {
+    "asset": 1542684029000,
+    "meta": 1542684050000,
+    "relativePath": "resources/textures/infoBG.jpg"
+  },
+  "ca82737f-c9a7-4350-a499-a90d6916bfc9": {
+    "asset": 1542684032000,
+    "meta": 1542684042000,
+    "relativePath": "resources/textures/treasures/tickTime.jpg"
+  },
+  "92160186-3e0d-4e0a-ae20-97286170ba58": {
+    "asset": 1542685588000,
+    "meta": 1542685588000,
+    "relativePath": "scenes/default_map.fire"
   }
 }

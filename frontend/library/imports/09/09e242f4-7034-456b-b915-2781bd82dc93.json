@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "tickTime",
+    "texture": "ca82737f-c9a7-4350-a499-a90d6916bfc9",
+    "atlas": "",
+    "rect": [
+      34,
+      98,
+      436,
+      292
+    ],
+    "offset": [
+      2,
+      6
+    ],
+    "originalSize": [
+      500,
+      500
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
