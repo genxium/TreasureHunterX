@@ -660,14 +660,9 @@
     "relativePath": "resources/textures/mikado_outline_shadow.png"
   },
   "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f": {
-    "asset": 1542615810000,
-    "meta": 1542615810000,
+    "asset": 1542685705000,
+    "meta": 1542685705000,
     "relativePath": "resources/prefabs/BulletPrefab.prefab"
-  },
-  "be9252d7-18db-470a-9f5c-654c60403d36": {
-    "asset": 1542613876000,
-    "meta": 1542613894000,
-    "relativePath": "resources/textures/trapBullet.png"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
     "asset": 1542621220000,
@@ -710,8 +705,13 @@
     "relativePath": "resources/textures/treasures/tickTime.jpg"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1542685588000,
-    "meta": 1542685588000,
+    "asset": 1542685991000,
+    "meta": 1542685991000,
     "relativePath": "scenes/default_map.fire"
+  },
+  "c9aaf2c8-f020-4ad1-8998-5745ecd94993": {
+    "asset": 1542685680000,
+    "meta": 1542685694000,
+    "relativePath": "resources/textures/trapBullet.jpg"
   }
 }
