@@ -69,6 +69,10 @@ func getPlayer(cond sq.Eq) (*Player, error) {
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
+  p.Dir = &Direction{
+    Dx: 0.0,
+    Dy: 0.0,
+  }
 	return &p, nil
 }
 

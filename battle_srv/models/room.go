@@ -194,6 +194,8 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *T
 	theTrap := Trap{
 		Id:              0,
 		LocalIdInBattle: trapLocalIdInBattle,
+    X:               pAnchor.X,
+    Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 	}
 
@@ -238,14 +240,11 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
     X: diffVecX/tempMag,
     Y: diffVecY/tempMag,
   }
-  immediatePosition := Vec2D{
-    X: startPos.X,
-    Y: startPos.Y,
-  }
   bullet := &Bullet{
     LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
     LinearSpeed:  0.0000001,
-    ImmediatePosition: &immediatePosition,
+    X: startPos.X,
+    Y: startPos.Y,
     StartAtPoint: &startPos,
     EndAtPoint: &endPos,
     LinearUnitVector: linearUnitVector,
@@ -279,6 +278,8 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 		Id:              0,
 		LocalIdInBattle: treasureLocalIdInBattle,
 		Score:           100,
+    X:               pAnchor.X,
+    Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 	}
 
@@ -412,7 +413,7 @@ func (pR *Room) StartBattle() {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
-   
+
   relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
@@ -523,10 +524,10 @@ func (pR *Room) StartBattle() {
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant. 
 			for _, bullet := range pR.Bullets {
         elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
-				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.ImmediatePosition.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.ImmediatePosition.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
+				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
-        bullet.ImmediatePosition.X = newB2Vec2Pos.X
-        bullet.ImmediatePosition.Y = newB2Vec2Pos.Y
+        bullet.X = newB2Vec2Pos.X
+        bullet.Y = newB2Vec2Pos.Y
 			}
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
@@ -574,7 +575,7 @@ func (pR *Room) StartBattle() {
 	cmdReceivingLoop := func() {
 		defer func() {
 			if r := recover(); r != nil {
-				Logger.Error("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.Id), zap.Any("panic", r))
+				Logger.Warn("Room cmdReceivingLoop, recovery spot#1, recovered from: ", zap.Any("roomId", pR.Id), zap.Any("panic", r))
 			}
 			Logger.Info("The `cmdReceivingLoop` is stopped for:", zap.Any("roomId", pR.Id))
 		}()

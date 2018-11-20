@@ -675,7 +675,7 @@ cc.Class({
     for (var _k4 in self.trapInfoDict) {
       var trapLocalIdInBattle = parseInt(_k4);
       var trapInfo = self.trapInfoDict[trapLocalIdInBattle];
-      var _newPos = cc.v2(trapInfo.pickupBoundary.anchor.x, trapInfo.pickupBoundary.anchor.y);
+      var _newPos = cc.v2(trapInfo.x, trapInfo.y);
       var _targetNode = self.trapNodeDict[trapLocalIdInBattle];
       if (!_targetNode) {
         _targetNode = cc.instantiate(self.trapPrefab);
@@ -704,7 +704,7 @@ cc.Class({
     for (var _k5 in self.trapBulletInfoDict) {
       var bulletLocalIdInBattle = parseInt(_k5);
       var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
-      var _newPos2 = cc.v2(bulletInfo.immediatePosition.x, bulletInfo.immediatePosition.y);
+      var _newPos2 = cc.v2(bulletInfo.x, bulletInfo.y);
       var _targetNode2 = self.trapBulletNodeDict[bulletLocalIdInBattle];
       if (!_targetNode2) {
         _targetNode2 = cc.instantiate(self.trapBulletPrefab);
@@ -733,7 +733,7 @@ cc.Class({
     for (var _k6 in self.treasureInfoDict) {
       var treasureLocalIdInBattle = parseInt(_k6);
       var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
-      var _newPos3 = cc.v2(treasureInfo.pickupBoundary.anchor.x, treasureInfo.pickupBoundary.anchor.y);
+      var _newPos3 = cc.v2(treasureInfo.x, treasureInfo.y);
       var _targetNode3 = self.treasureNodeDict[treasureLocalIdInBattle];
       if (!_targetNode3) {
         _targetNode3 = cc.instantiate(self.treasurePrefab);

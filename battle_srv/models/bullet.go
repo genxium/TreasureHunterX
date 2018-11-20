@@ -7,7 +7,8 @@ import (
 type Bullet struct {
 	LocalIdInBattle      int32    `protobuf:"varint,1,opt,name=localIdInBattle,proto3" json:"localIdInBattle,omitempty"`
 	LinearSpeed          float64  `protobuf:"fixed64,2,opt,name=linearSpeed,proto3" json:"linearSpeed,omitempty"`
-	ImmediatePosition    *Vec2D   `protobuf:"bytes,3,opt,name=immediatePosition,proto3" json:"immediatePosition,omitempty"`
+	X                    float64  `protobuf:"fixed64,3,opt,name=x,proto3" json:"x,omitempty"`
+	Y                    float64  `protobuf:"fixed64,4,opt,name=y,proto3" json:"y,omitempty"`
 	StartAtPoint         *Vec2D   `json:"-"`
 	EndAtPoint           *Vec2D   `json:"-"`
   LinearUnitVector Vec2D        `json:"-"`

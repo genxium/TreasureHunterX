@@ -536,8 +536,8 @@ cc.Class({
       const trapLocalIdInBattle = parseInt(k);
       const trapInfo = self.trapInfoDict[trapLocalIdInBattle];
       const newPos = cc.v2(
-        trapInfo.pickupBoundary.anchor.x,
-        trapInfo.pickupBoundary.anchor.y
+        trapInfo.x,
+        trapInfo.y
       );
       let targetNode = self.trapNodeDict[trapLocalIdInBattle];
       if (!targetNode) {
@@ -569,8 +569,8 @@ cc.Class({
       const bulletLocalIdInBattle = parseInt(k);
       const bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
       const newPos = cc.v2(
-        bulletInfo.immediatePosition.x,
-        bulletInfo.immediatePosition.y
+        bulletInfo.x,
+        bulletInfo.y
       );
       let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
       if (!targetNode) {
@@ -604,8 +604,8 @@ cc.Class({
       const treasureLocalIdInBattle = parseInt(k);
       const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
       const newPos = cc.v2(
-        treasureInfo.pickupBoundary.anchor.x,
-        treasureInfo.pickupBoundary.anchor.y
+        treasureInfo.x,
+        treasureInfo.y
       );
       let targetNode = self.treasureNodeDict[treasureLocalIdInBattle];
       if (!targetNode) {

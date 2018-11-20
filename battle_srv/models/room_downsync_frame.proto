@@ -1,15 +1,6 @@
 syntax = "proto3";
 package models;
 
-message Vec2D {
-	double x = 1;
-	double y = 2;
-}
-
-message Polygon2D {
-	Vec2D anchor = 1;
-}
-
 message Direction {
   double dx = 1;
   double dy = 2;
@@ -32,20 +23,23 @@ message Treasure {
   int32 id = 1;
   int32 localIdInBattle = 2;
   int32 score = 3;
-  Polygon2D pickupBoundary = 4; 
+  double x = 4; 
+  double y = 5; 
 }
 
 message Bullet {
   int32 localIdInBattle = 1;
   double linearSpeed = 2;
-  Vec2D immediatePosition = 3;
+  double x = 3;
+  double y = 4;
 }
 
 message Trap {
   int32 id = 1;
   int32 localIdInBattle = 2;
   int32 type = 3;
-  Polygon2D pickupBoundary = 4; 
+  double x = 4; 
+  double y = 5; 
 }
 
 message RoomDownsyncFrame {

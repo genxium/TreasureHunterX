@@ -55,6 +55,20 @@ window.handleHbPong = function (resp) {
   // TBD.
 };
 
+function _base64ToUint8Array(base64) {
+  var binary_string = window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array(len);
+  for (var i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function _base64ToArrayBuffer(base64) {
+  return _base64ToUint8Array(base64).buffer;
+}
+
 window.initPersistentSessionClient = function (onopenCb) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
     if (null == onopenCb) return;
@@ -90,7 +104,7 @@ window.initPersistentSessionClient = function (onopenCb) {
         break;
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
-          var typedArray = new Uint8Array(resp.data);
+          var typedArray = _base64ToUint8Array(resp.data);
           var parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
