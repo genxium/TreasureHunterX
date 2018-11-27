@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "win Diamonds",
+    "texture": "4dbab9e6-084f-4823-b7b8-2d3e2ad4d477",
+    "atlas": "",
+    "rect": [
+      592,
+      1580,
+      209,
+      115
+    ],
+    "offset": [
+      -348,
+      -581.5
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Winning ribbon",
+    "texture": "7a0ac2d5-ca17-41cb-8ca2-5d4d047fa7b6",
+    "atlas": "",
+    "rect": [
+      543,
+      239,
+      1052,
+      394
+    ],
+    "offset": [
+      24.5,
+      620
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Pearl",
+    "texture": "58f9096a-75fa-416d-87c2-371ad88b7afb",
+    "atlas": "",
+    "rect": [
+      1771,
+      512,
+      97,
+      108
+    ],
+    "offset": [
+      775,
+      490
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

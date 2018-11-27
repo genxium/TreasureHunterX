@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "left Head portrait",
+    "texture": "f8fd4bb8-e9b4-4df7-848c-850635aeadf3",
+    "atlas": "",
+    "rect": [
+      350,
+      600,
+      223,
+      223
+    ],
+    "offset": [
+      -583,
+      344.5
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

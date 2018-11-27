@@ -24,6 +24,7 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
+
     canvasNode: {
       type: cc.Node,
       default: null
@@ -103,8 +104,11 @@ cc.Class({
     trapBulletPrefab: {
       type: cc.Prefab,
       default: null
+    },
+    resultPanelPrefab: {
+      type: cc.Prefab,
+      default: null
     }
-
   },
 
   _onPerUpsyncFrame: function _onPerUpsyncFrame() {
@@ -205,16 +209,25 @@ cc.Class({
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
     self.scoreInfoDict = {};
+
+    /** init confirmLogoutNode started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
     self.confirmLogoutNode.width = canvasNode.width;
     self.confirmLogoutNode.height = canvasNode.height;
+    /** init confirmLogoutNode ended */
+
+    /** init Node started */
+    self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
+    self.resultPanelNode.width = canvasNode.width;
+    self.resultPanelNode.height = canvasNode.height;
+    /** init resultPanelNode ended */
 
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
     window.handleClientSessionCloseOrError = function () {
-      self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+      if (!self.battleState) self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     };
 
     initPersistentSessionClient(function () {
@@ -460,7 +473,7 @@ cc.Class({
           return;
         }
         if (roomDownsyncFrame.countdownNanos == -1) {
-          self.onBattleStopped();
+          self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
         self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
@@ -559,15 +572,23 @@ cc.Class({
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
     self.enableInputControls();
   },
-  onBattleStopped: function onBattleStopped() {
+  onBattleStopped: function onBattleStopped(players) {
     var self = this;
+    var canvasNode = self.canvasNode;
+    var resultPanelNode = self.resultPanelNode;
+    var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
+    resultPanelScriptIns.showPlayerInfo(players);
+    self.disableInputControls();
+    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     self.selfPlayerScriptIns.scheduleNewDirection({
       dx: 0,
       dy: 0
     });
-    self.disableInputControls();
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-    self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
+    // self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
+    resultPanelNode.setScale(1 / canvasNode.getScale());
+    safelyAddChild(canvasNode, resultPanelNode);
+    setLocalZOrder(resultPanelNode, 10);
   },
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;

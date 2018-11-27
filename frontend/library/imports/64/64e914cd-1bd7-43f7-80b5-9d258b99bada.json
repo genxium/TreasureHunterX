@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "back board",
+    "texture": "1a0dc1d1-58ad-4da2-8761-91f12aafaa3b",
+    "atlas": "",
+    "rect": [
+      0,
+      395,
+      2089,
+      1717
+    ],
+    "offset": [
+      0,
+      -197.5
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

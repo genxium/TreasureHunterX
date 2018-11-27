@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "compareBG",
+    "texture": "1e395fed-bea5-4242-a633-98e5115d378b",
+    "atlas": "",
+    "rect": [
+      344,
+      927,
+      1484,
+      199
+    ],
+    "offset": [
+      41.5,
+      29.5
+    ],
+    "originalSize": [
+      2089,
+      2112
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
