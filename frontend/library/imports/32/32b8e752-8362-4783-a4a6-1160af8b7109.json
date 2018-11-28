@@ -28,9 +28,13 @@
     ],
     "_active": true,
     "_level": 1,
-    "_components": [],
+    "_components": [
+      {
+        "__id__": 20
+      }
+    ],
     "_prefab": {
-      "__id__": 20
+      "__id__": 21
     },
     "_opacity": 255,
     "_color": {
@@ -151,7 +155,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "4497efe8-2e9c-4d6d-832f-1a0792afd4d1"
+      "__uuid__": "0eb7f3ca-2fe7-4848-9347-c59d4235c121"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -319,7 +323,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "75ac52bb-b74d-4ed5-98bf-c9390f623b96"
+      "__uuid__": "ecd767f4-cb1d-40e3-8c9d-2195429894aa"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -376,7 +380,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 700,
-      "height": 500
+      "height": 600
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -637,7 +641,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
+      "__uuid__": "b96f6b95-c510-4171-8c4a-6078ccf1149b"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -697,13 +701,13 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
+      "__uuid__": "b96f6b95-c510-4171-8c4a-6078ccf1149b"
     },
     "_N$pressedSprite": {
-      "__uuid__": "56aea40e-7d15-4426-90ae-05eaf263a092"
+      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
     },
     "pressedSprite": {
-      "__uuid__": "56aea40e-7d15-4426-90ae-05eaf263a092"
+      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
     },
     "_N$hoverSprite": {
       "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
@@ -712,7 +716,7 @@
       "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
     },
     "_N$disabledSprite": {
-      "__uuid__": "56aea40e-7d15-4426-90ae-05eaf263a092"
+      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
     },
     "_N$target": {
       "__id__": 13
@@ -729,6 +733,20 @@
     },
     "fileId": "c54lqSflFD8ogSYAhsAkKh",
     "sync": false
+  },
+  {
+    "__type__": "dd92bKVy8FJY7uq3ieoNZCZ",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "modeButton": {
+      "__id__": 18
+    },
+    "mapNode": null,
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",

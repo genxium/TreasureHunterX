@@ -2,21 +2,21 @@
   "__type__": "cc.SpriteFrame",
   "content": {
     "name": "botton2",
-    "texture": "8c4d46d7-03be-4ac3-87bc-defc59826d4d",
+    "texture": "136a5cd2-bf97-4266-a04e-51e2c043488c",
     "atlas": "",
     "rect": [
-      133,
-      855,
-      155,
-      45
+      334,
+      1256,
+      364,
+      105
     ],
     "offset": [
-      -109.5,
-      -397.5
+      4,
+      -348.5
     ],
     "originalSize": [
-      640,
-      960
+      1024,
+      1920
     ],
     "capInsets": [
       0,

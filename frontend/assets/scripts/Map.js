@@ -103,6 +103,10 @@ cc.Class({
       type:cc.Prefab,
       default: null
     },
+    gameRulePrefab: {
+      type:cc.Prefab,
+      default: null
+    },
   },
 
   _onPerUpsyncFrame() {
@@ -213,10 +217,19 @@ cc.Class({
     self.confirmLogoutNode.height = canvasNode.height;
     /** init confirmLogoutNode ended */
 
-    /** init Node started */
+    /** init resultPanelNode started */
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     self.resultPanelNode.width = canvasNode.width;
     self.resultPanelNode.height = canvasNode.height;
+    /** init resultPanelNode ended */
+
+    /** init gameRuleNode started */
+    self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
+    self.gameRuleNode.width = canvasNode.width;
+    self.gameRuleNode.height = canvasNode.height;
+    self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
+    self.gameRuleScriptIns.mapNode = self.node;
+    self.showPopopInCanvas(self.gameRuleNode);
     /** init resultPanelNode ended */
 
     self.clientUpsyncFps = 20;
@@ -227,7 +240,7 @@ cc.Class({
         self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     };
 
-    initPersistentSessionClient(() => {
+    self.initAfterWSConncted = () => {
       self.state = ALL_MAP_STATES.VISUAL;
       const tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
@@ -391,7 +404,7 @@ cc.Class({
       // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
       // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
-    });
+    }
   },
 
   setupInputControls() {
@@ -431,17 +444,12 @@ cc.Class({
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns =  resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    self.disableInputControls();
-    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     self.selfPlayerScriptIns.scheduleNewDirection({
       dx: 0,
       dy: 0
     });
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-   // self.alertForGoingBackToLoginScene("Battle stopped!", self, false);
-    resultPanelNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, resultPanelNode);
-    setLocalZOrder(resultPanelNode, 10);
+    self.showPopopInCanvas(resultPanelNode);
   },
 
   spawnSelfPlayer() {
@@ -749,12 +757,7 @@ cc.Class({
 
   onLogoutClicked(evt) {
     const self = this;
-    self.disableInputControls();
-    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
-    const canvasNode = self.canvasNode;
-    self.confirmLogoutNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, self.confirmLogoutNode);
-    setLocalZOrder(self.confirmLogoutNode, 10);
+    self.showPopopInCanvas(self.confirmLogoutNode);
   },
 
   onLogoutConfirmationDismissed() {
@@ -764,4 +767,25 @@ cc.Class({
     canvasNode.removeChild(self.confirmLogoutNode);
     self.enableInputControls();
   },
+  
+ startWSConnect(evt, cb) {
+    const self = this;
+    if(cb){ 
+      cb()
+    } 
+    initPersistentSessionClient(self.initAfterWSConncted);
+    self.enableInputControls();
+    self.transitToState(ALL_MAP_STATES.VISUAL);
+  },
+
+  showPopopInCanvas(toShowNode) {
+    const self = this;
+    self.disableInputControls();
+    self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
+    const canvasNode = self.canvasNode;
+    toShowNode.setScale(1 / canvasNode.getScale());
+    safelyAddChild(canvasNode, toShowNode);
+    setLocalZOrder(toShowNode, 10);
+  }
+
 });

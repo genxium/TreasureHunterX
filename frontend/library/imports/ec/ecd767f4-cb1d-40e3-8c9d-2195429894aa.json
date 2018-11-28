@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "botton1",
-    "texture": "b781fbb2-da44-491c-acd0-6b1fbc34c471",
+    "name": "black-board",
+    "texture": "8ee0889b-2a83-43eb-8d35-c2d877107ef1",
     "atlas": "",
     "rect": [
-      133,
-      855,
-      155,
-      45
+      108,
+      199,
+      850,
+      927
     ],
     "offset": [
-      -109.5,
-      -397.5
+      21,
+      297.5
     ],
     "originalSize": [
-      640,
-      960
+      1024,
+      1920
     ],
     "capInsets": [
       0,
