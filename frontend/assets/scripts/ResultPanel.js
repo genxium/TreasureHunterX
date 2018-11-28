@@ -32,6 +32,7 @@ cc.Class({
   },
 
   againBtnOnClick(evt) {
+  //TODO: 目前还没有实现rejoin the room，先跳转到login scene。
       window.closeWSConnection();
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       cc.sys.localStorage.removeItem('selfPlayer');
@@ -39,11 +40,13 @@ cc.Class({
   },
 
   homeBtnOnClick(evt) {
+  //TODO: 目前没有home scene和相关业务逻辑，先跳转到login scene。
       window.closeWSConnection();
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       cc.sys.localStorage.removeItem('selfPlayer');
       cc.director.loadScene('login');
   },
+
   showPlayerInfo(players) {
     const resultPanelNode = this.node;
     const winnerNameNode = resultPanelNode.getChildByName("winnerName");

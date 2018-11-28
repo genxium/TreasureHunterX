@@ -858,6 +858,7 @@ cc.Class({
       cc.sys.localStorage.removeItem('selfPlayer');
       cc.director.loadScene('login');
     };
+
     var self = this;
     if (null != cc.sys.localStorage.selfPlayer) {
       var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);

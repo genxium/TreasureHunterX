@@ -737,6 +737,7 @@ cc.Class({
       cc.sys.localStorage.removeItem('selfPlayer');
       cc.director.loadScene('login');
     };
+
     const self = this;
     if (null != cc.sys.localStorage.selfPlayer) {
       const selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);

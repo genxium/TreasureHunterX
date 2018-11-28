@@ -126,10 +126,10 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
           X: obj.X,
           Y: obj.Y,
         }
-        fmt.Printf("%s\n",obj.Polyline.Points)
+        // fmt.Printf("%s\n",obj.Polyline.Points)
         singleValueArray := strings.Split(obj.Polyline.Points, " ")
         pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
-        fmt.Printf("%v\n",singleValueArray)
+        // fmt.Printf("%v\n",singleValueArray)
         for key, value := range singleValueArray{
           for k, v := range strings.Split(value,","){
              n, err := strconv.ParseFloat(v, 64);
@@ -224,7 +224,7 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
       tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
       tileSizeUnifiedLength := math.Sqrt(tileRectilinearSize.Width * tileRectilinearSize.Width * 0.25 + tileRectilinearSize.Height * tileRectilinearSize.Height * 0.25)
       isometricObjectLayerPointOffsetScaleFactor := (tileSizeUnifiedLength / tileRectilinearSize.Height);
-  fmt.Printf("tileWidth = %d,tileHeight = %d\n", pTmxMapIns.TileWidth, pTmxMapIns.TileHeight)
+      // fmt.Printf("tileWidth = %d,tileHeight = %d\n", pTmxMapIns.TileWidth, pTmxMapIns.TileHeight)
       cosineThetaRadian := (tileRectilinearSize.Width * 0.5) / tileSizeUnifiedLength
       sineThetaRadian := (tileRectilinearSize.Height * 0.5) / tileSizeUnifiedLength
 

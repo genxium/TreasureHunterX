@@ -260,16 +260,19 @@ func Serve(c *gin.Context) {
 
 	// Starts the forwarding loop associated "(*pPlayer).boundRoom".
 	forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan interface{}) error {
-		defer func() {
+    defer func() {
+			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
+		}()
+    forwardingLoopAgainstBoundRoomRecovery := func() {
 			if r := recover(); r != nil {
 				Logger.Error("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ")
 			}
-			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
-		}()
+		}
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
 				return nil
 			}
+      defer forwardingLoopAgainstBoundRoomRecovery()
 			select {
 			case untypedRoomDownsyncFrame := <-dedicatedChanToForward:
 				if nil == untypedRoomDownsyncFrame {

@@ -1,28 +1,28 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "default_btn_normal",
-    "texture": "e851e89b-faa2-4484-bea6-5c01dd9f06e2",
+    "name": "Sign-in",
+    "texture": "433343f4-b11b-4587-a970-4d0f39e7e172",
     "atlas": "",
     "rect": [
       0,
       0,
-      40,
-      40
+      640,
+      960
     ],
     "offset": [
       0,
       0
     ],
     "originalSize": [
-      40,
-      40
+      640,
+      960
     ],
     "capInsets": [
-      12,
-      12,
-      12,
-      12
+      0,
+      0,
+      0,
+      0
     ]
   }
 }

@@ -5,13 +5,13 @@ import (
 	"go.uber.org/zap"
 	. "server/common"
 	"server/common/utils"
-	"sync"
 	"path/filepath"
   "math"
 	"io/ioutil"
   "os"
 	"fmt"
 	"time"
+  "sync"
   "github.com/golang/protobuf/proto"
 )
 
@@ -61,6 +61,7 @@ func calRoomScore(inRoomPlayerCount int32, roomCapacity int, currentRoomBattleSt
 type Room struct {
 	Id       int32
 	Capacity int
+  PlayersWholeMapLock sync.Mutex
 	Players  map[int32]*Player
 	/**
 	 * The following `PlayerDownsyncChanDict` is NOT individually put
@@ -320,7 +321,7 @@ func (pR *Room) InitColliders() {
 	world := box2d.MakeB2World(gravity)
 	pR.CollidableWorld = &world
 
-	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
+	// Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -343,7 +344,7 @@ func (pR *Room) InitColliders() {
 
 		player.CollidableBody = b2PlayerBody
 		b2PlayerBody.SetUserData(player)
-		PrettyPrintBody(player.CollidableBody)
+		// PrettyPrintBody(player.CollidableBody)
 	}
 
 	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
@@ -374,7 +375,7 @@ func (pR *Room) InitColliders() {
 
 		treasure.CollidableBody = b2TreasureBody
 		b2TreasureBody.SetUserData(treasure)
-		PrettyPrintBody(treasure.CollidableBody)
+		// PrettyPrintBody(treasure.CollidableBody)
 	}
 
 
@@ -406,7 +407,7 @@ func (pR *Room) InitColliders() {
 
 		trap.CollidableBody = b2TreasureBody
 		b2TreasureBody.SetUserData(trap)
-		PrettyPrintBody(trap.CollidableBody)
+		// PrettyPrintBody(trap.CollidableBody)
 	}
 }
 
@@ -497,6 +498,7 @@ func (pR *Room) StartBattle() {
 			}
 			pR.Tick++
 			stCalculation := utils.UnixtimeNano()
+
 			for playerId, _ := range pR.Players {
 				assembledFrame := &RoomDownsyncFrame{
 					Id:             pR.Tick,
@@ -509,6 +511,11 @@ func (pR *Room) StartBattle() {
           Bullets:        pR.Bullets,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+        
+        /* TODO
+        Pre-marshal the `assembledFrame` by `toForwardMsg := proto.Marshal(assembledFrame)` here and send it via the current `theForwardingChannel` to avoid potential thread-safety issues by marshalling from the associated `forwardingLoopAgainstBoundRoom` started by `../ws/server.go`.  
+        */
+
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 				utils.SendSafely(assembledFrame, theForwardingChannel)
 			}
