@@ -107,6 +107,10 @@ cc.Class({
       type:cc.Prefab,
       default: null
     },
+    findingPlayerPrefab: {
+      type:cc.Prefab,
+      default: null
+    },
   },
 
   _onPerUpsyncFrame() {
@@ -151,9 +155,10 @@ cc.Class({
 
   popupSimplePressToGo(labelString) {
     const self = this;
+/*
     if (ALL_MAP_STATES.VISUAL != self.state) {
       return;
-    }
+    }*/
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
     const canvasNode = self.canvasNode;
@@ -172,6 +177,7 @@ cc.Class({
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
     safelyAddChild(canvasNode, simplePressToGoDialogNode);
+    setLocalZOrder(simplePressToGoDialogNode, 20);
   },
 
   alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
@@ -232,6 +238,12 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
     /** init resultPanelNode ended */
 
+    /** init findingPlayer started */
+    self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+    self.findingPlayerNode.width = canvasNode.width;
+    self.findingPlayerNode.height = canvasNode.height;
+    /** init findingPlayerNode ended */
+
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
@@ -241,7 +253,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = () => {
-      self.state = ALL_MAP_STATES.VISUAL;
+     // self.state = ALL_MAP_STATES.VISUAL;
       const tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
@@ -397,6 +409,9 @@ cc.Class({
           if (1 == frameId) {
             // No need to prompt upon rejoined.
             self.popupSimplePressToGo("Battle started!");
+            self.transitToState(ALL_MAP_STATES.VISUAL);
+            const canvasNode = self.canvasNode;
+            canvasNode.removeChild(self.findingPlayerNode);
           }
           self.onBattleStarted();
         }
@@ -768,14 +783,13 @@ cc.Class({
     self.enableInputControls();
   },
   
- startWSConnect(evt, cb) {
+ showfindingPlayerPopup(evt, cb) {
     const self = this;
     if(cb){ 
       cb()
     } 
     initPersistentSessionClient(self.initAfterWSConncted);
-    self.enableInputControls();
-    self.transitToState(ALL_MAP_STATES.VISUAL);
+    self.showPopopInCanvas(self.findingPlayerNode);
   },
 
   showPopopInCanvas(toShowNode) {

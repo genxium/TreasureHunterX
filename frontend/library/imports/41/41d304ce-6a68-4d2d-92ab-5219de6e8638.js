@@ -112,6 +112,10 @@ cc.Class({
     gameRulePrefab: {
       type: cc.Prefab,
       default: null
+    },
+    findingPlayerPrefab: {
+      type: cc.Prefab,
+      default: null
     }
   },
 
@@ -153,9 +157,10 @@ cc.Class({
   },
   popupSimplePressToGo: function popupSimplePressToGo(labelString) {
     var self = this;
-    if (ALL_MAP_STATES.VISUAL != self.state) {
-      return;
-    }
+    /*
+        if (ALL_MAP_STATES.VISUAL != self.state) {
+          return;
+        }*/
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
     var canvasNode = self.canvasNode;
@@ -174,6 +179,7 @@ cc.Class({
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
     safelyAddChild(canvasNode, simplePressToGoDialogNode);
+    setLocalZOrder(simplePressToGoDialogNode, 20);
   },
   alertForGoingBackToLoginScene: function alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     var millisToGo = 3000;
@@ -236,6 +242,12 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
     /** init resultPanelNode ended */
 
+    /** init findingPlayer started */
+    self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+    self.findingPlayerNode.width = canvasNode.width;
+    self.findingPlayerNode.height = canvasNode.height;
+    /** init findingPlayerNode ended */
+
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
@@ -244,7 +256,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = function () {
-      self.state = ALL_MAP_STATES.VISUAL;
+      // self.state = ALL_MAP_STATES.VISUAL;
       var tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
@@ -549,6 +561,9 @@ cc.Class({
           if (1 == frameId) {
             // No need to prompt upon rejoined.
             self.popupSimplePressToGo("Battle started!");
+            self.transitToState(ALL_MAP_STATES.VISUAL);
+            var _canvasNode = self.canvasNode;
+            _canvasNode.removeChild(self.findingPlayerNode);
           }
           self.onBattleStarted();
         }
@@ -886,14 +901,13 @@ cc.Class({
     canvasNode.removeChild(self.confirmLogoutNode);
     self.enableInputControls();
   },
-  startWSConnect: function startWSConnect(evt, cb) {
+  showfindingPlayerPopup: function showfindingPlayerPopup(evt, cb) {
     var self = this;
     if (cb) {
       cb();
     }
     initPersistentSessionClient(self.initAfterWSConncted);
-    self.enableInputControls();
-    self.transitToState(ALL_MAP_STATES.VISUAL);
+    self.showPopopInCanvas(self.findingPlayerNode);
   },
   showPopopInCanvas: function showPopopInCanvas(toShowNode) {
     var self = this;

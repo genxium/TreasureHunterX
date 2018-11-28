@@ -419,11 +419,6 @@
     "meta": 1542783346000,
     "relativePath": "resources/pbfiles"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1542783346000,
-    "meta": 1543283948000,
-    "relativePath": "scripts/Login.js"
-  },
   "19a0f7ec-9e54-4fb3-b6d4-2afb0d205f42": {
     "asset": 1542783346000,
     "meta": 1543283945000,
@@ -453,11 +448,6 @@
     "asset": 1543283615000,
     "meta": 1542783346000,
     "relativePath": "resources/map"
-  },
-  "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1543371849000,
-    "meta": 1543371849000,
-    "relativePath": "scenes/default_map.fire"
   },
   "54917cb1-0028-4a84-a75a-a2b105bea6d5": {
     "asset": 1543299688000,
@@ -819,24 +809,14 @@
     "meta": 1543315654000,
     "relativePath": "resources/textures/treasures/rule/botton2.png"
   },
-  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
-    "asset": 1543371521000,
-    "meta": 1543371524000,
-    "relativePath": "scripts/GameRule.js"
-  },
   "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
     "asset": 1543371597000,
     "meta": 1543371598000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1543371739000,
-    "meta": 1543371741000,
-    "relativePath": "scripts/Map.js"
-  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1543372342000,
-    "meta": 1543372342000,
+    "asset": 1543377012000,
+    "meta": 1543377012000,
     "relativePath": "scenes/login.fire"
   },
   "0691d349-75b9-4279-877c-a42854f725a1": {
@@ -883,5 +863,100 @@
     "asset": 1543372246000,
     "meta": 1543372246000,
     "relativePath": "resources/textures/login/Sign-in.jpg"
+  },
+  "60faea4e-a8a7-463a-9544-555349ff0ccc": {
+    "asset": 1543372807000,
+    "meta": 1543372807000,
+    "relativePath": "resources/textures/Find an opponent"
+  },
+  "987b06b3-ab96-4745-8048-9088d943c3ad": {
+    "asset": 1543372807000,
+    "meta": 1543372807000,
+    "relativePath": "resources/textures/Find an opponent/black-board.jpg"
+  },
+  "23f7fe29-d5c9-4896-89c1-a52b4e86c700": {
+    "asset": 1543372807000,
+    "meta": 1543373091000,
+    "relativePath": "resources/textures/Find an opponent/exitBtn.png"
+  },
+  "9d0797f4-38aa-4f0e-b153-92b133fbb779": {
+    "asset": 1543372807000,
+    "meta": 1543373100000,
+    "relativePath": "resources/textures/Find an opponent/exitBtnPressed.png"
+  },
+  "9f30bfbf-e9ee-452e-8d9e-b583fa7cfa45": {
+    "asset": 1543372807000,
+    "meta": 1543372808000,
+    "relativePath": "resources/textures/Find an opponent/paper.png"
+  },
+  "66f5fcfa-d3cd-430b-9a53-c01db4d76cf7": {
+    "asset": 1543372807000,
+    "meta": 1543372808000,
+    "relativePath": "resources/textures/Find an opponent/self.png"
+  },
+  "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
+    "asset": 1543376437000,
+    "meta": 1543376437000,
+    "relativePath": "resources/prefabs/FindingPlayer.prefab"
+  },
+  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
+    "asset": 1543374952000,
+    "meta": 1543374956000,
+    "relativePath": "scripts/GameRule.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1543375523000,
+    "meta": 1543375526000,
+    "relativePath": "scripts/Map.js"
+  },
+  "92160186-3e0d-4e0a-ae20-97286170ba58": {
+    "asset": 1543375537000,
+    "meta": 1543375736000,
+    "relativePath": "scenes/default_map.fire"
+  },
+  "4197b083-8a18-4a2b-8834-621a03dfb9de": {
+    "asset": 1543375935000,
+    "meta": 1543375935000,
+    "relativePath": "resources/textures/Match opponent"
+  },
+  "ee3ebe14-015a-49bd-b831-e55669d81ca7": {
+    "asset": 1543375935000,
+    "meta": 1543375935000,
+    "relativePath": "resources/textures/Match opponent/black-board.jpg"
+  },
+  "72605446-1cc0-470f-a2dc-fc4e6b7e6be2": {
+    "asset": 1543375935000,
+    "meta": 1543375935000,
+    "relativePath": "resources/textures/Match opponent/botton1.png"
+  },
+  "0e51c8cf-ea38-447c-a086-674a82a408c5": {
+    "asset": 1543375935000,
+    "meta": 1543375935000,
+    "relativePath": "resources/textures/Match opponent/botton2.png"
+  },
+  "858653d5-45ec-4666-9991-98918679136e": {
+    "asset": 1543375935000,
+    "meta": 1543375936000,
+    "relativePath": "resources/textures/Find an opponent/matching.png"
+  },
+  "ff868476-3cad-488f-aecf-957dbcf0e689": {
+    "asset": 1543375935000,
+    "meta": 1543375936000,
+    "relativePath": "resources/textures/Match opponent/paper.png"
+  },
+  "f55f97b9-04a5-4d54-92ba-c99b9a2b7202": {
+    "asset": 1543375935000,
+    "meta": 1543375936000,
+    "relativePath": "resources/textures/Match opponent/self.png"
+  },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1543377004000,
+    "meta": 1543377008000,
+    "relativePath": "scripts/FindingPlayer.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1543376980000,
+    "meta": 1543377008000,
+    "relativePath": "scripts/Login.js"
   }
 }

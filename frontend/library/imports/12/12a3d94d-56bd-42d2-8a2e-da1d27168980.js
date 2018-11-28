@@ -283,7 +283,8 @@ cc.Class({
       var selfPlayer = {
         expiresAt: date,
         playerId: res.playerId,
-        intAuthToken: res.intAuthToken
+        intAuthToken: res.intAuthToken,
+        name: res.name
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
