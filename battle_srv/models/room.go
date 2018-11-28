@@ -97,6 +97,11 @@ type Room struct {
 }
 
 type RoomDownsyncFrame struct {
+  /* TODO
+  An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
+
+  Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.  
+  */
 	Id                   int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	RefFrameId           int32               `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
 	Players              map[int32]*Player   `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
@@ -511,10 +516,6 @@ func (pR *Room) StartBattle() {
           Bullets:        pR.Bullets,
 				}
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-        
-        /* TODO
-        Pre-marshal the `assembledFrame` by `toForwardMsg := proto.Marshal(assembledFrame)` here and send it via the current `theForwardingChannel` to avoid potential thread-safety issues by marshalling from the associated `forwardingLoopAgainstBoundRoom` started by `../ws/server.go`.  
-        */
 
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 				utils.SendSafely(assembledFrame, theForwardingChannel)
