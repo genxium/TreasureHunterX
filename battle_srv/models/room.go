@@ -61,7 +61,6 @@ func calRoomScore(inRoomPlayerCount int32, roomCapacity int, currentRoomBattleSt
 type Room struct {
 	Id       int32
 	Capacity int
-  PlayersWholeMapLock sync.Mutex
 	Players  map[int32]*Player
 	/**
 	 * The following `PlayerDownsyncChanDict` is NOT individually put
@@ -79,7 +78,7 @@ type Room struct {
 	 *
 	 * to avoid chaotic flaws.
 	 */
-	PlayerDownsyncChanDict map[int32]chan interface{}
+	PlayerDownsyncChanDict map[int32]chan string
 	CmdFromPlayersChan     chan interface{}
 	Score                  float32
 	State                  int32
@@ -159,7 +158,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	defer pR.onPlayerAdded(pPlayer.Id)
 	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
-	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan interface{}, 1024 /* Hardcoded temporarily. */)
+	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, 1024 /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	pPlayer.Speed = 300 // Hardcoded temporarily.
 	return true
@@ -450,7 +449,6 @@ func (pR *Room) StartBattle() {
     player.Score = 0
   }
 
-  relativePath = "../frontend/assets/resources/map/tile_1.tsx"
 	execPath, err = os.Executable()
 	ErrFatal(err)
 
@@ -458,8 +456,10 @@ func (pR *Room) StartBattle() {
 	ErrFatal(err)
 
   fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+
   tsxIns := Tsx{}
   pTsxIns := &tsxIns
+  relativePath = "../frontend/assets/resources/map/tile_1.tsx"
   fp = filepath.Join(pwd, relativePath)
   fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
@@ -518,7 +518,13 @@ func (pR *Room) StartBattle() {
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-				utils.SendSafely(assembledFrame, theForwardingChannel)
+        theBytes, marshalErr := proto.Marshal(assembledFrame)
+        if marshalErr != nil {
+          Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+          continue
+        }
+        theStr := string(theBytes)
+				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
@@ -642,7 +648,13 @@ func (pR *Room) StopBattleForSettlement() {
       Bullets:        pR.Bullets,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-		utils.SendSafely(assembledFrame, theForwardingChannel)
+    theBytes, marshalErr := proto.Marshal(assembledFrame)
+    if marshalErr != nil {
+      Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+      continue
+    }
+    theStr := string(theBytes)
+    utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 	// Note that `pR.onBattleStoppedForSettlement` will be called by `battleMainLoop`.
 }
@@ -696,7 +708,7 @@ func (pR *Room) onDismissed() {
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
 	pR.Bullets = make(map[int32]*Bullet)
-	pR.PlayerDownsyncChanDict = make(map[int32]chan interface{})
+	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
 }
@@ -722,18 +734,8 @@ func (pR *Room) onPlayerExpelledDuringGame(playerId int32) {
 }
 
 func (pR *Room) onPlayerExpelledForDismissal(playerId int32) {
-	assembledFrame := &RoomDownsyncFrame{
-		Id:             -1, // TODO: Replace this magic constant!
-		RefFrameId:     0,  // Hardcoded for now.
-		Players:        nil,
-		SentAt:         utils.UnixtimeMilli(),
-		CountdownNanos: -1,
-		Treasures:      pR.Treasures,
-	  Traps:          pR.Traps,
-    Bullets:        pR.Bullets,
-	}
 	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-	utils.SendSafely(assembledFrame, theForwardingChannel)
+  utils.SendStrSafely("", theForwardingChannel)
 	pR.onPlayerLost(playerId)
 	pR.DismissalWaitGroup.Done()
 
@@ -771,7 +773,7 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 func (pR *Room) onPlayerLost(playerId int32) {
 	if _, existent := pR.Players[playerId]; existent {
 		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
-		utils.CloseSafely(pR.PlayerDownsyncChanDict[playerId])
+		utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
 		delete(pR.PlayerDownsyncChanDict, playerId)
 		pR.EffectivePlayerCount--
 	}

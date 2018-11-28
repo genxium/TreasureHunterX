@@ -5,9 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 	"reflect"
-  "github.com/golang/protobuf/proto"
 	. "server/common"
-	"server/models"
 )
 
 type wsHandleInfo struct {
@@ -92,18 +90,14 @@ func wsSendAction(conn *websocket.Conn, act string, data interface{}) {
 	}
 }
 
-func wsSendActionPb(conn *websocket.Conn, act string, data *models.RoomDownsyncFrame) {
+func wsSendActionPb(conn *websocket.Conn, act string, data string) {
   // Reference https://godoc.org/github.com/gorilla/websocket#Conn.WriteMessage.
-  out, err := proto.Marshal(data)
-	if err != nil {
-		Logger.Error("proto marshalling error:", zap.Error(err))
-	}
 	resp := &wsRespPb{
 		Act:  act,
-		Data: out,
+		Data: []byte(data),
 		Ret:  int32(Constants.RetCode.Ok),
 	}
-	err = conn.WriteJSON(resp)
+	err := conn.WriteJSON(resp)
 	if err != nil {
 		Logger.Error("write:", zap.Error(err))
 	}

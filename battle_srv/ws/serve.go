@@ -259,37 +259,25 @@ func Serve(c *gin.Context) {
 	}
 
 	// Starts the forwarding loop associated "(*pPlayer).boundRoom".
-	forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan interface{}) error {
+	forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan string) error {
     defer func() {
-			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
-		}()
-    forwardingLoopAgainstBoundRoomRecovery := func() {
 			if r := recover(); r != nil {
 				Logger.Error("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ")
 			}
-		}
+			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
+		}()
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
 				return nil
 			}
-      defer forwardingLoopAgainstBoundRoomRecovery()
 			select {
-			case untypedRoomDownsyncFrame := <-dedicatedChanToForward:
-				if nil == untypedRoomDownsyncFrame {
-					break
-				}
-				typedRoomDownsyncFrame := untypedRoomDownsyncFrame.(*models.RoomDownsyncFrame)
-				if nil == typedRoomDownsyncFrame {
-					break
-				}
-				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
-				if -1 == typedRoomDownsyncFrame.Id {
-					// Expelled from room for whatever reason.
+			case typedRoomDownsyncFrame := <-dedicatedChanToForward:
+				if "" == typedRoomDownsyncFrame {
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 					return nil
-				} else {
-					wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 				}
+				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+        wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 			default:
 			}
 		}

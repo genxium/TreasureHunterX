@@ -95,7 +95,7 @@ func InitRoomHeapManager() {
 		pq[i] = &Room{
 			Id:                     int32(i),
 			Players:                make(map[int32]*Player),
-			PlayerDownsyncChanDict: make(map[int32]chan interface{}),
+			PlayerDownsyncChanDict: make(map[int32]chan string),
 			Capacity:               roomCapacity,
 			Score:                  calRoomScore(0, roomCapacity, currentRoomBattleState),
 			State:                  currentRoomBattleState,
