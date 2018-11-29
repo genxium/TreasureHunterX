@@ -530,8 +530,8 @@
     "relativePath": "resources/i18n/zh.js"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1543372305000,
-    "meta": 1543372305000,
+    "asset": 1543489331000,
+    "meta": 1543489331000,
     "relativePath": "resources/prefabs/GameRule.prefab"
   },
   "f20b3161-9015-4c37-baf8-355accd92c98": {
@@ -629,11 +629,6 @@
     "meta": 1543372808000,
     "relativePath": "resources/textures/Find an opponent/self.png"
   },
-  "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1543459649000,
-    "meta": 1543459649000,
-    "relativePath": "resources/prefabs/FindingPlayer.prefab"
-  },
   "4197b083-8a18-4a2b-8834-621a03dfb9de": {
     "asset": 1543375945000,
     "meta": 1543375935000,
@@ -725,8 +720,8 @@
     "relativePath": "plugin_scripts/conf.js"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1543477137000,
-    "meta": 1543477137000,
+    "asset": 1543489269000,
+    "meta": 1543489269000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "e851e89b-faa2-4484-bea6-5c01dd9f06e2": {
@@ -959,24 +954,29 @@
     "meta": 1543485107000,
     "relativePath": "scripts/WsSessionMgr.js"
   },
-  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
-    "asset": 1543486065000,
-    "meta": 1543486071000,
-    "relativePath": "scripts/GameRule.js"
-  },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
     "asset": 1543487276000,
     "meta": 1543487278000,
     "relativePath": "scripts/TouchEventsManager.js"
   },
+  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
+    "asset": 1543487971000,
+    "meta": 1543489135000,
+    "relativePath": "scripts/GameRule.js"
+  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
     "asset": 1543487895000,
-    "meta": 1543487895000,
+    "meta": 1543489136000,
     "relativePath": "scenes/login.fire"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1543487890000,
-    "meta": 1543487892000,
+    "asset": 1543489475000,
+    "meta": 1543489477000,
     "relativePath": "scripts/Map.js"
+  },
+  "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
+    "asset": 1543489481000,
+    "meta": 1543489534000,
+    "relativePath": "resources/prefabs/FindingPlayer.prefab"
   }
 }

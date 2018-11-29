@@ -224,20 +224,14 @@ cc.Class({
     /** init confirmLogoutNode started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
-    self.confirmLogoutNode.width = canvasNode.width;
-    self.confirmLogoutNode.height = canvasNode.height;
     /** init confirmLogoutNode ended */
 
     /** init resultPanelNode started */
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
-    self.resultPanelNode.width = canvasNode.width;
-    self.resultPanelNode.height = canvasNode.height;
     /** init resultPanelNode ended */
 
     /** init gameRuleNode started */
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
-    self.gameRuleNode.width = canvasNode.width;
-    self.gameRuleNode.height = canvasNode.height;
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
     self.showPopopInCanvas(self.gameRuleNode);
@@ -245,8 +239,6 @@ cc.Class({
 
     /** init findingPlayer started */
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
-    self.findingPlayerNode.width = canvasNode.width;
-    self.findingPlayerNode.height = canvasNode.height;
     /** init findingPlayerNode ended */
 
     self.clientUpsyncFps = 20;
