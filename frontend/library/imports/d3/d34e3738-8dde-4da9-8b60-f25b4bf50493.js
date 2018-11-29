@@ -4,14 +4,6 @@ cc._RF.push(module, 'd34e3c4jd5NqYtg8ltL9QST', 'TouchEventsManager');
 
 "use strict";
 
-window.ALL_MAP_STATES = {
-
-  VISUAL: 0, // For free dragging & zooming.
-
-  EDITING_BELONGING: 1
-
-};
-
 cc.Class({
   extends: cc.Component,
   properties: {
@@ -142,7 +134,7 @@ cc.Class({
       if (null != self._cachedZoomRawTarget && false == self._cachedZoomRawTarget.processed) {
         cc.log("Processing self._cachedZoomRawTarget == " + self._cachedZoomRawTarget);
         self._cachedZoomRawTarget.processed = true;
-        self.canvasNode.setScale(self._cachedZoomRawTarget.scale);
+        self.mapNode.setScale(self._cachedZoomRawTarget.scale);
       }
     }, 1000 / self.pollerFps);
   },

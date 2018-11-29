@@ -199,6 +199,7 @@ cc.Class({
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
     self.upsyncLoopInterval = null;
+    self.transitToState(ALL_MAP_STATES.VISUAL);
 
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
@@ -247,13 +248,26 @@ cc.Class({
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
+    window.reconnectWSWithoutRoomId = function() {
+      return  new Promise((resolve,reject) => {
+      if (window.clientSessionPingInterval) {
+        clearInterval(clientSessionPingInterval);
+      }
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
+      return resolve();
+      })
+      .then(() =>{
+        this.initPersistentSessionClient(this.initAfterWSConncted);
+      });
+    }
+
     window.handleClientSessionCloseOrError = function() {
       if(!self.battleState)
         self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     };
 
     self.initAfterWSConncted = () => {
-     // self.state = ALL_MAP_STATES.VISUAL;
+      self.transitToState(ALL_MAP_STATES.VISUAL);
       const tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
@@ -339,7 +353,6 @@ cc.Class({
 
       window.handleRoomDownsyncFrame = function(roomDownsyncFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
-
         const frameId = roomDownsyncFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -409,9 +422,6 @@ cc.Class({
           if (1 == frameId) {
             // No need to prompt upon rejoined.
             self.popupSimplePressToGo("Battle started!");
-            self.transitToState(ALL_MAP_STATES.VISUAL);
-            const canvasNode = self.canvasNode;
-            canvasNode.removeChild(self.findingPlayerNode);
           }
           self.onBattleStarted();
         }
@@ -419,6 +429,9 @@ cc.Class({
       // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
       // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
+      if(ALL_BATTLE_STATES.WAITING == self.battleState) {
+        self.showPopopInCanvas(self.findingPlayerNode);
+      }
     }
   },
 
@@ -448,9 +461,13 @@ cc.Class({
 
   onBattleStarted() {
     const self = this;
+    const canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
+    self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
+    if(self.findingPlayerNode.parent)
+      canvasNode.removeChild(self.findingPlayerNode);
   },
 
   onBattleStopped(players) {
@@ -784,13 +801,12 @@ cc.Class({
     self.enableInputControls();
   },
   
- showfindingPlayerPopup(evt, cb) {
+ initWSConnection(evt, cb) {
     const self = this;
     if(cb){ 
       cb()
     } 
     initPersistentSessionClient(self.initAfterWSConncted);
-    self.showPopopInCanvas(self.findingPlayerNode);
   },
 
   showPopopInCanvas(toShowNode) {
@@ -801,6 +817,6 @@ cc.Class({
     toShowNode.setScale(1 / canvasNode.getScale());
     safelyAddChild(canvasNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
-  }
+  },
 
 });

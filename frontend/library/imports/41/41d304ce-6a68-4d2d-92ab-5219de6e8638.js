@@ -192,7 +192,7 @@ cc.Class({
 
   //onLoad
   onLoad: function onLoad() {
-    var _this = this;
+    var _this2 = this;
 
     var self = this;
     self.lastRoomDownsyncFrameId = 0;
@@ -203,6 +203,7 @@ cc.Class({
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
     self.upsyncLoopInterval = null;
+    self.transitToState(ALL_MAP_STATES.VISUAL);
 
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
@@ -251,18 +252,32 @@ cc.Class({
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
 
+    window.reconnectWSWithoutRoomId = function () {
+      var _this = this;
+
+      return new Promise(function (resolve, reject) {
+        if (window.clientSessionPingInterval) {
+          clearInterval(clientSessionPingInterval);
+        }
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        return resolve();
+      }).then(function () {
+        _this.initPersistentSessionClient(_this.initAfterWSConncted);
+      });
+    };
+
     window.handleClientSessionCloseOrError = function () {
       if (!self.battleState) self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
     };
 
     self.initAfterWSConncted = function () {
-      // self.state = ALL_MAP_STATES.VISUAL;
+      self.transitToState(ALL_MAP_STATES.VISUAL);
       var tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
-      _this._inputControlEnabled = false;
+      _this2._inputControlEnabled = false;
       self.setupInputControls();
 
       var boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
@@ -428,11 +443,11 @@ cc.Class({
         }
       }
 
-      if (_this.joystickInputControllerNode.parent !== _this.node.parent.parent.getChildByName('JoystickContainer')) {
-        _this.joystickInputControllerNode.parent = _this.node.parent.parent.getChildByName('JoystickContainer');
+      if (_this2.joystickInputControllerNode.parent !== _this2.node.parent.parent.getChildByName('JoystickContainer')) {
+        _this2.joystickInputControllerNode.parent = _this2.node.parent.parent.getChildByName('JoystickContainer');
       }
-      _this.joystickInputControllerNode.parent.width = _this.node.parent.width * 0.5;
-      _this.joystickInputControllerNode.parent.height = _this.node.parent.height;
+      _this2.joystickInputControllerNode.parent.width = _this2.node.parent.width * 0.5;
+      _this2.joystickInputControllerNode.parent.height = _this2.node.parent.height;
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
@@ -491,7 +506,6 @@ cc.Class({
 
       window.handleRoomDownsyncFrame = function (roomDownsyncFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
-
         var frameId = roomDownsyncFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -561,9 +575,6 @@ cc.Class({
           if (1 == frameId) {
             // No need to prompt upon rejoined.
             self.popupSimplePressToGo("Battle started!");
-            self.transitToState(ALL_MAP_STATES.VISUAL);
-            var _canvasNode = self.canvasNode;
-            _canvasNode.removeChild(self.findingPlayerNode);
           }
           self.onBattleStarted();
         }
@@ -571,6 +582,9 @@ cc.Class({
         // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
         // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
+      if (ALL_BATTLE_STATES.WAITING == self.battleState) {
+        self.showPopopInCanvas(self.findingPlayerNode);
+      }
     };
   },
   setupInputControls: function setupInputControls() {
@@ -596,9 +610,12 @@ cc.Class({
   },
   onBattleStarted: function onBattleStarted() {
     var self = this;
+    var canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
+    self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
+    if (self.findingPlayerNode.parent) canvasNode.removeChild(self.findingPlayerNode);
   },
   onBattleStopped: function onBattleStopped(players) {
     var self = this;
@@ -902,13 +919,12 @@ cc.Class({
     canvasNode.removeChild(self.confirmLogoutNode);
     self.enableInputControls();
   },
-  showfindingPlayerPopup: function showfindingPlayerPopup(evt, cb) {
+  initWSConnection: function initWSConnection(evt, cb) {
     var self = this;
     if (cb) {
       cb();
     }
     initPersistentSessionClient(self.initAfterWSConncted);
-    self.showPopopInCanvas(self.findingPlayerNode);
   },
   showPopopInCanvas: function showPopopInCanvas(toShowNode) {
     var self = this;

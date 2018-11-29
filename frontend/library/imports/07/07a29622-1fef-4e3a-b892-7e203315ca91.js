@@ -21,8 +21,8 @@ window.closeWSConnection = function () {
 };
 
 window.getBoundRoomIdFromPersistentStorage = function () {
-  var expiresAt = cc.sys.localStorage.expiresAt;
-  if (!expiresAt || Date.now() >= parseInt(expiresAt)) {
+  var expiresAt = parseInt(cc.sys.localStorage.expiresAt);
+  if (!expiresAt || Date.now() >= expiresAt) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
@@ -140,8 +140,14 @@ window.initPersistentSessionClient = function (onopenCb) {
     }
     switch (event.code) {
       case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
+        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
+        return;
       case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
+        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
+        return;
       case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
+        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
+        return;
       case constants.RET_CODE.PLAYER_NOT_FOUND:
       case constants.RET_CODE.PLAYER_CHEATING:
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();

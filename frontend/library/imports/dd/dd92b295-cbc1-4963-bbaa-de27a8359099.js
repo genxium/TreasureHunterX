@@ -26,7 +26,7 @@ cc.Class({
     var modeBtnClickEventHandler = new cc.Component.EventHandler();
     modeBtnClickEventHandler.target = this.mapNode;
     modeBtnClickEventHandler.component = "Map";
-    modeBtnClickEventHandler.handler = "showfindingPlayerPopup";
+    modeBtnClickEventHandler.handler = "initWSConnection";
     modeBtnClickEventHandler.customEventData = function () {
       _this.node.active = false;
     };
