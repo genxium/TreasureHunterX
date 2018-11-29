@@ -248,7 +248,7 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 
   bullet := &Bullet{
     LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
-    LinearSpeed:  0.0000001,
+    LinearSpeed:  0.0000002,
     X: startPos.X,
     Y: startPos.Y,
     StartAtPoint: &startPos,

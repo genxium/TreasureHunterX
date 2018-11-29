@@ -429,11 +429,6 @@
     "meta": 1543283945000,
     "relativePath": "resources/pbfiles/room_downsync_frame.proto"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1542783346000,
-    "meta": 1543283948000,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "7a4c5db9-8c7c-4945-91b7-9cec11c82f48": {
     "asset": 1543283615000,
     "meta": 1542783346000,
@@ -674,11 +669,6 @@
     "meta": 1543291986000,
     "relativePath": "resources/textures/resultPanel/compareBG.jpg"
   },
-  "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1543314169000,
-    "meta": 1543314169000,
-    "relativePath": "resources/prefabs/ResultPanel.prefab"
-  },
   "3fd7dcec-b5b3-4141-93f7-517e19e650f9": {
     "asset": 1543313255000,
     "meta": 1543313257000,
@@ -815,8 +805,8 @@
     "relativePath": "scripts/GameRule.js"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1543458883000,
-    "meta": 1543458883000,
+    "asset": 1543475497000,
+    "meta": 1543475497000,
     "relativePath": "scenes/default_map.fire"
   },
   "4197b083-8a18-4a2b-8834-621a03dfb9de": {
@@ -934,19 +924,9 @@
     "meta": 1543387471000,
     "relativePath": "image/default_scrollbar_vertical.png"
   },
-  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
-    "asset": 1543405502000,
-    "meta": 1543458593000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
-  "8b400cb3-9119-4269-b86b-0aa2a659b691": {
-    "asset": 1543459156000,
-    "meta": 1543459156000,
-    "relativePath": "resources/prefabs/SelfPlayer.prefab"
-  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1543458982000,
-    "meta": 1543458982000,
+    "asset": 1543474622000,
+    "meta": 1543474622000,
     "relativePath": "scenes/login.fire"
   },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
@@ -974,9 +954,29 @@
     "meta": 1543459649000,
     "relativePath": "scripts/FindingPlayer.js"
   },
+  "8b400cb3-9119-4269-b86b-0aa2a659b691": {
+    "asset": 1543463070000,
+    "meta": 1543463070000,
+    "relativePath": "resources/prefabs/SelfPlayer.prefab"
+  },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1543459624000,
-    "meta": 1543459649000,
+    "asset": 1543474271000,
+    "meta": 1543474294000,
     "relativePath": "scripts/Login.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1543475096000,
+    "meta": 1543475116000,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
+    "asset": 1543475492000,
+    "meta": 1543475494000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
+    "asset": 1543475789000,
+    "meta": 1543475789000,
+    "relativePath": "resources/prefabs/ResultPanel.prefab"
   }
 }

@@ -15,12 +15,18 @@ window.closeWSConnection = function() {
 }
 
 window.getBoundRoomIdFromPersistentStorage = function() {
+  const expiresAt = cc.sys.localStorage.expiresAt;
+  if(!expiresAt || Date.now() >= expiresAt) {
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();    
+    return null;
+  }
   return cc.sys.localStorage.boundRoomId;
 };
 
 window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function() {
   window.boundRoomId = null;
   cc.sys.localStorage.removeItem("boundRoomId");
+  cc.sys.localStorage.removeItem("expiresAt");
 };
 
 window.boundRoomId = getBoundRoomIdFromPersistentStorage();
@@ -29,7 +35,8 @@ window.handleHbRequirements = function(resp) {
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId; 
     cc.sys.localStorage.boundRoomId = window.boundRoomId;
-  }
+    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000 ;//TODO: hardcoded, boundRoomId过期时间
+} 
 
   window.clientSessionPingInterval = setInterval(() => {
     if (clientSession.readyState != WebSocket.OPEN) return;
