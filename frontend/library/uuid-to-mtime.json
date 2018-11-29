@@ -964,19 +964,19 @@
     "meta": 1543474294000,
     "relativePath": "scripts/Login.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1543475096000,
-    "meta": 1543475116000,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "f4979357-83d8-4c43-85f1-1c1fe0aa6b69": {
     "asset": 1543475492000,
     "meta": 1543475494000,
     "relativePath": "plugin_scripts/conf.js"
   },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1543477131000,
+    "meta": 1543477132000,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1543475789000,
-    "meta": 1543475789000,
+    "asset": 1543477137000,
+    "meta": 1543477137000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   }
 }

@@ -16,7 +16,7 @@ window.closeWSConnection = function() {
 
 window.getBoundRoomIdFromPersistentStorage = function() {
   const expiresAt = cc.sys.localStorage.expiresAt;
-  if(!expiresAt || Date.now() >= expiresAt) {
+  if(!expiresAt || Date.now() >= parseInt(expiresAt)) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();    
     return null;
   }

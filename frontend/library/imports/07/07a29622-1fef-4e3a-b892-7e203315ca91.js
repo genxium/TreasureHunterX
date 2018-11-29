@@ -22,7 +22,7 @@ window.closeWSConnection = function () {
 
 window.getBoundRoomIdFromPersistentStorage = function () {
   var expiresAt = cc.sys.localStorage.expiresAt;
-  if (!expiresAt || Date.now() >= expiresAt) {
+  if (!expiresAt || Date.now() >= parseInt(expiresAt)) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
@@ -41,7 +41,7 @@ window.handleHbRequirements = function (resp) {
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId;
     cc.sys.localStorage.boundRoomId = window.boundRoomId;
-    cc.sys.localStorage.expiresAt = Date.now() + 10 * 1000; //TODO: hardcoded, boundRoomId过期时间
+    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
   }
 
   window.clientSessionPingInterval = setInterval(function () {
