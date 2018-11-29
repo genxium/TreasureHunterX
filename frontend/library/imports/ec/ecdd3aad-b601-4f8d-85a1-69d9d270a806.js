@@ -19,8 +19,8 @@ cc.Class({
   onLoad: function onLoad() {
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     var selfNameNode = this.selfInfoNode.getChildByName("selfName");
-    if (selfPlayerInfo.name) {
-      selfNameNode.getComponent(cc.Label).string = selfPlayerInfo.name;
+    if (selfPlayerInfo.displayName) {
+      selfNameNode.getComponent(cc.Label).string = selfPlayerInfo.displayName;
     }
   },
   exitBtnOnClick: function exitBtnOnClick(evt) {

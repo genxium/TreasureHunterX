@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="217">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="217">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
  <layer name="tile_1 floor" width="80" height="80">
@@ -75,146 +75,16 @@
   <object id="37" x="1910" y="2642">
    <point/>
   </object>
-  <object id="38" x="2856" y="1560">
-   <point/>
-  </object>
   <object id="39" x="2070" y="2730">
    <point/>
   </object>
   <object id="40" x="1892" y="3028">
    <point/>
   </object>
-  <object id="50" gid="8" x="1830" y="2148" width="64" height="64" visible="0"/>
-  <object id="145" x="2156" y="2406.67">
-   <point/>
-  </object>
-  <object id="146" x="2210.67" y="2464">
-   <point/>
-  </object>
-  <object id="147" x="2272" y="2528">
-   <point/>
-  </object>
-  <object id="148" x="2338.67" y="2592">
-   <point/>
-  </object>
-  <object id="150" x="2206.67" y="2348">
-   <point/>
-  </object>
-  <object id="151" x="2258.67" y="2405.33">
-   <point/>
-  </object>
-  <object id="153" x="2318.67" y="2470.67">
-   <point/>
-  </object>
-  <object id="155" x="2384" y="2544">
-   <point/>
-  </object>
-  <object id="156" x="2410.67" y="2152">
-   <point/>
-  </object>
-  <object id="157" x="2473.33" y="2217.33">
-   <point/>
-  </object>
-  <object id="158" x="2537.33" y="2276">
-   <point/>
-  </object>
-  <object id="159" x="2589.33" y="2328">
-   <point/>
-  </object>
-  <object id="163" x="2348" y="2209.33">
-   <point/>
-  </object>
-  <object id="165" x="2416" y="2274.67">
-   <point/>
-  </object>
-  <object id="168" x="2474.67" y="2333.33">
-   <point/>
-  </object>
-  <object id="169" x="2529.33" y="2385.33">
-   <point/>
-  </object>
-  <object id="173" x="2385.33" y="2454.67">
-   <point/>
-  </object>
-  <object id="174" x="2440" y="2509.33">
-   <point/>
-  </object>
-  <object id="178" x="2440" y="2400">
-   <point/>
-  </object>
-  <object id="179" x="2488" y="2453.33">
-   <point/>
-  </object>
   <object id="180" x="2926" y="1518">
    <point/>
   </object>
-  <object id="181" x="3166" y="3778">
-   <point/>
-  </object>
-  <object id="182" x="3764" y="3112">
-   <point/>
-  </object>
-  <object id="183" x="3998" y="3182">
-   <point/>
-  </object>
   <object id="185" x="2146" y="3170">
-   <point/>
-  </object>
-  <object id="188" x="684" y="1260">
-   <point/>
-  </object>
-  <object id="190" x="746" y="1194">
-   <point/>
-  </object>
-  <object id="191" x="4314" y="622">
-   <point/>
-  </object>
-  <object id="192" x="4444" y="480">
-   <point/>
-  </object>
-  <object id="194" x="482" y="1454">
-   <point/>
-  </object>
-  <object id="195" x="542" y="4774">
-   <point/>
-  </object>
-  <object id="197" x="1058" y="4786">
-   <point/>
-  </object>
-  <object id="198" x="1436" y="4776">
-   <point/>
-  </object>
-  <object id="200" x="1822" y="4778">
-   <point/>
-  </object>
-  <object id="201" x="4328" y="4648">
-   <point/>
-  </object>
-  <object id="202" x="4574" y="4386">
-   <point/>
-  </object>
-  <object id="203" x="4584" y="4260">
-   <point/>
-  </object>
-  <object id="204" x="4836" y="3888">
-   <point/>
-  </object>
-  <object id="205" x="3812" y="4776">
-   <point/>
-  </object>
-  <object id="206" x="3936" y="4644">
-   <point/>
-  </object>
-  <object id="207" x="4076" y="4660">
-   <point/>
-  </object>
-  <object id="208" x="4712" y="3888">
-   <point/>
-  </object>
-  <object id="209" x="3886" y="2670">
-   <point/>
-  </object>
-  <object id="210" x="2854" y="938">
    <point/>
   </object>
   <object id="212" x="2986" y="1966">

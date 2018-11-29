@@ -1,0 +1,9 @@
+{
+  "__type__": "cc.ParticleAsset",
+  "_name": "fire",
+  "_objFlags": 0,
+  "_native": ".plist",
+  "texture": {
+    "__uuid__": "9a208eb4-b48e-46bc-a2ae-5e6d9c1844d7"
+  }
+}

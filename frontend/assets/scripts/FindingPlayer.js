@@ -13,8 +13,8 @@ cc.Class({
   onLoad() {
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     const selfNameNode = this.selfInfoNode.getChildByName("selfName");
-    if(selfPlayerInfo.name) {
-     selfNameNode.getComponent(cc.Label).string = selfPlayerInfo.name; 
+    if(selfPlayerInfo.displayName) {
+     selfNameNode.getComponent(cc.Label).string = selfPlayerInfo.displayName; 
     }
   },
   

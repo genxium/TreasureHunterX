@@ -169,8 +169,8 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		Token     string `json:"intAuthToken"`
 		ExpiresAt int64  `json:"expiresAt"`
 		PlayerID  int    `json:"playerId"`
-    Name string `json:"name"`
-	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.Name}
+    DisplayName string `json:"displayName"`
+	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName}
 
 	c.JSON(http.StatusOK, resp)
 }
