@@ -17,8 +17,10 @@ window.ALL_BATTLE_STATES = {
 cc.Class({
   extends: cc.Component,
 
-  properties: {
-    
+  properties: { 
+    useDiffFrameAlgo: {
+      default: false
+    },
     canvasNode: {
       type: cc.Node,
       default: null,
@@ -112,6 +114,78 @@ cc.Class({
       default: null
     },
   },
+  
+  _generateNewFullFrame: function(refFullFrame, diffFrame) {
+    let newFullFrame = {
+      id: diffFrame.id,
+      treasures: refFullFrame.treasures,
+      traps: refFullFrame.traps,
+      bullets: refFullFrame.bullets,
+      players: refFullFrame.players,
+    };
+
+    const players = diffFrame.players;
+    const playersLocalIdStrList = Object.keys(players);
+    for (let i = 0; i < playersLocalIdStrList.length; ++i) {
+      const k = playersLocalIdStrList[i];
+      const playerId = parseInt(k);
+      if (true == diffFrame.players[playerId].removed) {
+        delete newFullFrame.players[playerId];
+      } else {
+        newFullFrame.players[playerId] = diffFrame.players[playerId];  
+      }  
+    }
+    
+    const treasures = diffFrame.treasures;
+    const treasuresLocalIdStrList = Object.keys(treasures);
+    for (let i = 0; i < treasuresLocalIdStrList.length; ++i) {
+      const k = treasuresLocalIdStrList[i];
+      const treasureLocalIdInBattle = parseInt(k);
+      if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
+        delete newFullFrame.treasures[treasureLocalIdInBattle];
+      } else {
+        newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];  
+      }  
+    }
+
+    const traps = diffFrame.traps;
+    const trapsLocalIdStrList = Object.keys(traps);
+    for (let i = 0; i < trapsLocalIdStrList.length; ++i) {
+      const k = trapsLocalIdStrList[i];
+      const trapLocalIdInBattle = parseInt(k);
+      if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
+        delete newFullFrame.traps[trapLocalIdInBattle];
+      } else {
+        newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];  
+      }
+    }
+
+    const bullets = diffFrame.bullets;
+    const bulletsLocalIdStrList = Object.keys(bullets);
+    for (let i = 0; i < bulletsLocalIdStrList.length; ++i) {
+      const k = bulletsLocalIdStrList[i];
+      const bulletLocalIdInBattle = parseInt(k);
+      if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
+        delete newFullFrame.bullets[bulletLocalIdInBattle];
+      } else {
+        newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];  
+      }
+    }
+
+    return newFullFrame;
+  },
+
+  _dumpToFullFrameCache: function(fullFrame) {
+    const self = this;
+    while (self.recentFrameCacheCurrentSize >= self.recentFrameCacheMaxCount) {
+      const toDelFrameId = Object.keys(recentFrameCache)[0];
+      // cc.log("toDelFrameId is " + toDelFrameId + ".");
+      delete recentFrameCache[toDelFrameId];
+      --self.recentFrameCacheCurrentSize;
+    }
+    self.recentFrameCache[fullFrame.id] = fullFrame;
+    ++self.recentFrameCacheCurrentSize;
+  },
 
   _onPerUpsyncFrame() {
     const instance = this;
@@ -133,6 +207,7 @@ cc.Class({
       },
       x: parseFloat(instance.selfPlayerNode.x),
       y: parseFloat(instance.selfPlayerNode.y),
+      ackingFrameId: self.lastRoomDownsyncFrameId,
     };
     const wrapped = {
       msgId: Date.now(),
@@ -188,10 +263,13 @@ cc.Class({
     }, millisToGo);
  },
 
-  //onLoad
   onLoad() {
     const self = this;
     self.lastRoomDownsyncFrameId = 0;
+
+    self.recentFrameCache = {};
+    self.recentFrameCacheCurrentSize = 0;
+    self.recentFrameCacheMaxCount = 2048;
 
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
@@ -343,20 +421,35 @@ cc.Class({
         self.node.addChild(newShelter);
       }
 
-      window.handleRoomDownsyncFrame = function(roomDownsyncFrame) {
+      window.handleRoomDownsyncFrame = function(diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
-        const frameId = roomDownsyncFrame.id;
+        const frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
+        const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize); 
+        const refFrameId = diffFrame.refFrameId;
+        const cachedFullFrame = self.recentFrameCache[refFrameId];
+       
+        if (!isInitiatingFrame && self.useDiffFrameAlgo && null == cachedFullFrame) {
+          cc.error("Should send a reset upsync to server!");
+          return;
+        } 
+        const roomDownsyncFrame = (
+          (isInitiatingFrame || !self.useDiffFrameAlgo)
+          ?
+          diffFrame    
+          :
+          self._generateNewFullFrame(cachedFullFrame, diffFrame) 
+        ); 
+        self._dumpToFullFrameCache(roomDownsyncFrame);
         if (roomDownsyncFrame.countdownNanos == -1) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
         self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
         const sentAt = roomDownsyncFrame.sentAt;
-        const refFrameId = roomDownsyncFrame.refFrameId;
         const players = roomDownsyncFrame.players;
         const playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
@@ -388,7 +481,6 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
-//初始化trapInfo
         self.trapInfoDict = {};
         const traps = roomDownsyncFrame.traps;
         const trapsLocalIdStrList = Object.keys(traps);
@@ -399,7 +491,6 @@ cc.Class({
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
         }
 
-//初始化trapBulletsInfo
         self.trapBulletInfoDict = {};
         const bullets = roomDownsyncFrame.bullets;
         const bulletsLocalIdStrList = Object.keys(bullets);
@@ -409,6 +500,7 @@ cc.Class({
           const bulletInfo = bullets[k];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -418,8 +510,7 @@ cc.Class({
           self.onBattleStarted();
         }
         self.lastRoomDownsyncFrameId = frameId;
-      // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
-      // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
+        // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
       if(ALL_BATTLE_STATES.WAITING == self.battleState) {
         self.showPopopInCanvas(self.findingPlayerNode);
@@ -468,10 +559,8 @@ cc.Class({
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns =  resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    self.selfPlayerScriptIns.scheduleNewDirection({
-      dx: 0,
-      dy: 0
-    });
+    // Such that it doesn't execute "update(dt)" anymore. 
+    self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopopInCanvas(resultPanelNode);
   },

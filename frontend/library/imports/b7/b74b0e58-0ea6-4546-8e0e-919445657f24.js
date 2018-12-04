@@ -83,10 +83,6 @@ cc.Class({
   },
   update: function update(dt) {
     BasePlayer.prototype.update.call(this, dt);
-    /*
-    const labelNode = this.node.getChildByName("CoordinateLabel");
-    labelNode.getComponent("cc.Label").string = "M_(" + this.node.x.toFixed(2) + ", " + this.node.y.toFixed(2) + ")";
-    */
   }
 });
 

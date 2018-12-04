@@ -24,7 +24,9 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-
+    useDiffFrameAlgo: {
+      default: false
+    },
     canvasNode: {
       type: cc.Node,
       default: null
@@ -119,6 +121,78 @@ cc.Class({
     }
   },
 
+  _generateNewFullFrame: function _generateNewFullFrame(refFullFrame, diffFrame) {
+    var newFullFrame = {
+      id: diffFrame.id,
+      treasures: refFullFrame.treasures,
+      traps: refFullFrame.traps,
+      bullets: refFullFrame.bullets,
+      players: refFullFrame.players
+    };
+
+    var players = diffFrame.players;
+    var playersLocalIdStrList = Object.keys(players);
+    for (var i = 0; i < playersLocalIdStrList.length; ++i) {
+      var k = playersLocalIdStrList[i];
+      var playerId = parseInt(k);
+      if (true == diffFrame.players[playerId].removed) {
+        delete newFullFrame.players[playerId];
+      } else {
+        newFullFrame.players[playerId] = diffFrame.players[playerId];
+      }
+    }
+
+    var treasures = diffFrame.treasures;
+    var treasuresLocalIdStrList = Object.keys(treasures);
+    for (var _i = 0; _i < treasuresLocalIdStrList.length; ++_i) {
+      var _k = treasuresLocalIdStrList[_i];
+      var treasureLocalIdInBattle = parseInt(_k);
+      if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
+        delete newFullFrame.treasures[treasureLocalIdInBattle];
+      } else {
+        newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];
+      }
+    }
+
+    var traps = diffFrame.traps;
+    var trapsLocalIdStrList = Object.keys(traps);
+    for (var _i2 = 0; _i2 < trapsLocalIdStrList.length; ++_i2) {
+      var _k2 = trapsLocalIdStrList[_i2];
+      var trapLocalIdInBattle = parseInt(_k2);
+      if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
+        delete newFullFrame.traps[trapLocalIdInBattle];
+      } else {
+        newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];
+      }
+    }
+
+    var bullets = diffFrame.bullets;
+    var bulletsLocalIdStrList = Object.keys(bullets);
+    for (var _i3 = 0; _i3 < bulletsLocalIdStrList.length; ++_i3) {
+      var _k3 = bulletsLocalIdStrList[_i3];
+      var bulletLocalIdInBattle = parseInt(_k3);
+      if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
+        delete newFullFrame.bullets[bulletLocalIdInBattle];
+      } else {
+        newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
+      }
+    }
+
+    return newFullFrame;
+  },
+
+  _dumpToFullFrameCache: function _dumpToFullFrameCache(fullFrame) {
+    var self = this;
+    while (self.recentFrameCacheCurrentSize >= self.recentFrameCacheMaxCount) {
+      var toDelFrameId = Object.keys(recentFrameCache)[0];
+      // cc.log("toDelFrameId is " + toDelFrameId + ".");
+      delete recentFrameCache[toDelFrameId];
+      --self.recentFrameCacheCurrentSize;
+    }
+    self.recentFrameCache[fullFrame.id] = fullFrame;
+    ++self.recentFrameCacheCurrentSize;
+  },
+
   _onPerUpsyncFrame: function _onPerUpsyncFrame() {
     var instance = this;
     if (null == instance.selfPlayerInfo || null == instance.selfPlayerScriptIns || null == instance.selfPlayerScriptIns.scheduledDirection) return;
@@ -134,7 +208,8 @@ cc.Class({
         dy: parseFloat(instance.selfPlayerScriptIns.scheduledDirection.dy)
       },
       x: parseFloat(instance.selfPlayerNode.x),
-      y: parseFloat(instance.selfPlayerNode.y)
+      y: parseFloat(instance.selfPlayerNode.y),
+      ackingFrameId: self.lastRoomDownsyncFrameId
     };
     var wrapped = {
       msgId: Date.now(),
@@ -188,14 +263,15 @@ cc.Class({
       mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
-
-
-  //onLoad
   onLoad: function onLoad() {
     var _this2 = this;
 
     var self = this;
     self.lastRoomDownsyncFrameId = 0;
+
+    self.recentFrameCache = {};
+    self.recentFrameCacheCurrentSize = 0;
+    self.recentFrameCacheMaxCount = 2048;
 
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
@@ -496,20 +572,29 @@ cc.Class({
         }
       }
 
-      window.handleRoomDownsyncFrame = function (roomDownsyncFrame) {
+      window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
-        var frameId = roomDownsyncFrame.id;
+        var frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
+        var isInitiatingFrame = 0 >= self.recentFrameCacheCurrentSize;
+        var refFrameId = diffFrame.refFrameId;
+        var cachedFullFrame = self.recentFrameCache[refFrameId];
+
+        if (!isInitiatingFrame && self.useDiffFrameAlgo && null == cachedFullFrame) {
+          cc.error("Should send a reset upsync to server!");
+          return;
+        }
+        var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
+        self._dumpToFullFrameCache(roomDownsyncFrame);
         if (roomDownsyncFrame.countdownNanos == -1) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
         self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
         var sentAt = roomDownsyncFrame.sentAt;
-        var refFrameId = roomDownsyncFrame.refFrameId;
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
@@ -534,34 +619,33 @@ cc.Class({
         self.treasureInfoDict = {};
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
-        for (var _i = 0; _i < treasuresLocalIdStrList.length; ++_i) {
-          var _k = treasuresLocalIdStrList[_i];
-          var treasureLocalIdInBattle = parseInt(_k);
-          var treasureInfo = treasures[_k];
+        for (var _i4 = 0; _i4 < treasuresLocalIdStrList.length; ++_i4) {
+          var _k4 = treasuresLocalIdStrList[_i4];
+          var treasureLocalIdInBattle = parseInt(_k4);
+          var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
-        //初始化trapInfo
         self.trapInfoDict = {};
         var traps = roomDownsyncFrame.traps;
         var trapsLocalIdStrList = Object.keys(traps);
-        for (var _i2 = 0; _i2 < trapsLocalIdStrList.length; ++_i2) {
-          var _k2 = trapsLocalIdStrList[_i2];
-          var trapLocalIdInBattle = parseInt(_k2);
-          var trapInfo = traps[_k2];
+        for (var _i5 = 0; _i5 < trapsLocalIdStrList.length; ++_i5) {
+          var _k5 = trapsLocalIdStrList[_i5];
+          var trapLocalIdInBattle = parseInt(_k5);
+          var trapInfo = traps[_k5];
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
         }
 
-        //初始化trapBulletsInfo
         self.trapBulletInfoDict = {};
         var bullets = roomDownsyncFrame.bullets;
         var bulletsLocalIdStrList = Object.keys(bullets);
-        for (var _i3 = 0; _i3 < bulletsLocalIdStrList.length; ++_i3) {
-          var _k3 = bulletsLocalIdStrList[_i3];
-          var bulletLocalIdInBattle = parseInt(_k3);
-          var bulletInfo = bullets[_k3];
+        for (var _i6 = 0; _i6 < bulletsLocalIdStrList.length; ++_i6) {
+          var _k6 = bulletsLocalIdStrList[_i6];
+          var bulletLocalIdInBattle = parseInt(_k6);
+          var bulletInfo = bullets[_k6];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
+
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
@@ -571,7 +655,6 @@ cc.Class({
           self.onBattleStarted();
         }
         self.lastRoomDownsyncFrameId = frameId;
-        // TODO: Cope with FullFrame reconstruction by `refFrameId` and a cache of recent FullFrames.
         // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
       if (ALL_BATTLE_STATES.WAITING == self.battleState) {
@@ -615,10 +698,8 @@ cc.Class({
     var resultPanelNode = self.resultPanelNode;
     var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    self.selfPlayerScriptIns.scheduleNewDirection({
-      dx: 0,
-      dy: 0
-    });
+    // Such that it doesn't execute "update(dt)" anymore. 
+    self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopopInCanvas(resultPanelNode);
   },
@@ -725,8 +806,8 @@ cc.Class({
     }
 
     // 更新陷阱显示 
-    for (var _k4 in self.trapInfoDict) {
-      var trapLocalIdInBattle = parseInt(_k4);
+    for (var _k7 in self.trapInfoDict) {
+      var trapLocalIdInBattle = parseInt(_k7);
       var trapInfo = self.trapInfoDict[trapLocalIdInBattle];
       var _newPos = cc.v2(trapInfo.x, trapInfo.y);
       var _targetNode = self.trapNodeDict[trapLocalIdInBattle];
@@ -754,8 +835,8 @@ cc.Class({
     }
 
     // 更新bullet显示 
-    for (var _k5 in self.trapBulletInfoDict) {
-      var bulletLocalIdInBattle = parseInt(_k5);
+    for (var _k8 in self.trapBulletInfoDict) {
+      var bulletLocalIdInBattle = parseInt(_k8);
       var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
       var _newPos2 = cc.v2(bulletInfo.x, bulletInfo.y);
       var _targetNode2 = self.trapBulletNodeDict[bulletLocalIdInBattle];
@@ -783,8 +864,8 @@ cc.Class({
     }
 
     // 更新宝物显示 
-    for (var _k6 in self.treasureInfoDict) {
-      var treasureLocalIdInBattle = parseInt(_k6);
+    for (var _k9 in self.treasureInfoDict) {
+      var treasureLocalIdInBattle = parseInt(_k9);
       var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
       var _newPos3 = cc.v2(treasureInfo.x, treasureInfo.y);
       var _targetNode3 = self.treasureNodeDict[treasureLocalIdInBattle];
@@ -822,30 +903,30 @@ cc.Class({
     }
 
     // Coping with removed players.
-    for (var _k7 in toRemovePlayerNodeDict) {
-      var _playerId = parseInt(_k7);
-      toRemovePlayerNodeDict[_k7].parent.removeChild(toRemovePlayerNodeDict[_k7]);
+    for (var _k10 in toRemovePlayerNodeDict) {
+      var _playerId = parseInt(_k10);
+      toRemovePlayerNodeDict[_k10].parent.removeChild(toRemovePlayerNodeDict[_k10]);
       delete self.otherPlayerNodeDict[_playerId];
     }
 
     // Coping with removed treasures.
-    for (var _k8 in toRemoveTreasureNodeDict) {
-      var _treasureLocalIdInBattle = parseInt(_k8);
-      toRemoveTreasureNodeDict[_k8].parent.removeChild(toRemoveTreasureNodeDict[_k8]);
+    for (var _k11 in toRemoveTreasureNodeDict) {
+      var _treasureLocalIdInBattle = parseInt(_k11);
+      toRemoveTreasureNodeDict[_k11].parent.removeChild(toRemoveTreasureNodeDict[_k11]);
       delete self.treasureNodeDict[_treasureLocalIdInBattle];
     }
 
     // Coping with removed traps.
-    for (var _k9 in toRemoveTrapNodeDict) {
-      var _trapLocalIdInBattle = parseInt(_k9);
-      toRemoveTrapNodeDict[_k9].parent.removeChild(toRemoveTrapNodeDict[_k9]);
+    for (var _k12 in toRemoveTrapNodeDict) {
+      var _trapLocalIdInBattle = parseInt(_k12);
+      toRemoveTrapNodeDict[_k12].parent.removeChild(toRemoveTrapNodeDict[_k12]);
       delete self.trapNodeDict[_trapLocalIdInBattle];
     }
 
     // Coping with removed bullets.
-    for (var _k10 in toRemoveBulletNodeDict) {
-      var _bulletLocalIdInBattle = parseInt(_k10);
-      toRemoveBulletNodeDict[_k10].parent.removeChild(toRemoveBulletNodeDict[_k10]);
+    for (var _k13 in toRemoveBulletNodeDict) {
+      var _bulletLocalIdInBattle = parseInt(_k13);
+      toRemoveBulletNodeDict[_k13].parent.removeChild(toRemoveBulletNodeDict[_k13]);
       delete self.trapBulletNodeDict[_bulletLocalIdInBattle];
     }
   },
