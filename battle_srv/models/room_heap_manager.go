@@ -109,6 +109,7 @@ func InitRoomHeapManager() {
 			Traps:                  make(map[int32]*Trap),
       Bullets:                make(map[int32]*Bullet),
       AccumulatedLocalIdForBullets: 0,
+			RoomDownsyncFrameBuffer:      NewRingBuffer(512),
 		}
 		roomMap[pq[i].Id] = pq[i]
 	}

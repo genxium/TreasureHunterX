@@ -93,6 +93,7 @@ type Room struct {
   Bullets                map[int32]*Bullet
   AccumulatedLocalIdForBullets  int32
 	CollidableWorld        *box2d.B2World
+	RoomDownsyncFrameBuffer *RingBuffer
 }
 
 type RoomDownsyncFrame struct {
@@ -415,6 +416,116 @@ func (pR *Room) InitColliders() {
 	}
 }
 
+func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
+	if lastFrame == nil {
+		return currentFrame
+	}
+	diffFrame := &RoomDownsyncFrame{
+		Id:             currentFrame.Id,
+		RefFrameId:     lastFrame.Id,
+		Players:        currentFrame.Players,
+		SentAt:         currentFrame.SentAt,
+		CountdownNanos: currentFrame.CountdownNanos,
+		Bullets:        currentFrame.Bullets,
+		Treasures:      make(map[int32]*Treasure, 0),
+		Traps:          make(map[int32]*Trap, 0),
+	}
+
+	for k, last := range lastFrame.Treasures {
+		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
+			continue
+		}
+		curr, ok := currentFrame.Treasures[k]
+		if !ok {
+			diffFrame.Treasures[k] = &Treasure{Removed: true}
+			Logger.Info("A treasure is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("treasure.LocalIdInBattle", curr.LocalIdInBattle))
+			continue
+		}
+		if ok, v := diffTreature(last, curr); ok {
+			diffFrame.Treasures[k] = v
+		}
+
+	}
+
+	for k, last := range lastFrame.Bullets {
+		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
+			continue
+		}
+		curr, ok := currentFrame.Bullets[k]
+		if !ok {
+			diffFrame.Bullets[k] = &Bullet{Removed: true}
+			Logger.Info("A bullet is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("bullet.LocalIdInBattle", curr.LocalIdInBattle))
+			continue
+		}
+		if ok, v := diffBullet(last, curr); ok {
+			diffFrame.Bullets[k] = v
+		}
+	}
+
+	for k, last := range lastFrame.Traps {
+		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
+			continue
+		}
+		curr, ok := currentFrame.Traps[k]
+		if !ok {
+			diffFrame.Traps[k] = &Trap{Removed: true}
+			Logger.Info("A trap is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("trap.LocalIdInBattle", curr.LocalIdInBattle))
+			continue
+		}
+		if ok, v := diffTrap(last, curr); ok {
+			diffFrame.Traps[k] = v
+		}
+	}
+
+	return diffFrame
+}
+
+func diffTreature(last, curr *Treasure) (bool, *Treasure) {
+	treature := &Treasure{}
+	t := false
+	if last.Score != curr.Score {
+		treature.Score = curr.Score
+		t = true
+	}
+	if last.X != curr.X {
+		treature.X = curr.X
+		t = true
+	}
+	if last.Y != curr.Y {
+		treature.Y = curr.Y
+		t = true
+	}
+	return t, treature
+}
+
+func diffTrap(last, curr *Trap) (bool, *Trap) {
+	trap := &Trap{}
+	t := false
+	if last.X != curr.X {
+		trap.X = curr.X
+		t = true
+	}
+	if last.Y != curr.Y {
+		trap.Y = curr.Y
+		t = true
+	}
+	return t, trap
+}
+
+func diffBullet(last, curr *Bullet) (bool, *Bullet) {
+	bullet := &Bullet{}
+	t := false
+	if last.X != curr.X {
+		bullet.X = bullet.X
+		t = true
+	}
+	if last.Y != curr.Y {
+		bullet.Y = curr.Y
+		t = true
+	}
+	return t, bullet
+}
+
 func (pR *Room) StartBattle() {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
@@ -504,21 +615,23 @@ func (pR *Room) StartBattle() {
 			pR.Tick++
 			stCalculation := utils.UnixtimeNano()
 
-			for playerId, _ := range pR.Players {
-				assembledFrame := &RoomDownsyncFrame{
-					Id:             pR.Tick,
-					RefFrameId:     0, // Hardcoded for now.
-					Players:        pR.Players,
-					SentAt:         utils.UnixtimeMilli(),
-					CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
-					Treasures:      pR.Treasures,
-					Traps:          pR.Traps,
-          Bullets:        pR.Bullets,
-				}
+      currentFrame := &RoomDownsyncFrame{
+        Id:             pR.Tick,
+        RefFrameId:     0, // Hardcoded for now.
+        Players:        pR.Players,
+        SentAt:         utils.UnixtimeMilli(),
+        CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
+        Treasures:      pR.Treasures,
+        Traps:          pR.Traps,
+        Bullets:        pR.Bullets,
+      }
+			for playerId, player := range pR.Players {
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
+				diffFrame := calculateDiffFrame(currentFrame, lastFrame)
 
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-        theBytes, marshalErr := proto.Marshal(assembledFrame)
+        theBytes, marshalErr := proto.Marshal(diffFrame)
         if marshalErr != nil {
           Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
           continue
@@ -526,6 +639,7 @@ func (pR *Room) StartBattle() {
         theStr := string(theBytes)
 				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
+			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
 			for _, player := range pR.Players {
@@ -618,6 +732,7 @@ func (pR *Room) StartBattle() {
 				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
 				pR.Players[immediatePlayerData.Id].Dir.Dx = immediatePlayerData.Dir.Dx
 				pR.Players[immediatePlayerData.Id].Dir.Dy = immediatePlayerData.Dir.Dy
+				pR.Players[immediatePlayerData.Id].AckingFrameId = immediatePlayerData.AckingFrameId
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
