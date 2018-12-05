@@ -19,7 +19,7 @@ cc.Class({
 
   properties: { 
     useDiffFrameAlgo: {
-      default: false
+      default: true 
     },
     canvasNode: {
       type: cc.Node,
@@ -207,7 +207,7 @@ cc.Class({
       },
       x: parseFloat(instance.selfPlayerNode.x),
       y: parseFloat(instance.selfPlayerNode.y),
-      ackingFrameId: self.lastRoomDownsyncFrameId,
+      ackingFrameId: instance.lastRoomDownsyncFrameId,
     };
     const wrapped = {
       msgId: Date.now(),
