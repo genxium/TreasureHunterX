@@ -17,6 +17,7 @@ message Player {
   string name = 8;
   string displayName = 9;
   int32 score = 10;
+  bool removed = 11;
 }
 
 message Treasure {
@@ -24,7 +25,8 @@ message Treasure {
   int32 localIdInBattle = 2;
   int32 score = 3;
   double x = 4; 
-  double y = 5; 
+  double y = 5;
+  bool removed = 6;
 }
 
 message Bullet {
@@ -32,6 +34,7 @@ message Bullet {
   double linearSpeed = 2;
   double x = 3;
   double y = 4;
+  bool removed = 5;
 }
 
 message Trap {
@@ -39,7 +42,24 @@ message Trap {
   int32 localIdInBattle = 2;
   int32 type = 3;
   double x = 4; 
-  double y = 5; 
+  double y = 5;
+  bool removed = 6;
+}
+
+message Hostage {
+    int32 localIdInBattle = 1;
+    int32 pairedPlayer = 2;
+    double x = 3;
+    double y = 4;
+    Direction dir = 5;
+    bool removed = 6;
+}
+
+message HostageSanctuary {
+    int32 localIdInBattle = 1;
+    double x = 2;
+    double y = 3;
+    bool removed = 4;
 }
 
 message RoomDownsyncFrame {
@@ -50,5 +70,7 @@ message RoomDownsyncFrame {
   int64 countdownNanos = 5;
   map<int32, Treasure> treasures = 6; 
   map<int32, Trap> traps = 7; 
-  map<int32, Bullet> bullets = 8; 
+  map<int32, Bullet> bullets = 8;
+  map<int32, Hostage> hostages = 9;
+  map<int32, HostageSanctuary> sanctuary = 10;
 }
