@@ -199,9 +199,9 @@ func Serve(c *gin.Context) {
 	}
 
 	resp := wsResp{
-		Ret:   int32(Constants.RetCode.Ok),
+		Ret:         int32(Constants.RetCode.Ok),
 		EchoedMsgId: int32(0),
-		Act:   "HeartbeatRequirements",
+		Act:         "HeartbeatRequirements",
 		Data: struct {
 			IntervalToPing        int `json:"intervalToPing"`
 			WillKickIfInactiveFor int `json:"willKickIfInactiveFor"`
@@ -260,7 +260,7 @@ func Serve(c *gin.Context) {
 
 	// Starts the forwarding loop associated "(*pPlayer).boundRoom".
 	forwardingLoopAgainstBoundRoom := func(dedicatedChanToForward <-chan string) error {
-    defer func() {
+		defer func() {
 			if r := recover(); r != nil {
 				Logger.Error("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ")
 			}
@@ -277,7 +277,7 @@ func Serve(c *gin.Context) {
 					return nil
 				}
 				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
-        wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
+				wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 			default:
 			}
 		}

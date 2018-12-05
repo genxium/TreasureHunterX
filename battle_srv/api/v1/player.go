@@ -165,11 +165,11 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	}
 	storage.RedisManagerIns.Del(redisKey)
 	resp := struct {
-		Ret       int    `json:"ret"`
-		Token     string `json:"intAuthToken"`
-		ExpiresAt int64  `json:"expiresAt"`
-		PlayerID  int    `json:"playerId"`
-    DisplayName string `json:"displayName"`
+		Ret         int    `json:"ret"`
+		Token       string `json:"intAuthToken"`
+		ExpiresAt   int64  `json:"expiresAt"`
+		PlayerID    int    `json:"playerId"`
+		DisplayName string `json:"displayName"`
 	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName}
 
 	c.JSON(http.StatusOK, resp)
@@ -288,11 +288,11 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
 		player, err := models.GetPlayerByName(req.Num)
 		if err != nil {
-      Logger.Error("Seeking test env player error:", zap.Error(err))
+			Logger.Error("Seeking test env player error:", zap.Error(err))
 			return nil, err
 		}
 		if player != nil {
-      Logger.Info("Got a test env player:", zap.Any("phonenum", req.Num), zap.Any("playerId", player.Id))
+			Logger.Info("Got a test env player:", zap.Any("phonenum", req.Num), zap.Any("playerId", player.Id))
 			return player, nil
 		}
 	}

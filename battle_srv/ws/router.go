@@ -20,17 +20,17 @@ type wsReq struct {
 }
 
 type wsResp struct {
-	Ret                  int32    `json:"ret,omitempty"`
-	EchoedMsgId          int32    `json:"echoedMsgId,omitempty"`
-	Act                  string   `json:"act,omitempty"`
-	Data                 interface{}   `json:"data,omitempty"`
+	Ret         int32       `json:"ret,omitempty"`
+	EchoedMsgId int32       `json:"echoedMsgId,omitempty"`
+	Act         string      `json:"act,omitempty"`
+	Data        interface{} `json:"data,omitempty"`
 }
 
 type wsRespPb struct {
-	Ret                  int32    `json:"ret,omitempty"`
-	EchoedMsgId          int32    `json:"echoedMsgId,omitempty"`
-	Act                  string   `json:"act,omitempty"`
-	Data                 []byte   `json:"data,omitempty"`
+	Ret         int32  `json:"ret,omitempty"`
+	EchoedMsgId int32  `json:"echoedMsgId,omitempty"`
+	Act         string `json:"act,omitempty"`
+	Data        []byte `json:"data,omitempty"`
 }
 
 type wsHandler interface {
@@ -91,7 +91,7 @@ func wsSendAction(conn *websocket.Conn, act string, data interface{}) {
 }
 
 func wsSendActionPb(conn *websocket.Conn, act string, data string) {
-  // Reference https://godoc.org/github.com/gorilla/websocket#Conn.WriteMessage.
+	// Reference https://godoc.org/github.com/gorilla/websocket#Conn.WriteMessage.
 	resp := &wsRespPb{
 		Act:  act,
 		Data: []byte(data),

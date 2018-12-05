@@ -1,25 +1,25 @@
 package models
 
 import (
+	"fmt"
 	"github.com/ByteArena/box2d"
+	"github.com/golang/protobuf/proto"
 	"go.uber.org/zap"
+	"io/ioutil"
+	"math"
+	"os"
+	"path/filepath"
 	. "server/common"
 	"server/common/utils"
-	"path/filepath"
-  "math"
-	"io/ioutil"
-  "os"
-	"fmt"
+	"sync"
 	"time"
-  "sync"
-  "github.com/golang/protobuf/proto"
 )
 
 const (
 	// You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
 	COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
 	COLLISION_CATEGORY_TREASURE          = (1 << 2)
-  COLLISION_CATEGORY_TRAP              = (1 << 3)
+	COLLISION_CATEGORY_TRAP              = (1 << 3)
 	COLLISION_CATEGORY_TRAP_BULLET       = (1 << 4)
 
 	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET)
@@ -78,49 +78,50 @@ type Room struct {
 	 *
 	 * to avoid chaotic flaws.
 	 */
-	PlayerDownsyncChanDict map[int32]chan string
-	CmdFromPlayersChan     chan interface{}
-	Score                  float32
-	State                  int32
-	Index                  int
-	Tick                   int32
-	ServerFPS              int32
-	BattleDurationNanos    int64
-	EffectivePlayerCount   int32
-	DismissalWaitGroup     sync.WaitGroup
-	Treasures              map[int32]*Treasure
-  Traps                  map[int32]*Trap
-  Bullets                map[int32]*Bullet
-  AccumulatedLocalIdForBullets  int32
-	CollidableWorld        *box2d.B2World
-	RoomDownsyncFrameBuffer *RingBuffer
+	PlayerDownsyncChanDict       map[int32]chan string
+	CmdFromPlayersChan           chan interface{}
+	Score                        float32
+	State                        int32
+	Index                        int
+	Tick                         int32
+	ServerFPS                    int32
+	BattleDurationNanos          int64
+	EffectivePlayerCount         int32
+	DismissalWaitGroup           sync.WaitGroup
+	Treasures                    map[int32]*Treasure
+	Traps                        map[int32]*Trap
+	Bullets                      map[int32]*Bullet
+	AccumulatedLocalIdForBullets int32
+	CollidableWorld              *box2d.B2World
+	RoomDownsyncFrameBuffer      *RingBuffer
 }
 
 type RoomDownsyncFrame struct {
-  /* TODO
-  An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
+	/* TODO
+	An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
 
-  Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.  
-  */
-	Id                   int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId           int32               `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players              map[int32]*Player   `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt               int64               `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
-	CountdownNanos       int64               `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures            map[int32]*Treasure `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps                map[int32]*Trap     `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets              map[int32]*Bullet   `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
+	*/
+	Id             int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId     int32               `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players        map[int32]*Player   `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt         int64               `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
+	CountdownNanos int64               `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures      map[int32]*Treasure `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps          map[int32]*Trap     `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets        map[int32]*Bullet   `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
+
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
 func (m *RoomDownsyncFrame) String() string { return proto.CompactTextString(m) }
-func (m *RoomDownsyncFrame) ProtoMessage()    {}
+func (m *RoomDownsyncFrame) ProtoMessage()  {}
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
 	if theTreasure, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent && !theTreasure.Removed {
 		Logger.Info("Player has picked up treasure:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTreasure.LocalIdInBattle", contactingTreasure.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
-		pR.Treasures[contactingTreasure.LocalIdInBattle] = &Treasure{Removed:true}
-    pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score
+		pR.Treasures[contactingTreasure.LocalIdInBattle] = &Treasure{Removed: true}
+		pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score
 	}
 }
 
@@ -128,17 +129,23 @@ func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 	if theTrap, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent && !theTrap.Removed {
 		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
-		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{Removed:true}
-    pR.createTrapBullet(contactingPlayer, contactingTrap)
+		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{
+			Removed:          true,
+			RemovedAtFrameId: pR.Tick,
+		}
+		pR.createTrapBullet(contactingPlayer, contactingTrap)
 	}
 }
 
 func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
 	if theBullet, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent && !theBullet.Removed {
-    Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
+		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
-		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{Removed:true}
-    pR.Players[contactingPlayer.Id].Score -= 100
+		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{
+			Removed:          true,
+			RemovedAtFrameId: pR.Tick,
+		}
+		pR.Players[contactingPlayer.Id].Score -= 100
 	}
 }
 
@@ -181,15 +188,15 @@ func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 
 func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *Tsx) *Trap {
 
-  polyLine :=  pTsxIns.TrapPolyLineList[0]
-  
+	polyLine := pTsxIns.TrapPolyLineList[0]
+
 	thePoints := make([]*Vec2D, len(polyLine.Points))
-  for index, value := range polyLine.Points{
-	  thePoints[index] = &Vec2D{
-	  	X:  value.X,
-	  	Y:  value.Y,
-	  }
-  }
+	for index, value := range polyLine.Points {
+		thePoints[index] = &Vec2D{
+			X: value.X,
+			Y: value.Y,
+		}
+	}
 
 	thePolygon := Polygon2D{
 		Anchor: pAnchor,
@@ -199,8 +206,8 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *T
 	theTrap := Trap{
 		Id:              0,
 		LocalIdInBattle: trapLocalIdInBattle,
-    X:               pAnchor.X,
-    Y:               pAnchor.Y,
+		X:               pAnchor.X,
+		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 	}
 
@@ -208,72 +215,72 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *T
 }
 
 func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
-  startPos := Vec2D{
-    X: pTrap.CollidableBody.GetPosition().X,
-    Y: pTrap.CollidableBody.GetPosition().Y,
-  }
-  endPos := Vec2D{
-    X: pPlayer.CollidableBody.GetPosition().X,
-    Y: pPlayer.CollidableBody.GetPosition().Y,
-  }
+	startPos := Vec2D{
+		X: pTrap.CollidableBody.GetPosition().X,
+		Y: pTrap.CollidableBody.GetPosition().Y,
+	}
+	endPos := Vec2D{
+		X: pPlayer.CollidableBody.GetPosition().X,
+		Y: pPlayer.CollidableBody.GetPosition().Y,
+	}
 
-  pR.AccumulatedLocalIdForBullets++
+	pR.AccumulatedLocalIdForBullets++
 
-  var bdDef box2d.B2BodyDef
-  colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
-  bdDef = box2d.MakeB2BodyDef()
-  bdDef.Type = box2d.B2BodyType.B2_dynamicBody
-  bdDef.Position.Set(startPos.X + colliderOffset.X, startPos.Y + colliderOffset.Y)
+	var bdDef box2d.B2BodyDef
+	colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
+	bdDef = box2d.MakeB2BodyDef()
+	bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+	bdDef.Position.Set(startPos.X+colliderOffset.X, startPos.Y+colliderOffset.Y)
 
-  b2Body := pR.CollidableWorld.CreateBody(&bdDef)
+	b2Body := pR.CollidableWorld.CreateBody(&bdDef)
 
-  b2CircleShape := box2d.MakeB2CircleShape()
-  b2CircleShape.M_radius = 32 // Matching that of client-side setting.
+	b2CircleShape := box2d.MakeB2CircleShape()
+	b2CircleShape.M_radius = 32 // Matching that of client-side setting.
 
-  fd := box2d.MakeB2FixtureDef()
-  fd.Shape = &b2CircleShape
-  fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
-  fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
-  fd.Density = 0.0
-  b2Body.CreateFixtureFromDef(&fd)
-  b2Body.CreateFixture(&b2CircleShape, 0.0)
+	fd := box2d.MakeB2FixtureDef()
+	fd.Shape = &b2CircleShape
+	fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
+	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
+	fd.Density = 0.0
+	b2Body.CreateFixtureFromDef(&fd)
+	b2Body.CreateFixture(&b2CircleShape, 0.0)
 
-  diffVecX := (endPos.X - startPos.X) 
-  diffVecY := (endPos.Y - startPos.Y) 
-  tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
-  linearUnitVector := Vec2D{
-    X: diffVecX/tempMag,
-    Y: diffVecY/tempMag,
-  }
+	diffVecX := (endPos.X - startPos.X)
+	diffVecY := (endPos.Y - startPos.Y)
+	tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
+	linearUnitVector := Vec2D{
+		X: diffVecX / tempMag,
+		Y: diffVecY / tempMag,
+	}
 
-  bullet := &Bullet{
-    LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
-    LinearSpeed:  0.0000002,
-    X: startPos.X,
-    Y: startPos.Y,
-    StartAtPoint: &startPos,
-    EndAtPoint: &endPos,
-    LinearUnitVector: linearUnitVector,
-  }
+	bullet := &Bullet{
+		LocalIdInBattle:  pR.AccumulatedLocalIdForBullets,
+		LinearSpeed:      0.0000002,
+		X:                startPos.X,
+		Y:                startPos.Y,
+		StartAtPoint:     &startPos,
+		EndAtPoint:       &endPos,
+		LinearUnitVector: linearUnitVector,
+	}
 
-  bullet.CollidableBody = b2Body
-  b2Body.SetUserData(bullet)
+	bullet.CollidableBody = b2Body
+	b2Body.SetUserData(bullet)
 
-  pR.Bullets[bullet.LocalIdInBattle] = bullet
-  return bullet
+	pR.Bullets[bullet.LocalIdInBattle] = bullet
+	return bullet
 }
 
 func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
 
-  polyLine :=  pTsxIns.TreasurePolyLineList[0]
-  
+	polyLine := pTsxIns.TreasurePolyLineList[0]
+
 	thePoints := make([]*Vec2D, len(polyLine.Points))
-  for index, value := range polyLine.Points{
-	  thePoints[index] = &Vec2D{
-	  	X:  value.X,
-	  	Y:  value.Y,
-	  }
-  }
+	for index, value := range polyLine.Points {
+		thePoints[index] = &Vec2D{
+			X: value.X,
+			Y: value.Y,
+		}
+	}
 
 	thePolygon := Polygon2D{
 		Anchor: pAnchor,
@@ -284,8 +291,8 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 		Id:              0,
 		LocalIdInBattle: treasureLocalIdInBattle,
 		Score:           100,
-    X:               pAnchor.X,
-    Y:               pAnchor.Y,
+		X:               pAnchor.X,
+		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 	}
 
@@ -293,30 +300,30 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 }
 
 func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
- for key,value := range pTmxMapIns.TrapsInitPosList {
-	{
-		pAnchor := &Vec2D{
-			X: float64(value.X),
-			Y: float64(value.Y),
+	for key, value := range pTmxMapIns.TrapsInitPosList {
+		{
+			pAnchor := &Vec2D{
+				X: float64(value.X),
+				Y: float64(value.Y),
+			}
+			theTrap := pR.createTrap(pAnchor, int32(key), pTsxIns)
+			pR.Traps[theTrap.LocalIdInBattle] = theTrap
 		}
-		theTrap := pR.createTrap(pAnchor, int32(key), pTsxIns)
-		pR.Traps[theTrap.LocalIdInBattle] = theTrap
 	}
-  }
 	Logger.Info("InitTraps finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
 }
 
 func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
- for key,value := range pTmxMapIns.TreasuresInitPosList {
-	{
-		pAnchor := &Vec2D{
-			X: float64(value.X),
-			Y: float64(value.Y),
+	for key, value := range pTmxMapIns.TreasuresInitPosList {
+		{
+			pAnchor := &Vec2D{
+				X: float64(value.X),
+				Y: float64(value.Y),
+			}
+			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
-		theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
-		pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 	}
-  }
 	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.Treasures))
 }
 
@@ -381,7 +388,6 @@ func (pR *Room) InitColliders() {
 		b2TreasureBody.SetUserData(treasure)
 		// PrettyPrintBody(treasure.CollidableBody)
 	}
-
 
 	Logger.Info("InitColliders for pR.Traps:", zap.Any("roomId", pR.Id))
 	for _, trap := range pR.Traps {
@@ -528,34 +534,34 @@ func (pR *Room) StartBattle() {
 		return
 	}
 
-  relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
+	relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+	fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
 
-  tmxMapIns := TmxMap{}
-  pTmxMapIns := &tmxMapIns
-  fp := filepath.Join(pwd, relativePath)
-  fmt.Printf("fp == %v\n", fp)
+	tmxMapIns := TmxMap{}
+	pTmxMapIns := &tmxMapIns
+	fp := filepath.Join(pwd, relativePath)
+	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
-    panic("Tmx filepath must be absolute!")
+		panic("Tmx filepath must be absolute!")
 	}
 
-  byteArr, err := ioutil.ReadFile(fp)
-  ErrFatal(err)
-  DeserializeToTmxMapIns(byteArr, pTmxMapIns)
-  var index = 0
-  for _, player := range pR.Players {
-    tmp := pTmxMapIns.ControlledPlayersInitPosList[index]
-    index++
-    player.X = tmp.X
-    player.Y = tmp.Y
-    player.Score = 0
-  }
+	byteArr, err := ioutil.ReadFile(fp)
+	ErrFatal(err)
+	DeserializeToTmxMapIns(byteArr, pTmxMapIns)
+	var index = 0
+	for _, player := range pR.Players {
+		tmp := pTmxMapIns.ControlledPlayersInitPosList[index]
+		index++
+		player.X = tmp.X
+		player.Y = tmp.Y
+		player.Score = 0
+	}
 
 	execPath, err = os.Executable()
 	ErrFatal(err)
@@ -563,23 +569,23 @@ func (pR *Room) StartBattle() {
 	pwd, err = os.Getwd()
 	ErrFatal(err)
 
-  fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+	fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
 
-  tsxIns := Tsx{}
-  pTsxIns := &tsxIns
-  relativePath = "../frontend/assets/resources/map/tile_1.tsx"
-  fp = filepath.Join(pwd, relativePath)
-  fmt.Printf("fp == %v\n", fp)
+	tsxIns := Tsx{}
+	pTsxIns := &tsxIns
+	relativePath = "../frontend/assets/resources/map/tile_1.tsx"
+	fp = filepath.Join(pwd, relativePath)
+	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
-    panic("Tmx filepath must be absolute!")
+		panic("Tmx filepath must be absolute!")
 	}
 
-  byteArr, err = ioutil.ReadFile(fp)
-  ErrFatal(err)
-  DeserializeToTsxIns(byteArr, pTsxIns)
+	byteArr, err = ioutil.ReadFile(fp)
+	ErrFatal(err)
+	DeserializeToTsxIns(byteArr, pTsxIns)
 
-	pR.InitTreasures(pTmxMapIns,pTsxIns)
-	pR.InitTraps(pTmxMapIns,pTsxIns)
+	pR.InitTreasures(pTmxMapIns, pTsxIns)
+	pR.InitTraps(pTmxMapIns, pTsxIns)
 	pR.InitColliders()
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
@@ -612,28 +618,70 @@ func (pR *Room) StartBattle() {
 			pR.Tick++
 			stCalculation := utils.UnixtimeNano()
 
-      currentFrame := &RoomDownsyncFrame{
-        Id:             pR.Tick,
-        RefFrameId:     0, // Hardcoded for now.
-        Players:        pR.Players,
-        SentAt:         utils.UnixtimeMilli(),
-        CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
-        Treasures:      pR.Treasures,
-        Traps:          pR.Traps,
-        Bullets:        pR.Bullets,
-      }
+			currentFrame := &RoomDownsyncFrame{
+				Id:             pR.Tick,
+				RefFrameId:     0, // Hardcoded for now.
+				Players:        pR.Players,
+				SentAt:         utils.UnixtimeMilli(),
+				CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
+				Treasures:      pR.Treasures,
+				Traps:          pR.Traps,
+				Bullets:        pR.Bullets,
+			}
+
+			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
+			for _, player := range pR.Players {
+				if player.AckingFrameId > minAckingFrameId {
+					continue
+				}
+				minAckingFrameId = player.AckingFrameId
+			}
+
+			for localIdInBattle, bullet := range pR.Bullets {
+				if !bullet.Removed {
+					continue
+				}
+				if bullet.RemovedAtFrameId > minAckingFrameId {
+					// The bullet removal information is NOT YET acknowledged by some players.
+					continue
+				}
+				// Logger.Info("Permanently removing one of pR.Bullets which was previously marked as removed", zap.Any("minAckingFrameId", minAckingFrameId), zap.Any("bullet.LocalIdInBattle", localIdInBattle), zap.Any("bullet.RemovedAtFrameId", bullet.RemovedAtFrameId), zap.Any("currentFrameId", currentFrame.Id))
+				delete(pR.Bullets, localIdInBattle)
+			}
+
+			/*
+			 * TODO: It might be necessary to use extra BinaryTrees for maintaining the updates to
+			 * "*.Removed" and "*.RemovedAtFrameId", to reduce TimeComplexity.
+			 *
+			 * MOTIVATION FOR SUCH TODO: Entities like `pR.Players` and `pR.Bullets` deserve full collection traversal at each frame. However
+			 * `pR.Treasures` and `pR.Traps` could be very large in the initial size and merely removed very slowly, thus not worth the full
+			 * traversal at each frame.
+			 *
+			 * Here I have deliberately avoided applying the use of "Treasure.RemovedAtFrameId" as a demonstration.
+			 */
+			for localIdInBattle, trap := range pR.Traps {
+				if !trap.Removed {
+					continue
+				}
+				if trap.RemovedAtFrameId > minAckingFrameId {
+					// The trap removal information is NOT YET acknowledged by some players.
+					continue
+				}
+				delete(pR.Traps, localIdInBattle)
+			}
+
 			for playerId, player := range pR.Players {
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
 				diffFrame := calculateDiffFrame(currentFrame, lastFrame)
 
 				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-        theBytes, marshalErr := proto.Marshal(diffFrame)
-        if marshalErr != nil {
-          Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-          continue
-        }
-        theStr := string(theBytes)
+				theBytes, marshalErr := proto.Marshal(diffFrame)
+				if marshalErr != nil {
+					Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+					continue
+				}
+				theStr := string(theBytes)
 				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
@@ -647,16 +695,16 @@ func (pR *Room) StartBattle() {
 				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
 			}
 
-			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant. 
+			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant.
 			for _, bullet := range pR.Bullets {
 				if bullet.Removed {
 					continue
 				}
-        elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
-				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
+				elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
+				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X+float64(elapsedMag)*bullet.LinearUnitVector.X, bullet.Y+float64(elapsedMag)*bullet.LinearUnitVector.Y)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
-        bullet.X = newB2Vec2Pos.X
-        bullet.Y = newB2Vec2Pos.Y
+				bullet.X = newB2Vec2Pos.X
+				bullet.Y = newB2Vec2Pos.Y
 			}
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
@@ -669,25 +717,25 @@ func (pR *Room) StartBattle() {
 						if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
 							pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
 						} else if contactingTrap, validTrap := bodyB.GetUserData().(*Trap); validTrap {
-							  pR.onTrapPickedUp(contactingPlayer, contactingTrap)
-            } else {
-              if contactingBullet, validBullet := bodyB.GetUserData().(*Bullet); validBullet {
-                // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomId", pR.Id))
-                pR.onBulletCrashed(contactingPlayer, contactingBullet)
-              }
-            }
+							pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+						} else {
+							if contactingBullet, validBullet := bodyB.GetUserData().(*Bullet); validBullet {
+								// Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomId", pR.Id))
+								pR.onBulletCrashed(contactingPlayer, contactingBullet)
+							}
+						}
 					} else {
 						if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
 							if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
 								pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-						  } else if contactingTrap, validTrap := bodyA.GetUserData().(*Trap); validTrap {
-						    pR.onTrapPickedUp(contactingPlayer, contactingTrap)
-              } else {
-                if contactingBullet, validBullet := bodyA.GetUserData().(*Bullet); validBullet {
-                  // Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomId", pR.Id))
-                  pR.onBulletCrashed(contactingPlayer, contactingBullet)
-                }
-              }
+							} else if contactingTrap, validTrap := bodyA.GetUserData().(*Trap); validTrap {
+								pR.onTrapPickedUp(contactingPlayer, contactingTrap)
+							} else {
+								if contactingBullet, validBullet := bodyA.GetUserData().(*Bullet); validBullet {
+									// Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomId", pR.Id))
+									pR.onBulletCrashed(contactingPlayer, contactingBullet)
+								}
+							}
 						}
 					}
 				}
@@ -760,16 +808,16 @@ func (pR *Room) StopBattleForSettlement() {
 			CountdownNanos: -1, // TODO: Replace this magic constant!
 			Treasures:      pR.Treasures,
 			Traps:          pR.Traps,
-      Bullets:        pR.Bullets,
+			Bullets:        pR.Bullets,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-    theBytes, marshalErr := proto.Marshal(assembledFrame)
-    if marshalErr != nil {
-      Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-      continue
-    }
-    theStr := string(theBytes)
-    utils.SendStrSafely(theStr, theForwardingChannel)
+		theBytes, marshalErr := proto.Marshal(assembledFrame)
+		if marshalErr != nil {
+			Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+			continue
+		}
+		theStr := string(theBytes)
+		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 	// Note that `pR.onBattleStoppedForSettlement` will be called by `battleMainLoop`.
 }
@@ -850,7 +898,7 @@ func (pR *Room) onPlayerExpelledDuringGame(playerId int32) {
 
 func (pR *Room) onPlayerExpelledForDismissal(playerId int32) {
 	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-  utils.SendStrSafely("", theForwardingChannel)
+	utils.SendStrSafely("", theForwardingChannel)
 	pR.onPlayerLost(playerId)
 	pR.DismissalWaitGroup.Done()
 

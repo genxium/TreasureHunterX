@@ -15,4 +15,5 @@ type Bullet struct {
 	LinearUnitVector Vec2D         `json:"-"`
 	DamageBoundary   *Polygon2D    `json:"-"`
 	CollidableBody   *box2d.B2Body `json:"-"`
+	RemovedAtFrameId int32         `json:"-"`
 }
