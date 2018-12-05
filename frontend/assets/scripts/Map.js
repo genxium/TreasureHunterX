@@ -130,6 +130,7 @@ cc.Class({
       const k = playersLocalIdStrList[i];
       const playerId = parseInt(k);
       if (true == diffFrame.players[playerId].removed) {
+        cc.log(`Player id == ${playerId} is removed.`);
         delete newFullFrame.players[playerId];
       } else {
         newFullFrame.players[playerId] = diffFrame.players[playerId];  
@@ -142,6 +143,7 @@ cc.Class({
       const k = treasuresLocalIdStrList[i];
       const treasureLocalIdInBattle = parseInt(k);
       if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
+        cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
         delete newFullFrame.treasures[treasureLocalIdInBattle];
       } else {
         newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];  
@@ -154,6 +156,7 @@ cc.Class({
       const k = trapsLocalIdStrList[i];
       const trapLocalIdInBattle = parseInt(k);
       if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
+        cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
         delete newFullFrame.traps[trapLocalIdInBattle];
       } else {
         newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];  
@@ -166,6 +169,7 @@ cc.Class({
       const k = bulletsLocalIdStrList[i];
       const bulletLocalIdInBattle = parseInt(k);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
+        cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];  
@@ -178,9 +182,9 @@ cc.Class({
   _dumpToFullFrameCache: function(fullFrame) {
     const self = this;
     while (self.recentFrameCacheCurrentSize >= self.recentFrameCacheMaxCount) {
-      const toDelFrameId = Object.keys(recentFrameCache)[0];
+      const toDelFrameId = Object.keys(self.recentFrameCache)[0];
       // cc.log("toDelFrameId is " + toDelFrameId + ".");
-      delete recentFrameCache[toDelFrameId];
+      delete self.recentFrameCache[toDelFrameId];
       --self.recentFrameCacheCurrentSize;
     }
     self.recentFrameCache[fullFrame.id] = fullFrame;
@@ -230,7 +234,7 @@ cc.Class({
 
   popupSimplePressToGo(labelString) {
     const self = this;
-/*
+    /*
     if (ALL_MAP_STATES.VISUAL != self.state) {
       return;
     }*/
@@ -257,7 +261,7 @@ cc.Class({
 
   alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const millisToGo = 3000;
-    mapIns.popupSimplePressToGo(cc.js.formatStr("%s Will logout in %s seconds.", labelString, millisToGo / 1000));
+    mapIns.popupSimplePressToGo(cc.js.formatStr("%s will logout in %s seconds.", labelString, millisToGo / 1000));
     setTimeout(() => {
       mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
@@ -428,12 +432,14 @@ cc.Class({
           // Log the obsolete frames?
           return;
         }
-        const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize); 
         const refFrameId = diffFrame.refFrameId;
+        const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId); 
+        if (refFrameId % 60 == 0) {
+          cc.log(`${JSON.stringify(diffFrame)}`);
+        }
         const cachedFullFrame = self.recentFrameCache[refFrameId];
-       
         if (!isInitiatingFrame && self.useDiffFrameAlgo && null == cachedFullFrame) {
-          cc.error("Should send a reset upsync to server!");
+          cc.log(`Should send a reset upsync to server for diffFrame id == ${frameId}, refFrameId == ${refFrameId}`);
           return;
         } 
         const roomDownsyncFrame = (
@@ -444,7 +450,7 @@ cc.Class({
           self._generateNewFullFrame(cachedFullFrame, diffFrame) 
         ); 
         self._dumpToFullFrameCache(roomDownsyncFrame);
-        if (roomDownsyncFrame.countdownNanos == -1) {
+        if (roomDownsyncFrame.countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
@@ -882,7 +888,7 @@ cc.Class({
     self.enableInputControls();
   },
   
- initWSConnection(evt, cb) {
+  initWSConnection(evt, cb) {
     const self = this;
     if(cb){ 
       cb()
