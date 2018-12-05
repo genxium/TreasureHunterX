@@ -71,6 +71,8 @@ message RoomDownsyncFrame {
   map<int32, Treasure> treasures = 6; 
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8;
-  map<int32, Hostage> hostages = 9;
-  map<int32, HostageSanctuary> sanctuary = 10;
+
+  map<int32, int32> RemovedTreasures = 12;
+  map<int32, int32> RemovedTraps = 13;
+  map<int32, int32> RemovedBullets = 11;
 }

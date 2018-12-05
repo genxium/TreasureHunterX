@@ -130,7 +130,7 @@ cc.Class({
       const k = playersLocalIdStrList[i];
       const playerId = parseInt(k);
       if (true == diffFrame.players[playerId].removed) {
-        cc.log(`Player id == ${playerId} is removed.`);
+        // cc.log(`Player id == ${playerId} is removed.`);
         delete newFullFrame.players[playerId];
       } else {
         newFullFrame.players[playerId] = diffFrame.players[playerId];  
@@ -143,7 +143,7 @@ cc.Class({
       const k = treasuresLocalIdStrList[i];
       const treasureLocalIdInBattle = parseInt(k);
       if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
-        cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
+        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
         delete newFullFrame.treasures[treasureLocalIdInBattle];
       } else {
         newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];  
@@ -156,7 +156,7 @@ cc.Class({
       const k = trapsLocalIdStrList[i];
       const trapLocalIdInBattle = parseInt(k);
       if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
-        cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
+        // cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
         delete newFullFrame.traps[trapLocalIdInBattle];
       } else {
         newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];  
@@ -169,7 +169,7 @@ cc.Class({
       const k = bulletsLocalIdStrList[i];
       const bulletLocalIdInBattle = parseInt(k);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
+        // cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];  
@@ -442,6 +442,13 @@ cc.Class({
           cc.log(`Should send a reset upsync to server for diffFrame id == ${frameId}, refFrameId == ${refFrameId}`);
           return;
         } 
+        let countdownNanos = diffFrame.countdownNanos;
+        if (countdownNanos < 0) countdownNanos = 0;
+        const countdownSeconds = parseInt(countdownNanos / 1000000000);
+        if (isNaN(countdownSeconds)) {
+          cc.log(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
+        }
+        self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = (
           (isInitiatingFrame || !self.useDiffFrameAlgo)
           ?
@@ -449,12 +456,11 @@ cc.Class({
           :
           self._generateNewFullFrame(cachedFullFrame, diffFrame) 
         ); 
-        self._dumpToFullFrameCache(roomDownsyncFrame);
-        if (roomDownsyncFrame.countdownNanos <= 0) {
+        if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
-        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
+        self._dumpToFullFrameCache(roomDownsyncFrame);
         const sentAt = roomDownsyncFrame.sentAt;
         const players = roomDownsyncFrame.players;
         const playerIdStrList = Object.keys(players);

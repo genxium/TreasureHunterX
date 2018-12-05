@@ -136,7 +136,7 @@ cc.Class({
       var k = playersLocalIdStrList[i];
       var playerId = parseInt(k);
       if (true == diffFrame.players[playerId].removed) {
-        cc.log("Player id == " + playerId + " is removed.");
+        // cc.log(`Player id == ${playerId} is removed.`);
         delete newFullFrame.players[playerId];
       } else {
         newFullFrame.players[playerId] = diffFrame.players[playerId];
@@ -149,7 +149,7 @@ cc.Class({
       var _k = treasuresLocalIdStrList[_i];
       var treasureLocalIdInBattle = parseInt(_k);
       if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
-        cc.log("Treasure with localIdInBattle == " + treasureLocalIdInBattle + " is removed.");
+        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
         delete newFullFrame.treasures[treasureLocalIdInBattle];
       } else {
         newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];
@@ -162,7 +162,7 @@ cc.Class({
       var _k2 = trapsLocalIdStrList[_i2];
       var trapLocalIdInBattle = parseInt(_k2);
       if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
-        cc.log("Trap with localIdInBattle == " + trapLocalIdInBattle + " is removed.");
+        // cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
         delete newFullFrame.traps[trapLocalIdInBattle];
       } else {
         newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];
@@ -175,7 +175,7 @@ cc.Class({
       var _k3 = bulletsLocalIdStrList[_i3];
       var bulletLocalIdInBattle = parseInt(_k3);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        cc.log("Bullet with localIdInBattle == " + bulletLocalIdInBattle + " is removed.");
+        // cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
@@ -593,13 +593,19 @@ cc.Class({
           cc.log("Should send a reset upsync to server for diffFrame id == " + frameId + ", refFrameId == " + refFrameId);
           return;
         }
+        var countdownNanos = diffFrame.countdownNanos;
+        if (countdownNanos < 0) countdownNanos = 0;
+        var countdownSeconds = parseInt(countdownNanos / 1000000000);
+        if (isNaN(countdownSeconds)) {
+          cc.log("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
+        }
+        self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
-        self._dumpToFullFrameCache(roomDownsyncFrame);
-        if (roomDownsyncFrame.countdownNanos <= 0) {
+        if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
         }
-        self.countdownLabel.string = parseInt(roomDownsyncFrame.countdownNanos / 1000000000).toString();
+        self._dumpToFullFrameCache(roomDownsyncFrame);
         var sentAt = roomDownsyncFrame.sentAt;
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);

@@ -116,29 +116,28 @@ func (m *RoomDownsyncFrame) String() string { return proto.CompactTextString(m) 
 func (m *RoomDownsyncFrame) ProtoMessage()    {}
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
-	if _, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent {
+	if theTreasure, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent && !theTreasure.Removed {
 		Logger.Info("Player has picked up treasure:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTreasure.LocalIdInBattle", contactingTreasure.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
-		delete(pR.Treasures, contactingTreasure.LocalIdInBattle)
-    pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score 
+		pR.Treasures[contactingTreasure.LocalIdInBattle] = &Treasure{Removed:true}
+    pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score
 	}
 }
 
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
-	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
+	if theTrap, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent && !theTrap.Removed {
 		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
-		delete(pR.Traps, contactingTrap.LocalIdInBattle)
-
+		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{Removed:true}
     pR.createTrapBullet(contactingPlayer, contactingTrap)
 	}
 }
 
 func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
-  Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
-	if _, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent {
+	if theBullet, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent && !theBullet.Removed {
+    Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
-		delete(pR.Bullets, contactingBullet.LocalIdInBattle)
+		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{Removed:true}
     pR.Players[contactingPlayer.Id].Score -= 100
 	}
 }
@@ -432,7 +431,8 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 	}
 
 	for k, last := range lastFrame.Treasures {
-		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
+		if last.Removed {
+			diffFrame.Treasures[k] = last
 			continue
 		}
 		curr, ok := currentFrame.Treasures[k]
@@ -441,16 +441,12 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 			Logger.Info("A treasure is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("treasure.LocalIdInBattle", curr.LocalIdInBattle))
 			continue
 		}
-		if ok, v := diffTreature(last, curr); ok {
+		if ok, v := diffTreasure(last, curr); ok {
 			diffFrame.Treasures[k] = v
 		}
-
 	}
 
 	for k, last := range lastFrame.Bullets {
-		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
-			continue
-		}
 		curr, ok := currentFrame.Bullets[k]
 		if !ok {
 			diffFrame.Bullets[k] = &Bullet{Removed: true}
@@ -463,7 +459,8 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 	}
 
 	for k, last := range lastFrame.Traps {
-		if last.Removed { // w 如果 ack 成功且 removed，则不考虑
+		if last.Removed {
+			diffFrame.Traps[k] = last
 			continue
 		}
 		curr, ok := currentFrame.Traps[k]
@@ -480,7 +477,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 	return diffFrame
 }
 
-func diffTreature(last, curr *Treasure) (bool, *Treasure) {
+func diffTreasure(last, curr *Treasure) (bool, *Treasure) {
 	treature := &Treasure{}
 	t := false
 	if last.Score != curr.Score {
@@ -652,6 +649,9 @@ func (pR *Room) StartBattle() {
 
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant. 
 			for _, bullet := range pR.Bullets {
+				if bullet.Removed {
+					continue
+				}
         elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
 				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X + float64(elapsedMag) * bullet.LinearUnitVector.X, bullet.Y + float64(elapsedMag) * bullet.LinearUnitVector.Y)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
