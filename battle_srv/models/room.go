@@ -16,6 +16,10 @@ import (
 )
 
 const (
+  MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
+)
+
+const (
 	// You can equivalently use the `GroupIndex` approach, but the more complicated and general purpose approach is used deliberately here. Reference http://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering.
 	COLLISION_CATEGORY_CONTROLLED_PLAYER = (1 << 1)
 	COLLISION_CATEGORY_TREASURE          = (1 << 2)
@@ -639,7 +643,7 @@ func (pR *Room) StartBattle() {
 				if !bullet.Removed {
 					continue
 				}
-				if bullet.RemovedAtFrameId > minAckingFrameId {
+				if bullet.RemovedAtFrameId > minAckingFrameId - MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
 					// The bullet removal information is NOT YET acknowledged by some players.
 					continue
 				}
@@ -661,7 +665,7 @@ func (pR *Room) StartBattle() {
 				if !trap.Removed {
 					continue
 				}
-				if trap.RemovedAtFrameId > minAckingFrameId {
+				if trap.RemovedAtFrameId > minAckingFrameId - MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
 					// The trap removal information is NOT YET acknowledged by some players.
 					continue
 				}
