@@ -117,7 +117,7 @@ func (m *RoomDownsyncFrame) String() string { return proto.CompactTextString(m) 
 func (m *RoomDownsyncFrame) ProtoMessage()  {}
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
-	if theTreasure, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent && !theTreasure.Removed {
+	if _, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent {
 		Logger.Info("Player has picked up treasure:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTreasure.LocalIdInBattle", contactingTreasure.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
 		pR.Treasures[contactingTreasure.LocalIdInBattle] = &Treasure{Removed: true}
@@ -126,7 +126,7 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 }
 
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
-	if theTrap, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent && !theTrap.Removed {
+	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
 		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
 		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{
@@ -138,7 +138,7 @@ func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 }
 
 func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
-	if theBullet, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent && !theBullet.Removed {
+	if _, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent {
 		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
 		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{
@@ -243,7 +243,6 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
 	fd.Density = 0.0
 	b2Body.CreateFixtureFromDef(&fd)
-	b2Body.CreateFixture(&b2CircleShape, 0.0)
 
 	diffVecX := (endPos.X - startPos.X)
 	diffVecY := (endPos.Y - startPos.Y)
@@ -351,7 +350,6 @@ func (pR *Room) InitColliders() {
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_CONTROLLED_PLAYER
 		fd.Density = 0.0
 		b2PlayerBody.CreateFixtureFromDef(&fd)
-		b2PlayerBody.CreateFixture(&b2CircleShape, 0.0)
 
 		player.CollidableBody = b2PlayerBody
 		b2PlayerBody.SetUserData(player)
