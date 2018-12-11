@@ -434,6 +434,15 @@ module.export = cc.Class({
     }
     return randomDirectionList[Math.floor(Math.random() * randomDirectionList.length)];
   },
+  updateSpeed: function updateSpeed(proposedSpeed) {
+    if (0 == proposedSpeed && 0 < this.speed) {
+      this.startFrozenDisplay();
+    }
+    if (0 < proposedSpeed && 0 == this.speed) {
+      this.stopFrozenDisplay();
+    }
+    this.speed = proposedSpeed;
+  },
   startFrozenDisplay: function startFrozenDisplay() {
     this.node.opacity = 64;
   },

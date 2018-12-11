@@ -484,11 +484,6 @@
     "meta": 1544501470533,
     "relativePath": "resources\\i18n\\zh.js"
   },
-  "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1544257252828,
-    "meta": 1544501470589,
-    "relativePath": "resources\\prefabs\\GameRule.prefab"
-  },
   "f20b3161-9015-4c37-baf8-355accd92c98": {
     "asset": 1544257253022,
     "meta": 1544257253006,
@@ -925,8 +920,8 @@
     "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1544505614444,
-    "meta": 1544505614530,
+    "asset": 1544510634792,
+    "meta": 1544510634828,
     "relativePath": "scenes\\login.fire"
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
@@ -959,16 +954,6 @@
     "meta": 1544501581963,
     "relativePath": "plugin_scripts\\conf.js"
   },
-  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
-    "asset": 1544504151268,
-    "meta": 1544505168933,
-    "relativePath": "scripts\\BasePlayer.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1544504805897,
-    "meta": 1544505168937,
-    "relativePath": "scripts\\Map.js"
-  },
   "78830fc7-4e25-49a1-a7fc-9f9d3883f278": {
     "asset": 1544505543658,
     "meta": 1544505546077,
@@ -978,5 +963,20 @@
     "asset": 1544505599866,
     "meta": 1544505605392,
     "relativePath": "scripts\\TouchEventsManager.js"
+  },
+  "32b8e752-8362-4783-a4a6-1160af8b7109": {
+    "asset": 1544506254997,
+    "meta": 1544509601172,
+    "relativePath": "resources\\prefabs\\GameRule.prefab"
+  },
+  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
+    "asset": 1544509718611,
+    "meta": 1544510290727,
+    "relativePath": "scripts\\BasePlayer.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1544510632668,
+    "meta": 1544510634724,
+    "relativePath": "scripts\\Map.js"
   }
 }

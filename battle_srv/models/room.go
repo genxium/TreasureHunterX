@@ -150,7 +150,7 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		}
     // TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtFrameId`, instead of a delicate timer to prevent thread-safety issues.
 		pR.Players[contactingPlayer.Id].Speed = 0
-		pR.Players[contactingPlayer.Id].FrozenAtFrameId = NewNullInt64(int64(pR.Tick));
+		pR.Players[contactingPlayer.Id].FrozenAtFrameId = pR.Tick;
 		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
 }
@@ -173,6 +173,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, 1024 /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+	pPlayer.FrozenAtFrameId = -1 // Hardcoded temporarily.
 	pPlayer.Speed = 300 // Hardcoded temporarily.
 	return true
 }
@@ -599,6 +600,7 @@ func (pR *Room) StartBattle() {
 	velocityIterationsPerFrame := 0
 	positionIterationsPerFrame := 0
 	pR.Tick = 0
+  maxFramesToFreezeAPlayer := 5*pR.ServerFPS // Hardcoded temporarily.
 	/**
 	 * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached.
 	 * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
@@ -697,6 +699,17 @@ func (pR *Room) StartBattle() {
 				 */
 				newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
 				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
+
+        if -1 == player.FrozenAtFrameId {
+          // TODO: Removed the magic number `-1`.
+          continue
+        }
+        if maxFramesToFreezeAPlayer > (pR.Tick - player.FrozenAtFrameId) {
+          continue
+        }
+        player.Speed = 300 // Hardcoded temporarily.
+        // TODO: Removed the magic number `-1`.
+        player.FrozenAtFrameId = -1
 			}
 
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant.

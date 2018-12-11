@@ -604,14 +604,9 @@ cc.Class({
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
       const score  = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0 
       self.selfPlayerScoreLabel.string = score;
-
-      if (0 == self.selfPlayerInfo.speed && 0 < self.selfPlayerScriptIns.speed) {
-        self.selfPlayerScriptIns.startFrozenDisplay(); 
-      } 
-      if (0 < self.selfPlayerInfo.speed && 0 == self.selfPlayerScriptIns.speed) {
-        self.selfPlayerScriptIns.stopFrozenDisplay(); 
-      } 
-      self.selfPlayerScriptIns.speed = self.selfPlayerInfo.speed; 
+      if (null != self.selfPlayerScriptIns) {
+        self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
+      }
     }
 
     let toRemovePlayerNodeDict = {};
@@ -653,14 +648,7 @@ cc.Class({
         setLocalZOrder(targetNode, 5);
       }
       const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer"); 
-      aControlledOtherPlayerScriptIns.speed = cachedPlayerData.speed;
-
-      if (0 == cachedPlayerData.speed && 0 < aControlledOtherPlayerScriptIns.speed) {
-        aControlledOtherPlayerScriptIns.startFrozenDisplay(); 
-      } 
-      if (0 < cachedPlayerData.speed && 0 == aControlledOtherPlayerScriptIns.speed) {
-        aControlledOtherPlayerScriptIns.stopFrozenDisplay(); 
-      } 
+      aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
       if (null != toRemovePlayerNodeDict[playerId]) {
         delete toRemovePlayerNodeDict[playerId];

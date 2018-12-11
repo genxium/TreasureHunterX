@@ -741,12 +741,8 @@ cc.Class({
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
       var score = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0;
       self.selfPlayerScoreLabel.string = score;
-
-      if (0 == self.selfPlayerInfo.speed && 0 < self.selfPlayerScriptIns.speed) {
-        self.selfPlayerScriptIns.startFrozenDisplay();
-      }
-      if (0 < self.selfPlayerInfo.speed && 0 == self.selfPlayerScriptIns.speed) {
-        self.selfPlayerScriptIns.stopFrozenDisplay();
+      if (null != self.selfPlayerScriptIns) {
+        self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
       }
     }
 
@@ -786,14 +782,7 @@ cc.Class({
         setLocalZOrder(targetNode, 5);
       }
       var aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
-      aControlledOtherPlayerScriptIns.speed = cachedPlayerData.speed;
-
-      if (0 == cachedPlayerData.speed && 0 < aControlledOtherPlayerScriptIns.speed) {
-        aControlledOtherPlayerScriptIns.startFrozenDisplay();
-      }
-      if (0 < cachedPlayerData.speed && 0 == aControlledOtherPlayerScriptIns.speed) {
-        aControlledOtherPlayerScriptIns.stopFrozenDisplay();
-      }
+      aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
       if (null != toRemovePlayerNodeDict[playerId]) {
         delete toRemovePlayerNodeDict[playerId];
