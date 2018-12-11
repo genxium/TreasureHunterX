@@ -102,7 +102,7 @@
     <integer>106</integer>
     <key>tangentialAcceleration</key>
     <integer>-386</integer>
-    <key>textureImageData</key>
-    <string/>
+    <key>spriteFrameUuid</key>
+    <string>ac936d55-b3ce-45ca-9a5e-3ce293b5dcef</string>
   </dict>
 </plist>

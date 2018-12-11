@@ -433,6 +433,12 @@ module.export = cc.Class({
       randomDirectionList.push(ALL_DISCRETE_DIRECTIONS_CLOCKWISE[_ii]);
     }
     return randomDirectionList[Math.floor(Math.random() * randomDirectionList.length)];
+  },
+  startFrozenDisplay: function startFrozenDisplay() {
+    this.node.opacity = 64;
+  },
+  stopFrozenDisplay: function stopFrozenDisplay() {
+    this.node.opacity = 255;
   }
 });
 

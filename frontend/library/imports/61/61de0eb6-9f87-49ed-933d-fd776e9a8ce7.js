@@ -89,6 +89,7 @@ module.exports = {
         }
         for (var _i = 0; _i < allLocalizedLabels.length; ++_i) {
             var label = allLocalizedLabels[_i];
+            if (!label.node.active) continue;
             label.updateLabel();
         }
         // walk all nodes with localize sprite and update
@@ -99,6 +100,7 @@ module.exports = {
         }
         for (var _i3 = 0; _i3 < allLocalizedSprites.length; ++_i3) {
             var sprite = allLocalizedSprites[_i3];
+            if (!sprite.node.active) continue;
             sprite.updateSprite(window.i18n.curLang);
         }
     }

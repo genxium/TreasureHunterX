@@ -143,13 +143,15 @@ func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 
 func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet) {
 	if _, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent {
-		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
 		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{
 			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
 		}
-		pR.Players[contactingPlayer.Id].Score -= 100
+    // TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtFrameId`, instead of a delicate timer to prevent thread-safety issues.
+		pR.Players[contactingPlayer.Id].Speed = 0
+		pR.Players[contactingPlayer.Id].FrozenAtFrameId = NewNullInt64(int64(pR.Tick));
+		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
 }
 
@@ -777,12 +779,17 @@ func (pR *Room) StartBattle() {
 					break
 				}
 				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomId", pR.Id))
+				pR.Players[immediatePlayerData.Id].AckingFrameId = immediatePlayerData.AckingFrameId
+
 				// Update immediate player info for broadcasting or unicasting.
-				pR.Players[immediatePlayerData.Id].X = immediatePlayerData.X
-				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
 				pR.Players[immediatePlayerData.Id].Dir.Dx = immediatePlayerData.Dir.Dx
 				pR.Players[immediatePlayerData.Id].Dir.Dy = immediatePlayerData.Dir.Dy
-				pR.Players[immediatePlayerData.Id].AckingFrameId = immediatePlayerData.AckingFrameId
+
+        if 0 >= pR.Players[immediatePlayerData.Id].Speed {
+          break
+        }
+				pR.Players[immediatePlayerData.Id].X = immediatePlayerData.X
+				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation

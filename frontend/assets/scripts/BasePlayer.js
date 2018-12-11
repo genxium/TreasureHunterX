@@ -319,4 +319,12 @@ module.export = cc.Class({
     }
     return randomDirectionList[Math.floor(Math.random() * randomDirectionList.length)]
   },
+
+  startFrozenDisplay() {
+    this.node.opacity = 64; 
+  },
+
+  stopFrozenDisplay() {
+    this.node.opacity = 255; 
+  },
 });

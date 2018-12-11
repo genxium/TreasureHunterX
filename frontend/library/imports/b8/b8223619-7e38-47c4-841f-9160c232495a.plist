@@ -102,5 +102,7 @@
     <real>65.79000091552734</real>
     <key>tangentialAcceleration</key>
     <real>-92.11000061035156</real>
+    <key>spriteFrameUuid</key>
+    <string>bb42ed8e-0867-4584-ad63-b6f84f83bba8</string>
   </dict>
 </plist>

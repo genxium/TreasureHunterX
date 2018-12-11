@@ -206,7 +206,7 @@ cc.Class({
         return;
       }
       var diffVec = event.currentTouch._point.sub(event.currentTouch._startPoint);
-      var scaleFactor = linearScaleFacBase / this.canvasNode.getScale();
+      var scaleFactor = linearScaleFacBase / this.canvasNode.scale;
       var diffVecScaled = diffVec.mul(scaleFactor);
       var distance = diffVecScaled.mag();
       var overMoved = distance > this.maxHeadDistance;
@@ -237,7 +237,7 @@ cc.Class({
           cc.log("ScaleBy == " + scaleBy + " is just jittering.");
           return;
         }
-        var targetScale = this.canvasNode.getScale() * scaleBy;
+        var targetScale = this.canvasNode.scale * scaleBy;
         if (this.minScale > targetScale || targetScale > this.maxScale) {
           return;
         }

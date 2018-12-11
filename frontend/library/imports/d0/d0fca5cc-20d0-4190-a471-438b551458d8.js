@@ -1,5 +1,5 @@
 "use strict";
-cc._RF.push(module, 'f4979NXg9hMQ4XxHB/gqmtp', 'conf');
+cc._RF.push(module, 'd0fcaXMINBBkKRxQ4tVFFjY', 'conf');
 // plugin_scripts/conf.js
 
 "use strict";

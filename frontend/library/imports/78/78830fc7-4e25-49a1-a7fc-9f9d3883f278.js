@@ -31,7 +31,7 @@ cc.Class({
         if (null == selfPlayerNode) return;
 
         var selfPlayerPosDiffInMapNode = selfPlayerNode.position;
-        var canvasNodeScale = canvasNode.getScale();
+        var canvasNodeScale = canvasNode.scale;
         var targetPos = selfPlayerPosDiffInMapNode.mul(-1);
         if (targetPos.x == mapNode.position.x && targetPos.y == mapNode.position.y) return;
         mapNode.runAction(cc.moveTo(0.2 /* hardcoded, in seconds */, targetPos));

@@ -741,6 +741,13 @@ cc.Class({
       self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
       var score = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0;
       self.selfPlayerScoreLabel.string = score;
+
+      if (0 == self.selfPlayerInfo.speed && 0 < self.selfPlayerScriptIns.speed) {
+        self.selfPlayerScriptIns.startFrozenDisplay();
+      }
+      if (0 < self.selfPlayerInfo.speed && 0 == self.selfPlayerScriptIns.speed) {
+        self.selfPlayerScriptIns.stopFrozenDisplay();
+      }
     }
 
     var toRemovePlayerNodeDict = {};
@@ -773,11 +780,19 @@ cc.Class({
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
         targetNode.getComponent("SelfPlayer").mapNode = mapNode;
-        targetNode.getComponent("SelfPlayer").speed = cachedPlayerData.speed;
         self.otherPlayerNodeDict[playerId] = targetNode;
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
+      }
+      var aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
+      aControlledOtherPlayerScriptIns.speed = cachedPlayerData.speed;
+
+      if (0 == cachedPlayerData.speed && 0 < aControlledOtherPlayerScriptIns.speed) {
+        aControlledOtherPlayerScriptIns.startFrozenDisplay();
+      }
+      if (0 < cachedPlayerData.speed && 0 == aControlledOtherPlayerScriptIns.speed) {
+        aControlledOtherPlayerScriptIns.stopFrozenDisplay();
       }
 
       if (null != toRemovePlayerNodeDict[playerId]) {
