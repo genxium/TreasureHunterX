@@ -45,7 +45,7 @@ type Player struct {
 	DisplayName       string        `protobuf:"bytes,9,opt,name=displayName,proto3" json:"displayName,omitempty" db:"display_name"`
 	Score             int32         `protobuf:"varint,10,opt,name=score,proto3" json:"score,omitempty"`
 	Removed           bool          `protobuf:"varint,11,opt,name=removed,proto3" json:"removed,omitempty"`
-	FrozenAtFrameId   int32         `json:"-" db:"deleted_at"`
+	FrozenAtGmtMillis int64         `json:"-" db:"deleted_at"`
 	CreatedAt         int64         `json:"-" db:"created_at"`
 	UpdatedAt         int64         `json:"-" db:"updated_at"`
 	DeletedAt         NullInt64     `json:"-" db:"deleted_at"`
