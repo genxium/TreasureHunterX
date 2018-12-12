@@ -16,7 +16,7 @@ import (
 )
 
 const (
-  MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
+	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
 )
 
 const (
@@ -35,6 +35,7 @@ const (
 type RoomBattleState struct {
 	IDLE                           int32
 	WAITING                        int32
+	PREPARE                        int32
 	IN_BATTLE                      int32
 	STOPPING_BATTLE_FOR_SETTLEMENT int32
 	IN_SETTLEMENT                  int32
@@ -48,6 +49,7 @@ func InitRoomBattleStateIns() {
 	RoomBattleStateIns = RoomBattleState{
 		IDLE:                           0,
 		WAITING:                        -1,
+		PREPARE:                        -2,
 		IN_BATTLE:                      10000000,
 		STOPPING_BATTLE_FOR_SETTLEMENT: 10000001,
 		IN_SETTLEMENT:                  10000002,
@@ -148,9 +150,9 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
 		}
-    // TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
+		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 		pR.Players[contactingPlayer.Id].Speed = 0
-		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis;
+		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
 		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
 }
@@ -174,13 +176,13 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, 1024 /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	pPlayer.FrozenAtGmtMillis = -1 // Hardcoded temporarily.
-	pPlayer.Speed = 300 // Hardcoded temporarily.
+	pPlayer.Speed = 300            // Hardcoded temporarily.
 	return true
 }
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
 	if RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
-		Logger.Error("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	if _, existent := pR.Players[pPlayer.Id]; !existent {
@@ -600,7 +602,7 @@ func (pR *Room) StartBattle() {
 	velocityIterationsPerFrame := 0
 	positionIterationsPerFrame := 0
 	pR.Tick = 0
-  maxMillisToFreezePerPlayer := int64(5000) // Hardcoded temporarily.
+	maxMillisToFreezePerPlayer := int64(5000) // Hardcoded temporarily.
 	/**
 	 * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached.
 	 * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
@@ -647,7 +649,7 @@ func (pR *Room) StartBattle() {
 				if !bullet.Removed {
 					continue
 				}
-				if bullet.RemovedAtFrameId > minAckingFrameId - MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
+				if bullet.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
 					// The bullet removal information is NOT YET acknowledged by some players.
 					continue
 				}
@@ -669,7 +671,7 @@ func (pR *Room) StartBattle() {
 				if !trap.Removed {
 					continue
 				}
-				if trap.RemovedAtFrameId > minAckingFrameId - MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
+				if trap.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
 					// The trap removal information is NOT YET acknowledged by some players.
 					continue
 				}
@@ -691,7 +693,7 @@ func (pR *Room) StartBattle() {
 				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
-		  collisionNowMillis := utils.UnixtimeMilli()
+			collisionNowMillis := utils.UnixtimeMilli()
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
 			for _, player := range pR.Players {
@@ -701,16 +703,16 @@ func (pR *Room) StartBattle() {
 				newB2Vec2Pos := box2d.MakeB2Vec2(player.X, player.Y)
 				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
 
-        if -1 == player.FrozenAtGmtMillis {
-          // TODO: Removed the magic number `-1`.
-          continue
-        }
-        if maxMillisToFreezePerPlayer > (collisionNowMillis - player.FrozenAtGmtMillis) {
-          continue
-        }
-        player.Speed = 300 // Hardcoded temporarily.
-        // TODO: Removed the magic number `-1`.
-        player.FrozenAtGmtMillis = -1
+				if -1 == player.FrozenAtGmtMillis {
+					// TODO: Removed the magic number `-1`.
+					continue
+				}
+				if maxMillisToFreezePerPlayer > (collisionNowMillis - player.FrozenAtGmtMillis) {
+					continue
+				}
+				player.Speed = 300 // Hardcoded temporarily.
+				// TODO: Removed the magic number `-1`.
+				player.FrozenAtGmtMillis = -1
 			}
 
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant.
@@ -799,9 +801,9 @@ func (pR *Room) StartBattle() {
 				pR.Players[immediatePlayerData.Id].Dir.Dx = immediatePlayerData.Dir.Dx
 				pR.Players[immediatePlayerData.Id].Dir.Dy = immediatePlayerData.Dir.Dy
 
-        if 0 >= pR.Players[immediatePlayerData.Id].Speed {
-          break
-        }
+				if 0 >= pR.Players[immediatePlayerData.Id].Speed {
+					break
+				}
 				pR.Players[immediatePlayerData.Id].X = immediatePlayerData.X
 				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
 			default:
@@ -809,7 +811,7 @@ func (pR *Room) StartBattle() {
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
 		}
 	}
-
+	pR.onBattlePrepare()
 	pR.onBattleStarted() // NOTE: Deliberately not using `defer`.
 	go cmdReceivingLoop()
 	go battleMainLoop()
@@ -846,11 +848,21 @@ func (pR *Room) StopBattleForSettlement() {
 }
 
 func (pR *Room) onBattleStarted() {
-	if RoomBattleStateIns.WAITING != pR.State {
+	if RoomBattleStateIns.PREPARE != pR.State {
 		return
 	}
 	pR.State = RoomBattleStateIns.IN_BATTLE
 	Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomId", pR.Id))
+	pR.updateScore()
+}
+
+func (pR *Room) onBattlePrepare() {
+	if RoomBattleStateIns.WAITING != pR.State {
+		return
+	}
+	pR.State = RoomBattleStateIns.PREPARE
+	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
+	time.Sleep(time.Duration(3 * time.Second))
 	pR.updateScore()
 }
 
