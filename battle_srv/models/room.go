@@ -181,12 +181,12 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 }
 
 func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
-	if RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
+	if RoomBattleStateIns.PREPARE != pR.State && RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
 		Logger.Warn("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	if _, existent := pR.Players[pPlayer.Id]; !existent {
-		Logger.Error("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	defer pR.onPlayerReAdded(pPlayer.Id)
