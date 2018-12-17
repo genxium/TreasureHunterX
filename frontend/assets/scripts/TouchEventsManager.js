@@ -3,6 +3,14 @@ cc.Class({
   extends: cc.Component,
   properties: {
     // For joystick begins.
+    translationListenerNode: {
+      default: null,
+      type: cc.Node
+    },
+    zoomingListenerNode: {
+      default: null,
+      type: cc.Node
+    },
     stickhead: {
       default: null,
       type: cc.Node
@@ -142,35 +150,36 @@ cc.Class({
 
   _initTouchEvent() {
     const self = this;
-    self.touchStartPosInMapNode = null;
-    self.inTouchPoints = new Map();
-    self.inMultiTouch = false;
+    const translationListenerNode = (self.translationListenerNode ? self.translationListenerNode : self.mapNode);  
+    const zoomingListenerNode = (self.zoomingListenerNode ? self.zoomingListenerNode : self.mapNode); 
 
-    self.canvasNode.on(cc.Node.EventType.TOUCH_START, function(event) {
+    translationListenerNode.on(cc.Node.EventType.TOUCH_START, function(event) {
       self._touchStartEvent(event);
     });
-    self.canvasNode.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
-      self._touchMoveEvent(event);
+    translationListenerNode.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
+      self._translationEvent(event);
     });
-    self.canvasNode.on(cc.Node.EventType.TOUCH_END, function(event) {
+    translationListenerNode.on(cc.Node.EventType.TOUCH_END, function(event) {
       self._touchEndEvent(event);
     });
-    self.canvasNode.on(cc.Node.EventType.TOUCH_CANCEL, function(event) {
+    translationListenerNode.on(cc.Node.EventType.TOUCH_CANCEL, function(event) {
       self._touchEndEvent(event);
     });
-  },
+    translationListenerNode.inTouchPoints = new Map(); 
 
-  _touchStartEvent(event) {
-    for (let touch of event._touches) {
-      this.inTouchPoints.set(touch._id, touch);
-    }
-    if (1 < this.inTouchPoints.size) {
-      this.inMultiTouch = true;
-    }
-    
-    if (!this.inMultiTouch) {
-      this.touchStartPosInMapNode = this.mapNode.convertToNodeSpaceAR(event.currentTouch);
-    }
+    zoomingListenerNode.on(cc.Node.EventType.TOUCH_START, function(event) {
+      self._touchStartEvent(event);
+    });
+    zoomingListenerNode.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
+      self._zoomingEvent(event);
+    });
+    zoomingListenerNode.on(cc.Node.EventType.TOUCH_END, function(event) {
+      self._touchEndEvent(event);
+    });
+    zoomingListenerNode.on(cc.Node.EventType.TOUCH_CANCEL, function(event) {
+      self._touchEndEvent(event);
+    });
+    zoomingListenerNode.inTouchPoints = new Map(); 
   },
 
   _isMapOverMoved(mapTargetPos) {
@@ -178,67 +187,80 @@ cc.Class({
     return tileCollisionManager.isOutOfMapNode(this.mapNode, virtualPlayerPos);
   },
 
-  _touchMoveEvent(event) {
+  _touchStartEvent(event) {
+    const theListenerNode = event.target; 
+    for (let touch of event._touches) {
+      theListenerNode.inTouchPoints.set(touch._id, touch);
+    }
+  },
+
+  _translationEvent(event) {
     if (ALL_MAP_STATES.VISUAL != this.mapScriptIns.state) {
       return;
     }
-    const linearScaleFacBase = this.linearScaleFacBase;
-    const zoomingScaleFacBase = this.zoomingScaleFacBase;
-    if (!this.inMultiTouch) {
-      if (!this.inTouchPoints.has(event.currentTouch._id)) {
+    const theListenerNode = event.target; 
+    const linearScaleFacBase = this.linearScaleFacBase; // Not used yet.
+    if (1 != theListenerNode.inTouchPoints.size) {
+      return;
+    }
+    if (!theListenerNode.inTouchPoints.has(event.currentTouch._id))  {
+      return;
+    }
+    const diffVec = event.currentTouch._point.sub(event.currentTouch._startPoint);
+    const distance = diffVec.mag();
+    const overMoved = (distance > this.maxHeadDistance);
+    if (overMoved) {
+      const ratio = (this.maxHeadDistance / distance);
+      this.cachedStickHeadPosition = diffVec.mul(ratio);
+    } else {
+      const ratio = (distance / this.maxHeadDistance);
+      this.cachedStickHeadPosition = diffVec.mul(ratio);
+    }
+  },
+
+  _zoomingEvent(event) {
+    if (ALL_MAP_STATES.VISUAL != this.mapScriptIns.state) {
+      return;
+    }
+    const theListenerNode = event.target; 
+    if (2 != theListenerNode.inTouchPoints.size) {
+       return;
+    }
+    if (2 == event._touches.length) {
+      const firstTouch = event._touches[0];
+      const secondTouch = event._touches[1];
+
+      const startMagnitude = firstTouch._startPoint.sub(secondTouch._startPoint).mag();
+      const currentMagnitude = firstTouch._point.sub(secondTouch._point).mag();
+
+      let scaleBy = (currentMagnitude / startMagnitude);
+      scaleBy = 1 + (scaleBy - 1) * this.zoomingScaleFacBase;
+      if (1 < scaleBy && Math.abs(scaleBy - 1) < this.scaleByEps) {
+        // Jitterring.
+        cc.log(`ScaleBy == ${scaleBy} is just jittering.`);
         return;
       }
-      const diffVec = event.currentTouch._point.sub(event.currentTouch._startPoint);
-      const scaleFactor = linearScaleFacBase / this.canvasNode.scale;
-      const diffVecScaled = (diffVec).mul(scaleFactor);
-      const distance = diffVecScaled.mag();
-      const overMoved = (distance > this.maxHeadDistance);
-      if (overMoved) {
-        const ratio = (this.maxHeadDistance / distance);
-        this.cachedStickHeadPosition = diffVecScaled.mul(ratio);
-      } else {
-        const ratio = (distance / this.maxHeadDistance);
-        this.cachedStickHeadPosition = diffVecScaled.mul(ratio);
+      if (1 > scaleBy && Math.abs(scaleBy - 1) < 0.5 * this.scaleByEps) {
+        // Jitterring.
+        cc.log(`ScaleBy == ${scaleBy} is just jittering.`);
+        return;
       }
-    } else {
-      if (2 == event._touches.length) {
-        const firstTouch = event._touches[0];
-        const secondTouch = event._touches[1];
-
-        const startMagnitude = firstTouch._startPoint.sub(secondTouch._startPoint).mag();
-        const currentMagnitude = firstTouch._point.sub(secondTouch._point).mag();
-
-        let scaleBy = (currentMagnitude / startMagnitude);
-        scaleBy = 1 + (scaleBy - 1) * zoomingScaleFacBase;
-        if (1 < scaleBy && Math.abs(scaleBy - 1) < this.scaleByEps) {
-          // Jitterring.
-          cc.log(`ScaleBy == ${scaleBy} is just jittering.`);
-          return;
-        }
-        if (1 > scaleBy && Math.abs(scaleBy - 1) < 0.5 * this.scaleByEps) {
-          // Jitterring.
-          cc.log(`ScaleBy == ${scaleBy} is just jittering.`);
-          return;
-        }
-        const targetScale = this.canvasNode.scale * scaleBy;
-        if (this.minScale > targetScale || targetScale > this.maxScale) {
-          return;
-        }
-        this._cachedZoomRawTarget = {
-          scale: targetScale,
-          timestamp: Date.now(),
-          processed: false
-        };
+      if (!this.mainCamera) return;
+      const targetScale = this.mainCamera.zoomRatio * scaleBy;
+      if (this.minScale > targetScale || targetScale > this.maxScale) {
+        return;
+      }
+      this.mainCamera.zoomRatio = targetScale;
+      for (let child of this.mainCameraNode.children) {
+        child.setScale(1/targetScale); 
       }
     }
   },
 
   _touchEndEvent(event) {
+    const theListenerNode = event.target; 
     do {
-      if (this.inMultiTouch) {
-        break;
-      }
-      if (!this.inTouchPoints.has(event.currentTouch._id)) {
+      if (!theListenerNode.inTouchPoints.has(event.currentTouch._id)) {
         break;
       }
       const diffVec = event.currentTouch._point.sub(event.currentTouch._startPoint);
@@ -254,15 +276,11 @@ cc.Class({
 
       // TODO: Handle single-finger-click event.
     } while (false);
-    this.touchStartPosInMapNode = null;
     this.cachedStickHeadPosition = cc.v2(0.0, 0.0);
     for (let touch of event._touches) {
-      if(touch){
-        this.inTouchPoints.delete(touch._id);
+      if (touch){
+        theListenerNode.inTouchPoints.delete(touch._id);
       }
-    }
-    if (0 == this.inTouchPoints.size) {
-      this.inMultiTouch = false;
     }
   },
 

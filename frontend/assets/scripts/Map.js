@@ -254,8 +254,7 @@ cc.Class({
     yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
-    simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, simplePressToGoDialogNode);
+    safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
   },
 
@@ -275,18 +274,23 @@ cc.Class({
     self.recentFrameCacheCurrentSize = 0;
     self.recentFrameCacheMaxCount = 2048;
 
+    const mapNode = self.node;
+    const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
+
+    self.mainCameraNode = canvasNode.getChildByName("Main Camera");
+    self.mainCamera = self.mainCameraNode.getComponent(cc.Camera);
+    for (let child of self.mainCameraNode.children) {
+      child.setScale(1/self.mainCamera.zoomRatio); 
+    } 
+    self.widgetsAboveAllNode = self.mainCameraNode.getChildByName("WidgetsAboveAll"); 
+
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
     self.upsyncLoopInterval = null;
     self.transitToState(ALL_MAP_STATES.VISUAL);
-
-    const mapNode = self.node;
-    const canvasNode = mapNode.parent;
-    cc.director.getCollisionManager().enabled = true;
-    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
     self.otherPlayerCachedDataDict = {};
@@ -407,11 +411,6 @@ cc.Class({
         }
       }
 
-      if (this.joystickInputControllerNode.parent !== this.node.parent.parent.getChildByName('JoystickContainer')) {
-        this.joystickInputControllerNode.parent = this.node.parent.parent.getChildByName('JoystickContainer');
-      }
-      this.joystickInputControllerNode.parent.width = this.node.parent.width * 0.5;
-      this.joystickInputControllerNode.parent.height = this.node.parent.height;
       for (let boundaryObj of boundaryObjs.sheltersZReducer) {
         const newShelter = cc.instantiate(self.shelterZReducerPrefab);
         const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
@@ -561,8 +560,9 @@ cc.Class({
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
     self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
-    if(self.findingPlayerNode.parent)
-      canvasNode.removeChild(self.findingPlayerNode);
+    if(self.findingPlayerNode.parent) {
+      self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+    }
   },
 
   onBattleStopped(players) {
@@ -910,9 +910,7 @@ cc.Class({
     const self = this;
     self.disableInputControls();
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
-    const canvasNode = self.canvasNode;
-    toShowNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, toShowNode);
+    safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
   },
 

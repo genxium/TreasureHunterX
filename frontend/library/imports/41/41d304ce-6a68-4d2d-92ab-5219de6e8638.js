@@ -256,8 +256,7 @@ cc.Class({
     yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
-    simplePressToGoDialogNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, simplePressToGoDialogNode);
+    safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
   },
   alertForGoingBackToLoginScene: function alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
@@ -277,18 +276,45 @@ cc.Class({
     self.recentFrameCacheCurrentSize = 0;
     self.recentFrameCacheMaxCount = 2048;
 
+    var mapNode = self.node;
+    var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
+
+    self.mainCameraNode = canvasNode.getChildByName("Main Camera");
+    self.mainCamera = self.mainCameraNode.getComponent(cc.Camera);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = self.mainCameraNode.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var child = _step.value;
+
+        child.setScale(1 / self.mainCamera.zoomRatio);
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    self.widgetsAboveAllNode = self.mainCameraNode.getChildByName("WidgetsAboveAll");
+
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
     self.upsyncLoopInterval = null;
     self.transitToState(ALL_MAP_STATES.VISUAL);
-
-    var mapNode = self.node;
-    var canvasNode = mapNode.parent;
-    cc.director.getCollisionManager().enabled = true;
-    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
     self.otherPlayerCachedDataDict = {};
@@ -353,13 +379,13 @@ cc.Class({
       self.setupInputControls();
 
       var boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator = boundaryObjs.frameAnimations[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var frameAnim = _step.value;
+        for (var _iterator2 = boundaryObjs.frameAnimations[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var frameAnim = _step2.value;
 
           var animNode = cc.instantiate(self.tiledAnimPrefab);
           var anim = animNode.getComponent(cc.Animation);
@@ -372,64 +398,6 @@ cc.Class({
           setLocalZOrder(animNode, 5);
           anim.addClip(frameAnim.animationClip, "default");
           anim.play("default");
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      self.barrierColliders = [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = boundaryObjs.barriers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var boundaryObj = _step2.value;
-
-          var newBarrier = cc.instantiate(self.barrierPrefab);
-          var newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-          newBarrier.setPosition(newBoundaryOffsetInMapNode);
-          newBarrier.setAnchorPoint(cc.v2(0, 0));
-          var newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
-          newBarrierColliderIns.points = [];
-          var _iteratorNormalCompletion6 = true;
-          var _didIteratorError6 = false;
-          var _iteratorError6 = undefined;
-
-          try {
-            for (var _iterator6 = boundaryObj[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-              var p = _step6.value;
-
-              newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-            }
-          } catch (err) {
-            _didIteratorError6 = true;
-            _iteratorError6 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                _iterator6.return();
-              }
-            } finally {
-              if (_didIteratorError6) {
-                throw _iteratorError6;
-              }
-            }
-          }
-
-          self.barrierColliders.push(newBarrierColliderIns);
-          self.node.addChild(newBarrier);
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -446,26 +414,48 @@ cc.Class({
         }
       }
 
-      var allLayers = tiledMapIns.getLayers();
+      self.barrierColliders = [];
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = allLayers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var layer = _step3.value;
+        for (var _iterator3 = boundaryObjs.barriers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var boundaryObj = _step3.value;
 
-          var layerType = layer.getProperty("type");
-          switch (layerType) {
-            case "normal":
-              setLocalZOrder(layer.node, 0);
-              break;
-            case "barrier_and_shelter":
-              setLocalZOrder(layer.node, 3);
-              break;
-            default:
-              break;
+          var newBarrier = cc.instantiate(self.barrierPrefab);
+          var newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+          newBarrier.setPosition(newBoundaryOffsetInMapNode);
+          newBarrier.setAnchorPoint(cc.v2(0, 0));
+          var newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
+          newBarrierColliderIns.points = [];
+          var _iteratorNormalCompletion7 = true;
+          var _didIteratorError7 = false;
+          var _iteratorError7 = undefined;
+
+          try {
+            for (var _iterator7 = boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+              var p = _step7.value;
+
+              newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+            }
+          } catch (err) {
+            _didIteratorError7 = true;
+            _iteratorError7 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
+              }
+            } finally {
+              if (_didIteratorError7) {
+                throw _iteratorError7;
+              }
+            }
           }
+
+          self.barrierColliders.push(newBarrierColliderIns);
+          self.node.addChild(newBarrier);
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -482,19 +472,22 @@ cc.Class({
         }
       }
 
-      var allObjectGroups = tiledMapIns.getObjectGroups();
+      var allLayers = tiledMapIns.getLayers();
       var _iteratorNormalCompletion4 = true;
       var _didIteratorError4 = false;
       var _iteratorError4 = undefined;
 
       try {
-        for (var _iterator4 = allObjectGroups[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var objectGroup = _step4.value;
+        for (var _iterator4 = allLayers[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var layer = _step4.value;
 
-          var objectGroupType = objectGroup.getProperty("type");
-          switch (objectGroupType) {
+          var layerType = layer.getProperty("type");
+          switch (layerType) {
+            case "normal":
+              setLocalZOrder(layer.node, 0);
+              break;
             case "barrier_and_shelter":
-              setLocalZOrder(objectGroup.node, 3);
+              setLocalZOrder(layer.node, 3);
               break;
             default:
               break;
@@ -515,51 +508,23 @@ cc.Class({
         }
       }
 
-      if (_this2.joystickInputControllerNode.parent !== _this2.node.parent.parent.getChildByName('JoystickContainer')) {
-        _this2.joystickInputControllerNode.parent = _this2.node.parent.parent.getChildByName('JoystickContainer');
-      }
-      _this2.joystickInputControllerNode.parent.width = _this2.node.parent.width * 0.5;
-      _this2.joystickInputControllerNode.parent.height = _this2.node.parent.height;
+      var allObjectGroups = tiledMapIns.getObjectGroups();
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator5 = boundaryObjs.sheltersZReducer[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var _boundaryObj = _step5.value;
+        for (var _iterator5 = allObjectGroups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var objectGroup = _step5.value;
 
-          var newShelter = cc.instantiate(self.shelterZReducerPrefab);
-          var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
-          newShelter.setPosition(newBoundaryOffsetInMapNode);
-          newShelter.setAnchorPoint(cc.v2(0, 0));
-          var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
-          newShelterColliderIns.points = [];
-          var _iteratorNormalCompletion7 = true;
-          var _didIteratorError7 = false;
-          var _iteratorError7 = undefined;
-
-          try {
-            for (var _iterator7 = _boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-              var _p = _step7.value;
-
-              newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
-            }
-          } catch (err) {
-            _didIteratorError7 = true;
-            _iteratorError7 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                _iterator7.return();
-              }
-            } finally {
-              if (_didIteratorError7) {
-                throw _iteratorError7;
-              }
-            }
+          var objectGroupType = objectGroup.getProperty("type");
+          switch (objectGroupType) {
+            case "barrier_and_shelter":
+              setLocalZOrder(objectGroup.node, 3);
+              break;
+            default:
+              break;
           }
-
-          self.node.addChild(newShelter);
         }
       } catch (err) {
         _didIteratorError5 = true;
@@ -572,6 +537,62 @@ cc.Class({
         } finally {
           if (_didIteratorError5) {
             throw _iteratorError5;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
+
+      try {
+        for (var _iterator6 = boundaryObjs.sheltersZReducer[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var _boundaryObj = _step6.value;
+
+          var newShelter = cc.instantiate(self.shelterZReducerPrefab);
+          var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
+          newShelter.setPosition(newBoundaryOffsetInMapNode);
+          newShelter.setAnchorPoint(cc.v2(0, 0));
+          var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+          newShelterColliderIns.points = [];
+          var _iteratorNormalCompletion8 = true;
+          var _didIteratorError8 = false;
+          var _iteratorError8 = undefined;
+
+          try {
+            for (var _iterator8 = _boundaryObj[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+              var _p = _step8.value;
+
+              newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
+            }
+          } catch (err) {
+            _didIteratorError8 = true;
+            _iteratorError8 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                _iterator8.return();
+              }
+            } finally {
+              if (_didIteratorError8) {
+                throw _iteratorError8;
+              }
+            }
+          }
+
+          self.node.addChild(newShelter);
+        }
+      } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
+          }
+        } finally {
+          if (_didIteratorError6) {
+            throw _iteratorError6;
           }
         }
       }
@@ -702,7 +723,9 @@ cc.Class({
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
     self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
-    if (self.findingPlayerNode.parent) canvasNode.removeChild(self.findingPlayerNode);
+    if (self.findingPlayerNode.parent) {
+      self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+    }
   },
   onBattleStopped: function onBattleStopped(players) {
     var self = this;
@@ -1019,9 +1042,7 @@ cc.Class({
     var self = this;
     self.disableInputControls();
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
-    var canvasNode = self.canvasNode;
-    toShowNode.setScale(1 / canvasNode.getScale());
-    safelyAddChild(canvasNode, toShowNode);
+    safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
   }
 });

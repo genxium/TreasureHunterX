@@ -3,31 +3,21 @@
  <image source="tile_1.png" width="192" height="192"/>
  <tile id="1">
   <objectgroup draworder="index">
-   <object id="1" x="0" y="1">
+   <object id="2" x="10.3333" y="0">
     <properties>
      <property name="boundary_type" value="barrier"/>
     </properties>
-    <polyline points="0,0 63,-1 63,62 -1,63 0,13"/>
+    <polyline points="0,0 -11.6667,10.6667 -11,56.3333 -3,64.6667 45.6667,64 53,54.3333 53.6667,7.33333 40,-1.66667"/>
    </object>
   </objectgroup>
  </tile>
  <tile id="4">
   <objectgroup draworder="index">
-   <object id="1" x="0" y="-1">
+   <object id="3" x="0" y="0">
     <properties>
      <property name="boundary_type" value="barrier"/>
     </properties>
-    <polyline points="0,0 64,1 65,63 2,65 0,11"/>
-   </object>
-  </objectgroup>
- </tile>
- <tile id="5">
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="-1">
-    <properties>
-     <property name="boundary_type" value="barrier"/>
-    </properties>
-    <polyline points="0,0 62,1 64,65 1,65 -1,14"/>
+    <polyline points="0,0 0,64 64,64 64,0"/>
    </object>
   </objectgroup>
  </tile>

@@ -136,7 +136,7 @@ module.export = cc.Class({
       for (var _iterator2 = self.contactedBarriers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var contactedBarrier = _step2.value;
 
-        if (contactedBarrier.id == collider.id) {
+        if (contactedBarrier._id == collider._id) {
           return false;
         }
       }
@@ -161,7 +161,7 @@ module.export = cc.Class({
   _removeContactedBarrier: function _removeContactedBarrier(collider) {
     var self = this;
     self.contactedBarriers = self.contactedBarriers.filter(function (contactedBarrier) {
-      return contactedBarrier.id != collider.id;
+      return contactedBarrier._id != collider._id;
     });
     return true;
   },
@@ -254,11 +254,11 @@ module.export = cc.Class({
 
     var currentSelfColliderCircle = self.node.getComponent(cc.CircleCollider);
     var nextSelfColliderCircle = null;
-    if (0 < self.contactedBarriers.length || 0 < self.contactedNPCPlayers.length) {
+    if (0 < self.contactedBarriers.length) {
       /* To avoid unexpected buckling. */
-      var mutatedVecToMoveBy = vecToMoveBy.mul(2);
+      var mutatedVecToMoveBy = vecToMoveBy.mul(5); // To help it escape the engaged `contactedBarriers`.
       nextSelfColliderCircle = {
-        position: self.node.position.add(vecToMoveBy.mul(2)).add(currentSelfColliderCircle.offset),
+        position: self.node.position.add(mutatedVecToMoveBy).add(currentSelfColliderCircle.offset),
         radius: currentSelfColliderCircle.radius
       };
     } else {
@@ -302,8 +302,21 @@ module.export = cc.Class({
           }
         }
 
-        if (cc.Intersection.polygonCircle(contactedBarrierPolygonLocalToParentWithinCurrentFrame, nextSelfColliderCircle)) {
+        if (cc.Intersection.pointInPolygon(nextSelfColliderCircle.position, contactedBarrierPolygonLocalToParentWithinCurrentFrame)) {
+          // Make sure that the player is "leaving" the PolygonCollider.
           return false;
+        }
+        if (cc.Intersection.polygonCircle(contactedBarrierPolygonLocalToParentWithinCurrentFrame, nextSelfColliderCircle)) {
+          if (null == self.firstContactedEdge) {
+            return false;
+          }
+          if (null != self.firstContactedEdge && self.firstContactedEdge.associatedBarrier != contactedBarrier) {
+            var res = self._calculateTangentialMovementAttrs(nextSelfColliderCircle, contactedBarrier);
+            if (null == res.contactedEdge) {
+              // Otherwise, the current movement is going to transit smoothly onto the next PolygonCollider.
+              return false;
+            }
+          }
         }
       }
     } catch (err) {
@@ -334,19 +347,138 @@ module.export = cc.Class({
      * Reference http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/class.html#override
      */
   },
-  _calculateVecToMoveBy: function _calculateVecToMoveBy(elapsedTime) {
+  _calculateTangentialMovementAttrs: function _calculateTangentialMovementAttrs(currentSelfColliderCircle, contactedBarrier) {
+    /*
+     * Theoretically when the `contactedBarrier` is a convex polygon and the `PlayerCollider` is a circle, there can be only 1 `contactedEdge` for each `contactedBarrier`. Except only for around the corner.
+     *
+     * We should avoid the possibility of players hitting the "corners of convex polygons" by map design wherever & whenever possible.
+     *
+     */
     var self = this;
     var sDir = self.activeDirection;
+    var currentSelfColliderCircleCentrePos = currentSelfColliderCircle.position ? currentSelfColliderCircle.position : self.node.position.add(currentSelfColliderCircle.offset);
+    var currentSelfColliderCircleRadius = currentSelfColliderCircle.radius;
+    var contactedEdgeCandidateList = [];
+    var skinDepthThreshold = 0.45 * currentSelfColliderCircleRadius;
+    for (var i = 0; i < contactedBarrier.points.length; ++i) {
+      var stPoint = contactedBarrier.points[i].add(contactedBarrier.offset).add(contactedBarrier.node.position);
+      var edPoint = i == contactedBarrier.points.length - 1 ? contactedBarrier.points[0].add(contactedBarrier.offset).add(contactedBarrier.node.position) : contactedBarrier.points[1 + i].add(contactedBarrier.offset).add(contactedBarrier.node.position);
+      var tmpVSt = stPoint.sub(currentSelfColliderCircleCentrePos);
+      var tmpVEd = edPoint.sub(currentSelfColliderCircleCentrePos);
+      var crossProdScalar = tmpVSt.cross(tmpVEd);
+      if (0 < crossProdScalar) {
+        // If moving parallel along `st <-> ed`, the trajectory of `currentSelfColliderCircleCentrePos` will cut inside the polygon. 
+        continue;
+      }
+      var dis = cc.Intersection.pointLineDistance(currentSelfColliderCircleCentrePos, stPoint, edPoint, true);
+      if (dis > currentSelfColliderCircleRadius) continue;
+      if (dis < skinDepthThreshold) continue;
+      contactedEdgeCandidateList.push({
+        st: stPoint,
+        ed: edPoint,
+        associatedBarrier: contactedBarrier
+      });
+    }
+    var contactedEdge = null;
+    var contactedEdgeDir = null;
+    var largestInnerProdAbs = Number.MIN_VALUE;
 
+    if (0 < contactedEdgeCandidateList.length) {
+      var sDirMag = Math.sqrt(sDir.dx * sDir.dx + sDir.dy * sDir.dy);
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
+
+      try {
+        for (var _iterator7 = contactedEdgeCandidateList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var contactedEdgeCandidate = _step7.value;
+
+          var tmp = contactedEdgeCandidate.ed.sub(contactedEdgeCandidate.st);
+          var contactedEdgeDirCandidate = {
+            dx: tmp.x,
+            dy: tmp.y
+          };
+          var contactedEdgeDirCandidateMag = Math.sqrt(contactedEdgeDirCandidate.dx * contactedEdgeDirCandidate.dx + contactedEdgeDirCandidate.dy * contactedEdgeDirCandidate.dy);
+          var innerDotProd = (sDir.dx * contactedEdgeDirCandidate.dx + sDir.dy * contactedEdgeDirCandidate.dy) / (sDirMag * contactedEdgeDirCandidateMag);
+          var innerDotProdThresholdMag = 0.7;
+          if (0 > innerDotProd && innerDotProd > -innerDotProdThresholdMag || 0 < innerDotProd && innerDotProd < innerDotProdThresholdMag) {
+            // Intentionally left blank, in this case the player is trying to escape from the `contactedEdge`.    
+            continue;
+          } else if (innerDotProd > 0) {
+            var abs = Math.abs(innerDotProd);
+            if (abs > largestInnerProdAbs) {
+              contactedEdgeDir = contactedEdgeDirCandidate;
+              contactedEdge = contactedEdgeCandidate;
+            }
+          } else {
+            var _abs = Math.abs(innerDotProd);
+            if (_abs > largestInnerProdAbs) {
+              contactedEdgeDir = {
+                dx: -contactedEdgeDirCandidate.dx,
+                dy: -contactedEdgeDirCandidate.dy
+              };
+              contactedEdge = contactedEdgeCandidate;
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+            _iterator7.return();
+          }
+        } finally {
+          if (_didIteratorError7) {
+            throw _iteratorError7;
+          }
+        }
+      }
+    }
+    return {
+      contactedEdgeDir: contactedEdgeDir,
+      contactedEdge: contactedEdge
+    };
+  },
+  _calculateVecToMoveByWithChosenDir: function _calculateVecToMoveByWithChosenDir(elapsedTime, sDir) {
     if (0 == sDir.dx && 0 == sDir.dy) {
       return cc.v2();
     }
-
+    var self = this;
     var distanceToMove = self.speed * elapsedTime;
     var denominator = Math.sqrt(sDir.dx * sDir.dx + sDir.dy * sDir.dy);
     var unitProjDx = sDir.dx / denominator;
     var unitProjDy = sDir.dy / denominator;
     return cc.v2(distanceToMove * unitProjDx, distanceToMove * unitProjDy);
+  },
+  _calculateVecToMoveBy: function _calculateVecToMoveBy(elapsedTime) {
+    var self = this;
+    // Note that `sDir` used in this method MUST BE a copy in RAM.
+    var sDir = {
+      dx: self.activeDirection.dx,
+      dy: self.activeDirection.dy
+    };
+
+    if (0 == sDir.dx && 0 == sDir.dy) {
+      return cc.v2();
+    }
+
+    self.firstContactedEdge = null; // Reset everytime (temporary algorithm design, might change later).
+    if (0 < self.contactedBarriers.length) {
+      /*
+       * Hardcoded to take care of only the 1st `contactedEdge` of the 1st `contactedBarrier` for now. Each `contactedBarrier` must be "counterclockwisely convex polygonal", otherwise sliding doesn't work! 
+       *
+       */
+      var contactedBarrier = self.contactedBarriers[0];
+      var currentSelfColliderCircle = self.node.getComponent(cc.CircleCollider);
+      var res = self._calculateTangentialMovementAttrs(currentSelfColliderCircle, contactedBarrier);
+      if (res.contactedEdge) {
+        self.firstContactedEdge = res.contactedEdge;
+        sDir = res.contactedEdgeDir;
+      }
+    }
+    return self._calculateVecToMoveByWithChosenDir(elapsedTime, sDir);
   },
   update: function update(dt) {
     var self = this;

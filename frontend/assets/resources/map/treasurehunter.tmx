@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="217">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="218">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
  <layer name="tile_1 floor" width="80" height="80">
@@ -7,7 +7,7 @@
    <property name="type" value="normal"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0tsOwjAMA9Dy/z/NK0La1jQXO5kj+QEErXO2z1rro2znf6LPRe9XbXjn+hYPj+HVZ/n5/ZRnQ/nFWcrP54fu0Dnyk5/8+kZ+8kPayc/nh+7QOfKb52cddFe0l8fuf97slzHyi5npfhUz1a9y0LtW2GU/C/TOGXbZz2SaX/Y+0w0r9pjsV/2cZCg7Jj8Z+vzQ3Xb7o+/v7ofs2tkP3fVp0D7Mdk9+aB/ZyY4tDD1lJzuGHiydTjqrS7++TF1O+zL5oX26+XUzZPS768XWl63PqR+qM0uProYsPXY7snVn6JCxwxvunrDHVL/pz22CHcov8h6kHcIv+i6kHYOf5z60HcIvancGu66GTHZXfhXdrPdU9/Manp6T8R4x20UYWv9n+f1pJwY/6267+1l+bz2b0XB3ot9V69kMOR3P+Ui7jPOtE3H+yfvJaLfr6Ll/dyp2y7wD9Wwq9urud+dYeTd6/2jD6nvRu2sXRVGqswg6KIqiKIryvqyL734H3ZE1suHJF+H6Fjo=
+   eJzt0ssOwjAMRNHw/z/NFoFa4jw8E/damgUIkvFpX621F+nO96w+V71ftuGd61M8ZgyvPuMX8yNjhuoOhBBCCCEkP82gw8nBDz/8fjtFRt1V7TVj9z1P9tsx+K2Z6n4ZU9Uvc9S7ZtjtfhbqnXfY7X4m1fx271PdMGOPyn7ZzwlD7Jz8MJzzU3fr7a++/3Q/ZdeT/dRd/43ax9nun5/aBzvs3OLQEzvsHHq4dBrpTJfz+jp1Ge3r5Kf2Oc3vNENHv7tebn3d+oz6qTq79DjV0KVHb0e37g4dduzwhLsr7FHVr/pzq2Cn8lt5j9JO4bf6LqWdg9/MfWo7hd+q3R3sTjV0srvyy+gWvSe736zh6Dk73iNnuxWG0f9Ffj/aycEvulvvfpHfR892NOyd1e9q9GyHjM7M+Uq7HedHZ8X5I++no12v48z9vZOx2847VM8mY6/T/e4cM+9W77/aMPte9e7sQgjJTjPoQAghhJDnpV189znqjq7BxidveNEWRw==
   </data>
  </layer>
  <layer name="tile_1 human skeleton" width="80" height="80">
@@ -15,7 +15,7 @@
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0LEJwDAQBMGP1H/JbsDZIiOLGbj4YNfMLDOzA7fD13+30a/Rr9Gv0a/Rr9Gu0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/RrtGv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9GveetnZv/bAwH3Fc0=
+   eJzt0LEJwDAQBMGP1H/JbsDZIiOLGbj4YNfMLDOzA7fDVz+30q/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9GveetnZv/bAyHbFTE=
   </data>
  </layer>
  <layer name="tile_1 board" width="80" height="80">
@@ -104,12 +104,6 @@
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
-  <object id="20" x="276" y="292">
-   <properties>
-    <property name="boundary_type" value="barrier"/>
-   </properties>
-   <polyline points="0,0 -96,5040 -448,5056 -488,8 -180,4"/>
-  </object>
   <object id="21" x="-240" y="-96">
    <properties>
     <property name="boundary_type" value="barrier"/>
@@ -127,6 +121,9 @@
     <property name="boundary_type" value="barrier"/>
    </properties>
    <polyline points="0,0 -4,340 5284,300 5236,12 124,-4"/>
+  </object>
+  <object id="217" x="-108" y="-44">
+   <polyline points="0,0 72,5200 240,5208 244,-4"/>
   </object>
  </objectgroup>
  <objectgroup name="frame anim">
