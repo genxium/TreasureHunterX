@@ -90,6 +90,9 @@ cc.Class({
   start: function start() {},
   onLoad: function onLoad() {
     this.cachedStickHeadPosition = cc.v2(0.0, 0.0);
+    this.canvasNode = this.mapNode.parent;
+    this.mainCameraNode = this.canvasNode.getChildByName("Main Camera"); // Cannot drag and assign the `mainCameraNode` from CocosCreator EDITOR directly, otherwise it'll cause an infinite loading time, till v2.1.0.
+    this.mainCamera = this.mainCameraNode.getComponent(cc.Camera);
     this.activeDirection = {
       dx: 0.0,
       dy: 0.0

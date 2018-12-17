@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1545032422456,
+    "asset": 1545033754211,
     "meta": 1545031560260,
     "relativePath": "plugin_scripts"
   },
@@ -100,7 +100,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1545032985103,
+    "asset": 1545033424799,
     "meta": 1545031560427,
     "relativePath": "scripts"
   },
@@ -920,8 +920,8 @@
     "relativePath": "resources\\animation\\findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545033585143,
-    "meta": 1545033585154,
+    "asset": 1545037943967,
+    "meta": 1545037943992,
     "relativePath": "scenes\\login.fire"
   },
   "3b807ebc-0636-4486-b8e1-3a817a06637f": {
@@ -964,31 +964,6 @@
     "meta": 1545033151254,
     "relativePath": "resources\\map\\treasure3.png"
   },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1544274621863,
-    "meta": 1545033284185,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1544274621865,
-    "meta": 1545033284204,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1544274621867,
-    "meta": 1545033284288,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1544274621869,
-    "meta": 1545033284294,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1544274621870,
-    "meta": 1545033284299,
-    "relativePath": "SpriteFrameSet.js"
-  },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
     "asset": 1545033422265,
     "meta": 1545033426981,
@@ -999,9 +974,34 @@
     "meta": 1545033427168,
     "relativePath": "scripts\\SelfPlayer.js"
   },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1544274621863,
+    "meta": 1545036753437,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1544274621865,
+    "meta": 1545036753457,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1544274621867,
+    "meta": 1545036753530,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1544274621869,
+    "meta": 1545036753535,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1544274621870,
+    "meta": 1545036753539,
+    "relativePath": "SpriteFrameSet.js"
+  },
   "d34e3738-8dde-4da9-8b60-f25b4bf50493": {
-    "asset": 1545033319657,
-    "meta": 1545033427187,
+    "asset": 1545037251640,
+    "meta": 1545037254826,
     "relativePath": "scripts\\TouchEventsManager.js"
   }
 }
