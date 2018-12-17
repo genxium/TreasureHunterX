@@ -865,8 +865,8 @@
     "relativePath": "prefab\\webview.prefab"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1545033581228,
-    "meta": 1545033581250,
+    "asset": 1545038658695,
+    "meta": 1545038658714,
     "relativePath": "scenes\\default_map.fire"
   },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
@@ -920,8 +920,8 @@
     "relativePath": "resources\\animation\\findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545037943967,
-    "meta": 1545037943992,
+    "asset": 1545038709422,
+    "meta": 1545038709435,
     "relativePath": "scenes\\login.fire"
   },
   "3b807ebc-0636-4486-b8e1-3a817a06637f": {
