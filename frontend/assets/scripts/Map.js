@@ -182,7 +182,8 @@ cc.Class({
   _dumpToFullFrameCache: function(fullFrame) {
     const self = this;
     while (self.recentFrameCacheCurrentSize >= self.recentFrameCacheMaxCount) {
-      const toDelFrameId = Object.keys(self.recentFrameCache)[0];
+      // Trick here: never evict the "Zero-th Frame" for resyncing!
+      const toDelFrameId = Object.keys(self.recentFrameCache)[1]; 
       // cc.log("toDelFrameId is " + toDelFrameId + ".");
       delete self.recentFrameCache[toDelFrameId];
       --self.recentFrameCacheCurrentSize;
@@ -193,6 +194,7 @@ cc.Class({
 
   _onPerUpsyncFrame() {
     const instance = this;
+    if (instance.resyncing) return;
     if (
       null == instance.selfPlayerInfo ||
       null == instance.selfPlayerScriptIns ||
@@ -221,7 +223,6 @@ cc.Class({
     window.sendSafely(JSON.stringify(wrapped));
   },
 
-  // LIFE-CYCLE CALLBACKS:
   onDestroy() {
     const self = this;
     if (self.upsyncLoopInterval) {
@@ -232,12 +233,19 @@ cc.Class({
     }
   },
 
+  _lazilyTriggerResync() {
+    if (true == this.resyncing) return; 
+    this.resyncing = false;
+    this.popupSimplePressToGo("Resyncing your battle, please wait...");
+  },
+
+  _onResyncCompleted() {
+    if (false == this.resyncing) return; 
+    this.resyncing = true;
+  },
+
   popupSimplePressToGo(labelString) {
     const self = this;
-    /*
-    if (ALL_MAP_STATES.VISUAL != self.state) {
-      return;
-    }*/
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
     const canvasNode = self.canvasNode;
@@ -268,6 +276,7 @@ cc.Class({
 
   onLoad() {
     const self = this;
+    self.resyncing = false;
     self.lastRoomDownsyncFrameId = 0;
 
     self.recentFrameCache = {};
@@ -438,9 +447,15 @@ cc.Class({
         }
         const cachedFullFrame = self.recentFrameCache[refFrameId];
         if (!isInitiatingFrame && self.useDiffFrameAlgo && null == cachedFullFrame) {
-          cc.log(`Should send a reset upsync to server for diffFrame id == ${frameId}, refFrameId == ${refFrameId}`);
+          this._lazilyTriggerResync();
+          // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
         } 
+        
+        if (isInitiatingFrame && 0 == refFrameId) {
+          // Reaching here implies that you've received the resync frame.
+          this._onResyncCompleted();
+        }
         let countdownNanos = diffFrame.countdownNanos;
         if (countdownNanos < 0) countdownNanos = 0;
         const countdownSeconds = parseInt(countdownNanos / 1000000000);
