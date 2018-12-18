@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "StatusBar",
+    "texture": "e69d1fc4-cdd8-4f13-9532-cbc500af0f95",
+    "atlas": "",
+    "rect": [
+      3,
+      2,
+      231,
+      236
+    ],
+    "offset": [
+      0.5,
+      0
+    ],
+    "originalSize": [
+      236,
+      240
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

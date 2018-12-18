@@ -83,7 +83,11 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    selfPlayerIdLabel: {
+    selfPlayerNameLabel: {
+      type: cc.Label,
+      default: null
+    },
+    otherPlayerNameLabel: {
       type: cc.Label,
       default: null
     },
@@ -99,8 +103,8 @@ cc.Class({
       type: cc.Label,
       default: null
     },
-    otherPlayerScoreIndicatorPrefab: {
-      type: cc.Prefab,
+    otherPlayerScoreLabel: {
+      type: cc.Label,
       default: null
     },
     trapBulletPrefab: {
@@ -330,7 +334,6 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
-    self.scoreInfoDict = {};
 
     /** init confirmLogoutNode started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
@@ -623,7 +626,7 @@ cc.Class({
 
         if (isInitiatingFrame && 0 == refFrameId) {
           // Reaching here implies that you've received the resync frame.
-          this._onResyncCompleted();
+          self._onResyncCompleted();
         }
         var countdownNanos = diffFrame.countdownNanos;
         if (countdownNanos < 0) countdownNanos = 0;
@@ -772,7 +775,7 @@ cc.Class({
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
-      self.selfPlayerIdLabel.string = self.selfPlayerInfo.id;
+      self.selfPlayerNameLabel.string = self.selfPlayerInfo.displayName;
       var score = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0;
       self.selfPlayerScoreLabel.string = score;
       if (null != self.selfPlayerScriptIns) {
@@ -796,16 +799,12 @@ cc.Class({
       var playerId = parseInt(k);
       var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
       var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
-      //显示分数
-      if (!self.scoreInfoDict[playerId]) {
-        var scoreNode = cc.instantiate(self.otherPlayerScoreIndicatorPrefab);
-        var debugInfoNode = canvasParentNode.getChildByName("DebugInfo");
-        scoreNode.getChildByName("title").getComponent(cc.Label).string = "player" + cachedPlayerData.id + "'s score:";
-        safelyAddChild(debugInfoNode, scoreNode);
-        self.scoreInfoDict[playerId] = scoreNode;
+      //更新信息
+      if (null != cachedPlayerData) {
+        self.otherPlayerNameLabel.string = cachedPlayerData.displayName;
+        var _score = cachedPlayerData.score ? cachedPlayerData.score : 0;
+        self.otherPlayerScoreLabel.string = _score;
       }
-      var playerScore = !cachedPlayerData.score ? cachedPlayerData.score : 0;
-      self.scoreInfoDict[playerId].getChildByName("OtherPlayerScoreLabel").getComponent(cc.Label).string = playerScore;
       var targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
         targetNode = cc.instantiate(self.selfPlayerPrefab);
