@@ -1,0 +1,80 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "PandaAtacked.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "LeftPandaAtacked01": {
+      "__uuid__": "6cbbb9d6-65a2-49b1-bc86-c40e9b04c18e"
+    },
+    "LeftPandaAtacked010": {
+      "__uuid__": "0d972f9b-acda-4b09-bed3-07b07997eae3"
+    },
+    "LeftPandaAtacked011": {
+      "__uuid__": "956c7179-91d2-4e6c-9b57-569b920151a2"
+    },
+    "LeftPandaAtacked012": {
+      "__uuid__": "b653c817-b311-486d-8a75-06e6efe6a88d"
+    },
+    "LeftPandaAtacked02": {
+      "__uuid__": "557896e1-ebb9-4ead-ba7d-ec6a99a43f22"
+    },
+    "LeftPandaAtacked03": {
+      "__uuid__": "018d3806-e8cb-4836-84d2-7db8690125fd"
+    },
+    "LeftPandaAtacked04": {
+      "__uuid__": "4ee9990a-a346-473e-b93f-2a3002ca1877"
+    },
+    "LeftPandaAtacked05": {
+      "__uuid__": "d52fd101-3d92-41f6-8166-c0a02fe56b76"
+    },
+    "LeftPandaAtacked06": {
+      "__uuid__": "edfa3bf3-bac2-4701-b09f-06cbf5600bf7"
+    },
+    "LeftPandaAtacked07": {
+      "__uuid__": "fd889ca3-152e-4577-b810-f40f91795bcd"
+    },
+    "LeftPandaAtacked08": {
+      "__uuid__": "b5c552f4-dd5e-475c-8359-e086891a2ea6"
+    },
+    "LeftPandaAtacked09": {
+      "__uuid__": "4b9934c3-57e0-46db-a905-f51286714cb2"
+    },
+    "RightPandaAtacked01": {
+      "__uuid__": "966e0727-e985-4dbf-9561-99479d03b68d"
+    },
+    "RightPandaAtacked010": {
+      "__uuid__": "21e4a54f-0b30-4fd1-be36-95c040b5f6a3"
+    },
+    "RightPandaAtacked011": {
+      "__uuid__": "b072f9ab-6e04-46f0-b08d-12c504420f3e"
+    },
+    "RightPandaAtacked012": {
+      "__uuid__": "7edd878e-d57b-436c-b94e-15830006993d"
+    },
+    "RightPandaAtacked02": {
+      "__uuid__": "df627fc4-8c22-4af4-997f-9a3e78564125"
+    },
+    "RightPandaAtacked03": {
+      "__uuid__": "0bc28e50-c9d6-40f4-a855-9c7a40e738d0"
+    },
+    "RightPandaAtacked04": {
+      "__uuid__": "6f696aa1-6159-44dc-a460-238583420b66"
+    },
+    "RightPandaAtacked05": {
+      "__uuid__": "ad0c9ee3-b71e-4867-a5e5-9d62beeb5e91"
+    },
+    "RightPandaAtacked06": {
+      "__uuid__": "6c7c0533-90db-41b5-afff-0cef2091d746"
+    },
+    "RightPandaAtacked07": {
+      "__uuid__": "9b5e5d2b-b1b7-4a36-b739-58203736cc53"
+    },
+    "RightPandaAtacked08": {
+      "__uuid__": "e1022c06-f745-4808-af71-560ae12f5d95"
+    },
+    "RightPandaAtacked09": {
+      "__uuid__": "c7efc9b3-650b-4eae-8bd6-994e583a07d2"
+    }
+  }
+}

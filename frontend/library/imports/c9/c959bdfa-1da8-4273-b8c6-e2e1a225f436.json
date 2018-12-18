@@ -1,0 +1,29 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Armature_LeftNewAnimation_23",
+    "texture": "2e662cb7-5690-4224-8bad-5bb3fa0fb176",
+    "atlas": "9983aec7-dc4b-40a2-bdaf-559b60e26ad7",
+    "rect": [
+      305,
+      307,
+      100,
+      150
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      100,
+      150
+    ],
+    "rotated": 1,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

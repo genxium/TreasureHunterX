@@ -3,8 +3,8 @@
   "_name": "FlatHeadSisterRunTopRight",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.3333333333333333,
-  "sample": 6,
+  "_duration": 0.8,
+  "sample": 15,
   "speed": 1,
   "wrapMode": 2,
   "curveData": {
@@ -14,13 +14,73 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "6c92e7fe-f18d-4e72-8bc5-476df276b9f7"
+              "__uuid__": "8d2b217f-e2a8-42e8-aa05-c1ad12b2c492"
             }
           },
           {
-            "frame": 0.16666666666666666,
+            "frame": 0.06666666666666667,
             "value": {
-              "__uuid__": "da343320-6f7f-4e42-8818-94f728781410"
+              "__uuid__": "c0c6a118-11a7-443c-9602-5411340a63af"
+            }
+          },
+          {
+            "frame": 0.13333333333333333,
+            "value": {
+              "__uuid__": "c15c43f4-6e3c-4700-b51b-17889421ee81"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "93a4802b-3d47-406c-ad5a-91fa83c78f44"
+            }
+          },
+          {
+            "frame": 0.26666666666666666,
+            "value": {
+              "__uuid__": "3ad9fb71-def0-4399-8036-6c150fd748ac"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "f3ffbd9e-3562-4688-bf42-210aa841a86b"
+            }
+          },
+          {
+            "frame": 0.4,
+            "value": {
+              "__uuid__": "6ccdfcf7-38ec-4a11-a87f-a88c14f26b8b"
+            }
+          },
+          {
+            "frame": 0.4666666666666667,
+            "value": {
+              "__uuid__": "63b4fed8-0b66-45ae-a6d0-d6d78243cf40"
+            }
+          },
+          {
+            "frame": 0.5333333333333333,
+            "value": {
+              "__uuid__": "f9a85c68-5c95-42db-8ba1-40f69ed2a329"
+            }
+          },
+          {
+            "frame": 0.6,
+            "value": {
+              "__uuid__": "cc04b8ec-b49c-45ce-a3fc-400c258bfdc5"
+            }
+          },
+          {
+            "frame": 0.6666666666666666,
+            "value": {
+              "__uuid__": "0e40bae8-fef6-4d0d-9c2c-7ad791d1dcc5"
+            }
+          },
+          {
+            "frame": 0.7333333333333333,
+            "value": {
+              "__uuid__": "ee7e38bc-da33-44cd-81ba-338f28acc9fa"
             }
           }
         ]

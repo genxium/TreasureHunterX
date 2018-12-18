@@ -37,21 +37,21 @@
   </data>
  </layer>
  <objectgroup name="controlled_players_starting_pos_list">
-  <object id="26" x="1412" y="1136">
+  <object id="26" x="1433.21" y="1460.24">
    <point/>
   </object>
-  <object id="275" x="1210.91" y="1476.36">
+  <object id="275" x="1738.18" y="1143.03">
    <point/>
   </object>
  </objectgroup>
  <objectgroup name="traps">
-  <object id="231" x="2822.03" y="3067.67">
+  <object id="231" x="2281.79" y="2643.79">
    <point/>
   </object>
-  <object id="232" x="3279.24" y="2837">
+  <object id="232" x="2733.3" y="2469.97">
    <point/>
   </object>
-  <object id="250" x="2850.73" y="2692.42">
+  <object id="250" x="2830.37" y="2827.69">
    <point/>
   </object>
   <object id="252" x="2291.06" y="2233.97">

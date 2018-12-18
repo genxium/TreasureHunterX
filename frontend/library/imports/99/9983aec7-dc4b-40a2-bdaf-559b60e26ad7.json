@@ -1,0 +1,80 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "panda_boy.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "Armature_LeftNewAnimation_01": {
+      "__uuid__": "3f7544c8-554f-477c-b40c-090be6ab226c"
+    },
+    "Armature_LeftNewAnimation_03": {
+      "__uuid__": "56afd5c3-6896-4336-a708-28a0dd9d769b"
+    },
+    "Armature_LeftNewAnimation_04": {
+      "__uuid__": "c4a54de7-892e-4b1a-8913-1407e9d11e6c"
+    },
+    "Armature_LeftNewAnimation_07": {
+      "__uuid__": "4348d2b6-e658-4a9b-82bc-43a2b3218469"
+    },
+    "Armature_LeftNewAnimation_09": {
+      "__uuid__": "dd7f76fb-909a-4254-8809-5e7b250e113f"
+    },
+    "Armature_LeftNewAnimation_11": {
+      "__uuid__": "73502660-bb9f-47e7-afe3-0185c81fa3b8"
+    },
+    "Armature_LeftNewAnimation_13": {
+      "__uuid__": "abda9947-e272-445c-9f63-6d66966d0360"
+    },
+    "Armature_LeftNewAnimation_15": {
+      "__uuid__": "b759f101-6ef1-48f5-8b73-41b5f15f7434"
+    },
+    "Armature_LeftNewAnimation_17": {
+      "__uuid__": "ea9b8e83-4c7e-40a6-8a0c-6cb7ef7fb5fa"
+    },
+    "Armature_LeftNewAnimation_19": {
+      "__uuid__": "41245795-3dbe-4f2e-9334-e99800927643"
+    },
+    "Armature_LeftNewAnimation_21": {
+      "__uuid__": "aacdb3f7-bd3b-4218-9bda-9eac625d65f2"
+    },
+    "Armature_LeftNewAnimation_23": {
+      "__uuid__": "c959bdfa-1da8-4273-b8c6-e2e1a225f436"
+    },
+    "Armature_RightNewAnimation_01": {
+      "__uuid__": "8d2b217f-e2a8-42e8-aa05-c1ad12b2c492"
+    },
+    "Armature_RightNewAnimation_03": {
+      "__uuid__": "c0c6a118-11a7-443c-9602-5411340a63af"
+    },
+    "Armature_RightNewAnimation_04": {
+      "__uuid__": "c15c43f4-6e3c-4700-b51b-17889421ee81"
+    },
+    "Armature_RightNewAnimation_07": {
+      "__uuid__": "93a4802b-3d47-406c-ad5a-91fa83c78f44"
+    },
+    "Armature_RightNewAnimation_09": {
+      "__uuid__": "3ad9fb71-def0-4399-8036-6c150fd748ac"
+    },
+    "Armature_RightNewAnimation_11": {
+      "__uuid__": "f3ffbd9e-3562-4688-bf42-210aa841a86b"
+    },
+    "Armature_RightNewAnimation_13": {
+      "__uuid__": "6ccdfcf7-38ec-4a11-a87f-a88c14f26b8b"
+    },
+    "Armature_RightNewAnimation_15": {
+      "__uuid__": "63b4fed8-0b66-45ae-a6d0-d6d78243cf40"
+    },
+    "Armature_RightNewAnimation_17": {
+      "__uuid__": "f9a85c68-5c95-42db-8ba1-40f69ed2a329"
+    },
+    "Armature_RightNewAnimation_19": {
+      "__uuid__": "cc04b8ec-b49c-45ce-a3fc-400c258bfdc5"
+    },
+    "Armature_RightNewAnimation_21": {
+      "__uuid__": "0e40bae8-fef6-4d0d-9c2c-7ad791d1dcc5"
+    },
+    "Armature_RightNewAnimation_23": {
+      "__uuid__": "ee7e38bc-da33-44cd-81ba-338f28acc9fa"
+    }
+  }
+}

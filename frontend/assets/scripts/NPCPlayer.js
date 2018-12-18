@@ -179,6 +179,7 @@ cc.Class({
       '2-1': 'FlatHeadSisterRunBottomRight'
     };
 
+
     self.onStunnedAnimPlayedSafe = () => {
       const oldCollisionWithPlayerState = self.collisionWithPlayerState;
       self.collisionWithPlayerState = transitStunnedAnimPlayingToPlayed(this.collisionWithPlayerState, true);

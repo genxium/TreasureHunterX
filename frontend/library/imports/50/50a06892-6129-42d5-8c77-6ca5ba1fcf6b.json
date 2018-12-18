@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "PandaAtacked",
+    "texture": "fcfe661d-9fd2-45da-a58c-920cf4b3fcbe",
+    "atlas": "",
+    "rect": [
+      0,
+      10,
+      451,
+      644
+    ],
+    "offset": [
+      -2.5,
+      0
+    ],
+    "originalSize": [
+      456,
+      664
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -73,7 +73,8 @@ module.export = cc.Class({
     if (forceAnimSwitch || null == this.scheduledDirection || newScheduledDirection.dx != this.scheduledDirection.dx || newScheduledDirection.dy != this.scheduledDirection.dy) {
       this.scheduledDirection = newScheduledDirection;
       var clipKey = newScheduledDirection.dx.toString() + newScheduledDirection.dy.toString();
-      var clip = this.clips[clipKey];
+      var clips = this.attacked ? this.attackedClips : this.clips;
+      var clip = clips[clipKey];
       if (!clip) {
         // Keep playing the current anim.
         if (0 !== newScheduledDirection.dx || 0 !== newScheduledDirection.dy) {
@@ -576,10 +577,14 @@ module.export = cc.Class({
     this.speed = proposedSpeed;
   },
   startFrozenDisplay: function startFrozenDisplay() {
-    this.node.opacity = 64;
+    var self = this;
+    self.animComp.play("attackedBottom");
+    self.attacked = true;
   },
   stopFrozenDisplay: function stopFrozenDisplay() {
-    this.node.opacity = 255;
+    var self = this;
+    self.animComp.play();
+    self.attacked = false;
   }
 });
 
