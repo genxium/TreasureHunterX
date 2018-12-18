@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "treasure3",
-    "texture": "f40ab057-dbf4-418b-990a-4afeb21d3eb1",
+    "name": "HighTreasure",
+    "texture": "83505953-225f-4516-80a4-65ca59e402a1",
     "atlas": "",
     "rect": [
-      30,
-      34,
-      202,
-      89
+      7,
+      16,
+      247,
+      233
     ],
     "offset": [
-      3,
-      -14.5
+      2.5,
+      -4.5
     ],
     "originalSize": [
       256,
-      128
+      256
     ],
     "capInsets": [
       0,

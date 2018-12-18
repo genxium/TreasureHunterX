@@ -1,18 +1,18 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "HighTreasure",
-    "texture": "6dec9f8d-3729-43d0-8fbf-0074c49abe30",
+    "name": "traps",
+    "texture": "ab39536e-a03e-4e67-90ff-89b9f6426708",
     "atlas": "",
     "rect": [
-      7,
-      16,
-      247,
-      233
+      20,
+      67,
+      219,
+      161
     ],
     "offset": [
-      2.5,
-      -4.5
+      1.5,
+      -19.5
     ],
     "originalSize": [
       256,

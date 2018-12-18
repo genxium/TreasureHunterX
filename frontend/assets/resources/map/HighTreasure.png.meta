@@ -1,6 +1,6 @@
 {
   "ver": "2.3.0",
-  "uuid": "6dec9f8d-3729-43d0-8fbf-0074c49abe30",
+  "uuid": "83505953-225f-4516-80a4-65ca59e402a1",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,8 +9,8 @@
   "subMetas": {
     "HighTreasure": {
       "ver": "1.0.3",
-      "uuid": "d8774be6-dc4e-4c88-9cf7-597a3501696a",
-      "rawTextureUuid": "6dec9f8d-3729-43d0-8fbf-0074c49abe30",
+      "uuid": "f8521975-9437-4b65-a6f8-64e9edaca0a2",
+      "rawTextureUuid": "83505953-225f-4516-80a4-65ca59e402a1",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "Armature_run_01",
+    "name": "trap",
     "texture": "edb2963c-8153-4597-8bc4-554c0195ee62",
     "atlas": "",
     "rect": [
-      1,
-      2,
-      146,
-      115
+      20,
+      67,
+      219,
+      161
     ],
     "offset": [
-      -0.5,
-      2.5
+      1.5,
+      -19.5
     ],
     "originalSize": [
-      149,
-      124
+      256,
+      256
     ],
     "capInsets": [
       0,

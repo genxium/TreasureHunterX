@@ -1,102 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="80" height="80" tilewidth="64" tileheight="64" infinite="0" nextobjectid="218">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextobjectid="285">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
- <layer name="tile_1 floor" width="80" height="80">
+ <tileset firstgid="10" source="HighTreasure.tsx"/>
+ <tileset firstgid="14" source="traps.tsx"/>
+ <layer name="tile_1 floor" width="70" height="70">
   <properties>
    <property name="type" value="normal"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0ssOwjAMRNHw/z/NFoFa4jw8E/damgUIkvFpX621F+nO96w+V71ftuGd61M8ZgyvPuMX8yNjhuoOhBBCCCEkP82gw8nBDz/8fjtFRt1V7TVj9z1P9tsx+K2Z6n4ZU9Uvc9S7ZtjtfhbqnXfY7X4m1fx271PdMGOPyn7ZzwlD7Jz8MJzzU3fr7a++/3Q/ZdeT/dRd/43ax9nun5/aBzvs3OLQEzvsHHq4dBrpTJfz+jp1Ge3r5Kf2Oc3vNENHv7tebn3d+oz6qTq79DjV0KVHb0e37g4dduzwhLsr7FHVr/pzq2Cn8lt5j9JO4bf6LqWdg9/MfWo7hd+q3R3sTjV0srvyy+gWvSe736zh6Dk73iNnuxWG0f9Ffj/aycEvulvvfpHfR892NOyd1e9q9GyHjM7M+Uq7HedHZ8X5I++no12v48z9vZOx2847VM8mY6/T/e4cM+9W77/aMPte9e7sQgjJTjPoQAghhJDnpV189znqjq7BxidveNEWRw==
+   eJztwwENAAAMw6DOv+kLOSSsmqqqqqqqqqqqqqqqqqqqqqqqqvryAVfrEyU=
   </data>
  </layer>
- <layer name="tile_1 human skeleton" width="80" height="80">
+ <layer name="tile_1 human skeleton" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0LEJwDAQBMGP1H/JbsDZIiOLGbj4YNfMLDOzA7fDVz+30q/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9Gv0a/Rr9GveetnZv/bAyHbFTE=
+   eJzt0KENACAQwMBX7D8yAkcqwN8lXaBrZpb0GYcvzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ov7f4ivbQBmKgMwQ==
   </data>
  </layer>
- <layer name="tile_1 board" width="80" height="80">
+ <layer name="tile_1 board" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmEmSxCAMBPvi/395Yg6+EAa0lFTCVl46GrM5Ldbfr2mapvkiF7sDL6Ad+mmHftqhn2v4bebMHLU7OaOrjj89VZyx27eQ7e6Nc0Z232dzxom82d04tqS/Vcnst9Ud2+muvYx+Wes+zaE0P7JtafmqDivGnbRetsNIp9HvxnbIiDv0WsF2aH2uKRu93lY5b0TU7Z3zqzlkuEPVGzlmkHi+ZVQcnObQA3vPwnZY+exZ3R0D65qCqg9NRPyh9unV3UlA7UF26dr2q7hbxZ82NrXOdvWv2q3i74nrFx8niLFZweGTJ5Q76XNLuQruRiLcafNJ8n/NnTZ/u/P1JbtNL+3OjvUeJerOIKMtFN69aYbDt7qz5tfUc6o7bfx53/MkdzfosRvpcPebTdS81w7lexfGHgZZxgPqTJ/t8GmfH92XGdXW31m9T/HOdhjtDr2n0azPLIfV3FXuQ1T8VTgXnxJ/YznvfTFi3T1t/tOUk3jWtM9yx2hf05YljtnudukRbVodst3N2s04D1kcrvZ97DuGkxxWdzemR55DtGt2NXc3jHtAbcxXdXdjdTh7jpz7q7u7kTra3b2h9oHWuploHUrLr/KcOmZnZJw/dulod9LvjyJj3Z2lnxp3I9J5D3Hmn6Wj3LHPJ0h3Y93W56eCfK+sM/hbv8U/b5nvmESvi1/4JpnviFzzvsDq/muWz/L8jUjdSfMw7p1ZaN1J82odnuh2de+qKb+q11JOmh6JZl+P3ONL/2vTq4Lon/cOdJfOjD9vHlR73jFbLQ6r9adpmjj+AF7QCWE=
+   eJztmcGOwyAMRHvp///yKodKFSzEhrFnSP0uUVVqD4NJYvp6FcUa78E1K4/K1aIVDXvOHk9GmtGw54yoFzQr65SR11MvaFieWPNb6iVbUxY79RKFgoaZDiVvWCA8acfuzontyQekNyrrjQIxr6d40YLcS0+jPOlZeX95uicfFPqjGQrvDoz+aIZ6boU6ydTA7I9mjHIyvWHFaGNF5rBqQHiCwBor0xtEjEx/I72JiJ3ZT6jov4vF6LEY+9gTi9l3Rt7vd2Ip9OJqz47ypI9VnvSxypM+VnnSx1LwZIfypCfSk1PPOyPfjU+tl4h+VO0cYjW3dRzLm0xW68Tyu4wzp0jucu6cDT7Vm1XPvr/L9CbjXAVxL464bzLOtlfnMfs/QGkNkTl3xiuuYQYsTzJzeFHUxMbzjP4Vfm2+Fk7tiS+i9KjN04PSs0tBwwXjXedUmN6or4u6PiZKPboK6voY1P2lR0GXgoZvsvVkn7+soKLjIsob5BlRJJZ6QWnzxlP0EO3NaZ546gV1XdGEHL+DZ65vx3hvftQ4L7v18p8/qD3I+M/pLq7Xk7vv0BqjPVmtlwxPWj2jzygsulU8GelBY9n7ap60unZ/79kPReHlD8GOCME=
   </data>
  </layer>
- <layer name="tile_1 stone" width="80" height="80">
+ <layer name="tile_1 stone" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt29GOgkAMQFFjsv//y/vuLjDSYVrKOS8maoS5NmbE+HoBAADEvbNPgEcydwBU9/64hZXMH5nMH5kqzN9P4rFn0O6eurTLmL8u7TJ0a1dx71LxnLhGxfe64jmt8rS1z9xDV9iPZ5jZLvqad2t/RbuZr13Zle1mHqOr0TYa/qVdnDZxGsaNNux27WCmo73zk9uNrl27bdEGGsZpGKdhXOeGq/ZzHRuu3gsfNbQ3P9ZxDgHgLHuHuBUNu79PW7/rdl/3TJoB3I/PbjKZOzKZPzKZP6owi+fttdN138h3EA3/9027J/yX4HOte2sfec7Wc88+Pnp/dZF2R9fcR6/JH92fYeTY38wocE+/vZIBHg==
+   eJztmssSwiAMRTv+/0c77pzSKI/ccBPu2bjQhnAKJVCvSwghxMm8jM/ZOJVYdXKPUwmvPlV044XctHjNyUp4PcMrYblAuMni+9/4yNIPD0bnzAlu9ByxkRMbOeECOVaz32ukk+xuPImou3pZadszb6a6i2WsMtVdHm1Fxohwk2WcrP6eJfYITGe12Z14XY+KtcIOJ0xr3RM7nTDVRt/snDtVnXjCkgtLHh9Y1rIMTqJzzOQkeo/I4KZ3nET3j/Gs4OQ5Ndv3E92w7N1784rYJ7Ps3Xvr7+znKiOxe98JM6xXK3g6mYnJCMJJBn71IWstt4q3E49ro4leBzK4mXHC8h4liky5oliZO9X9VVg70TU5+hoEFe4rGgY3DDk8wZrX6ei+2LCcbzHSe14gN/b3u8cXwxmy9f2IG5b3oqg2705270sZ3FhOUGc7VruesXeA/A+YnMTGRiInLXLSIictctIiJ+JU3gFXAZU=
   </data>
  </layer>
  <objectgroup name="controlled_players_starting_pos_list">
-  <object id="25" x="1644" y="2452">
+  <object id="26" x="1412" y="1136">
    <point/>
   </object>
-  <object id="26" x="1732" y="1456">
+  <object id="275" x="1210.91" y="1476.36">
    <point/>
   </object>
  </objectgroup>
  <objectgroup name="traps">
-  <object id="41" x="1978" y="2058">
+  <object id="231" x="2822.03" y="3067.67">
    <point/>
   </object>
-  <object id="45" x="1346" y="1790">
+  <object id="232" x="3279.24" y="2837">
    <point/>
   </object>
-  <object id="46" x="2610" y="1742">
+  <object id="250" x="2850.73" y="2692.42">
    <point/>
   </object>
-  <object id="47" x="1720" y="1724">
+  <object id="252" x="2291.06" y="2233.97">
+   <point/>
+  </object>
+  <object id="268" x="3504.88" y="3470.09">
+   <point/>
+  </object>
+  <object id="270" x="815.21" y="420.303">
    <point/>
   </object>
  </objectgroup>
  <objectgroup name="treasures">
-  <object id="32" x="1426" y="2598">
+  <object id="227" x="2404" y="3938.67">
    <point/>
   </object>
-  <object id="33" x="1360" y="2784">
+  <object id="228" x="2629.33" y="4168">
    <point/>
   </object>
-  <object id="34" x="2342" y="1562">
+  <object id="229" x="4173.33" y="2618.67">
    <point/>
   </object>
-  <object id="35" x="2462" y="1558">
+  <object id="230" x="3938" y="2395.33">
    <point/>
   </object>
-  <object id="36" x="2660" y="1504">
+  <object id="254" x="1444.06" y="2166.24">
    <point/>
   </object>
-  <object id="37" x="1910" y="2642">
+  <object id="255" x="2234.24" y="1367.82">
    <point/>
   </object>
-  <object id="39" x="2070" y="2730">
+  <object id="256" x="1778" y="2490">
    <point/>
   </object>
-  <object id="40" x="1892" y="3028">
+  <object id="257" x="2534" y="1718">
    <point/>
   </object>
-  <object id="180" x="2926" y="1518">
+  <object id="259" x="326" y="950">
    <point/>
   </object>
-  <object id="185" x="2146" y="3170">
+  <object id="260" x="628" y="652">
    <point/>
   </object>
-  <object id="212" x="2986" y="1966">
+  <object id="261" x="606" y="1566">
    <point/>
   </object>
-  <object id="213" x="3436" y="1896">
+  <object id="262" x="598" y="2046">
    <point/>
   </object>
-  <object id="214" x="2732" y="2092">
+  <object id="264" x="1721.58" y="4147.03">
    <point/>
   </object>
-  <object id="216" x="1436" y="3496">
+  <object id="265" x="2554" y="3434">
+   <point/>
+  </object>
+  <object id="266" x="3795.7" y="4223.33">
+   <point/>
+  </object>
+  <object id="267" x="4210.18" y="3790.79">
+   <point/>
+  </object>
+  <object id="271" x="1518.12" y="414.848">
+   <point/>
+  </object>
+  <object id="273" x="444.242" y="2418.79">
+   <point/>
+  </object>
+  <object id="274" x="2223.03" y="500.606">
+   <point/>
+  </object>
+  <object id="276" x="801.82" y="3794.55">
+   <point/>
+  </object>
+  <object id="277" x="1447.27" y="3779.39">
+   <point/>
+  </object>
+  <object id="278" x="3453.33" y="633.939">
+   <point/>
+  </object>
+  <object id="279" x="3786.67" y="1579.39">
+   <point/>
+  </object>
+  <object id="280" x="1138.18" y="2500.61">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="HighTreasure">
+  <object id="223" x="1997.15" y="1921.88">
+   <point/>
+  </object>
+  <object id="224" x="2519.33" y="4050">
+   <point/>
+  </object>
+  <object id="226" x="4086.18" y="4110.73">
+   <point/>
+  </object>
+  <object id="246" x="4066" y="2514">
    <point/>
   </object>
  </objectgroup>
@@ -104,32 +156,34 @@
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
-  <object id="21" x="-240" y="-96">
+  <object id="281" x="-56" y="-32">
    <properties>
-    <property name="boundary_type" value="barrier"/>
+    <property name="type" value="barrier_and_shelter"/>
    </properties>
-   <polyline points="0,0 -56,416 5512,304 5480,8 164,-28"/>
+   <polyline points="0,0 -8,4584 236,4588 264,-88 120,-88"/>
   </object>
-  <object id="22" x="4804" y="-148">
+  <object id="282" x="4464" y="-64">
    <properties>
-    <property name="boundary_type" value="barrier"/>
+    <property name="type" value="barrier_and_shelter"/>
    </properties>
-   <polyline points="116,140 132,5420 420,5404 388,-12 132,4"/>
+   <polyline points="0,0 -4436,12 -4432,232 80,224 92,132"/>
   </object>
-  <object id="23" x="-104" y="4912">
+  <object id="283" x="4352" y="4336">
    <properties>
-    <property name="boundary_type" value="barrier"/>
+    <property name="type" value="barrier_and_shelter"/>
    </properties>
-   <polyline points="0,0 -4,340 5284,300 5236,12 124,-4"/>
+   <polyline points="0,0 -4340,-28 -4304,216 156,236 176,-16"/>
   </object>
-  <object id="217" x="-108" y="-44">
-   <polyline points="0,0 72,5200 240,5208 244,-4"/>
+  <object id="284" x="4308" y="44">
+   <properties>
+    <property name="type" value="barrier_and_shelter"/>
+   </properties>
+   <polyline points="0,0 40,4392 216,4400 212,-28 140,-36"/>
   </object>
  </objectgroup>
  <objectgroup name="frame anim">
   <properties>
    <property name="type" value="frame_anim"/>
   </properties>
-  <object id="6" gid="10" x="2376" y="2376" width="128" height="128"/>
  </objectgroup>
 </map>
