@@ -1044,14 +1044,9 @@
     "meta": 1545128922000,
     "relativePath": "scripts/SelfPlayer.js"
   },
-  "a7880898-f0eb-4957-892c-d8157c15efe2": {
-    "asset": 1545130055000,
-    "meta": 1545130058000,
-    "relativePath": "resources/map/treasurehunter.tmx"
-  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545130290000,
-    "meta": 1545130307000,
+    "asset": 1545131524000,
+    "meta": 1545131524000,
     "relativePath": "scenes/login.fire"
   },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
@@ -1088,5 +1083,10 @@
     "asset": 1545130721000,
     "meta": 1545130739000,
     "relativePath": "plugin_scripts/constants.js"
+  },
+  "a7880898-f0eb-4957-892c-d8157c15efe2": {
+    "asset": 1545131522000,
+    "meta": 1545131523000,
+    "relativePath": "resources/map/treasurehunter.tmx"
   }
 }

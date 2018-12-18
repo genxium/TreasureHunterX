@@ -45,19 +45,19 @@
   </object>
  </objectgroup>
  <objectgroup name="traps">
-  <object id="231" x="2281.79" y="2643.79">
+  <object id="231" x="2790.88" y="2801.37">
    <point/>
   </object>
-  <object id="232" x="2733.3" y="2469.97">
+  <object id="232" x="3118.15" y="2642.7">
    <point/>
   </object>
-  <object id="250" x="2830.37" y="2827.69">
+  <object id="250" x="2921.28" y="3154.97">
    <point/>
   </object>
-  <object id="252" x="2291.06" y="2233.97">
+  <object id="252" x="2285" y="2209.73">
    <point/>
   </object>
-  <object id="268" x="3504.88" y="3470.09">
+  <object id="268" x="3483.67" y="3454.94">
    <point/>
   </object>
   <object id="270" x="815.21" y="420.303">
@@ -158,25 +158,25 @@
   </properties>
   <object id="281" x="-56" y="-32">
    <properties>
-    <property name="type" value="barrier_and_shelter"/>
+    <property name="boundary_type" value="barrier"/>
    </properties>
    <polyline points="0,0 -8,4584 236,4588 264,-88 120,-88"/>
   </object>
   <object id="282" x="4464" y="-64">
    <properties>
-    <property name="type" value="barrier_and_shelter"/>
+    <property name="boundary_type" value="barrier"/>
    </properties>
    <polyline points="0,0 -4436,12 -4432,232 80,224 92,132"/>
   </object>
   <object id="283" x="4352" y="4336">
    <properties>
-    <property name="type" value="barrier_and_shelter"/>
+    <property name="boundary_type" value="barrier"/>
    </properties>
    <polyline points="0,0 -4340,-28 -4304,216 156,236 176,-16"/>
   </object>
   <object id="284" x="4308" y="44">
    <properties>
-    <property name="type" value="barrier_and_shelter"/>
+    <property name="boundary_type" value="barrier"/>
    </properties>
    <polyline points="0,0 40,4392 216,4400 212,-28 140,-36"/>
   </object>
