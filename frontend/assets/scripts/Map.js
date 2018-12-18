@@ -236,11 +236,14 @@ cc.Class({
   _lazilyTriggerResync() {
     if (true == this.resyncing) return; 
     this.resyncing = false;
-    this.popupSimplePressToGo("Resyncing your battle, please wait...");
+    if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
+      this.popupSimplePressToGo("Resyncing your battle, please wait...");
+    }
   },
 
   _onResyncCompleted() {
     if (false == this.resyncing) return; 
+    cc.log(`_onResyncCompleted`);
     this.resyncing = true;
   },
 
@@ -360,7 +363,7 @@ cc.Class({
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
-      this._inputControlEnabled = false;
+      self._inputControlEnabled = false;
       self.setupInputControls();
 
       const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
@@ -442,19 +445,30 @@ cc.Class({
         }
         const refFrameId = diffFrame.refFrameId;
         const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId); 
-        if (refFrameId % 60 == 0) {
+        /*
+        if (frameId % 300 == 0) {
+          // WARNING: For testing only!
+          if (0 < frameId) {
+            self._lazilyTriggerResync(); 
+          }
           cc.log(`${JSON.stringify(diffFrame)}`);
         }
+        */
         const cachedFullFrame = self.recentFrameCache[refFrameId];
-        if (!isInitiatingFrame && self.useDiffFrameAlgo && null == cachedFullFrame) {
-          this._lazilyTriggerResync();
+        if (
+          !isInitiatingFrame 
+          && self.useDiffFrameAlgo 
+          && 0 < self.recentFrameCacheCurrentSize // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
+          && null == cachedFullFrame
+        ) {
+          self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
         } 
         
         if (isInitiatingFrame && 0 == refFrameId) {
           // Reaching here implies that you've received the resync frame.
-          this._onResyncCompleted();
+          self._onResyncCompleted();
         }
         let countdownNanos = diffFrame.countdownNanos;
         if (countdownNanos < 0) countdownNanos = 0;

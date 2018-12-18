@@ -123,6 +123,9 @@
    <polyline points="0,0 -4,340 5284,300 5236,12 124,-4"/>
   </object>
   <object id="217" x="-108" y="-44">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
    <polyline points="0,0 72,5200 240,5208 244,-4"/>
   </object>
  </objectgroup>

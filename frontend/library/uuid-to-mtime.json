@@ -920,8 +920,8 @@
     "relativePath": "resources\\animation\\findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545057822482,
-    "meta": 1545057822488,
+    "asset": 1545108061926,
+    "meta": 1545108061933,
     "relativePath": "scenes\\login.fire"
   },
   "3b807ebc-0636-4486-b8e1-3a817a06637f": {
@@ -933,11 +933,6 @@
     "asset": 1545032420194,
     "meta": 1545032422496,
     "relativePath": "plugin_scripts\\conf.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545057741987,
-    "meta": 1545057802657,
-    "relativePath": "scripts\\Map.js"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
     "asset": 1545026434151,
@@ -953,11 +948,6 @@
     "asset": 1545025842862,
     "meta": 1545033151230,
     "relativePath": "resources\\map\\tile_1.png"
-  },
-  "a7880898-f0eb-4957-892c-d8157c15efe2": {
-    "asset": 1545030880785,
-    "meta": 1545033151260,
-    "relativePath": "resources\\map\\treasurehunter.tmx"
   },
   "f40ab057-dbf4-418b-990a-4afeb21d3eb1": {
     "asset": 1545025842859,
@@ -981,27 +971,37 @@
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1544274621863,
-    "meta": 1545057803439,
+    "meta": 1545105627965,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1544274621865,
-    "meta": 1545057803451,
+    "meta": 1545105627985,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1544274621867,
-    "meta": 1545057803498,
+    "meta": 1545105628068,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1544274621869,
-    "meta": 1545057803503,
+    "meta": 1545105628076,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1544274621870,
-    "meta": 1545057803505,
+    "meta": 1545105628079,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545107991524,
+    "meta": 1545107994941,
+    "relativePath": "scripts\\Map.js"
+  },
+  "a7880898-f0eb-4957-892c-d8157c15efe2": {
+    "asset": 1545108058463,
+    "meta": 1545108060466,
+    "relativePath": "resources\\map\\treasurehunter.tmx"
   }
 }
