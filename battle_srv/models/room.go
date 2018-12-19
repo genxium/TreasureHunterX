@@ -1055,4 +1055,14 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
 	// TODO
+	//xiaomai 重新加入时重新分配joinIndex
+	for index, value := range pR.JoinIndexBooleanArr {
+		if value == false {
+			pR.Players[playerId].JoinIndex = int32(index) + 1
+			pR.JoinIndexBooleanArr[index] = true
+			break
+		}
+	}
+	Logger.Info("room JoinIndexBooleanArr", zap.Any(":", pR.JoinIndexBooleanArr))
+	pR.updateScore()
 }
