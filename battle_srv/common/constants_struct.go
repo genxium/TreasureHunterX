@@ -32,6 +32,7 @@ type constants struct {
 		LackOfGold                                       int    `json:"LACK_OF_GOLD"`
 		MapNotUnlocked                                   int    `json:"MAP_NOT_UNLOCKED"`
 		MysqlError                                       int    `json:"MYSQL_ERROR"`
+		GetSmsCaptchaRespErrorCode                       int    `json:"GET_SMS_CAPTCHA_RESP_ERROR_CODE"`
 		NewHandleConflict                                int    `json:"NEW_HANDLE_CONFLICT"`
 		NonexistentAct                                   int    `json:"NONEXISTENT_ACT"`
 		NonexistentActHandler                            int    `json:"NONEXISTENT_ACT_HANDLER"`

@@ -1,9 +1,14 @@
 package v1
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"net/http"
 	"server/api"
 	. "server/common"
@@ -98,6 +103,16 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 			succRet = Constants.RetCode.Ok
 			pass = true
 		}
+		//hardecode 只验证国内手机号格式
+		if req.CountryCode == "86" {
+			if RE_CHINA_PHONE_NUM.MatchString(req.Num) {
+				succRet = Constants.RetCode.Ok
+				pass = true
+			} else {
+				succRet = Constants.RetCode.Ok
+				pass = false
+			}
+		}
 	}
 	if !pass {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
@@ -106,16 +121,33 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	resp := struct {
 		Ret int `json:"ret"`
 		smsCaptchReq
+		GetSmsCaptchaRespErrorCode int `json:"getSmsCaptchaRespErrorCode"`
 	}{Ret: succRet}
 	var captcha string
 	if ttl >= 0 {
 		// 续验证码时长，重置剩余时长
 		storage.RedisManagerIns.Expire(redisKey, ConstVals.Player.CaptchaExpire)
 		captcha = storage.RedisManagerIns.Get(redisKey).Val()
+		if ttl >= ConstVals.Player.CaptchaExpire/4 {
+			if succRet == Constants.RetCode.Ok {
+				getSmsCaptchaRespErrorCode := sendMessage(req.Num, req.CountryCode, captcha)
+				if getSmsCaptchaRespErrorCode != 0 {
+					resp.Ret = Constants.RetCode.GetSmsCaptchaRespErrorCode
+					resp.GetSmsCaptchaRespErrorCode = getSmsCaptchaRespErrorCode
+				}
+			}
+		}
 		Logger.Debug("redis captcha", zap.String("key", redisKey), zap.String("captcha", captcha))
 	} else {
 		// 校验通过，进行验证码生成处理
 		captcha = strconv.Itoa(utils.Rand.Number(1000, 9999))
+		if succRet == Constants.RetCode.Ok {
+			getSmsCaptchaRespErrorCode := sendMessage(req.Num, req.CountryCode, captcha)
+			if getSmsCaptchaRespErrorCode != 0 {
+				resp.Ret = Constants.RetCode.GetSmsCaptchaRespErrorCode
+				resp.GetSmsCaptchaRespErrorCode = getSmsCaptchaRespErrorCode
+			}
+		}
 		storage.RedisManagerIns.Set(redisKey, captcha, ConstVals.Player.CaptchaExpire)
 		Logger.Debug("gen new captcha", zap.String("key", redisKey), zap.String("captcha", captcha))
 	}
@@ -358,4 +390,77 @@ func (p *playerController) getIntAuthToken(c *gin.Context) string {
 		return ""
 	}
 	return req.Token
+}
+
+type tel struct {
+	Mobile     string `json:"mobile"`
+	Nationcode string `json:"nationcode"`
+}
+
+type captchaReq struct {
+	Ext    string     `json:"ext"`
+	Extend string     `json:"extend"`
+	Params *[2]string `json:"params"`
+	Sig    string     `json:"sig"`
+	Sign   string     `json:"sign"`
+	Tel    *tel       `json:"tel"`
+	Time   int64      `json:"time"`
+	Tpl_id int        `json:"tpl_id"`
+}
+
+func sendMessage(mobile string, nationcode string, captchaCode string) int {
+	tel := &tel{
+		Mobile:     mobile,
+		Nationcode: nationcode,
+	}
+	var captchaExpireMin string
+	//短信有效期hardcode
+	if Conf.General.ServerEnv == SERVER_ENV_TEST {
+		//测试环境下有效期为20秒 先hardcode了
+		captchaExpireMin = "0.5"
+	} else {
+		captchaExpireMin = strconv.Itoa(int(ConstVals.Player.CaptchaExpire) / 60000000000)
+	}
+	params := [2]string{captchaCode, captchaExpireMin}
+	appkey := "41a5142feff0b38ade02ea12deee9741"
+	rand := strconv.Itoa(utils.Rand.Number(1000, 9999))
+	now := utils.UnixtimeSec()
+
+	hash := sha256.New()
+	hash.Write([]byte("appkey=" + appkey + "&random=" + rand + "&time=" + strconv.FormatInt(now, 10) + "&mobile=" + mobile))
+	md := hash.Sum(nil)
+	sig := hex.EncodeToString(md)
+
+	reqData := &captchaReq{
+		Ext:    "",
+		Extend: "",
+		Params: &params,
+		Sig:    sig,
+		Sign:   "洛克互娱",
+		Tel:    tel,
+		Time:   now,
+		Tpl_id: 207399,
+	}
+	reqDataString, err := json.Marshal(reqData)
+	req := bytes.NewBuffer([]byte(reqDataString))
+	if err != nil {
+		Logger.Info("json marshal", zap.Any("err:", err))
+		return -1
+	}
+	resp, err := http.Post("https://yun.tim.qq.com/v5/tlssmssvr/sendsms?sdkappid=1400150185&random="+rand,
+		"application/json",
+		req)
+	if err != nil {
+		Logger.Info("resp", zap.Any("err:", err))
+	}
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Logger.Info("body", zap.Any("response body err:", err))
+	}
+	type bodyStruct struct {
+		Result int `json:"result"`
+	}
+	var body bodyStruct
+	json.Unmarshal(respBody, &body)
+	return body.Result
 }
