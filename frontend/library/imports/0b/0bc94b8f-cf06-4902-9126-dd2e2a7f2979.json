@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Armature_newAnimation_01",
+    "texture": "85e736bc-c67d-4499-b2da-a72d6bcb701b",
+    "atlas": "",
+    "rect": [
+      4,
+      1,
+      87,
+      149
+    ],
+    "offset": [
+      -5,
+      -0.5
+    ],
+    "originalSize": [
+      105,
+      150
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

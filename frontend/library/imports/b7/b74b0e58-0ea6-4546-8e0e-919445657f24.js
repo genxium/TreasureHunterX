@@ -15,16 +15,6 @@ cc.Class({
   },
   onLoad: function onLoad() {
     BasePlayer.prototype.onLoad.call(this);
-    this.clips = {
-      '01': 'FlatHeadSisterRunTop',
-      '0-1': 'FlatHeadSisterRunBottom',
-      '-20': 'FlatHeadSisterRunLeft',
-      '20': 'FlatHeadSisterRunRight',
-      '-21': 'FlatHeadSisterRunTopLeft',
-      '21': 'FlatHeadSisterRunTopRight',
-      '-2-1': 'FlatHeadSisterRunBottomLeft',
-      '2-1': 'FlatHeadSisterRunBottomRight'
-    };
     this.attackedClips = {
       '01': 'attackedTop',
       '0-1': 'attackedBottom',

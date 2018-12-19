@@ -54,6 +54,16 @@ module.export = cc.Class({
 
   onLoad() {
     const self = this;
+    self.clips = {
+      '01': 'Top',
+      '0-1': 'Bottom',
+      '-20': 'Left',
+      '20': 'Right',
+      '-21': 'TopLeft',
+      '21': 'TopRight',
+      '-2-1': 'BottomLeft',
+      '2-1': 'BottomRight'
+    };
     const canvasNode = self.mapNode.parent;
     self.contactedBarriers = [];
     const joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");

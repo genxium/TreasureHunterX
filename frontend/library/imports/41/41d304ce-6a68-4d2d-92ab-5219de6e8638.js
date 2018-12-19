@@ -47,14 +47,6 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    npcPlayerPrefab: {
-      type: cc.Prefab,
-      default: null
-    },
-    type2NpcPlayerPrefab: {
-      type: cc.Prefab,
-      default: null
-    },
     barrierPrefab: {
       type: cc.Prefab,
       default: null
@@ -625,7 +617,7 @@ cc.Class({
           // Log the obsolete frames?
           return;
         }
-        var isInitiatingFrame = 0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId;
+        var isInitiatingFrame = 0 > self.recentFrameCacheCurrentSize || 0 == refFrameId;
         /*
         if (frameId % 300 == 0) {
           // WARNING: For testing only!

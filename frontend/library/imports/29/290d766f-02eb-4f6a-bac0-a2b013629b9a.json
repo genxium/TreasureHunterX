@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Armature_run_21",
+    "texture": "8413bbe6-53e8-40e0-87d3-3e25f5b8e1ae",
+    "atlas": "",
+    "rect": [
+      11,
+      4,
+      68,
+      146
+    ],
+    "offset": [
+      -4.5,
+      -2
+    ],
+    "originalSize": [
+      99,
+      150
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
