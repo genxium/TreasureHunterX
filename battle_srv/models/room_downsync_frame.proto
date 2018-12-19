@@ -17,6 +17,7 @@ message Player {
   string name = 8;
   string displayName = 9;
   int32 score = 10;
+  bool removed = 11;
   int32 joinIndex = 12;
 }
 

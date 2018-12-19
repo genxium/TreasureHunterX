@@ -867,11 +867,10 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
 	playerJoinIndexFrame := &RoomDownsyncFrame{
-		Id:             pR.Tick,
-		Players:        pR.Players,
-		SentAt:         utils.UnixtimeMilli(),
-		CountdownNanos: utils.UnixtimeNano(),
-		RefFrameId:     -1, // Hardcoded for messages in waiting state.
+		Id:         pR.Tick,
+		Players:    pR.Players,
+		SentAt:     utils.UnixtimeMilli(),
+		RefFrameId: -99, // Hardcoded for Ready to start.
 	}
 	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
 	if marshalErr != nil {
@@ -1009,7 +1008,7 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 func (pR *Room) onPlayerLost(playerId int32) {
 	if _, existent := pR.Players[playerId]; existent {
 		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
-		pR.JoinIndexBooleanArr[pR.Players[playerId].JoinIndex] = false
+		pR.JoinIndexBooleanArr[pR.Players[playerId].JoinIndex-1] = false
 		pR.Players[playerId].JoinIndex = -1
 		utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
 		delete(pR.PlayerDownsyncChanDict, playerId)
@@ -1024,18 +1023,17 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	}
 	for index, value := range pR.JoinIndexBooleanArr {
 		if value == false {
-			pR.Players[playerId].JoinIndex = int32(index)
+			pR.Players[playerId].JoinIndex = int32(index) + 1
 			pR.JoinIndexBooleanArr[index] = true
 			break
 		}
 	}
 	pR.updateScore()
-	Logger.Info("onplyaerAdd players:", zap.Any(":", pR.Players))
 	playerJoinIndexFrame := &RoomDownsyncFrame{
 		Id:         pR.Tick,
 		Players:    pR.Players,
 		SentAt:     utils.UnixtimeMilli(),
-		RefFrameId: -2, // Hardcoded for messages in waiting state.
+		RefFrameId: -98, // Hardcoded for messages player joinIndex.
 	}
 
 	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
