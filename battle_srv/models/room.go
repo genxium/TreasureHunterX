@@ -862,6 +862,10 @@ func (pR *Room) onBattlePrepare() {
 	}
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
+	for _, player := range pR.Players {
+		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
+		utils.SendStrSafely("prepare", theForwardingChannel)
+	}
 	time.Sleep(time.Duration(3 * time.Second))
 	pR.updateScore()
 }
