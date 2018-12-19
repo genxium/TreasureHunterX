@@ -578,12 +578,16 @@ module.export = cc.Class({
   },
   startFrozenDisplay: function startFrozenDisplay() {
     var self = this;
-    self.animComp.play("attackedBottom");
+    var clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString();
+    var clip = this.attackedClips[clipKey];
+    self.animComp.play(clip);
     self.attacked = true;
   },
   stopFrozenDisplay: function stopFrozenDisplay() {
     var self = this;
-    self.animComp.play();
+    var clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString();
+    var clip = this.clips[clipKey];
+    self.animComp.play(clip);
     self.attacked = false;
   }
 });

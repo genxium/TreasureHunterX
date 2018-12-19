@@ -1038,6 +1038,9 @@
     "findingPlayerPrefab": {
       "__uuid__": "3ed4c7bc-79d0-4075-a563-d5a58ae798f9"
     },
+    "countdownToBeginGamePrefab": {
+      "__uuid__": "230eeb1f-e0f9-4a41-ab6c-05b3771cbf3e"
+    },
     "_id": "d12gkAmppNlIzqcRDELa91"
   },
   {

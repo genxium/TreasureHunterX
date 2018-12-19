@@ -446,13 +446,17 @@ module.export = cc.Class({
 
   startFrozenDisplay() {
     const self =  this;
-    self.animComp.play("attackedBottom");
+    const clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString()
+    let clip = this.attackedClips[clipKey];
+    self.animComp.play(clip);
     self.attacked = true;
   },
 
   stopFrozenDisplay() {
     const self = this;
-    self.animComp.play();
+    const clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString()
+    let clip = this.clips[clipKey];
+    self.animComp.play(clip);
     self.attacked = false;
   },
 });

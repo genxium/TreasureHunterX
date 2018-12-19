@@ -2606,7 +2606,9 @@
     "phoneNumberInput": {
       "__id__": 20
     },
-    "phoneNumberTips": null,
+    "phoneNumberTips": {
+      "__id__": 58
+    },
     "smsLoginCaptchaInput": {
       "__id__": 34
     },

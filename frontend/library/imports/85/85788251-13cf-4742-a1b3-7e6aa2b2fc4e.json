@@ -1,0 +1,17 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "3Seconds Countdown.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "BaseBoard": {
+      "__uuid__": "98fbc7d8-f9ec-456e-bfb3-9519400190ca"
+    },
+    "Clock": {
+      "__uuid__": "1b3def72-c17b-47e4-bbb0-3f40ec0d6cab"
+    },
+    "WhiteStars": {
+      "__uuid__": "d654202a-80c9-4f00-bc47-ebb486edc486"
+    }
+  }
+}

@@ -117,6 +117,10 @@ cc.Class({
       type:cc.Prefab,
       default: null
     },
+    countdownToBeginGamePrefab: {
+      type:cc.Prefab,
+      default: null
+    }
   },
   
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
@@ -439,6 +443,10 @@ cc.Class({
         self.node.addChild(newShelter);
       }
 
+      if(ALL_BATTLE_STATES.WAITING == self.battleState) {
+        self.showPopopInCanvas(self.findingPlayerNode);
+      }
+
       window.handleRoomDownsyncFrame = function(diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const frameId = diffFrame.id;
@@ -555,9 +563,6 @@ cc.Class({
         self.lastRoomDownsyncFrameId = frameId;
         // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
-      if(ALL_BATTLE_STATES.WAITING == self.battleState) {
-        self.showPopopInCanvas(self.findingPlayerNode);
-      }
     }
   },
 

@@ -126,6 +126,7 @@ cc.Class({
         switch (res.ret) {
           case self.retCodeDict.OK:
             self.phoneNumberTips.getComponent(cc.Label).string = '';
+            self.captchaTips.getComponent(cc.Label).string = '';
             break;
           case self.retCodeDict.DUPLICATED:
             self.phoneNumberTips.getComponent(cc.Label).string = constants.ALERT.TIP_LABEL.LOG_OUT;

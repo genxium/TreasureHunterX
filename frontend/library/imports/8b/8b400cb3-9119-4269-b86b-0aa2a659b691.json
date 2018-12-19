@@ -197,7 +197,7 @@
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_level": 2,
     "_components": [
       {
@@ -270,7 +270,7 @@
     "_spriteFrame": {
       "__uuid__": "472df5d3-35e7-4184-9e6c-7f41bee65ee3"
     },
-    "_stopped": true,
+    "_stopped": false,
     "playOnLoad": true,
     "autoRemoveOnFinish": false,
     "totalParticles": 200,
