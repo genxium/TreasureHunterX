@@ -43,8 +43,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 62,
-      "height": 71
+      "width": 47,
+      "height": 54
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -104,7 +104,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "9f1cd766-1ded-483a-8401-a539637bae3b"
+    },
     "_id": ""
   },
   {
@@ -146,22 +148,16 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Animation",
+    "__type__": "5eea6zlA0NHdoCk/M1pvQmb",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "_defaultClip": {
-      "__uuid__": "7d1d36be-d94c-44b7-9fa5-c22910627d2d"
+    "animPrefab": {
+      "__uuid__": "4b4216c4-2a64-4f27-b83e-86a0a2779d26"
     },
-    "_clips": [
-      {
-        "__uuid__": "7d1d36be-d94c-44b7-9fa5-c22910627d2d"
-      }
-    ],
-    "playOnLoad": false,
     "_id": ""
   },
   {

@@ -113,6 +113,12 @@ window.initPersistentSessionClient = function(onopenCb) {
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
         break; 
+      case "Ready": {
+        if (window.handleGameReadyResp) {
+          window.handleGameReadyResp(resp);
+        }
+        break;
+      }
       default:
         cc.log(`${JSON.stringify(resp)}`);
         break;

@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "BeforeMushroomsArePickedUp.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "BeforeMushroomsArePickedUp01": {
+      "__uuid__": "3f4e24b4-b97f-4973-88f6-49b25ee703a3"
+    },
+    "BeforeMushroomsArePickedUp02": {
+      "__uuid__": "268a357a-b2a3-49c1-85e8-7717ba696925"
+    },
+    "BeforeMushroomsArePickedUp03": {
+      "__uuid__": "7edefa56-4856-4ff1-be1d-42ad662d5cf8"
+    },
+    "BeforeMushroomsArePickedUp04": {
+      "__uuid__": "ade7a8ff-e151-4e35-9369-26b3af113457"
+    }
+  }
+}

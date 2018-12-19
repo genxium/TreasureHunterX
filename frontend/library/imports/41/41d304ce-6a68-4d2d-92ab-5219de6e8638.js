@@ -340,25 +340,23 @@ cc.Class({
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
 
-    /** init confirmLogoutNode started */
+    /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
-    /** init confirmLogoutNode ended */
 
-    /** init resultPanelNode started */
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
-    /** init resultPanelNode ended */
 
-    /** init gameRuleNode started */
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
     self.showPopopInCanvas(self.gameRuleNode);
-    /** init resultPanelNode ended */
 
-    /** init findingPlayer started */
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
-    /** init findingPlayerNode ended */
+    self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+
+    self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
+
+    /** init requeired prefab ended */
 
     self.clientUpsyncFps = 20;
     self.upsyncLoopInterval = null;
@@ -610,18 +608,27 @@ cc.Class({
         }
       }
 
-      if (ALL_BATTLE_STATES.WAITING == self.battleState) {
-        self.showPopopInCanvas(self.findingPlayerNode);
-      }
-
       window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
+        var refFrameId = diffFrame.refFrameId;
+        if (-99 == refFrameId) {
+          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
+          if (self.findingPlayerNode.parent) {
+            self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+            self.transitToState(ALL_MAP_STATES.VISUAL);
+          }
+          self.showPopopInCanvas(self.countdownToBeginGameNode);
+          return;
+        } else if (-98 == refFrameId) {
+          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
+          self.showPopopInCanvas(self.findingPlayerNode);
+          return;
+        }
         var frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
-        var refFrameId = diffFrame.refFrameId;
         var isInitiatingFrame = 0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId;
         /*
         if (frameId % 300 == 0) {
@@ -750,8 +757,9 @@ cc.Class({
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
     self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
-    if (self.findingPlayerNode.parent) {
-      self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+    if (self.countdownToBeginGameNode.parent) {
+      self.countdownToBeginGameNode.parent.removeChild(self.countdownToBeginGameNode);
+      self.transitToState(ALL_MAP_STATES.VISUAL);
     }
   },
   onBattleStopped: function onBattleStopped(players) {
@@ -974,7 +982,8 @@ cc.Class({
     // Coping with removed treasures.
     for (var _k11 in toRemoveTreasureNodeDict) {
       var _treasureLocalIdInBattle = parseInt(_k11);
-      toRemoveTreasureNodeDict[_k11].parent.removeChild(toRemoveTreasureNodeDict[_k11]);
+      var treasureScriptIns = toRemoveTreasureNodeDict[_k11].getComponent("Treasure");
+      treasureScriptIns.playPickedUpAnimAndDestroy();
       delete self.treasureNodeDict[_treasureLocalIdInBattle];
     }
 

@@ -8,7 +8,7 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    CountdownSeconds: {
+    countdownSeconds: {
       type: cc.Label,
       default: null
     }
@@ -17,11 +17,22 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {},
-  init: function init(mapScriptIns) {
-    this.mapScriptIns = mapScriptIns;
+  start: function start() {
+    this.startedMillis = Date.now();
+    this.durationMillis = 3000;
   },
-  start: function start() {},
-  update: function update() {}
+  update: function update() {
+    var currentGMTMillis = Date.now();
+    var elapsedMillis = currentGMTMillis - this.startedMillis;
+    var remainingMillis = this.durationMillis - elapsedMillis;
+    if (remainingMillis <= 0) {
+      remainingMillis = 0;
+    }
+    var remaingHint = "" + Math.round(remainingMillis / 1000);
+    if (remaingHint != this.countdownSeconds.string) {
+      this.countdownSeconds.string = remaingHint;
+    }
+  }
 });
 
 cc._RF.pop();

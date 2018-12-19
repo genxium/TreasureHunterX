@@ -68,8 +68,12 @@ cc.Class({
         loserInfo = playerInfo;
       }
     }
-    winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
-    loserNameNode.getComponent(cc.Label).string = loserInfo.name;
+    if (winnerInfo.name) {
+      winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
+    }
+    if (loserInfo.name) {
+      loserNameNode.getComponent(cc.Label).string = loserInfo.name;
+    }
 
     var progressComp = compareProgressNode.getComponent(cc.ProgressBar);
     var winnerScore = parseInt(winnerInfo.score);
