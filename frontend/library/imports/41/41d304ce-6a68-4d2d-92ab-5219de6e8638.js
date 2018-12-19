@@ -83,27 +83,11 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    selfPlayerNameLabel: {
-      type: cc.Label,
-      default: null
-    },
-    otherPlayerNameLabel: {
-      type: cc.Label,
-      default: null
-    },
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
     },
     countdownLabel: {
-      type: cc.Label,
-      default: null
-    },
-    selfPlayerScoreLabel: {
-      type: cc.Label,
-      default: null
-    },
-    otherPlayerScoreLabel: {
       type: cc.Label,
       default: null
     },
@@ -126,7 +110,12 @@ cc.Class({
     countdownToBeginGamePrefab: {
       type: cc.Prefab,
       default: null
+    },
+    playersInfoPrefab: {
+      type: cc.Prefab,
+      default: null
     }
+
   },
 
   _generateNewFullFrame: function _generateNewFullFrame(refFullFrame, diffFrame) {
@@ -352,7 +341,9 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
-    self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+
+    self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
+    safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
 
@@ -612,10 +603,15 @@ cc.Class({
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
+          console.log("handleRoomDownsyncFrame and refFrameId < 0, " + JSON.stringify(diffFrame));
           if (self.findingPlayerNode.parent) {
             self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
             self.transitToState(ALL_MAP_STATES.VISUAL);
+            for (var i in diffFrame.players) {
+              var playerInfo = diffFrame.players[i];
+              var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+              playersScriptIns.updateData(playerInfo);
+            }
           }
           self.showPopopInCanvas(self.countdownToBeginGameNode);
           return;
@@ -640,7 +636,7 @@ cc.Class({
         }
         */
         var cachedFullFrame = self.recentFrameCache[refFrameId];
-        if (!isInitiatingFrame && self.useDiffFrameAlgo && 0 < self.recentFrameCacheCurrentSize // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
+        if (!isInitiatingFrame && self.useDiffFrameAlgo && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
         && null == cachedFullFrame) {
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
@@ -668,8 +664,8 @@ cc.Class({
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
-        for (var i = 0; i < playerIdStrList.length; ++i) {
-          var k = playerIdStrList[i];
+        for (var _i4 = 0; _i4 < playerIdStrList.length; ++_i4) {
+          var k = playerIdStrList[_i4];
           var playerId = parseInt(k);
           if (playerId == self.selfPlayerInfo.id) {
             var immediateSelfPlayerInfo = players[k];
@@ -678,7 +674,8 @@ cc.Class({
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
               battleState: immediateSelfPlayerInfo.battleState,
-              score: immediateSelfPlayerInfo.score
+              score: immediateSelfPlayerInfo.score,
+              joinIndex: immediateSelfPlayerInfo.joinIndex
             });
             continue;
           }
@@ -689,8 +686,8 @@ cc.Class({
         self.treasureInfoDict = {};
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
-        for (var _i4 = 0; _i4 < treasuresLocalIdStrList.length; ++_i4) {
-          var _k4 = treasuresLocalIdStrList[_i4];
+        for (var _i5 = 0; _i5 < treasuresLocalIdStrList.length; ++_i5) {
+          var _k4 = treasuresLocalIdStrList[_i5];
           var treasureLocalIdInBattle = parseInt(_k4);
           var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
@@ -699,8 +696,8 @@ cc.Class({
         self.trapInfoDict = {};
         var traps = roomDownsyncFrame.traps;
         var trapsLocalIdStrList = Object.keys(traps);
-        for (var _i5 = 0; _i5 < trapsLocalIdStrList.length; ++_i5) {
-          var _k5 = trapsLocalIdStrList[_i5];
+        for (var _i6 = 0; _i6 < trapsLocalIdStrList.length; ++_i6) {
+          var _k5 = trapsLocalIdStrList[_i6];
           var trapLocalIdInBattle = parseInt(_k5);
           var trapInfo = traps[_k5];
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
@@ -709,8 +706,8 @@ cc.Class({
         self.trapBulletInfoDict = {};
         var bullets = roomDownsyncFrame.bullets;
         var bulletsLocalIdStrList = Object.keys(bullets);
-        for (var _i6 = 0; _i6 < bulletsLocalIdStrList.length; ++_i6) {
-          var _k6 = bulletsLocalIdStrList[_i6];
+        for (var _i7 = 0; _i7 < bulletsLocalIdStrList.length; ++_i7) {
+          var _k6 = bulletsLocalIdStrList[_i7];
           var bulletLocalIdInBattle = parseInt(_k6);
           var bulletInfo = bullets[_k6];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
@@ -796,9 +793,8 @@ cc.Class({
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
-      self.selfPlayerNameLabel.string = self.selfPlayerInfo.displayName;
-      var score = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0;
-      self.selfPlayerScoreLabel.string = score;
+      var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+      playersScriptIns.updateData(self.selfPlayerInfo);
       if (null != self.selfPlayerScriptIns) {
         self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
       }
@@ -822,9 +818,8 @@ cc.Class({
       var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
       //更新信息
       if (null != cachedPlayerData) {
-        self.otherPlayerNameLabel.string = cachedPlayerData.displayName;
-        var _score = cachedPlayerData.score ? cachedPlayerData.score : 0;
-        self.otherPlayerScoreLabel.string = _score;
+        var _playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+        _playersScriptIns.updateData(cachedPlayerData);
       }
       var targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {

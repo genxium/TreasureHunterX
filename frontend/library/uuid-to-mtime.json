@@ -575,8 +575,8 @@
     "relativePath": "resources/prefabs/SelfPlayer.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1545103395000,
-    "meta": 1545115341000,
+    "asset": 1545219030000,
+    "meta": 1545219030000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "e851e89b-faa2-4484-bea6-5c01dd9f06e2": {
@@ -900,8 +900,8 @@
     "relativePath": "resources/map/traps.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1545206472000,
-    "meta": 1545206472000,
+    "asset": 1545216351000,
+    "meta": 1545216351000,
     "relativePath": "scenes/default_map.fire"
   },
   "edb2963c-8153-4597-8bc4-554c0195ee62": {
@@ -1045,8 +1045,8 @@
     "relativePath": "scripts/FindingPlayer.js"
   },
   "7d1d36be-d94c-44b7-9fa5-c22910627d2d": {
-    "asset": 1545206814000,
-    "meta": 1545206814000,
+    "asset": 1545219457000,
+    "meta": 1545219457000,
     "relativePath": "resources/animation/treasurePicked.anim"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
@@ -1085,8 +1085,8 @@
     "relativePath": "resources/textures/treasures/mushroom.png"
   },
   "4b4216c4-2a64-4f27-b83e-86a0a2779d26": {
-    "asset": 1545208331000,
-    "meta": 1545208331000,
+    "asset": 1545219876000,
+    "meta": 1545219876000,
     "relativePath": "resources/prefabs/TreasurePickedAnimPrefab.prefab"
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
@@ -1129,24 +1129,34 @@
     "meta": 1545211505000,
     "relativePath": "scripts/CountdownToBeginGame.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545213316000,
-    "meta": 1545213337000,
-    "relativePath": "scripts/Map.js"
+  "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
+    "asset": 1545217196000,
+    "meta": 1545217196000,
+    "relativePath": "resources/prefabs/PlayersInfo.prefab"
+  },
+  "846cee45-4ca9-4383-8a74-c6a8f3c35617": {
+    "asset": 1545217269000,
+    "meta": 1545217301000,
+    "relativePath": "scripts/PlayersInfo.js"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
-    "asset": 1545213930000,
-    "meta": 1545213932000,
+    "asset": 1545218724000,
+    "meta": 1545218727000,
     "relativePath": "scripts/Treasure.js"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545213932000,
-    "meta": 1545213932000,
-    "relativePath": "scenes/login.fire"
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545219028000,
+    "meta": 1545219030000,
+    "relativePath": "scripts/Map.js"
   },
   "697ef72c-27ee-4184-9ae3-885808d58153": {
-    "asset": 1545213929000,
-    "meta": 1545213932000,
+    "asset": 1545219934000,
+    "meta": 1545219936000,
     "relativePath": "scripts/TreasurePickedUpAnim.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1545219937000,
+    "meta": 1545220011000,
+    "relativePath": "scenes/login.fire"
   }
 }

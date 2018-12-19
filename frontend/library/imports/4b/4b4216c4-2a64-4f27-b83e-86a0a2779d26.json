@@ -21,18 +21,18 @@
         "__id__": 2
       },
       {
-        "__id__": 6
+        "__id__": 5
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 9
+        "__id__": 8
       }
     ],
     "_prefab": {
-      "__id__": 10
+      "__id__": 9
     },
     "_opacity": 255,
     "_color": {
@@ -93,13 +93,10 @@
     "_components": [
       {
         "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 4
     },
     "_opacity": 255,
     "_color": {
@@ -172,25 +169,6 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Animation",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "_defaultClip": {
-      "__uuid__": "7d1d36be-d94c-44b7-9fa5-c22910627d2d"
-    },
-    "_clips": [
-      {
-        "__uuid__": "7d1d36be-d94c-44b7-9fa5-c22910627d2d"
-      }
-    ],
-    "playOnLoad": true,
-    "_id": ""
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -213,11 +191,11 @@
     "_level": 2,
     "_components": [
       {
-        "__id__": 7
+        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 8
+      "__id__": 7
     },
     "_opacity": 255,
     "_color": {
@@ -268,7 +246,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 6
+      "__id__": 5
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -311,10 +289,13 @@
     },
     "_enabled": true,
     "pickedUpAnimNode": {
-      "__id__": 6
+      "__id__": 5
     },
-    "durationMillis": 4000,
-    "startedAtMillis": 0,
+    "durationMillis": 1000,
+    "binglingAnimNode": {
+      "__id__": 2
+    },
+    "binglingAnimDurationMillis": 1000,
     "_id": ""
   },
   {

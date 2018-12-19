@@ -77,27 +77,11 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    selfPlayerNameLabel: {
-      type: cc.Label,
-      default: null
-    },
-    otherPlayerNameLabel: {
-      type: cc.Label,
-      default: null
-    },
     boundRoomIdLabel: {
       type: cc.Label,
       default: null
     },
     countdownLabel: {
-      type: cc.Label,
-      default: null
-    },
-    selfPlayerScoreLabel: {
-      type: cc.Label,
-      default: null
-    },
-    otherPlayerScoreLabel: {
       type: cc.Label,
       default: null
     },
@@ -120,7 +104,12 @@ cc.Class({
     countdownToBeginGamePrefab: {
       type:cc.Prefab,
       default: null
-    }
+    },
+    playersInfoPrefab: {
+      type:cc.Prefab,
+      default: null
+    },
+
   },
   
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
@@ -334,8 +323,10 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
-    self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
     
+    self.playersInfoNode = cc.instantiate(self.playersInfoPrefab); 
+    safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
+
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
     
     /** init requeired prefab ended */
@@ -445,10 +436,15 @@ cc.Class({
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
         if( -99 == refFrameId ) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
+          console.log("handleRoomDownsyncFrame and refFrameId < 0, " + JSON.stringify(diffFrame));
           if(self.findingPlayerNode.parent){
             self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
             self.transitToState(ALL_MAP_STATES.VISUAL);
+            for(let i in diffFrame.players) {
+              const playerInfo = diffFrame.players[i];
+              const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+              playersScriptIns.updateData(playerInfo);
+            }
           }
           self.showPopopInCanvas(self.countdownToBeginGameNode);
           return;
@@ -476,7 +472,7 @@ cc.Class({
         if (
           !isInitiatingFrame 
           && self.useDiffFrameAlgo 
-          && 0 < self.recentFrameCacheCurrentSize // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
+          && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
           && null == cachedFullFrame
         ) {
           self._lazilyTriggerResync();
@@ -522,6 +518,7 @@ cc.Class({
               speed: immediateSelfPlayerInfo.speed,
               battleState: immediateSelfPlayerInfo.battleState,
               score: immediateSelfPlayerInfo.score,
+              joinIndex: immediateSelfPlayerInfo.joinIndex,
             });
             continue;
           }
@@ -646,9 +643,8 @@ cc.Class({
       self.boundRoomIdLabel.string = window.boundRoomId;
     }
     if (null != self.selfPlayerInfo) {
-      self.selfPlayerNameLabel.string = self.selfPlayerInfo.displayName;
-      const score  = self.selfPlayerInfo.score ? self.selfPlayerInfo.score : 0 
-      self.selfPlayerScoreLabel.string = score;
+      const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+      playersScriptIns.updateData(self.selfPlayerInfo);
       if (null != self.selfPlayerScriptIns) {
         self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
       }
@@ -675,9 +671,8 @@ cc.Class({
       );
      //更新信息
     if (null != cachedPlayerData) {
-      self.otherPlayerNameLabel.string = cachedPlayerData.displayName;
-      const score  = cachedPlayerData.score ? cachedPlayerData.score : 0 
-      self.otherPlayerScoreLabel.string = score;
+      const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+      playersScriptIns.updateData(cachedPlayerData);
     }
       let targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
