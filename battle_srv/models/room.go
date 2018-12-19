@@ -867,10 +867,11 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
 	playerJoinIndexFrame := &RoomDownsyncFrame{
-		Id:         pR.Tick,
-		Players:    pR.Players,
-		SentAt:     utils.UnixtimeMilli(),
-		RefFrameId: -1, // Hardcoded for messages in waiting state.
+		Id:             pR.Tick,
+		Players:        pR.Players,
+		SentAt:         utils.UnixtimeMilli(),
+		CountdownNanos: utils.UnixtimeNano(),
+		RefFrameId:     -1, // Hardcoded for messages in waiting state.
 	}
 	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
 	if marshalErr != nil {
@@ -1029,11 +1030,12 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		}
 	}
 	pR.updateScore()
+	Logger.Info("onplyaerAdd players:", zap.Any(":", pR.Players))
 	playerJoinIndexFrame := &RoomDownsyncFrame{
 		Id:         pR.Tick,
 		Players:    pR.Players,
 		SentAt:     utils.UnixtimeMilli(),
-		RefFrameId: -1, // Hardcoded for messages in waiting state.
+		RefFrameId: -2, // Hardcoded for messages in waiting state.
 	}
 
 	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)

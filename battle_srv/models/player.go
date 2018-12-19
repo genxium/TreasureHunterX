@@ -52,7 +52,7 @@ type Player struct {
 	TutorialStage     int           `json:"-" db:"tutorial_stage"`
 	CollidableBody    *box2d.B2Body `json:"-"`
 	AckingFrameId     int32         `json:"ackingFrameId"`
-	JoinIndex         int32         `protobuf:"varint,11,opt,name=joinIndex,proto3 " json:"joinIndex"`
+	JoinIndex         int32         `protobuf:"varint,12,opt,name=joinIndex,proto3 " json:"joinIndex"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

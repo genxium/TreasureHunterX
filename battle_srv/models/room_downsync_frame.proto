@@ -17,7 +17,7 @@ message Player {
   string name = 8;
   string displayName = 9;
   int32 score = 10;
-  int32 joinIndex = 11;
+  int32 joinIndex = 12;
 }
 
 message Treasure {
