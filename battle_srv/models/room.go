@@ -100,6 +100,7 @@ type Room struct {
 	AccumulatedLocalIdForBullets int32
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
+	JoinIndexBooleanArr          []bool
 }
 
 type RoomDownsyncFrame struct {
@@ -811,10 +812,11 @@ func (pR *Room) StartBattle() {
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
 		}
 	}
-	pR.onBattlePrepare()
-	pR.onBattleStarted() // NOTE: Deliberately not using `defer`.
-	go cmdReceivingLoop()
-	go battleMainLoop()
+	pR.onBattlePrepare(func() {
+		pR.onBattleStarted() // NOTE: Deliberately not using `defer`.
+		go cmdReceivingLoop()
+		go battleMainLoop()
+	})
 }
 
 func (pR *Room) StopBattleForSettlement() {
@@ -856,18 +858,49 @@ func (pR *Room) onBattleStarted() {
 	pR.updateScore()
 }
 
-func (pR *Room) onBattlePrepare() {
+type battleStartCbType func()
+
+func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	if RoomBattleStateIns.WAITING != pR.State {
 		return
 	}
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
+	playerJoinIndexFrame := &RoomDownsyncFrame{
+		Id:         pR.Tick,
+		Players:    pR.Players,
+		SentAt:     utils.UnixtimeMilli(),
+		RefFrameId: -1, // Hardcoded for messages in waiting state.
+	}
+	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
+	if marshalErr != nil {
+		Logger.Error("Error marshalling playerJoinIndexFrame in onBattlePrepare:", zap.Any("the error", marshalErr))
+	}
+	theStr := string(theBytes)
 	for _, player := range pR.Players {
 		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
-		utils.SendStrSafely("prepare", theForwardingChannel)
+		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
-	time.Sleep(time.Duration(3 * time.Second))
-	pR.updateScore()
+
+	battlePreparationNanos := int64(3000000000)
+	preparationLoop := func() {
+		defer func() {
+			Logger.Info("The `preparationLoop` is stopped for:", zap.Any("roomId", pR.Id))
+			cb()
+		}()
+		preparationLoopStartedNanos := utils.UnixtimeNano()
+		var totalElapsedNanos int64
+		totalElapsedNanos = 0
+		for {
+			if totalElapsedNanos > battlePreparationNanos {
+				break
+			}
+			now := utils.UnixtimeNano()
+			totalElapsedNanos = (now - preparationLoopStartedNanos)
+			time.Sleep(time.Duration(battlePreparationNanos - totalElapsedNanos))
+		}
+	}
+	go preparationLoop()
 }
 
 func (pR *Room) onBattleStoppedForSettlement() {
@@ -975,6 +1008,8 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 func (pR *Room) onPlayerLost(playerId int32) {
 	if _, existent := pR.Players[playerId]; existent {
 		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
+		pR.JoinIndexBooleanArr[pR.Players[playerId].JoinIndex] = false
+		pR.Players[playerId].JoinIndex = -1
 		utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
 		delete(pR.PlayerDownsyncChanDict, playerId)
 		pR.EffectivePlayerCount--
@@ -986,7 +1021,32 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	if pR.EffectivePlayerCount == 1 {
 		pR.State = RoomBattleStateIns.WAITING
 	}
+	for index, value := range pR.JoinIndexBooleanArr {
+		if value == false {
+			pR.Players[playerId].JoinIndex = int32(index)
+			pR.JoinIndexBooleanArr[index] = true
+			break
+		}
+	}
 	pR.updateScore()
+	playerJoinIndexFrame := &RoomDownsyncFrame{
+		Id:         pR.Tick,
+		Players:    pR.Players,
+		SentAt:     utils.UnixtimeMilli(),
+		RefFrameId: -1, // Hardcoded for messages in waiting state.
+	}
+
+	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
+	if marshalErr != nil {
+		Logger.Error("Error marshalling playerJoinIndexFrame in onPlayerAdded:", zap.Any("the error", marshalErr))
+	}
+	theStr := string(theBytes)
+
+	for _, player := range pR.Players {
+		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
+		utils.SendStrSafely(theStr, theForwardingChannel)
+	}
+
 	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 	if pR.Capacity == len(pR.Players) {
 		pR.StartBattle()

@@ -276,15 +276,8 @@ func Serve(c *gin.Context) {
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 					return nil
 				}
-				//buggy fix the when playerRoom prepare send a "ReadyMessage"
-				if "prepare" == typedRoomDownsyncFrame {
-					wsSendAction(conn, "Ready", &struct {
-						Time int `json:"time"`
-					}{3})
-				} else {
-					// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
-					wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
-				}
+				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+				wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 			default:
 			}
 		}
