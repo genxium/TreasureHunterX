@@ -45,17 +45,22 @@ func Serve(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-
-	boundRoomIdStr, hasBoundRoomId := c.GetQuery("boundRoomId")
-	var boundRoomId int
-	if hasBoundRoomId {
-		tmpBoundRoomId, atoierr := strconv.Atoi(boundRoomIdStr)
-		if atoierr != nil {
+	var boundRoomId, expectRoomId int
+	var err error
+	if boundRoomIdStr, hasBoundRoomId := c.GetQuery("boundRoomId");hasBoundRoomId {
+		boundRoomId, err = strconv.Atoi(boundRoomIdStr)
+		if err != nil {
 			// TODO: Abort with specific message.
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		boundRoomId = tmpBoundRoomId
+	}
+	if expectRoomIdStr,hasExpectRoomId := c.GetQuery(""); hasExpectRoomId {
+		expectRoomId,err =strconv.Atoi(expectRoomIdStr)
+		if err != nil {
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
 	}
 
 	Logger.Info("Finding PlayerLogin record for ws authentication:", zap.Any("intAuthToken", token))
@@ -163,7 +168,7 @@ func Serve(c *gin.Context) {
 	}()
 	Logger.Info("Acquired RoomHeapMux for player:", zap.Any("playerId", playerId))
 	// Logger.Info("The RoomHeapManagerIns has:", zap.Any("addr", fmt.Sprintf("%p", models.RoomHeapManagerIns)), zap.Any("size", len(*(models.RoomHeapManagerIns))))
-	if hasBoundRoomId {
+	if boundRoomId > 0 {
 		if tmpPRoom, existent := (*models.RoomMapManagerIns)[int32(boundRoomId)]; existent {
 			pRoom = tmpPRoom
 			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
@@ -174,7 +179,17 @@ func Serve(c *gin.Context) {
 		} else {
 			signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoSpecifiedRoom, fmt.Sprintf("Cannot get a (*Room) for PresumedBoundRoomId == %d, playerId == %v!", boundRoomId, playerId))
 		}
-	} else {
+	} else if expectRoomId > 0 {
+		if pRoom, ok:= (*models.RoomMapManagerIns)[int32(expectRoomId)];ok{
+			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+			res := pRoom.AddPlayerIfPossible(pPlayer)
+			if !res {
+				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
+			}
+		}else {
+			signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoSpecifiedRoom, fmt.Sprintf("Cannot get a (*Room) for ExpectRoomId == %d, playerId == %v!", expectRoomId, playerId))
+		}
+	}else {
 		defer func() {
 			if pRoom != nil {
 				heap.Push(models.RoomHeapManagerIns, pRoom)
@@ -189,7 +204,7 @@ func Serve(c *gin.Context) {
 			Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
 			res := pRoom.AddPlayerIfPossible(pPlayer)
 			if !res {
-				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotReAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
+				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
 			}
 		}
 	}
