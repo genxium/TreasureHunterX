@@ -299,8 +299,7 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 	theTreasure := Treasure{
 		Id:              0,
 		LocalIdInBattle: treasureLocalIdInBattle,
-		Score:           0,
-    Type:            0,
+		Score:           100,
 		X:               pAnchor.X,
 		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
@@ -324,27 +323,13 @@ func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 }
 
 func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for key, value := range pTmxMapIns.TreasuresInfo {
+	for key, value := range pTmxMapIns.TreasuresInitPosList {
 		{
 			pAnchor := &Vec2D{
-				X: float64(value.InitPos.X),
-				Y: float64(value.InitPos.Y),
+				X: float64(value.X),
+				Y: float64(value.Y),
 			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns )
-      theTreasure.Score = value.Score
-      theTreasure.Type = value.Type
-			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-		}
-	}
-	for key, value := range pTmxMapIns.HighTreasuresInfo {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.InitPos.X),
-				Y: float64(value.InitPos.Y),
-			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns )
-      theTreasure.Score = value.Score
-      theTreasure.Type = value.Type
+			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
 	}
@@ -1070,14 +1055,4 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
 	// TODO
-	//xiaomai 重新加入时重新分配joinIndex
-	for index, value := range pR.JoinIndexBooleanArr {
-		if value == false {
-			pR.Players[playerId].JoinIndex = int32(index) + 1
-			pR.JoinIndexBooleanArr[index] = true
-			break
-		}
-	}
-	Logger.Info("room JoinIndexBooleanArr", zap.Any(":", pR.JoinIndexBooleanArr))
-	pR.updateScore()
 }
