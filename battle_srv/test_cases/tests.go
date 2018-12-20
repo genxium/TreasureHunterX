@@ -19,8 +19,11 @@ func loadTMX(fp string, pTmxMapIns *models.TmxMap) {
 	byteArr, err := ioutil.ReadFile(fp)
 	ErrFatal(err)
 	models.DeserializeToTmxMapIns(byteArr, pTmxMapIns)
-	for _, playerPos := range pTmxMapIns.TrapsInitPosList {
-		fmt.Printf("%v\n", playerPos)
+	for _, info := range pTmxMapIns.TreasuresInfo{
+		fmt.Printf("treasuresInfo: %v\n", info)
+	}
+	for _, info := range pTmxMapIns.HighTreasuresInfo{
+		fmt.Printf("treasuresInfo: %v\n", info)
 	}
 }
 
@@ -38,7 +41,7 @@ func loadTSX(fp string, pTsxIns *models.Tsx) {
 }
 
 func getTMXInfo() {
-	relativePath = "../../frontend/assets/resources/map/treasurehunter.tmx"
+	relativePath = "../frontend/assets/resources/map/treasurehunter.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
@@ -56,7 +59,7 @@ func getTMXInfo() {
 
 func getTSXInfo() {
 
-	relativePath = "../../frontend/assets/resources/map/tile_1.tsx"
+	relativePath = "../frontend/assets/resources/map/tile_1.tsx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
@@ -72,5 +75,5 @@ func getTSXInfo() {
 }
 
 func main() {
-	getTSXInfo()
+	getTMXInfo()
 }

@@ -1,0 +1,26 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "HighTreasure.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "HighTreasure01": {
+      "__uuid__": "02a64559-db45-4fb0-846a-46781eb99aed"
+    },
+    "HighTreasure02": {
+      "__uuid__": "7976b1be-94be-47b2-9bfe-b54eeb558fe1"
+    },
+    "HighTreasure03": {
+      "__uuid__": "da1660d5-dc44-420f-9f48-6ea9a638123c"
+    },
+    "HighTreasure04": {
+      "__uuid__": "36e6d07e-d6a7-4f78-9d9b-9b8df8b8a132"
+    },
+    "HighTreasure05": {
+      "__uuid__": "46bfa194-a8eb-4a30-a665-6bb75fad06df"
+    },
+    "HighTreasure06": {
+      "__uuid__": "4b12825d-5928-4d55-8275-e1b21dbc8e47"
+    }
+  }
+}

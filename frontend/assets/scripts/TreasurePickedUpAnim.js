@@ -18,10 +18,21 @@ cc.Class({
     }
   },
  
-  binglingAnimFinish() {
-    this.node.destroy();
-  },
 
+  setData (treasureInfo) {
+    const self = this;
+    this.score = treasureInfo.score ? treasureInfo.score : 100 ;
+    this.type = treasureInfo.type ? treasureInfo.type : 1;
+    const spriteComponent = this.pickedUpAnimNode.getComponent(cc.Sprite);
+    //hardcode treasurePNG's path.
+    cc.loader.loadRes("textures/treasures/"+ this.type, cc.SpriteFrame, function (err, frame) {
+      if(err){
+        cc.warn(err);
+        return;
+      }
+      spriteComponent.spriteFrame = frame; 
+    })
+  },
   
   // LIFE-CYCLE CALLBACKS:
   update (dt) {
@@ -29,7 +40,10 @@ cc.Class({
     const elapsedMillis = Date.now() - this.startedAtMillis; 
     if(elapsedMillis > this.binglingAnimDurationMillis && this.binglingAnimNode.active) {
       this.binglingAnimNode.active = false;
+      this.startedAtMillis = Date.now();
     }
+    if(this.binglingAnimNode.active)
+      return;
     if (elapsedMillis > this.durationMillis) {
       this.node.destroy();
       return;

@@ -1,12 +1,12 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "treasurePicked",
+  "_name": "1",
   "_objFlags": 0,
   "_native": "",
   "_duration": 1,
   "sample": 4,
   "speed": 1,
-  "wrapMode": "1",
+  "wrapMode": "2",
   "curveData": {
     "comps": {
       "cc.Sprite": {

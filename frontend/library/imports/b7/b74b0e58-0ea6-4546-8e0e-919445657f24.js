@@ -21,7 +21,7 @@ cc.Class({
       '-20': 'attackedLeft',
       '20': 'attackedRight',
       '-21': 'attackedTopLeft',
-      '21': 'attackedTopRight',
+      '21': 'atackedTopRright',
       '-2-1': 'attackedBottomLeft',
       '2-1': 'attackedBottomRight'
     };

@@ -28,6 +28,7 @@ message Treasure {
   double x = 4; 
   double y = 5;
   bool removed = 6;
+  int32 type = 7;
 }
 
 message Bullet {

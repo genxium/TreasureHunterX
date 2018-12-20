@@ -928,6 +928,8 @@ cc.Class({
       var _targetNode3 = self.treasureNodeDict[treasureLocalIdInBattle];
       if (!_targetNode3) {
         _targetNode3 = cc.instantiate(self.treasurePrefab);
+        var treasureNodeScriptIns = _targetNode3.getComponent("Treasure");
+        treasureNodeScriptIns.setData(treasureInfo);
         self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode3;
         safelyAddChild(mapNode, _targetNode3);
         _targetNode3.setPosition(_newPos3);

@@ -599,9 +599,7 @@
     "_enabled": true,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "2b20044b-360a-497c-81c2-add8e30c4363"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 0,
     "_fillType": 0,
@@ -656,7 +654,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 108.42,
+      "width": 0,
       "height": 50
     },
     "_anchorPoint": {
@@ -703,8 +701,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "John",
-    "_N$string": "John",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 50,
     "_lineHeight": 50,
     "_enableWrapText": true,
@@ -756,7 +754,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 105.57,
+      "width": 0,
       "height": 50
     },
     "_anchorPoint": {
@@ -803,8 +801,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Mike",
-    "_N$string": "Mike",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 50,
     "_lineHeight": 50,
     "_enableWrapText": true,
@@ -4360,7 +4358,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 66.74,
+      "width": 22.25,
       "height": 40
     },
     "_anchorPoint": {
@@ -4407,8 +4405,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "120",
-    "_N$string": "120",
+    "_string": "0",
+    "_N$string": "0",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -4460,7 +4458,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 44.49,
+      "width": 22.25,
       "height": 40
     },
     "_anchorPoint": {
@@ -4507,8 +4505,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "50",
-    "_N$string": "50",
+    "_string": "0",
+    "_N$string": "0",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextobjectid="285">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextobjectid="299">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="10" source="treasure.tsx"/>
  <tileset firstgid="10" source="HighTreasure.tsx"/>
@@ -66,89 +66,197 @@
  </objectgroup>
  <objectgroup name="treasures">
   <object id="227" x="2404" y="3938.67">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="228" x="2629.33" y="4168">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="229" x="4173.33" y="2618.67">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="230" x="3938" y="2395.33">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="254" x="1444.06" y="2166.24">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="255" x="2234.24" y="1367.82">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="256" x="1778" y="2490">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="257" x="2534" y="1718">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="259" x="326" y="950">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="260" x="628" y="652">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="261" x="606" y="1566">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="262" x="598" y="2046">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="264" x="1721.58" y="4147.03">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="265" x="2554" y="3434">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="266" x="3795.7" y="4223.33">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="267" x="4210.18" y="3790.79">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="271" x="1518.12" y="414.848">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="273" x="444.242" y="2418.79">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="274" x="2223.03" y="500.606">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="276" x="801.82" y="3794.55">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="277" x="1447.27" y="3779.39">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="278" x="3453.33" y="633.939">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="279" x="3786.67" y="1579.39">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="280" x="1138.18" y="2500.61">
+   <properties>
+    <property name="score" value="100"/>
+    <property name="type" value="1"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="HighTreasure">
+ <objectgroup name="highTreasures">
   <object id="223" x="1997.15" y="1921.88">
+   <properties>
+    <property name="score" value="200"/>
+    <property name="type" value="2"/>
+   </properties>
    <point/>
   </object>
   <object id="224" x="2519.33" y="4050">
+   <properties>
+    <property name="score" value="200"/>
+    <property name="type" value="2"/>
+   </properties>
    <point/>
   </object>
   <object id="226" x="4086.18" y="4110.73">
    <point/>
   </object>
   <object id="246" x="4066" y="2514">
+   <properties>
+    <property name="score" value="200"/>
+    <property name="type" value="2"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

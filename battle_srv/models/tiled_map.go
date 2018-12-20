@@ -7,7 +7,12 @@ import (
 	"strconv"
 	"strings"
 )
-
+const (
+  HIGH_SCORE_TREASURE_SCORE = 200
+  HIGH_SCORE_TREASURE_TYPE = 2
+  TREASURE_SCORE = 100
+  TREASURE_TYPE = 1 
+)
 type TmxMap struct {
 	Version      string           `xml:"version,attr"`
 	Orientation  string           `xml:"orientation,attr"`
@@ -21,10 +26,15 @@ type TmxMap struct {
 	ObjectGroups []TmxObjectGroup `xml:"objectgroup"`
 
 	ControlledPlayersInitPosList []Vec2D
-	TreasuresInitPosList         []Vec2D
+	TreasuresInfo                []TreasuresInfo
+	HighTreasuresInfo                []TreasuresInfo
 	TrapsInitPosList             []Vec2D
 }
-
+type TreasuresInfo struct {
+  InitPos     Vec2D 
+  Type        int32
+  Score       int32
+}
 type Tsx struct {
 	Name                 string     `xml:"name,attr"`
 	TileWidth            int        `xml:"tilewidth,attr"`
@@ -102,11 +112,10 @@ type TmxObjectGroup struct {
 }
 
 type TmxObject struct {
-	Type   string  `xml:"type,attr"`
+	Id   string  `xml:"id,attr"`
 	X      float64 `xml:"x,attr"`
 	Y      float64 `xml:"y,attr"`
-	Width  int     `xml:"width,attr"`
-	Height int     `xml:"height,attr"`
+	Properties   TmxProperties  `xml:"properties"`
 }
 
 type TreasurePolyline struct {
@@ -178,16 +187,63 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.ControlledPlayersInitPosList[index] = controlledPlayerStartingPos
 			}
 		}
-		if "treasures" == objGroup.Name {
-			pTmxMapIns.TreasuresInitPosList = make([]Vec2D, len(objGroup.Objects))
+
+		if "highTreasures" == objGroup.Name {
+      pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects)) 
 			for index, obj := range objGroup.Objects {
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.TreasuresInitPosList[index] = treasurePos
-			}
+        pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
+        pTmxMapIns.HighTreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
+        pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos 
+      }
+    }
+		if "treasures" == objGroup.Name {
+      pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects)) 
+			for index, obj := range objGroup.Objects {
+				tmp := Vec2D{
+					X: obj.X,
+					Y: obj.Y,
+				}
+				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+        pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
+        pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
+        pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos 
+      }
+    /*if "treasures" == objGroup.Name {
+				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
+        if "highTreasures" == objGroup.Name {
+          pTmxMapIns.TreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE 
+          pTmxMapIns.TreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE 
+        } else {
+          pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE 
+          pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE 
+        }
+       // 由于分数现在只有2种，不读取tmx文件属性
+        properties := obj.Properties
+         for _, prop := range properties.Property {
+            if("type" == prop.Name){
+              typeValue , err := strconv.Atoi(prop.Value)
+              if err != nil {
+                fmt.Printf("transit tmx fails and error: %v\n", err)
+              }else {
+                pTmxMapIns.TreasuresInfo[index].Type = int32(typeValue)
+              }
+            }
+
+            if("score" == prop.Name){
+              scoreValue , err := strconv.Atoi(prop.Value)
+              if err != nil {
+                fmt.Printf("transit tmx fails and error: %v\n", err)
+              }else {
+                pTmxMapIns.TreasuresInfo[index].Score = int32(scoreValue)
+              }
+            }
+          }
+			}*/
 		}
 
 		if "traps" == objGroup.Name {
@@ -197,8 +253,8 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 					X: obj.X,
 					Y: obj.Y,
 				}
-				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.TrapsInitPosList[index] = treasurePos
+				trapPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+				pTmxMapIns.TrapsInitPosList[index] = trapPos
 			}
 		}
 	}
