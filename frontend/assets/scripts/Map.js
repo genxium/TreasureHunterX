@@ -428,7 +428,6 @@ cc.Class({
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
         if( -99 == refFrameId ) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0, " + JSON.stringify(diffFrame));
           if(self.findingPlayerNode.parent){
             self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
             self.transitToState(ALL_MAP_STATES.VISUAL);
@@ -441,7 +440,6 @@ cc.Class({
           self.showPopopInCanvas(self.countdownToBeginGameNode);
           return;
         } else if( -98 == refFrameId ) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
           self.showPopopInCanvas(self.findingPlayerNode);
           return;
         }
