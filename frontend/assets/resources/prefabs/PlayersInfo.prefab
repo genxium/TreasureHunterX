@@ -696,7 +696,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 0,
+      "width": 67.81,
       "height": 20
     },
     "_anchorPoint": {
@@ -743,8 +743,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "",
-    "_N$string": "",
+    "_string": "Player1",
+    "_N$string": "Player1",
     "_fontSize": 20,
     "_lineHeight": 20,
     "_enableWrapText": true,
@@ -1327,7 +1327,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 0,
+      "width": 67.81,
       "height": 20
     },
     "_anchorPoint": {
@@ -1374,8 +1374,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "",
-    "_N$string": "",
+    "_string": "Player2",
+    "_N$string": "Player2",
     "_fontSize": 20,
     "_lineHeight": 20,
     "_enableWrapText": true,

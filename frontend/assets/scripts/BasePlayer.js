@@ -370,7 +370,7 @@ module.export = cc.Class({
   },
 
   onCollisionEnter(other, self) {
-    const playerScriptIns = self.getComponent(self.node.name);
+    const playerScriptIns = self.node.getComponent("SelfPlayer");
     switch (other.node.name) {
       case "NPCPlayer":
         if ("NPCPlayer" != self.node.name) {
@@ -399,7 +399,7 @@ module.export = cc.Class({
   },
 
   onCollisionExit(other, self) {
-    const playerScriptIns = self.getComponent(self.node.name);
+    const playerScriptIns = self.getComponent("SelfPlayer");
     switch (other.node.name) {
       case "NPCPlayer":
         other.node.getComponent('NPCPlayer').hideProfileTrigger();

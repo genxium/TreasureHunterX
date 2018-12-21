@@ -1,0 +1,32 @@
+{
+  "ver": "2.3.0",
+  "uuid": "c6ec9d78-ad63-4f46-8e8e-41acbbcd36e5",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "platformSettings": {},
+  "subMetas": {
+    "HeroPandaBlueAttacked": {
+      "ver": "1.0.3",
+      "uuid": "db999889-e1af-4302-939a-7493256736b0",
+      "rawTextureUuid": "c6ec9d78-ad63-4f46-8e8e-41acbbcd36e5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": -2,
+      "trimX": 12,
+      "trimY": 4,
+      "width": 968,
+      "height": 452,
+      "rawWidth": 992,
+      "rawHeight": 456,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

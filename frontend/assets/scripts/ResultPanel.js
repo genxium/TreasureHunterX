@@ -65,12 +65,15 @@ cc.Class({
         loserInfo = playerInfo;
       }
     }
-    if(winnerInfo.name) {
-      winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
-    }
-    if(loserInfo.name) {
-      loserNameNode.getComponent(cc.Label).string = loserInfo.name;
-    }
+    //TODO Hardecode the name
+    winnerNameNode.getComponent(cc.Label).string = "Player" + winnerInfo.joinIndex;
+    loserNameNode.getComponent(cc.Label).string = "Player" + loserInfo.joinIndex;
+    //if(winnerInfo.name) {
+    //  winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
+    //} 
+    //if(loserInfo.name) {
+    //  loserNameNode.getComponent(cc.Label).string = loserInfo.name;
+    //} 
   
     const progressComp = compareProgressNode.getComponent(cc.ProgressBar);
     const winnerScore = parseInt(winnerInfo.score);
@@ -85,7 +88,21 @@ cc.Class({
     resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
     resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
     
-    this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
+   const plistDir = "textures/StatusBar";
+
+   cc.loader.loadRes(plistDir, cc.SpriteAtlas, function (err, altas) {
+    if(err){
+      cc.warn(err);
+      return;
+    }
+    //hardecode avatart by joinIndex
+    let winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
+    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
+   });
+
+   this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
   },
  
   showRibbon(winnerInfo, ribbonNode) {
@@ -98,8 +115,8 @@ cc.Class({
       }
       ribbonNode.getComponent(cc.Sprite).spriteFrame = spriteFrame;
     });
+
   },
-  
   
   onClose(evt) {
     this.node.active = false;

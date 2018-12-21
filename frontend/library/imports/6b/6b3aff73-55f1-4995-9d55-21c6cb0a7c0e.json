@@ -1,0 +1,32 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "FindingPlayer.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "Blackboard": {
+      "__uuid__": "e3946140-4386-4fb8-abab-b637085ef7de"
+    },
+    "BlueAvatar": {
+      "__uuid__": "0ab2a66d-0e19-4713-9d5d-92f56ce31f7c"
+    },
+    "QuestionMark": {
+      "__uuid__": "92ecf300-43a2-469e-a3b6-fb177108ff20"
+    },
+    "RedAvatar": {
+      "__uuid__": "5d2adf73-a6b6-4c02-9d0c-4c7a26f421e1"
+    },
+    "botton1": {
+      "__uuid__": "1a1b0cf2-6495-49d5-9ca2-e41c7b58d407"
+    },
+    "botton2": {
+      "__uuid__": "6dd2698f-85b5-4e83-bb71-c8baed4d6069"
+    },
+    "matching": {
+      "__uuid__": "95a72b5c-e22d-4fe2-82e9-7ce723e1585e"
+    },
+    "paper": {
+      "__uuid__": "a2089e76-9dd8-4fed-80cb-8c7b55086a03"
+    }
+  }
+}

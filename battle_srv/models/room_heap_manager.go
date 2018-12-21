@@ -97,7 +97,7 @@ func InitRoomHeapManager() {
 	for i := 0; i < initialCountOfRooms; i++ {
 		currentRoomBattleState := RoomBattleStateIns.IDLE
 		pq[i] = &Room{
-			Id:                           int32(i),
+			Id:                           int32(i + 1),
 			Players:                      make(map[int32]*Player),
 			PlayerDownsyncChanDict:       make(map[int32]chan string),
 			Capacity:                     roomCapacity,
@@ -107,7 +107,7 @@ func InitRoomHeapManager() {
 			Index:                        i,
 			Tick:                         0,
 			EffectivePlayerCount:         0,
-			BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
+			BattleDurationNanos:          int64(10 * 1000 * 1000 * 1000),
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),
 			Traps:                        make(map[int32]*Trap),

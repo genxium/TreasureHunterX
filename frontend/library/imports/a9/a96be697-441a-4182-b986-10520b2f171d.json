@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "FindingPlayer",
+    "texture": "c95400af-8e48-4040-8b83-27c2336f0415",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      1454,
+      1922
+    ],
+    "offset": [
+      -1,
+      0
+    ],
+    "originalSize": [
+      1456,
+      1922
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

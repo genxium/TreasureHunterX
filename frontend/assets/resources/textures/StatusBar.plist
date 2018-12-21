@@ -9,13 +9,13 @@
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{226,311}</string>
+                <string>{-3,5}</string>
                 <key>spriteSize</key>
-                <string>{84,84}</string>
+                <string>{237,237}</string>
                 <key>spriteSourceSize</key>
-                <string>{640,960}</string>
+                <string>{251,255}</string>
                 <key>textureRect</key>
-                <string>{{1,1},{84,84}}</string>
+                <string>{{240,1},{237,237}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -30,22 +30,22 @@
                 <key>spriteSourceSize</key>
                 <string>{640,960}</string>
                 <key>textureRect</key>
-                <string>{{1,87},{234,76}}</string>
+                <string>{{479,1},{234,76}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>RedAvatar.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-153,281}</string>
+                <string>{-2,6}</string>
                 <key>spriteSize</key>
-                <string>{84,84}</string>
+                <string>{237,238}</string>
                 <key>spriteSourceSize</key>
-                <string>{640,960}</string>
+                <string>{247,254}</string>
                 <key>textureRect</key>
-                <string>{{87,1},{84,84}}</string>
+                <string>{{1,1},{237,238}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -60,9 +60,9 @@
                 <key>spriteSourceSize</key>
                 <string>{640,960}</string>
                 <key>textureRect</key>
-                <string>{{1,165},{234,74}}</string>
+                <string>{{557,1},{234,74}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>pearl.png</key>
             <dict>
@@ -75,7 +75,7 @@
                 <key>spriteSourceSize</key>
                 <string>{640,960}</string>
                 <key>textureRect</key>
-                <string>{{173,1},{40,44}}</string>
+                <string>{{633,1},{40,44}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -91,9 +91,9 @@
             <key>realTextureFileName</key>
             <string>StatusBar.png</string>
             <key>size</key>
-            <string>{236,240}</string>
+            <string>{674,240}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:3ee9ff5ecd8e7f3b06fc88330862e555:4a9060c85ddf7c1b8cd7ba20046ae167:ca28bf0b21ebb6ddea19672152e556a6$</string>
+            <string>$TexturePacker:SmartUpdate:bde0762c731e59d23c5999c02179060e:4869d298fa34e3542cdab5875c2a12e9:ca28bf0b21ebb6ddea19672152e556a6$</string>
             <key>textureFileName</key>
             <string>StatusBar.png</string>
         </dict>

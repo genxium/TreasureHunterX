@@ -20,7 +20,10 @@ cc.Class({
     var playerNode = this.listNode.getChildByName("player" + joinIndex);
     if (!playerNode) return;
     var playerNameLabelNode = playerNode.getChildByName("name");
-    if (playerInfo.displayName) playerNameLabelNode.getComponent(cc.Label).string = playerInfo.displayName;
+    //if(playerInfo.name) {
+    //  playerNameLabelNode.getComponent(cc.Label).string = playerInfo.name;
+    //} 
+
     var score = playerInfo.score ? playerInfo.score : 0;
     var playerScoreLabelNode = playerNode.getChildByName("score");
     playerScoreLabelNode.getComponent(cc.Label).string = score;
