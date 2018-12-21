@@ -156,6 +156,7 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
 func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	var req smsCaptchReq
 	err := c.ShouldBindWith(&req, binding.FormPost)
@@ -206,6 +207,78 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+type wechatLogin struct {
+	Authcode string `form:"authcode"`
+}
+
+func (p *playerController) WechatLogin(c *gin.Context) {
+	var req wechatLogin
+	err := c.ShouldBindWith(&req, binding.FormPost)
+	api.CErr(c, err)
+	if err != nil || req.Authcode == "" {
+		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+		return
+	}
+	fserverConf := &utils.WechatConfig{
+		ApiProtocol: "http",
+		ApiGateway:  "localhost:8089",
+		AppID:       "wx5432dc1d6164d4e",
+		AppSecret:   "secret1",
+	}
+	wechat := utils.NewWechatIns(fserverConf)
+	baseInfo, err := wechat.GetOauth2Basic(req.Authcode)
+	if err != nil {
+		Logger.Info("err", zap.Any("", err))
+		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		return
+	}
+
+	userInfo, err := wechat.GetMoreInfo(baseInfo.AccessToken, baseInfo.OpenID)
+	if err != nil {
+		Logger.Info("err", zap.Any("", err))
+		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		return
+	}
+	//fserver不会返回openId
+	userInfo.OpenID = baseInfo.OpenID
+
+	player, err := p.maybeCreatePlayerWechatAuthBinding(userInfo)
+	api.CErr(c, err)
+	if err != nil {
+		c.Set(api.RET, Constants.RetCode.MysqlError)
+		return
+	}
+
+	now := utils.UnixtimeMilli()
+	token := utils.TokenGenerator(32)
+	expiresAt := now + 1000*int64(Constants.Player.IntAuthTokenTTLSeconds)
+	playerLogin := models.PlayerLogin{
+		CreatedAt:    now,
+		FromPublicIP: models.NewNullString(c.ClientIP()),
+		IntAuthToken: token,
+		PlayerID:     int(player.Id),
+		DisplayName:  models.NewNullString(player.DisplayName),
+		UpdatedAt:    now,
+	}
+	err = playerLogin.Insert()
+	api.CErr(c, err)
+	if err != nil {
+		c.Set(api.RET, Constants.RetCode.MysqlError)
+		return
+	}
+
+	resp := struct {
+		Ret         int               `json:"ret"`
+		Token       string            `json:"intAuthToken"`
+		ExpiresAt   int64             `json:"expiresAt"`
+		PlayerID    int               `json:"playerId"`
+		DisplayName models.NullString `json:"displayName"`
+	}{Constants.RetCode.Ok, token, expiresAt,
+		playerLogin.PlayerID, playerLogin.DisplayName}
+	c.JSON(http.StatusOK, resp)
+}
+
 func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 	token := p.getIntAuthToken(c)
 	if token == "" {
@@ -341,18 +414,42 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 			return player, nil
 		}
 	}
-	return p.createNewPlayer(extAuthID)
-}
-
-func (p *playerController) createNewPlayer(extAuthID string) (*models.Player, error) {
-	Logger.Debug("createNewPlayer", zap.String("extAuthID", extAuthID))
-	tx := storage.MySQLManagerIns.MustBegin()
-	defer tx.Rollback()
 	now := utils.UnixtimeMilli()
 	player := models.Player{
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
+	return p.createNewPlayer(player, extAuthID, int(Constants.AuthChannel.Sms))
+}
+
+func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.UserInfo) (*models.Player, error) {
+	bind, err := models.GetPlayerAuthBinding(Constants.AuthChannel.Wechat, userInfo.OpenID)
+	if err != nil {
+		return nil, err
+	}
+	if bind != nil {
+		player, err := models.GetPlayerById(bind.PlayerID)
+		if err != nil {
+			return nil, err
+		}
+		if player != nil {
+			return player, nil
+		}
+	}
+	now := utils.UnixtimeMilli()
+	player := models.Player{
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		DisplayName: userInfo.Nickname,
+	}
+	return p.createNewPlayer(player, userInfo.OpenID, int(Constants.AuthChannel.Wechat))
+}
+
+func (p *playerController) createNewPlayer(player models.Player, extAuthID string, channel int) (*models.Player, error) {
+	Logger.Debug("createNewPlayer", zap.String("extAuthID", extAuthID))
+	now := utils.UnixtimeMilli()
+	tx := storage.MySQLManagerIns.MustBegin()
+	defer tx.Rollback()
 	err := player.Insert(tx)
 	if err != nil {
 		return nil, err
@@ -360,7 +457,7 @@ func (p *playerController) createNewPlayer(extAuthID string) (*models.Player, er
 	playerAuthBinding := models.PlayerAuthBinding{
 		CreatedAt: now,
 		UpdatedAt: now,
-		Channel:   int(Constants.AuthChannel.Sms),
+		Channel:   channel,
 		ExtAuthID: extAuthID,
 		PlayerID:  int(player.Id),
 	}

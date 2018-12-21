@@ -90,6 +90,7 @@ func setRouter(router *gin.Engine) {
 		apiRouter.POST("/player/v1/IntAuthToken/logout", v1.Player.IntAuthTokenLogout)
 		apiRouter.GET("/player/v1/SmsCaptcha/get", v1.Player.SMSCaptchaGet)
 		apiRouter.POST("/player/v1/SmsCaptcha/login", v1.Player.SMSCaptchaLogin)
+		apiRouter.POST("/player/v1/wechat/login", v1.Player.WechatLogin)
 
 		authRouter := func(method string, url string, handler gin.HandlerFunc) {
 			apiRouter.Handle(method, url, v1.Player.TokenWithPlayerIdAuth, handler)
