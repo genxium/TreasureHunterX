@@ -627,12 +627,13 @@ cc.Class({
     let toStartWithPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y)
     newPlayerNode.setPosition(toStartWithPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
-
+    
     instance.node.addChild(newPlayerNode);
+    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
+    instance.selfPlayerScriptIns.showArrowTipNode();
 
     setLocalZOrder(newPlayerNode, 5);
     instance.selfPlayerNode = newPlayerNode;
-    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
   },
 
   update(dt) {

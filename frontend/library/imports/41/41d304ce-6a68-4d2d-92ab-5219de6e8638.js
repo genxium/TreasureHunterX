@@ -780,10 +780,11 @@ cc.Class({
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
     instance.node.addChild(newPlayerNode);
+    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
+    instance.selfPlayerScriptIns.showArrowTipNode();
 
     setLocalZOrder(newPlayerNode, 5);
     instance.selfPlayerNode = newPlayerNode;
-    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
   },
   update: function update(dt) {
     var self = this;

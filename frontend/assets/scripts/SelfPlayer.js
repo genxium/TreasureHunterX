@@ -2,8 +2,13 @@ const BasePlayer = require("./BasePlayer");
 
 cc.Class({
   extends: BasePlayer,
-
   // LIFE-CYCLE CALLBACKS:
+  properties: {
+    arrowTipNode: {
+      type: cc.Node,
+      default: null
+    }
+  },
   start() {
     BasePlayer.prototype.start.call(this);
   },
@@ -20,6 +25,15 @@ cc.Class({
       '-2-1': 'attackedLeft',
       '2-1': 'attackedRight'
     };
+    this.arrowTipNode.active = false;
+  },
+
+  showArrowTipNode() {
+    const self = this;
+    self.arrowTipNode.active = true;
+    window.setTimeout(function(){
+      self.arrowTipNode.active = false;
+    }, 3000)
   },
 
   update(dt) {

@@ -947,47 +947,47 @@
   "fb13791e-cc5c-420d-9039-237bd2cc1625": {
     "asset": 1545297819000,
     "meta": 1545277821000,
-    "relativePath": "resources/animation/BoyPanda"
+    "relativePath": "resources/animation/HeroPandaBasicBlue"
   },
   "213e4c8c-eff8-4a32-a7e4-629866a50c80": {
     "asset": 1545297899000,
     "meta": 1545297899000,
-    "relativePath": "resources/animation/BoyPanda/Bottom.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/Bottom.anim"
   },
   "ac4d7421-ac30-4d45-af49-bc7706daf2c7": {
     "asset": 1545298901000,
     "meta": 1545298901000,
-    "relativePath": "resources/animation/BoyPanda/BottomLeft.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/BottomLeft.anim"
   },
   "de7d302b-ba6d-4ce5-af8c-244fac902187": {
     "asset": 1545297956000,
     "meta": 1545297956000,
-    "relativePath": "resources/animation/BoyPanda/BottomRight.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/BottomRight.anim"
   },
   "72ea5f2f-4982-4e28-ba78-057fbe3bd011": {
     "asset": 1545297983000,
     "meta": 1545297983000,
-    "relativePath": "resources/animation/BoyPanda/Left.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/Left.anim"
   },
   "4df43cda-0819-4df6-8e8e-5cd2f18c1d22": {
     "asset": 1545298019000,
     "meta": 1545298019000,
-    "relativePath": "resources/animation/BoyPanda/Right.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/Right.anim"
   },
   "ea151eb6-8265-4fa6-ae44-5df46d65aade": {
     "asset": 1545298049000,
     "meta": 1545298049000,
-    "relativePath": "resources/animation/BoyPanda/Top.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/Top.anim"
   },
   "4cafed10-4027-4adc-b755-1993ee86d8ee": {
     "asset": 1545298075000,
     "meta": 1545298075000,
-    "relativePath": "resources/animation/BoyPanda/TopLeft.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/TopLeft.anim"
   },
   "242edc56-2853-4b60-a968-282b50933d0e": {
     "asset": 1545298114000,
     "meta": 1545298114000,
-    "relativePath": "resources/animation/BoyPanda/TopRight.anim"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/TopRight.anim"
   },
   "00d83664-662f-430f-b42f-e555cb8ffb69": {
     "asset": 1545277821000,
@@ -1510,8 +1510,8 @@
     "relativePath": "resources/panda_boy/rightfront/Armature_newAnimation_21.png"
   },
   "8b400cb3-9119-4269-b86b-0aa2a659b691": {
-    "asset": 1545298688000,
-    "meta": 1545298688000,
+    "asset": 1545358893000,
+    "meta": 1545358893000,
     "relativePath": "resources/prefabs/Player1.prefab"
   },
   "0a634d7e-2c5d-45db-896f-e3de32ff0ac8": {
@@ -2095,8 +2095,8 @@
     "relativePath": "scripts/TreasurePickedUpAnim.js"
   },
   "8dc1f61c-b839-4344-80e2-df0eecffe125": {
-    "asset": 1545299071000,
-    "meta": 1545299071000,
+    "asset": 1545358901000,
+    "meta": 1545358901000,
     "relativePath": "resources/prefabs/Player2.prefab"
   },
   "67797815-b28d-4be3-9f75-7c8cb4dd4981": {
@@ -2124,30 +2124,15 @@
     "meta": 1545297190000,
     "relativePath": "resources/animation/HeroPandaGreenAttacked/HeroPandaGreenAttacked.png"
   },
-  "b74b0e58-0ea6-4546-8e0e-919445657f24": {
-    "asset": 1545297319000,
-    "meta": 1545297323000,
-    "relativePath": "scripts/SelfPlayer.js"
-  },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545356319000,
-    "meta": 1545356320000,
-    "relativePath": "scenes/login.fire"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545297799000,
-    "meta": 1545297805000,
-    "relativePath": "scripts/Map.js"
-  },
   "ffc6cd58-e1c4-462f-9178-715b31fc7155": {
     "asset": 1545297818000,
     "meta": 1545297819000,
-    "relativePath": "resources/animation/BoyPanda/panda_hero.plist"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/panda_hero.plist"
   },
   "38b46349-1d26-422d-a17c-164190cd1d82": {
     "asset": 1545297818000,
     "meta": 1545297819000,
-    "relativePath": "resources/animation/BoyPanda/panda_hero.png"
+    "relativePath": "resources/animation/HeroPandaBasicBlue/panda_hero.png"
   },
   "97549cfc-4448-43b4-b20b-90879e7695e1": {
     "asset": 1545298657000,
@@ -2293,5 +2278,25 @@
     "asset": 1544498224000,
     "meta": 1545356207000,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "c39c2dbf-d38f-437d-96f9-22b4af7f5d6b": {
+    "asset": 1545357876000,
+    "meta": 1545357895000,
+    "relativePath": "resources/textures/arrowTip.png"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545358664000,
+    "meta": 1545358668000,
+    "relativePath": "scripts/Map.js"
+  },
+  "b74b0e58-0ea6-4546-8e0e-919445657f24": {
+    "asset": 1545359104000,
+    "meta": 1545359107000,
+    "relativePath": "scripts/SelfPlayer.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1545359109000,
+    "meta": 1545359257000,
+    "relativePath": "scenes/login.fire"
   }
 }
