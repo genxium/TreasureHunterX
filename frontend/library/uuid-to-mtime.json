@@ -414,36 +414,6 @@
     "meta": 1545115342000,
     "relativePath": "resources/textures/login/botton1.png"
   },
-  "60faea4e-a8a7-463a-9544-555349ff0ccc": {
-    "asset": 1545121553000,
-    "meta": 1544587938000,
-    "relativePath": "resources/textures/Find an opponent"
-  },
-  "987b06b3-ab96-4745-8048-9088d943c3ad": {
-    "asset": 1544587938000,
-    "meta": 1545115341000,
-    "relativePath": "resources/textures/Find an opponent/black-board.jpg"
-  },
-  "23f7fe29-d5c9-4896-89c1-a52b4e86c700": {
-    "asset": 1544587938000,
-    "meta": 1545115341000,
-    "relativePath": "resources/textures/Find an opponent/exitBtn.png"
-  },
-  "9d0797f4-38aa-4f0e-b153-92b133fbb779": {
-    "asset": 1544587938000,
-    "meta": 1545115341000,
-    "relativePath": "resources/textures/Find an opponent/exitBtnPressed.png"
-  },
-  "9f30bfbf-e9ee-452e-8d9e-b583fa7cfa45": {
-    "asset": 1544587938000,
-    "meta": 1545115341000,
-    "relativePath": "resources/textures/Find an opponent/paper.png"
-  },
-  "66f5fcfa-d3cd-430b-9a53-c01db4d76cf7": {
-    "asset": 1544587938000,
-    "meta": 1545115342000,
-    "relativePath": "resources/textures/Find an opponent/self.png"
-  },
   "4197b083-8a18-4a2b-8834-621a03dfb9de": {
     "asset": 1544587938000,
     "meta": 1544587938000,
@@ -463,11 +433,6 @@
     "asset": 1544587938000,
     "meta": 1545115342000,
     "relativePath": "resources/textures/Match opponent/botton2.png"
-  },
-  "858653d5-45ec-4666-9991-98918679136e": {
-    "asset": 1544587938000,
-    "meta": 1545115341000,
-    "relativePath": "resources/textures/Find an opponent/matching.png"
   },
   "ff868476-3cad-488f-aecf-957dbcf0e689": {
     "asset": 1544587938000,
@@ -735,8 +700,8 @@
     "relativePath": "scripts/GameRule.js"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1544589300000,
-    "meta": 1545115341000,
+    "asset": 1545363110000,
+    "meta": 1545363110000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "78830fc7-4e25-49a1-a7fc-9f9d3883f278": {
@@ -874,11 +839,6 @@
     "meta": 1545187279000,
     "relativePath": "resources/textures/Blackboard.png"
   },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1545187775000,
-    "meta": 1545187787000,
-    "relativePath": "scripts/FindingPlayer.js"
-  },
   "7d1d36be-d94c-44b7-9fa5-c22910627d2d": {
     "asset": 1545292217000,
     "meta": 1545292217000,
@@ -928,11 +888,6 @@
     "asset": 1545208540000,
     "meta": 1545208542000,
     "relativePath": "scripts/ResultPanel.js"
-  },
-  "6a3d663a-2a2d-418a-a015-48a211770465": {
-    "asset": 1545211432000,
-    "meta": 1545211505000,
-    "relativePath": "scripts/CountdownToBeginGame.js"
   },
   "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
     "asset": 1545217196000,
@@ -2284,19 +2239,44 @@
     "meta": 1545357895000,
     "relativePath": "resources/textures/arrowTip.png"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545358664000,
-    "meta": 1545358668000,
-    "relativePath": "scripts/Map.js"
-  },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
     "asset": 1545359104000,
     "meta": 1545359107000,
     "relativePath": "scripts/SelfPlayer.js"
   },
+  "fc345c73-6eeb-4655-ad79-aefd7fa4f404": {
+    "asset": 1545362961000,
+    "meta": 1545362961000,
+    "relativePath": "resources/textures/FindingPlayer"
+  },
+  "6b3aff73-55f1-4995-9d55-21c6cb0a7c0e": {
+    "asset": 1545362961000,
+    "meta": 1545362961000,
+    "relativePath": "resources/textures/FindingPlayer/FindingPlayer.plist"
+  },
+  "c95400af-8e48-4040-8b83-27c2336f0415": {
+    "asset": 1545362961000,
+    "meta": 1545362961000,
+    "relativePath": "resources/textures/FindingPlayer/FindingPlayer.png"
+  },
+  "6a3d663a-2a2d-418a-a015-48a211770465": {
+    "asset": 1545363606000,
+    "meta": 1545363608000,
+    "relativePath": "scripts/CountdownToBeginGame.js"
+  },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1545363254000,
+    "meta": 1545363609000,
+    "relativePath": "scripts/FindingPlayer.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545363784000,
+    "meta": 1545363790000,
+    "relativePath": "scripts/Map.js"
+  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545359109000,
-    "meta": 1545359257000,
+    "asset": 1545363790000,
+    "meta": 1545364221000,
     "relativePath": "scenes/login.fire"
   }
 }

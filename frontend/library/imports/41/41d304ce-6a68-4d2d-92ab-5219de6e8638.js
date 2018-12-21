@@ -337,6 +337,8 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+    var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+    findingPlayerScriptIns.init();
 
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
@@ -603,21 +605,20 @@ cc.Class({
       window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
+        if (0 > refFrameId) {
+          cc.log(diffFrame.players);
+          cc.log(refFrameId);
+        }
         if (-99 == refFrameId) {
-          if (self.findingPlayerNode.parent) {
-            self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
-            self.transitToState(ALL_MAP_STATES.VISUAL);
-            for (var i in diffFrame.players) {
-              //更新在线玩家信息面板的信息
-              var playerInfo = diffFrame.players[i];
-              var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
-              playersScriptIns.updateData(playerInfo);
-            }
-          }
-          self.showPopopInCanvas(self.countdownToBeginGameNode);
-          return;
+          //显示倒计时
+          self.matchPlayersFinsihed(diffFrame.players);
         } else if (-98 == refFrameId) {
-          self.showPopopInCanvas(self.findingPlayerNode);
+          //显示匹配玩家
+          var _findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+          if (!self.findingPlayerNode.parent) {
+            self.showPopopInCanvas(self.findingPlayerNode);
+          }
+          _findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
           return;
         }
         var frameId = diffFrame.id;
@@ -664,8 +665,8 @@ cc.Class({
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
-        for (var _i4 = 0; _i4 < playerIdStrList.length; ++_i4) {
-          var k = playerIdStrList[_i4];
+        for (var i = 0; i < playerIdStrList.length; ++i) {
+          var k = playerIdStrList[i];
           var playerId = parseInt(k);
           if (playerId == self.selfPlayerInfo.id) {
             var immediateSelfPlayerInfo = players[k];
@@ -686,8 +687,8 @@ cc.Class({
         self.treasureInfoDict = {};
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
-        for (var _i5 = 0; _i5 < treasuresLocalIdStrList.length; ++_i5) {
-          var _k4 = treasuresLocalIdStrList[_i5];
+        for (var _i4 = 0; _i4 < treasuresLocalIdStrList.length; ++_i4) {
+          var _k4 = treasuresLocalIdStrList[_i4];
           var treasureLocalIdInBattle = parseInt(_k4);
           var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
@@ -696,8 +697,8 @@ cc.Class({
         self.trapInfoDict = {};
         var traps = roomDownsyncFrame.traps;
         var trapsLocalIdStrList = Object.keys(traps);
-        for (var _i6 = 0; _i6 < trapsLocalIdStrList.length; ++_i6) {
-          var _k5 = trapsLocalIdStrList[_i6];
+        for (var _i5 = 0; _i5 < trapsLocalIdStrList.length; ++_i5) {
+          var _k5 = trapsLocalIdStrList[_i5];
           var trapLocalIdInBattle = parseInt(_k5);
           var trapInfo = traps[_k5];
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
@@ -706,8 +707,8 @@ cc.Class({
         self.trapBulletInfoDict = {};
         var bullets = roomDownsyncFrame.bullets;
         var bulletsLocalIdStrList = Object.keys(bullets);
-        for (var _i7 = 0; _i7 < bulletsLocalIdStrList.length; ++_i7) {
-          var _k6 = bulletsLocalIdStrList[_i7];
+        for (var _i6 = 0; _i6 < bulletsLocalIdStrList.length; ++_i6) {
+          var _k6 = bulletsLocalIdStrList[_i6];
           var bulletLocalIdInBattle = parseInt(_k6);
           var bulletInfo = bullets[_k6];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
@@ -1075,6 +1076,25 @@ cc.Class({
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
+  },
+  matchPlayersFinsihed: function matchPlayersFinsihed(players) {
+    var self = this;
+    var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+    findingPlayerScriptIns.updatePlayersInfo(players);
+    window.setTimeout(function () {
+      if (self.findingPlayerNode.parent) {
+        self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+        self.transitToState(ALL_MAP_STATES.VISUAL);
+        for (var i in players) {
+          //更新在线玩家信息面板的信息
+          var playerInfo = players[i];
+          var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+          playersScriptIns.updateData(playerInfo);
+        }
+      }
+      self.showPopopInCanvas(self.countdownToBeginGameNode);
+      return;
+    }, 2000);
   }
 });
 

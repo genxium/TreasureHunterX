@@ -319,6 +319,8 @@ cc.Class({
     self.showPopopInCanvas(self.gameRuleNode);
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+    const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+    findingPlayerScriptIns.init();
     
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab); 
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
@@ -436,21 +438,18 @@ cc.Class({
       window.handleRoomDownsyncFrame = function(diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
-        if( -99 == refFrameId ) {
-          if(self.findingPlayerNode.parent){
-            self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
-            self.transitToState(ALL_MAP_STATES.VISUAL);
-            for(let i in diffFrame.players) {
-              //更新在线玩家信息面板的信息
-              const playerInfo = diffFrame.players[i];
-              const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
-              playersScriptIns.updateData(playerInfo);
-            }
-          }
-          self.showPopopInCanvas(self.countdownToBeginGameNode);
-          return;
-        } else if( -98 == refFrameId ) {
-          self.showPopopInCanvas(self.findingPlayerNode);
+        if( 0 > refFrameId) {
+          cc.log(diffFrame.players)
+          cc.log(refFrameId)
+        }
+        if( -99 == refFrameId ) { //显示倒计时
+          self.matchPlayersFinsihed(diffFrame.players);
+        } else if( -98 == refFrameId ) { //显示匹配玩家
+          const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+          if(!self.findingPlayerNode.parent){
+            self.showPopopInCanvas(self.findingPlayerNode);
+           }
+          findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
           return;
         }
         const frameId = diffFrame.id;
@@ -954,5 +953,23 @@ cc.Class({
     safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
   },
-
+  matchPlayersFinsihed (players) {
+    const self = this;
+    const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+    findingPlayerScriptIns.updatePlayersInfo(players);
+    window.setTimeout(()=>{
+      if(self.findingPlayerNode.parent){
+        self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+        self.transitToState(ALL_MAP_STATES.VISUAL);
+        for(let i in players) {
+          //更新在线玩家信息面板的信息
+          const playerInfo = players[i];
+          const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+          playersScriptIns.updateData(playerInfo);
+        }
+      }
+      self.showPopopInCanvas(self.countdownToBeginGameNode);
+      return;
+    }, 2000);
+  },
 });

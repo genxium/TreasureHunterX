@@ -897,7 +897,7 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 
-	battlePreparationNanos := int64(3000000000)
+	battlePreparationNanos := int64(6000000000)
 	preparationLoop := func() {
 		defer func() {
 			Logger.Info("The `preparationLoop` is stopped for:", zap.Any("roomId", pR.Id))

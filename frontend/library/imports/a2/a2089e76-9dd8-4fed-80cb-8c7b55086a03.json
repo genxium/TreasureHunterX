@@ -1,23 +1,24 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "matching",
-    "texture": "858653d5-45ec-4666-9991-98918679136e",
-    "atlas": "",
+    "name": "paper",
+    "texture": "c95400af-8e48-4040-8b83-27c2336f0415",
+    "atlas": "6b3aff73-55f1-4995-9d55-21c6cb0a7c0e",
     "rect": [
-      446,
-      1217,
-      426,
-      496
+      1027,
+      501,
+      406,
+      408
     ],
     "offset": [
-      147,
-      -505
+      82,
+      -4
     ],
     "originalSize": [
       1024,
       1920
     ],
+    "rotated": 1,
     "capInsets": [
       0,
       0,
