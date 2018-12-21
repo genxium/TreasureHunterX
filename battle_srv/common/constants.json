@@ -17,6 +17,7 @@
     "PLAYER_NOT_READDABLE_TO_ROOM": 9013,
     "PLAYER_NOT_FOUND": 9014,
     "PLAYER_CHEATING": 9015,
+    "WECHAT_SERVER_ERROR": 9016,
 
     "__comment__":"SMS",
     "SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY": 5001,
@@ -46,7 +47,8 @@
     "NOT_IMPLEMENTED_YET": 65535
   },
   "AUTH_CHANNEL": {
-    "SMS": 0
+    "SMS": 0,
+    "WECHAT": 1
   },
   "PLAYER": {
     "DIAMOND": 1,
