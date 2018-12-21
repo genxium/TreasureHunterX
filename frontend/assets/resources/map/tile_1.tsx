@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="tile_1" tilewidth="64" tileheight="64" tilecount="9" columns="3">
- <image source="tile_1.png" width="192" height="192"/>
+<tileset name="tile_1" tilewidth="64" tileheight="64" tilecount="12" columns="3">
+ <image source="tile_1.png" width="192" height="256"/>
  <tile id="1">
   <objectgroup draworder="index">
    <object id="2" x="62.6667" y="-1.33333">
@@ -32,6 +32,13 @@
   <objectgroup draworder="index">
    <object id="1" x="32" y="10">
     <polyline points="-90,-119 -216,17 -97,181 177,168 234,3 55,-118"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="9">
+  <objectgroup draworder="index">
+   <object id="1" x="19" y="-52">
+    <polyline points="-115,-135 -351,67 -187,314 196,312 340,65 116,-137"/>
    </object>
   </objectgroup>
  </tile>

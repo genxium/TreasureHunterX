@@ -17,7 +17,7 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {},
-  start: function start() {
+  setData: function setData() {
     this.startedMillis = Date.now();
     this.durationMillis = 3000;
   },

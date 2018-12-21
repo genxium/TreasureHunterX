@@ -266,19 +266,58 @@ cc.Class({
       mapIns.logout(false, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }, millisToGo);
   },
-  onLoad: function onLoad() {
+  _resetCurrentMatch: function _resetCurrentMatch() {
     var self = this;
-    self.resyncing = false;
-    self.lastRoomDownsyncFrameId = 0;
-
-    self.recentFrameCache = {};
-    self.recentFrameCacheCurrentSize = 0;
-    self.recentFrameCacheMaxCount = 2048;
-
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
-    cc.director.getCollisionManager().enabled = true;
-    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
+    self.countdownLabel.string = "";
+    if (self.playersNode) {
+      for (var i in self.playersNode) {
+        var node = self.playersNode[i];
+        node.getComponent(cc.Animation).play("Bottom");
+        node.getComponent("SelfPlayer").start();
+        node.active = true;
+      }
+    }
+    if (self.otherPlayerNodeDict) {
+      for (var _i4 in self.otherPlayerNodeDict) {
+        var _node = self.otherPlayerNodeDict[_i4];
+        if (_node.parent) {
+          _node.parent.removeChild(_node);
+        }
+      }
+    }
+    if (self.selfPlayerNode && self.selfPlayerNode.parent) {
+      self.selfPlayerNode.parent.removeChild(self.selfPlayerNode);
+    }
+    if (self.treasureNodeDict) {
+      for (var _i5 in self.treasureNodeDict) {
+        var _node2 = self.treasureNodeDict[_i5];
+        if (_node2.parent) {
+          _node2.parent.removeChild(_node2);
+        }
+      }
+    }
+    if (self.trapBulletNodeDict) {
+      for (var _i6 in self.trapBulletNodeDict) {
+        var _node3 = self.trapBulletNodeDict[_i6];
+        if (_node3.parent) {
+          _node3.parent.removeChild(_node3);
+        }
+      }
+    }
+    if (self.trapNodeDict) {
+      for (var _i7 in self.trapNodeDict) {
+        var _node4 = self.trapNodeDict[_i7];
+        if (_node4.parent) {
+          _node4.parent.removeChild(_node4);
+        }
+      }
+    }
+
+    if (self.upsyncLoopInterval) {
+      clearInterval(self.upsyncLoopInterval);
+    }
 
     self.mainCameraNode = canvasNode.getChildByName("Main Camera");
     self.mainCamera = self.mainCameraNode.getComponent(cc.Camera);
@@ -308,7 +347,14 @@ cc.Class({
     }
 
     self.widgetsAboveAllNode = self.mainCameraNode.getChildByName("WidgetsAboveAll");
+    self.mainCameraNode.setPosition(cc.v2());
 
+    self.resyncing = false;
+    self.lastRoomDownsyncFrameId = 0;
+
+    self.recentFrameCache = {};
+    self.recentFrameCacheCurrentSize = 0;
+    self.recentFrameCacheMaxCount = 2048;
     self.selfPlayerNode = null;
     self.selfPlayerScriptIns = null;
     self.selfPlayerInfo = null;
@@ -324,36 +370,274 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
+    if (self.findingPlayerNode) {
+      var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+      findingPlayerScriptIns.init();
+    }
+    self.showPopopInCanvas(self.gameRuleNode);
+    safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
+  },
+  onLoad: function onLoad() {
+    var self = this;
+
+    var mapNode = self.node;
+    var canvasNode = mapNode.parent;
+    cc.director.getCollisionManager().enabled = true;
+    cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
 
     /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
 
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
+    var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
+    resultPanelScriptIns.mapScriptIns = self;
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
-    self.showPopopInCanvas(self.gameRuleNode);
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
     var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
     findingPlayerScriptIns.init();
 
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
-    safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
 
     self.playersNode = {};
     var player1Node = cc.instantiate(self.player1Prefab);
     var player2Node = cc.instantiate(self.player2Prefab);
-    Object.assign(self.playersNode, { 1: player1Node });
-    Object.assign(self.playersNode, { 2: player2Node });
+    Object.assign(self.playersNode, {
+      1: player1Node
+    });
+    Object.assign(self.playersNode, {
+      2: player2Node
+    });
     /** init requeired prefab ended */
 
     self.clientUpsyncFps = 20;
-    self.upsyncLoopInterval = null;
+    self._resetCurrentMatch();
+
+    var tiledMapIns = self.node.getComponent(cc.TiledMap);
+    var boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = boundaryObjs.frameAnimations[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var frameAnim = _step2.value;
+
+        var animNode = cc.instantiate(self.tiledAnimPrefab);
+        var anim = animNode.getComponent(cc.Animation);
+        animNode.setPosition(frameAnim.posInMapNode);
+        animNode.width = frameAnim.sizeInMapNode.width;
+        animNode.height = frameAnim.sizeInMapNode.height;
+        animNode.setScale(frameAnim.sizeInMapNode.width / frameAnim.origSize.width, frameAnim.sizeInMapNode.height / frameAnim.origSize.height);
+        animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
+        safelyAddChild(self.node, animNode);
+        setLocalZOrder(animNode, 5);
+        anim.addClip(frameAnim.animationClip, "default");
+        anim.play("default");
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+
+    self.barrierColliders = [];
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = boundaryObjs.barriers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var boundaryObj = _step3.value;
+
+        var newBarrier = cc.instantiate(self.barrierPrefab);
+        var newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+        newBarrier.setPosition(newBoundaryOffsetInMapNode);
+        newBarrier.setAnchorPoint(cc.v2(0, 0));
+        var newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
+        newBarrierColliderIns.points = [];
+        var _iteratorNormalCompletion7 = true;
+        var _didIteratorError7 = false;
+        var _iteratorError7 = undefined;
+
+        try {
+          for (var _iterator7 = boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+            var p = _step7.value;
+
+            newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+          }
+        } catch (err) {
+          _didIteratorError7 = true;
+          _iteratorError7 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion7 && _iterator7.return) {
+              _iterator7.return();
+            }
+          } finally {
+            if (_didIteratorError7) {
+              throw _iteratorError7;
+            }
+          }
+        }
+
+        self.barrierColliders.push(newBarrierColliderIns);
+        self.node.addChild(newBarrier);
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+
+    var allLayers = tiledMapIns.getLayers();
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
+
+    try {
+      for (var _iterator4 = allLayers[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var layer = _step4.value;
+
+        var layerType = layer.getProperty("type");
+        switch (layerType) {
+          case "normal":
+            setLocalZOrder(layer.node, 0);
+            break;
+          case "barrier_and_shelter":
+            setLocalZOrder(layer.node, 3);
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion4 && _iterator4.return) {
+          _iterator4.return();
+        }
+      } finally {
+        if (_didIteratorError4) {
+          throw _iteratorError4;
+        }
+      }
+    }
+
+    var allObjectGroups = tiledMapIns.getObjectGroups();
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+      for (var _iterator5 = allObjectGroups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        var objectGroup = _step5.value;
+
+        var objectGroupType = objectGroup.getProperty("type");
+        switch (objectGroupType) {
+          case "barrier_and_shelter":
+            setLocalZOrder(objectGroup.node, 3);
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion5 && _iterator5.return) {
+          _iterator5.return();
+        }
+      } finally {
+        if (_didIteratorError5) {
+          throw _iteratorError5;
+        }
+      }
+    }
+
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+      for (var _iterator6 = boundaryObjs.sheltersZReducer[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+        var _boundaryObj = _step6.value;
+
+        var newShelter = cc.instantiate(self.shelterZReducerPrefab);
+        var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
+        newShelter.setPosition(newBoundaryOffsetInMapNode);
+        newShelter.setAnchorPoint(cc.v2(0, 0));
+        var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+        newShelterColliderIns.points = [];
+        var _iteratorNormalCompletion8 = true;
+        var _didIteratorError8 = false;
+        var _iteratorError8 = undefined;
+
+        try {
+          for (var _iterator8 = _boundaryObj[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+            var _p = _step8.value;
+
+            newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
+          }
+        } catch (err) {
+          _didIteratorError8 = true;
+          _iteratorError8 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion8 && _iterator8.return) {
+              _iterator8.return();
+            }
+          } finally {
+            if (_didIteratorError8) {
+              throw _iteratorError8;
+            }
+          }
+        }
+
+        self.node.addChild(newShelter);
+      }
+    } catch (err) {
+      _didIteratorError6 = true;
+      _iteratorError6 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion6 && _iterator6.return) {
+          _iterator6.return();
+        }
+      } finally {
+        if (_didIteratorError6) {
+          throw _iteratorError6;
+        }
+      }
+    }
 
     window.reconnectWSWithoutRoomId = function () {
       var _this = this;
@@ -365,242 +649,27 @@ cc.Class({
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         return resolve();
       }).then(function () {
-        _this.initPersistentSessionClient(_this.initAfterWSConncted);
+        _this.initPersistentSessionClient(self.initAfterWSConncted);
       });
     };
 
     window.handleClientSessionCloseOrError = function () {
-      if (!self.battleState) self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+      if (!self.battleState) {
+        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+        if (window.clientSessionPingInterval) {
+          clearInterval(clientSessionPingInterval);
+        }
+      }
     };
 
     self.initAfterWSConncted = function () {
-      self.transitToState(ALL_MAP_STATES.VISUAL);
-      var tiledMapIns = self.node.getComponent(cc.TiledMap);
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
+      self.transitToState(ALL_MAP_STATES.VISUAL);
       self._inputControlEnabled = false;
       self.setupInputControls();
-
-      var boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = boundaryObjs.frameAnimations[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var frameAnim = _step2.value;
-
-          var animNode = cc.instantiate(self.tiledAnimPrefab);
-          var anim = animNode.getComponent(cc.Animation);
-          animNode.setPosition(frameAnim.posInMapNode);
-          animNode.width = frameAnim.sizeInMapNode.width;
-          animNode.height = frameAnim.sizeInMapNode.height;
-          animNode.setScale(frameAnim.sizeInMapNode.width / frameAnim.origSize.width, frameAnim.sizeInMapNode.height / frameAnim.origSize.height);
-          animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
-          safelyAddChild(self.node, animNode);
-          setLocalZOrder(animNode, 5);
-          anim.addClip(frameAnim.animationClip, "default");
-          anim.play("default");
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-
-      self.barrierColliders = [];
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
-
-      try {
-        for (var _iterator3 = boundaryObjs.barriers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var boundaryObj = _step3.value;
-
-          var newBarrier = cc.instantiate(self.barrierPrefab);
-          var newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-          newBarrier.setPosition(newBoundaryOffsetInMapNode);
-          newBarrier.setAnchorPoint(cc.v2(0, 0));
-          var newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
-          newBarrierColliderIns.points = [];
-          var _iteratorNormalCompletion7 = true;
-          var _didIteratorError7 = false;
-          var _iteratorError7 = undefined;
-
-          try {
-            for (var _iterator7 = boundaryObj[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-              var p = _step7.value;
-
-              newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-            }
-          } catch (err) {
-            _didIteratorError7 = true;
-            _iteratorError7 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                _iterator7.return();
-              }
-            } finally {
-              if (_didIteratorError7) {
-                throw _iteratorError7;
-              }
-            }
-          }
-
-          self.barrierColliders.push(newBarrierColliderIns);
-          self.node.addChild(newBarrier);
-        }
-      } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
-          }
-        } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
-          }
-        }
-      }
-
-      var allLayers = tiledMapIns.getLayers();
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = allLayers[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var layer = _step4.value;
-
-          var layerType = layer.getProperty("type");
-          switch (layerType) {
-            case "normal":
-              setLocalZOrder(layer.node, 0);
-              break;
-            case "barrier_and_shelter":
-              setLocalZOrder(layer.node, 3);
-              break;
-            default:
-              break;
-          }
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-
-      var allObjectGroups = tiledMapIns.getObjectGroups();
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
-
-      try {
-        for (var _iterator5 = allObjectGroups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var objectGroup = _step5.value;
-
-          var objectGroupType = objectGroup.getProperty("type");
-          switch (objectGroupType) {
-            case "barrier_and_shelter":
-              setLocalZOrder(objectGroup.node, 3);
-              break;
-            default:
-              break;
-          }
-        }
-      } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
-          }
-        } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
-          }
-        }
-      }
-
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
-
-      try {
-        for (var _iterator6 = boundaryObjs.sheltersZReducer[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var _boundaryObj = _step6.value;
-
-          var newShelter = cc.instantiate(self.shelterZReducerPrefab);
-          var newBoundaryOffsetInMapNode = cc.v2(_boundaryObj[0].x, _boundaryObj[0].y);
-          newShelter.setPosition(newBoundaryOffsetInMapNode);
-          newShelter.setAnchorPoint(cc.v2(0, 0));
-          var newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
-          newShelterColliderIns.points = [];
-          var _iteratorNormalCompletion8 = true;
-          var _didIteratorError8 = false;
-          var _iteratorError8 = undefined;
-
-          try {
-            for (var _iterator8 = _boundaryObj[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-              var _p = _step8.value;
-
-              newShelterColliderIns.points.push(_p.sub(newBoundaryOffsetInMapNode));
-            }
-          } catch (err) {
-            _didIteratorError8 = true;
-            _iteratorError8 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion8 && _iterator8.return) {
-                _iterator8.return();
-              }
-            } finally {
-              if (_didIteratorError8) {
-                throw _iteratorError8;
-              }
-            }
-          }
-
-          self.node.addChild(newShelter);
-        }
-      } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-            _iterator6.return();
-          }
-        } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
-          }
-        }
-      }
 
       window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
@@ -687,8 +756,8 @@ cc.Class({
         self.treasureInfoDict = {};
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
-        for (var _i4 = 0; _i4 < treasuresLocalIdStrList.length; ++_i4) {
-          var _k4 = treasuresLocalIdStrList[_i4];
+        for (var _i8 = 0; _i8 < treasuresLocalIdStrList.length; ++_i8) {
+          var _k4 = treasuresLocalIdStrList[_i8];
           var treasureLocalIdInBattle = parseInt(_k4);
           var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
@@ -697,8 +766,8 @@ cc.Class({
         self.trapInfoDict = {};
         var traps = roomDownsyncFrame.traps;
         var trapsLocalIdStrList = Object.keys(traps);
-        for (var _i5 = 0; _i5 < trapsLocalIdStrList.length; ++_i5) {
-          var _k5 = trapsLocalIdStrList[_i5];
+        for (var _i9 = 0; _i9 < trapsLocalIdStrList.length; ++_i9) {
+          var _k5 = trapsLocalIdStrList[_i9];
           var trapLocalIdInBattle = parseInt(_k5);
           var trapInfo = traps[_k5];
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
@@ -707,8 +776,8 @@ cc.Class({
         self.trapBulletInfoDict = {};
         var bullets = roomDownsyncFrame.bullets;
         var bulletsLocalIdStrList = Object.keys(bullets);
-        for (var _i6 = 0; _i6 < bulletsLocalIdStrList.length; ++_i6) {
-          var _k6 = bulletsLocalIdStrList[_i6];
+        for (var _i10 = 0; _i10 < bulletsLocalIdStrList.length; ++_i10) {
+          var _k6 = bulletsLocalIdStrList[_i10];
           var bulletLocalIdInBattle = parseInt(_k6);
           var bulletInfo = bullets[_k6];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
@@ -766,6 +835,7 @@ cc.Class({
     var resultPanelNode = self.resultPanelNode;
     var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); //清除cached boundRoomId
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
@@ -1092,6 +1162,8 @@ cc.Class({
           playersScriptIns.updateData(playerInfo);
         }
       }
+      var countDownScriptIns = self.countdownToBeginGameNode.getComponent("CountdownToBeginGame");
+      countDownScriptIns.setData();
       self.showPopopInCanvas(self.countdownToBeginGameNode);
       return;
     }, 2000);

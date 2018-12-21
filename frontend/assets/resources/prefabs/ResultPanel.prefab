@@ -393,9 +393,7 @@
     "_enabled": true,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "c946a570-ce9b-47ea-ac8f-aedc2b866528"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 0,
     "_fillType": 0,
@@ -496,9 +494,7 @@
     "_enabled": true,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "d3bd9732-334e-459e-9ab9-719bbb910255"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 0,
     "_fillType": 0,
@@ -4558,6 +4554,13 @@
     },
     "resultCompareNode": {
       "__id__": 117
+    },
+    "mapScriptIns": null,
+    "winnerPortraitNode": {
+      "__id__": 8
+    },
+    "loserPortraitNode": {
+      "__id__": 11
     },
     "_id": ""
   },

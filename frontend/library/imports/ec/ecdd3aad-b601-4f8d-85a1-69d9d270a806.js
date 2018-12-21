@@ -44,7 +44,7 @@ cc.Class({
       var playerInfo = players[i];
       var playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
       var nameNode = playerInfoNode.getChildByName("name");
-      nameNode.getComponent(cc.Label).string = "Player" + playerInfo.joinIndex;
+      nameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[playerInfo.joinIndex];
       playerInfoNode.active = true;
       if (2 == playerInfo.joinIndex) {
         this.findingAnimNode.active = false;

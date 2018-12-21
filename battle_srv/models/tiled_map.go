@@ -126,7 +126,7 @@ type TreasurePolyline struct {
 func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	err := xml.Unmarshal(byteArr, pTsxIns)
 	for _, tile := range pTsxIns.Tiles {
-		if 7 == tile.Id || 8 == tile.Id {
+		if 7 == tile.Id || 8 == tile.Id || 9 == tile.Id{
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]TreasurePolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects {
@@ -164,7 +164,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 			}
 			if tile.Id == 7 {
 				pTsxIns.TreasurePolyLineList = pPolyLineList
-			} else {
+			}else if 9 == tile.Id {
 				pTsxIns.TrapPolyLineList = pPolyLineList
 			}
 		}

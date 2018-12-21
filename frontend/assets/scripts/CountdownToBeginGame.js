@@ -14,7 +14,7 @@ cc.Class({
 
 
   },
-  start() {
+  setData() {
     this.startedMillis = Date.now();
     this.durationMillis = 3000;  
   },

@@ -75,5 +75,5 @@ func getTSXInfo() {
 }
 
 func main() {
-	getTMXInfo()
+getTSXInfo()
 }

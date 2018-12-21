@@ -19,6 +19,10 @@ function _defineProperty(obj, key, value) {
 }
 
 var constants = {
+  PLAYER_NAME: {
+    1: "Player1",
+    2: "Player2",
+  },
   SOCKET_EVENT: {
     CONTROL: "control",
     SYNC: "sync",
