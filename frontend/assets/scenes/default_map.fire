@@ -41,9 +41,9 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.10425347487131754,
-      "y": 0.10425347487131754,
-      "z": 0.10425347487131754
+      "x": 0.19947916666666668,
+      "y": 0.19947916666666668,
+      "z": 0.19947916666666668
     },
     "_quat": {
       "__type__": "cc.Quat",
@@ -70,18 +70,12 @@
         "__id__": 3
       },
       {
-        "__id__": 28
+        "__id__": 30
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
-      {
-        "__id__": 57
-      },
-      {
-        "__id__": 58
-      },
       {
         "__id__": 59
       },
@@ -90,6 +84,12 @@
       },
       {
         "__id__": 61
+      },
+      {
+        "__id__": 62
+      },
+      {
+        "__id__": 63
       }
     ],
     "_prefab": null,
@@ -176,16 +176,19 @@
       },
       {
         "__id__": 22
+      },
+      {
+        "__id__": 24
       }
     ],
     "_active": true,
     "_level": 2,
     "_components": [
       {
-        "__id__": 24
+        "__id__": 26
       },
       {
-        "__id__": 25
+        "__id__": 27
       }
     ],
     "_prefab": null,
@@ -944,6 +947,76 @@
     "_id": "4bngiOI55NZ4J+i35YfdDJ"
   },
   {
+    "__type__": "cc.Node",
+    "_name": "highTreasures",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 3
+    },
+    "_children": [],
+    "_active": true,
+    "_level": 3,
+    "_components": [
+      {
+        "__id__": 25
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 4480,
+      "height": 4480
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_position": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_scale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_quat": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_zIndex": 0,
+    "_is3DNode": false,
+    "groupIndex": 0,
+    "_id": "e0Wr+4oTZHrK/LsLsJibZb"
+  },
+  {
+    "__type__": "cc.TiledObjectGroup",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 24
+    },
+    "_enabled": true,
+    "_id": "e85eF8+UZJGIiqa3uu2y0P"
+  },
+  {
     "__type__": "cc.TiledMap",
     "_name": "",
     "_objFlags": 0,
@@ -971,8 +1044,11 @@
     "tiledAnimPrefab": {
       "__uuid__": "0a634d7e-2c5d-45db-896f-e3de32ff0ac8"
     },
-    "selfPlayerPrefab": {
+    "player1Prefab": {
       "__uuid__": "8b400cb3-9119-4269-b86b-0aa2a659b691"
+    },
+    "player2Prefab": {
+      "__uuid__": "8dc1f61c-b839-4344-80e2-df0eecffe125"
     },
     "treasurePrefab": {
       "__uuid__": "e108b9e7-e8b0-465d-8bf1-a850560c3b0f"
@@ -990,10 +1066,10 @@
       "__uuid__": "a36d024b-a979-4d18-b089-19af313ffb82"
     },
     "keyboardInputControllerNode": {
-      "__id__": 26
+      "__id__": 28
     },
     "joystickInputControllerNode": {
-      "__id__": 46
+      "__id__": 48
     },
     "confirmLogoutPrefab": {
       "__uuid__": "8e8c1a65-623d-42ba-97a7-820ce518ea11"
@@ -1002,10 +1078,10 @@
       "__uuid__": "670b477e-61a1-4778-879b-35913f7c79d2"
     },
     "boundRoomIdLabel": {
-      "__id__": 41
+      "__id__": 43
     },
     "countdownLabel": {
-      "__id__": 54
+      "__id__": 56
     },
     "trapBulletPrefab": {
       "__uuid__": "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f"
@@ -1032,17 +1108,17 @@
     "_name": "KeyboardControlsMount",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 27
+      "__id__": 29
     },
     "_children": [],
     "_active": true,
     "_level": 3,
     "_components": [
       {
-        "__id__": 55
+        "__id__": 57
       },
       {
-        "__id__": 56
+        "__id__": 58
       }
     ],
     "_prefab": null,
@@ -1097,23 +1173,23 @@
     "_name": "WidgetsAboveAll",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 28
+      "__id__": 30
     },
     "_children": [
       {
-        "__id__": 30
+        "__id__": 32
       },
       {
-        "__id__": 36
+        "__id__": 38
       },
       {
-        "__id__": 26
+        "__id__": 28
       },
       {
-        "__id__": 46
+        "__id__": 48
       },
       {
-        "__id__": 53
+        "__id__": 55
       }
     ],
     "_active": true,
@@ -1175,14 +1251,14 @@
     },
     "_children": [
       {
-        "__id__": 27
+        "__id__": 29
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 29
+        "__id__": 31
       }
     ],
     "_prefab": null,
@@ -1237,7 +1313,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 28
+      "__id__": 30
     },
     "_enabled": true,
     "_cullingMask": 4294967295,
@@ -1271,21 +1347,21 @@
     "_name": "BtnLogout",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 27
+      "__id__": 29
     },
     "_children": [
       {
-        "__id__": 31
+        "__id__": 33
       }
     ],
     "_active": false,
     "_level": 3,
     "_components": [
       {
-        "__id__": 33
+        "__id__": 35
       },
       {
-        "__id__": 34
+        "__id__": 36
       }
     ],
     "_prefab": null,
@@ -1340,14 +1416,14 @@
     "_name": "Label",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 30
+      "__id__": 32
     },
     "_children": [],
     "_active": true,
     "_level": 0,
     "_components": [
       {
-        "__id__": 32
+        "__id__": 34
       }
     ],
     "_prefab": null,
@@ -1402,7 +1478,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 31
+      "__id__": 33
     },
     "_enabled": true,
     "_srcBlendFactor": 1,
@@ -1427,7 +1503,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 30
+      "__id__": 32
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1455,14 +1531,14 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 30
+      "__id__": 32
     },
     "_enabled": true,
     "duration": 0.1,
     "zoomScale": 1.2,
     "clickEvents": [
       {
-        "__id__": 35
+        "__id__": 37
       }
     ],
     "_N$interactable": true,
@@ -1530,7 +1606,7 @@
       "__uuid__": "29158224-f8dd-4661-a796-1ffab537140e"
     },
     "_N$target": {
-      "__id__": 30
+      "__id__": 32
     },
     "_id": "29a7O/sABBgYFUwbkJSm/0"
   },
@@ -1549,21 +1625,21 @@
     "_name": "DebugInfo",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 27
+      "__id__": 29
     },
     "_children": [
       {
-        "__id__": 37
+        "__id__": 39
       }
     ],
     "_active": true,
     "_level": 3,
     "_components": [
       {
-        "__id__": 44
+        "__id__": 46
       },
       {
-        "__id__": 45
+        "__id__": 47
       }
     ],
     "_prefab": null,
@@ -1618,24 +1694,24 @@
     "_name": "RoomIdIndicator",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 36
+      "__id__": 38
     },
     "_children": [
       {
-        "__id__": 38
+        "__id__": 40
       },
       {
-        "__id__": 40
+        "__id__": 42
       }
     ],
     "_active": false,
     "_level": 2,
     "_components": [
       {
-        "__id__": 42
+        "__id__": 44
       },
       {
-        "__id__": 43
+        "__id__": 45
       }
     ],
     "_prefab": null,
@@ -1690,14 +1766,14 @@
     "_name": "label",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 37
+      "__id__": 39
     },
     "_children": [],
     "_active": true,
     "_level": 2,
     "_components": [
       {
-        "__id__": 39
+        "__id__": 41
       }
     ],
     "_prefab": null,
@@ -1752,7 +1828,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 38
+      "__id__": 40
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1779,14 +1855,14 @@
     "_name": "BoundRoomIdLabel",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 37
+      "__id__": 39
     },
     "_children": [],
     "_active": true,
     "_level": 2,
     "_components": [
       {
-        "__id__": 41
+        "__id__": 43
       }
     ],
     "_prefab": null,
@@ -1841,7 +1917,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 40
+      "__id__": 42
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1868,7 +1944,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 37
+      "__id__": 39
     },
     "_enabled": true,
     "_layoutSize": {
@@ -1901,7 +1977,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 37
+      "__id__": 39
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1929,7 +2005,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 36
+      "__id__": 38
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -1955,7 +2031,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 36
+      "__id__": 38
     },
     "_enabled": true,
     "_layoutSize": {
@@ -1988,18 +2064,18 @@
     "_name": "JoystickContainer",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 27
+      "__id__": 29
     },
     "_children": [
       {
-        "__id__": 47
+        "__id__": 49
       }
     ],
     "_active": true,
     "_level": 3,
     "_components": [
       {
-        "__id__": 52
+        "__id__": 54
       }
     ],
     "_prefab": null,
@@ -2054,21 +2130,21 @@
     "_name": "JoystickBG",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 46
+      "__id__": 48
     },
     "_children": [
       {
-        "__id__": 48
+        "__id__": 50
       }
     ],
     "_active": true,
     "_level": 0,
     "_components": [
       {
-        "__id__": 50
+        "__id__": 52
       },
       {
-        "__id__": 51
+        "__id__": 53
       }
     ],
     "_prefab": null,
@@ -2123,14 +2199,14 @@
     "_name": "Joystick",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 47
+      "__id__": 49
     },
     "_children": [],
     "_active": true,
     "_level": 0,
     "_components": [
       {
-        "__id__": 49
+        "__id__": 51
       }
     ],
     "_prefab": null,
@@ -2185,7 +2261,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 48
+      "__id__": 50
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -2213,7 +2289,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 47
+      "__id__": 49
     },
     "_enabled": true,
     "_srcBlendFactor": 770,
@@ -2239,7 +2315,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 47
+      "__id__": 49
     },
     "_enabled": true,
     "alignMode": 0,
@@ -2266,7 +2342,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 46
+      "__id__": 48
     },
     "_enabled": true,
     "alignMode": 0,
@@ -2293,14 +2369,14 @@
     "_name": "CountdownSeconds",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 27
+      "__id__": 29
     },
     "_children": [],
     "_active": true,
     "_level": 3,
     "_components": [
       {
-        "__id__": 54
+        "__id__": 56
       }
     ],
     "_prefab": null,
@@ -2355,7 +2431,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 53
+      "__id__": 55
     },
     "_enabled": true,
     "_srcBlendFactor": 1,
@@ -2380,7 +2456,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 26
+      "__id__": 28
     },
     "_enabled": true,
     "_srcBlendFactor": 1,
@@ -2405,7 +2481,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 26
+      "__id__": 28
     },
     "_enabled": true,
     "_id": "5ahzSYC8pCCLVPCBYyCRfZ"
@@ -2489,16 +2565,16 @@
     },
     "_enabled": true,
     "translationListenerNode": {
-      "__id__": 46
+      "__id__": 48
     },
     "zoomingListenerNode": {
       "__id__": 3
     },
     "stickhead": {
-      "__id__": 48
+      "__id__": 50
     },
     "base": {
-      "__id__": 47
+      "__id__": 49
     },
     "joyStickEps": 0.1,
     "magicLeanLowerBound": 0.414,

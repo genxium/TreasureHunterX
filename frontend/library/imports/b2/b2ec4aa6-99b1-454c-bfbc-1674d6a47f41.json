@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "ButtomLeft_run_04",
+    "texture": "a24a836b-f98b-4384-842a-020085c8c66d",
+    "atlas": "3f44c275-cd9d-4dab-9de9-6bf052206495",
+    "rect": [
+      125,
+      153,
+      122,
+      150
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      122,
+      150
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

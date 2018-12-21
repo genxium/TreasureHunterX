@@ -1,0 +1,80 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "HeroPandaGreenAttacked.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "ButtomLeft_run_00": {
+      "__uuid__": "20cddb62-3a73-4cbb-9ad3-5cac49c940f5"
+    },
+    "ButtomLeft_run_01": {
+      "__uuid__": "92220f1a-9ea7-4480-a31b-1b3a5b416b08"
+    },
+    "ButtomLeft_run_02": {
+      "__uuid__": "1a4735ee-4b27-4b7f-8463-c3b183fc65b6"
+    },
+    "ButtomLeft_run_03": {
+      "__uuid__": "832128f3-bf6d-4d1f-8d34-26f2a9f3d71f"
+    },
+    "ButtomLeft_run_04": {
+      "__uuid__": "b2ec4aa6-99b1-454c-bfbc-1674d6a47f41"
+    },
+    "ButtomLeft_run_05": {
+      "__uuid__": "bf5e595a-09a6-4ca7-ad4c-b4adf30729c6"
+    },
+    "ButtomLeft_run_06": {
+      "__uuid__": "49ed66cf-c316-4bf5-bf76-cf6c168fd091"
+    },
+    "ButtomLeft_run_07": {
+      "__uuid__": "a4b4f493-fb67-45cb-942b-c7630651386a"
+    },
+    "ButtomLeft_run_08": {
+      "__uuid__": "7fe3b8bf-fc53-48ef-b487-a1348736f3a0"
+    },
+    "ButtomLeft_run_09": {
+      "__uuid__": "9b33a102-7d37-4168-a338-a7314dcc17ce"
+    },
+    "ButtomLeft_run_10": {
+      "__uuid__": "fa43ab3b-fb6f-45df-bc9e-a33a281f04a7"
+    },
+    "ButtomLeft_run_11": {
+      "__uuid__": "de615773-8280-495c-9289-22199ee428a8"
+    },
+    "ButtomRight_run_00": {
+      "__uuid__": "86680da5-237f-4790-9a99-0d62c12d16ea"
+    },
+    "ButtomRight_run_01": {
+      "__uuid__": "0ae4be20-fa44-435f-8f90-558d12f0067c"
+    },
+    "ButtomRight_run_02": {
+      "__uuid__": "b09778b3-0383-4b20-82b0-cdffe15e5338"
+    },
+    "ButtomRight_run_03": {
+      "__uuid__": "019a56ba-22f5-4d91-a028-9d3c30ed5108"
+    },
+    "ButtomRight_run_04": {
+      "__uuid__": "8763f502-7393-4baf-83fc-ee952d5b177c"
+    },
+    "ButtomRight_run_05": {
+      "__uuid__": "81ff1b6a-1db1-4069-a95d-71b77dfd35b1"
+    },
+    "ButtomRight_run_06": {
+      "__uuid__": "11750ded-358a-40d3-820f-65cc12214e69"
+    },
+    "ButtomRight_run_07": {
+      "__uuid__": "bcfc8f57-5c2b-44cf-a27f-376d2ab99f98"
+    },
+    "ButtomRight_run_08": {
+      "__uuid__": "e7e43ac1-5e41-4ff1-b2d9-ec459dc23a22"
+    },
+    "ButtomRight_run_09": {
+      "__uuid__": "e0bf9735-0abb-417a-9fad-0aa54870a116"
+    },
+    "ButtomRight_run_10": {
+      "__uuid__": "d632c400-387e-4a79-a3f3-7c84da5d92d7"
+    },
+    "ButtomRight_run_11": {
+      "__uuid__": "c34923cf-c8f7-4f78-8ecf-bed2fbff8232"
+    }
+  }
+}

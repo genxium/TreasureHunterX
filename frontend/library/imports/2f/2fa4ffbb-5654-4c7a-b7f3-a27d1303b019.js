@@ -508,7 +508,7 @@ module.export = cc.Class({
     self.lastMovedAt = now;
   },
   onCollisionEnter: function onCollisionEnter(other, self) {
-    var playerScriptIns = self.getComponent(self.node.name);
+    var playerScriptIns = self.node.getComponent("SelfPlayer");
     switch (other.node.name) {
       case "NPCPlayer":
         if ("NPCPlayer" != self.node.name) {
@@ -535,7 +535,7 @@ module.export = cc.Class({
     // TBD.
   },
   onCollisionExit: function onCollisionExit(other, self) {
-    var playerScriptIns = self.getComponent(self.node.name);
+    var playerScriptIns = self.getComponent("SelfPlayer");
     switch (other.node.name) {
       case "NPCPlayer":
         other.node.getComponent('NPCPlayer').hideProfileTrigger();

@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "SelfPlayer",
+    "_name": "Player1",
     "_objFlags": 0,
     "_native": "",
     "data": {
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "SelfPlayer",
+    "_name": "Player1",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -423,28 +423,10 @@
         "__uuid__": "242edc56-2853-4b60-a968-282b50933d0e"
       },
       {
-        "__uuid__": "8b673745-7fe0-465e-bbe9-675e67fea185"
+        "__uuid__": "eccd9e3b-4874-45e3-924d-470e5d3af29d"
       },
       {
-        "__uuid__": "2ef2044a-b0b2-44c7-a93c-0fe4d32116e5"
-      },
-      {
-        "__uuid__": "d0c65f5f-840b-445a-b8f7-df53ae471f7d"
-      },
-      {
-        "__uuid__": "e2538581-e188-458b-9d93-8224a6d93d74"
-      },
-      {
-        "__uuid__": "813df7bf-9200-405c-8c9f-42619c73d629"
-      },
-      {
-        "__uuid__": "1a8773e3-8df2-4c26-a96a-8592bddcba5d"
-      },
-      {
-        "__uuid__": "ca78c331-ea1c-48a2-b2ec-6321dad498ce"
-      },
-      {
-        "__uuid__": "070298b0-4916-4dbc-ada6-2fbe1921c2cb"
+        "__uuid__": "279c87ed-cd37-41d2-a0ba-4032c7636db6"
       }
     ],
     "playOnLoad": true,

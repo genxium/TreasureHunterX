@@ -35,7 +35,11 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    selfPlayerPrefab: {
+    player1Prefab: {
+      type: cc.Prefab,
+      default: null
+    },
+    player2Prefab: {
       type: cc.Prefab,
       default: null
     },
@@ -339,6 +343,11 @@ cc.Class({
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
 
+    self.playersNode = {};
+    var player1Node = cc.instantiate(self.player1Prefab);
+    var player2Node = cc.instantiate(self.player2Prefab);
+    Object.assign(self.playersNode, { 1: player1Node });
+    Object.assign(self.playersNode, { 2: player2Node });
     /** init requeired prefab ended */
 
     self.clientUpsyncFps = 20;
@@ -595,11 +604,11 @@ cc.Class({
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0, " + JSON.stringify(diffFrame));
           if (self.findingPlayerNode.parent) {
             self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
             self.transitToState(ALL_MAP_STATES.VISUAL);
             for (var i in diffFrame.players) {
+              //更新在线玩家信息面板的信息
               var playerInfo = diffFrame.players[i];
               var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
               playersScriptIns.updateData(playerInfo);
@@ -608,7 +617,6 @@ cc.Class({
           self.showPopopInCanvas(self.countdownToBeginGameNode);
           return;
         } else if (-98 == refFrameId) {
-          console.log("handleRoomDownsyncFrame and refFrameId < 0 , refFrameId: " + refFrameId);
           self.showPopopInCanvas(self.findingPlayerNode);
           return;
         }
@@ -764,7 +772,8 @@ cc.Class({
   },
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;
-    var newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
+    var joinIndex = this.selfPlayerInfo.joinIndex;
+    var newPlayerNode = this.playersNode[joinIndex];
     var tiledMapIns = instance.node.getComponent(cc.TiledMap);
     var toStartWithPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y);
     newPlayerNode.setPosition(toStartWithPos);
@@ -815,7 +824,7 @@ cc.Class({
       }
       var targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
-        targetNode = cc.instantiate(self.selfPlayerPrefab);
+        targetNode = self.playersNode[cachedPlayerData.joinIndex];
         targetNode.getComponent("SelfPlayer").mapNode = mapNode;
         self.otherPlayerNodeDict[playerId] = targetNode;
         safelyAddChild(mapNode, targetNode);

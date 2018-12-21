@@ -15,7 +15,12 @@ cc.Class({
     },
     binglingAnimDurationMillis: {
       default: 0
+    },
+    scoreLabelNode: {
+      type: cc.Node,
+      default: null
     }
+  
   },
  
 
@@ -23,6 +28,7 @@ cc.Class({
     const self = this;
     this.score = treasureInfo.score ? treasureInfo.score : 100 ;
     this.type = treasureInfo.type ? treasureInfo.type : 1;
+    this.scoreLabelNode.getComponent(cc.Label).string = this.score;
     const spriteComponent = this.pickedUpAnimNode.getComponent(cc.Sprite);
     //hardcode treasurePNG's path.
     cc.loader.loadRes("textures/treasures/"+ this.type, cc.SpriteFrame, function (err, frame) {
@@ -38,7 +44,7 @@ cc.Class({
   update (dt) {
     const changingNode = this.pickedUpAnimNode; 
     const elapsedMillis = Date.now() - this.startedAtMillis; 
-    if(elapsedMillis > this.binglingAnimDurationMillis && this.binglingAnimNode.active) {
+    if(elapsedMillis >= this.binglingAnimDurationMillis && this.binglingAnimNode.active) {
       this.binglingAnimNode.active = false;
       this.startedAtMillis = Date.now();
     }
@@ -51,11 +57,14 @@ cc.Class({
     if (elapsedMillis <= this.firstDurationMillis) {
       let posDiff = cc.v2(0, dt * this.yIncreaseSpeed);
       changingNode.setPosition(changingNode.position.add(posDiff));
+      this.scoreLabelNode.setPosition(this.scoreLabelNode.position.add(posDiff));
       changingNode.scale += (this.scaleIncreaseSpeed*dt); 
     } else {
       let posDiff = cc.v2(dt * this.xIncreaseSpeed , ( -1 *dt * this.yDecreaseSpeed));     
       changingNode.setPosition(changingNode.position.add(posDiff));
+      this.scoreLabelNode.setPosition(this.scoreLabelNode.position.add(posDiff));
       changingNode.opacity -= dt * this.opacityDegradeSpeed;
+      this.scoreLabelNode.opacity -= dt * this.opacityDegradeSpeed;
     }
   },
 

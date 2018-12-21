@@ -29,7 +29,11 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
-    selfPlayerPrefab: {
+    player1Prefab: {
+      type: cc.Prefab,
+      default: null,
+    },
+    player2Prefab: {
       type: cc.Prefab,
       default: null,
     },
@@ -321,6 +325,11 @@ cc.Class({
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
     
+    self.playersNode = {};
+    const player1Node = cc.instantiate(self.player1Prefab);
+    const player2Node = cc.instantiate(self.player2Prefab);
+    Object.assign(self.playersNode,{1: player1Node});
+    Object.assign(self.playersNode,{2: player2Node});
     /** init requeired prefab ended */
 
     self.clientUpsyncFps = 20;
@@ -432,6 +441,7 @@ cc.Class({
             self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
             self.transitToState(ALL_MAP_STATES.VISUAL);
             for(let i in diffFrame.players) {
+              //更新在线玩家信息面板的信息
               const playerInfo = diffFrame.players[i];
               const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
               playersScriptIns.updateData(playerInfo);
@@ -611,7 +621,8 @@ cc.Class({
 
   spawnSelfPlayer() {
     const instance = this;
-    const newPlayerNode = cc.instantiate(instance.selfPlayerPrefab);
+    const joinIndex = this.selfPlayerInfo.joinIndex;
+    const newPlayerNode = this.playersNode[joinIndex];
     const tiledMapIns = instance.node.getComponent(cc.TiledMap);
     let toStartWithPos = cc.v2(instance.selfPlayerInfo.x, instance.selfPlayerInfo.y)
     newPlayerNode.setPosition(toStartWithPos);
@@ -666,7 +677,7 @@ cc.Class({
     }
       let targetNode = self.otherPlayerNodeDict[playerId];
       if (!targetNode) {
-        targetNode = cc.instantiate(self.selfPlayerPrefab);
+        targetNode = self.playersNode[cachedPlayerData.joinIndex];
         targetNode.getComponent("SelfPlayer").mapNode = mapNode;
         self.otherPlayerNodeDict[playerId] = targetNode;
         safelyAddChild(mapNode, targetNode);

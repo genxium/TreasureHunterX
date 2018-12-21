@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "HeroPandaBasicGreen",
+    "texture": "c17d5cc0-0ddb-4ab6-918b-c4082e2e8d5f",
+    "atlas": "",
+    "rect": [
+      4,
+      0,
+      981,
+      1368
+    ],
+    "offset": [
+      -7,
+      0
+    ],
+    "originalSize": [
+      1003,
+      1368
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

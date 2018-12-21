@@ -16,14 +16,14 @@ cc.Class({
   onLoad: function onLoad() {
     BasePlayer.prototype.onLoad.call(this);
     this.attackedClips = {
-      '01': 'attackedTop',
-      '0-1': 'attackedBottom',
+      '01': 'attackedLeft',
+      '0-1': 'attackedRight',
       '-20': 'attackedLeft',
       '20': 'attackedRight',
-      '-21': 'attackedTopLeft',
-      '21': 'atackedTopRright',
-      '-2-1': 'attackedBottomLeft',
-      '2-1': 'attackedBottomRight'
+      '-21': 'attackedLeft',
+      '21': 'attackedRight',
+      '-2-1': 'attackedLeft',
+      '2-1': 'attackedRight'
     };
   },
   update: function update(dt) {
