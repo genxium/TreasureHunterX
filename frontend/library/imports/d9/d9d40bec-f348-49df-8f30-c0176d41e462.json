@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "self",
-    "texture": "66f5fcfa-d3cd-430b-9a53-c01db4d76cf7",
+    "name": "arrowTip",
+    "texture": "c39c2dbf-d38f-437d-96f9-22b4af7f5d6b",
     "atlas": "",
     "rect": [
-      188,
-      209,
-      333,
-      332
+      0,
+      0,
+      76,
+      84
     ],
     "offset": [
-      -157.5,
-      585
+      0,
+      0
     ],
     "originalSize": [
-      1024,
-      1920
+      76,
+      84
     ],
     "capInsets": [
       0,
