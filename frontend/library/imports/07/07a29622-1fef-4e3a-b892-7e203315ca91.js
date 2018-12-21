@@ -78,8 +78,9 @@ function _base64ToArrayBuffer(base64) {
 
 window.initPersistentSessionClient = function (onopenCb) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
-    if (null == onopenCb) return;
-    onopenCb();
+    if (null != onopenCb) {
+      onopenCb();
+    }
     return;
   }
 
@@ -132,7 +133,7 @@ window.initPersistentSessionClient = function (onopenCb) {
   clientSession.onerror = function (event) {
     cc.error("Error caught on the WS clientSession:", event);
     if (window.clientSessionPingInterval) {
-      clearInterval(clientSessionPingInterval);
+      clearInterval(window.clientSessionPingInterval);
     }
     if (window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError();
@@ -141,19 +142,19 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   clientSession.onclose = function (event) {
     cc.log("The WS clientSession is closed:", event);
+    if (window.clientSessionPingInterval) {
+      clearInterval(window.clientSessionPingInterval);
+    }
     if (!event.wasClean) {
       // Chrome doesn't allow the use of "CustomCloseCode"s (yet) and will callback with a "WebsocketStdCloseCode 1006" and "false == event.wasClean" here. See https://tools.ietf.org/html/rfc6455#section-7.4 for more information.
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
     switch (event.code) {
       case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
-        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
-        return;
       case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
-        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
-        return;
       case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
-        if (window.reconnectWSWithoutRoomId) window.reconnectWSWithoutRoomId();
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        window.initPersistentSessionClient(onopenCb);
         return;
       case constants.RET_CODE.PLAYER_NOT_FOUND:
       case constants.RET_CODE.PLAYER_CHEATING:
@@ -161,9 +162,6 @@ window.initPersistentSessionClient = function (onopenCb) {
         break;
       default:
         break;
-    }
-    if (window.clientSessionPingInterval) {
-      clearInterval(clientSessionPingInterval);
     }
     if (window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError();

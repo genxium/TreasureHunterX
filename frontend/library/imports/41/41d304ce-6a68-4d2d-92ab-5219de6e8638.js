@@ -392,6 +392,28 @@ cc.Class({
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
+    resultPanelScriptIns.onAgainClicked = function () {
+      self._resetCurrentMatch();
+      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      switch (shouldReconnectState) {
+        case 2:
+        case 1:
+          // Clicking too fast?
+          return;
+        default:
+          break;
+      }
+      if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) {
+        // Already disconnected. 
+        cc.log("Ws session is already closed when `again/replay` button is clicked. Reconnecting now.");
+        window.initPersistentSessionClient(self.initAfterWSConncted);
+      } else {
+        // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
+        cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
+        cc.sys.localStorage.shouldReconnectState = 2;
+        window.closeWSConnection();
+      }
+    };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
@@ -639,26 +661,24 @@ cc.Class({
       }
     }
 
-    window.reconnectWSWithoutRoomId = function () {
-      var _this = this;
-
-      return new Promise(function (resolve, reject) {
-        if (window.clientSessionPingInterval) {
-          clearInterval(clientSessionPingInterval);
-        }
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        return resolve();
-      }).then(function () {
-        _this.initPersistentSessionClient(self.initAfterWSConncted);
-      });
-    };
-
     window.handleClientSessionCloseOrError = function () {
-      if (!self.battleState) {
+      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      switch (shouldReconnectState) {
+        case 2:
+          shouldReconnectState = 1;
+          cc.sys.localStorage.shouldReconnectState = shouldReconnectState;
+          cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
+          window.initPersistentSessionClient(self.initAfterWSConncted);
+          return;
+        case 1:
+          cc.log("Neither reconnecting nor alerting because 1 == shouldReconnectState and it's now removed.");
+          cc.sys.localStorage.removeItem("shouldReconnectState");
+          return;
+        default:
+          break;
+      }
+      if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
         self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
-        if (window.clientSessionPingInterval) {
-          clearInterval(clientSessionPingInterval);
-        }
       }
     };
 
@@ -1077,12 +1097,7 @@ cc.Class({
   },
   logout: function logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     var localClearance = function localClearance() {
-      if (byClick) {
-        /**
-        * WARNING: We MUST distinguish `byClick`, otherwise the `window.clientSession.onclose(event)` could be confused by local events!
-        */
-        window.closeWSConnection();
-      }
+      window.closeWSConnection();
       if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
@@ -1135,10 +1150,10 @@ cc.Class({
   },
   initWSConnection: function initWSConnection(evt, cb) {
     var self = this;
+    window.initPersistentSessionClient(self.initAfterWSConncted);
     if (cb) {
       cb();
     }
-    initPersistentSessionClient(self.initAfterWSConncted);
   },
   showPopopInCanvas: function showPopopInCanvas(toShowNode) {
     var self = this;

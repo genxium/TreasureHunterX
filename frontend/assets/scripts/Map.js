@@ -283,7 +283,7 @@ cc.Class({
         node.active = true;
       }
     }
-    if(self.otherPlayerNodeDict ){
+    if (self.otherPlayerNodeDict) {
       for (let i in self.otherPlayerNodeDict) {
         let node = self.otherPlayerNodeDict[i];
         if (node.parent) {
@@ -352,7 +352,7 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
-    if(self.findingPlayerNode) {
+    if (self.findingPlayerNode) {
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");  
       findingPlayerScriptIns.init();
     }
@@ -375,6 +375,28 @@ cc.Class({
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
+    resultPanelScriptIns.onAgainClicked = () => {
+      self._resetCurrentMatch();
+      let shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState); 
+      switch (shouldReconnectState) {
+        case 2:
+        case 1:
+          // Clicking too fast?
+          return;
+        default:
+          break;
+      }
+      if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) {
+        // Already disconnected. 
+        cc.log("Ws session is already closed when `again/replay` button is clicked. Reconnecting now.");
+        window.initPersistentSessionClient(self.initAfterWSConncted);
+      } else {
+        // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
+        cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
+        cc.sys.localStorage.shouldReconnectState = 2;
+        window.closeWSConnection();
+      }
+    };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
@@ -472,25 +494,24 @@ cc.Class({
       self.node.addChild(newShelter);
     }
 
-    window.reconnectWSWithoutRoomId = function() {
-      return new Promise((resolve, reject) => {
-        if (window.clientSessionPingInterval) {
-          clearInterval(clientSessionPingInterval);
-        }
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
-        return resolve();
-      })
-        .then(() => {
-          this.initPersistentSessionClient(self.initAfterWSConncted);
-        });
-    }
-
     window.handleClientSessionCloseOrError = function() {
-      if (!self.battleState){
+      let shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      switch (shouldReconnectState) {
+        case 2:
+          shouldReconnectState = 1;
+          cc.sys.localStorage.shouldReconnectState = shouldReconnectState;
+          cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
+          window.initPersistentSessionClient(self.initAfterWSConncted);
+          return;
+        case 1:
+          cc.log("Neither reconnecting nor alerting because 1 == shouldReconnectState and it's now removed.");
+          cc.sys.localStorage.removeItem("shouldReconnectState");
+          return;
+        default:
+          break;
+      }
+      if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
         self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
-        if (window.clientSessionPingInterval) {
-          clearInterval(clientSessionPingInterval);
-        }
       }
     };
 
@@ -502,7 +523,6 @@ cc.Class({
       self.transitToState(ALL_MAP_STATES.VISUAL);
       self._inputControlEnabled = false;
       self.setupInputControls();
-
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
@@ -950,12 +970,7 @@ cc.Class({
 
   logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/ , shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const localClearance = function() {
-      if (byClick) {
-        /**
-        * WARNING: We MUST distinguish `byClick`, otherwise the `window.clientSession.onclose(event)` could be confused by local events!
-        */
-        window.closeWSConnection();
-      }
+      window.closeWSConnection();
       if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
@@ -1011,10 +1026,10 @@ cc.Class({
 
   initWSConnection(evt, cb) {
     const self = this;
+    window.initPersistentSessionClient(self.initAfterWSConncted);
     if (cb) {
       cb()
     }
-    initPersistentSessionClient(self.initAfterWSConncted);
   },
 
   showPopopInCanvas(toShowNode) {
@@ -1024,6 +1039,7 @@ cc.Class({
     safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
   },
+
   matchPlayersFinsihed(players) {
     const self = this;
     const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");

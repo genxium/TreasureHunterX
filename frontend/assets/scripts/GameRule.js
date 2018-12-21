@@ -19,8 +19,8 @@ cc.Class({
      modeBtnClickEventHandler.target = this.mapNode; 
      modeBtnClickEventHandler.component = "Map";
      modeBtnClickEventHandler.handler = "initWSConnection";
-     modeBtnClickEventHandler.customEventData = () =>{
-      this.node.active = false;
+     modeBtnClickEventHandler.customEventData = () => {
+       this.node.active = false;
      };
      this.modeButton.clickEvents.push(modeBtnClickEventHandler);
   }

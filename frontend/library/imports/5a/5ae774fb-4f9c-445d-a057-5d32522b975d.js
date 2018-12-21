@@ -15,6 +15,10 @@ cc.Class({
       type: cc.Object,
       default: null
     },
+    onAgainClicked: {
+      type: cc.Object,
+      default: null
+    },
     winnerPanel: {
       type: cc.Node,
       default: null
@@ -37,12 +41,11 @@ cc.Class({
     var homeButtonNode = resultPanelNode.getChildByName("homeBtn");
   },
   againBtnOnClick: function againBtnOnClick(evt) {
-    //TODO: 目前还没有实现rejoin the room，先跳转到login scene。
-    window.closeWSConnection();
-    cc.director.loadScene('login');
+    this.onClose();
+    if (!this.onAgainClicked) return;
+    this.onAgainClicked();
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    //TODO: 目前没有home scene和相关业务逻辑，先跳转到login scene。
     window.closeWSConnection();
     cc.director.loadScene('login');
   },
@@ -71,12 +74,6 @@ cc.Class({
     //TODO Hardecode the name
     winnerNameNode.getComponent(cc.Label).string = "Player" + winnerInfo.joinIndex;
     loserNameNode.getComponent(cc.Label).string = "Player" + loserInfo.joinIndex;
-    //if(winnerInfo.name) {
-    //  winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
-    //} 
-    //if(loserInfo.name) {
-    //  loserNameNode.getComponent(cc.Label).string = loserInfo.name;
-    //} 
 
     var progressComp = compareProgressNode.getComponent(cc.ProgressBar);
     var winnerScore = parseInt(winnerInfo.score);
@@ -118,8 +115,12 @@ cc.Class({
     });
   },
   onClose: function onClose(evt) {
-    this.node.active = false;
-    if (!this.onCloseDelegate) return;
+    if (this.node.parent) {
+      this.node.parent.removeChild(this.node);
+    }
+    if (!this.onCloseDelegate) {
+      return;
+    }
     this.onCloseDelegate();
   }
 });

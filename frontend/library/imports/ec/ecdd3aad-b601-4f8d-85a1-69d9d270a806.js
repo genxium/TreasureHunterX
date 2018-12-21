@@ -31,6 +31,7 @@ cc.Class({
     this.playersInfoNode = {};
     Object.assign(this.playersInfoNode, { 1: this.firstPlayerInfoNode });
     Object.assign(this.playersInfoNode, { 2: this.secondPlayerInfoNode });
+    this.findingAnimNode.active = true;
   },
   exitBtnOnClick: function exitBtnOnClick(evt) {
     window.closeWSConnection();
