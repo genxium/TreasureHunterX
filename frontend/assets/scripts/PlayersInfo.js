@@ -15,8 +15,10 @@ cc.Class({
     if(!playerNode)
       return;
     const playerNameLabelNode = playerNode.getChildByName("name");
-    if(playerInfo.displayName)
-      playerNameLabelNode.getComponent(cc.Label).string = playerInfo.displayName;
+    //if(playerInfo.name) {
+    //  playerNameLabelNode.getComponent(cc.Label).string = playerInfo.name;
+    //} 
+
     const score  = playerInfo.score ? playerInfo.score : 0 
     const playerScoreLabelNode = playerNode.getChildByName("score");
     playerScoreLabelNode.getComponent(cc.Label).string = score;

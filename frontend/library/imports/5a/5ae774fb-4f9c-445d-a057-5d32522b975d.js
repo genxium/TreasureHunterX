@@ -68,12 +68,15 @@ cc.Class({
         loserInfo = playerInfo;
       }
     }
-    if (winnerInfo.name) {
-      winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
-    }
-    if (loserInfo.name) {
-      loserNameNode.getComponent(cc.Label).string = loserInfo.name;
-    }
+    //TODO Hardecode the name
+    winnerNameNode.getComponent(cc.Label).string = "Player" + winnerInfo.joinIndex;
+    loserNameNode.getComponent(cc.Label).string = "Player" + loserInfo.joinIndex;
+    //if(winnerInfo.name) {
+    //  winnerNameNode.getComponent(cc.Label).string = winnerInfo.name;
+    //} 
+    //if(loserInfo.name) {
+    //  loserNameNode.getComponent(cc.Label).string = loserInfo.name;
+    //} 
 
     var progressComp = compareProgressNode.getComponent(cc.ProgressBar);
     var winnerScore = parseInt(winnerInfo.score);
@@ -86,6 +89,20 @@ cc.Class({
 
     resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
     resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
+
+    var plistDir = "textures/StatusBar";
+
+    cc.loader.loadRes(plistDir, cc.SpriteAtlas, function (err, altas) {
+      if (err) {
+        cc.warn(err);
+        return;
+      }
+      //hardecode avatart by joinIndex
+      var winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar");
+      var loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar");
+      resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
+      resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
+    });
 
     this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));
   },
