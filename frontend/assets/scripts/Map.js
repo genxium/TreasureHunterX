@@ -218,6 +218,9 @@ cc.Class({
 
   onDestroy() {
     const self = this;
+    if (null != window.handleRoomDownsyncFrame) {
+      window.handleRoomDownsyncFrame = null;
+    }
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
     }
