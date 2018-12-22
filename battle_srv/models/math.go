@@ -5,6 +5,12 @@ import (
 	"github.com/ByteArena/box2d"
 )
 
+// Use type `float64` for json unmarshalling of numbers.
+type Direction struct {
+	Dx float64 `protobuf:"fixed64,1,opt,name=dx,proto3" json:"dx,omitempty"`
+	Dy float64 `protobuf:"fixed64,2,opt,name=dy,proto3" json:"dy,omitempty"`
+}
+
 type Vec2D struct {
 	X float64 `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
 	Y float64 `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`

@@ -751,6 +751,9 @@ cc.Class({
     let toRemoveTrapNodeDict = {};
     Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
 
+    /*
+    * NOTE: At the beginning of each GUI update cycle, mark all `self.trapBulletNode` as `toRemoveBulletNode`, while only those that persist in `self.trapBulletInfoDict` are NOT finally removed. This approach aims to reduce the lines of codes for coping with node removal in the RoomDownsyncFrame algorithm.
+    */
     let toRemoveBulletNodeDict = {};
     Object.assign(toRemoveBulletNodeDict, self.trapBulletNodeDict);
 
@@ -761,7 +764,7 @@ cc.Class({
         cachedPlayerData.x,
         cachedPlayerData.y
       );
-      //更新信息
+      //更新玩家信息展示
       if (null != cachedPlayerData) {
         const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
         playersScriptIns.updateData(cachedPlayerData);
@@ -778,12 +781,9 @@ cc.Class({
       const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
-      if (null != toRemovePlayerNodeDict[playerId]) {
-        delete toRemovePlayerNodeDict[playerId];
-      }
       if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
         const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
-        targetNode.getComponent("SelfPlayer").scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
+        aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
       }
       const oldPos = cc.v2(
         targetNode.x,
@@ -794,14 +794,14 @@ cc.Class({
       const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
       const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
       if (toMoveByVecMag < notToMoveDisThreshold) {
-        targetNode.getComponent("SelfPlayer").activeDirection = {
+        aControlledOtherPlayerScriptIns.activeDirection = {
           dx: 0,
           dy: 0
         };
       } else {
-        if (toMoveByVecMag >= toTeleportDisThreshold) {
+        if (toMoveByVecMag > toTeleportDisThreshold) {
           cc.log(`Player ${cachedPlayerData.id} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
-          targetNode.getComponent("SelfPlayer").activeDirection = {
+          aControlledOtherPlayerScriptIns.activeDirection = {
             dx: 0,
             dy: 0
           };
@@ -813,8 +813,12 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag,
           };
-          targetNode.getComponent("SelfPlayer").activeDirection = normalizedDir;
+          aControlledOtherPlayerScriptIns.activeDirection = normalizedDir;
         }
+      }
+
+      if (null != toRemovePlayerNodeDict[playerId]) {
+        delete toRemovePlayerNodeDict[playerId];
       }
     }
 
@@ -833,22 +837,10 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
-      /*
-      //初始化trap的标记
-      const pickupBoundary = trapInfo.pickupBoundary;
-      const anchor = pickupBoundary.anchor; 
-      const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
-      newColliderIns.points = [];
-      for (let point of pickupBoundary.points) {
-        const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
-        newColliderIns.points.push(p);
-      }
-      */
       }
       if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
         delete toRemoveTrapNodeDict[trapLocalIdInBattle];
       }
-
     }
 
     // 更新bullet显示 
@@ -866,24 +858,45 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
-      } else {
-        targetNode.setPosition(newPos);
-      }
-      if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
-        delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
-      }
+      } 
+      const aBulletScriptIns = targetNode.getComponent("Bullet"); 
+      aBulletScriptIns.localIdInBattle = bulletLocalIdInBattle;
+      aBulletScriptIns.linearSpeed = bulletInfo.linearSpeed * 1000000000; // The `bullet.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
 
-      if (0 < targetNode.getNumberOfRunningActions()) {
-        // A significant trick to smooth the position sync performance!
-        continue;
-      }
       const oldPos = cc.v2(
         targetNode.x,
         targetNode.y
       );
       const toMoveByVec = newPos.sub(oldPos);
-      const durationSeconds = dt; // Using `dt` temporarily!
-      targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+      const toMoveByVecMag = toMoveByVec.mag();
+      const toTeleportDisThreshold = (aBulletScriptIns.linearSpeed * dt * 100);
+      const notToMoveDisThreshold = (aBulletScriptIns.linearSpeed * dt * 0.5);
+      if (toMoveByVecMag < notToMoveDisThreshold) {
+        aBulletScriptIns.activeDirection = {
+          dx: 0,
+          dy: 0
+        };
+      } else {
+        if (toMoveByVecMag > toTeleportDisThreshold) {
+          cc.log(`Bullet ${bulletLocalIdInBattle} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
+          aBulletScriptIns.activeDirection = {
+            dx: 0,
+            dy: 0
+          };
+          // TODO: Use `cc.Action`?
+          targetNode.setPosition(newPos);
+        } else {
+          // The common case which is suitable for interpolation.
+          const normalizedDir = {
+            dx: toMoveByVec.x / toMoveByVecMag,
+            dy: toMoveByVec.y / toMoveByVecMag,
+          };
+          aBulletScriptIns.activeDirection = normalizedDir;
+        }
+      }
+      if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
+        delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
+      }
     }
 
     // 更新宝物显示 
@@ -903,18 +916,6 @@ cc.Class({
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
         setLocalZOrder(targetNode, 5);
-
-      /* 
-      //初始化treasure的标记
-      const pickupBoundary = treasureInfo.pickupBoundary;
-      const anchor = pickupBoundary.anchor; 
-      const newColliderIns = targetNode.getComponent(cc.PolygonCollider);
-      newColliderIns.points = [];
-      for (let point of pickupBoundary.points) {
-        const p = cc.v2(parseFloat(point.x), parseFloat(point.y));
-        newColliderIns.points.push(p);
-      }
-      */
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {

@@ -257,9 +257,9 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	diffVecX := (endPos.X - startPos.X)
 	diffVecY := (endPos.Y - startPos.Y)
 	tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
-	linearUnitVector := Vec2D{
-		X: diffVecX / tempMag,
-		Y: diffVecY / tempMag,
+	linearUnitVector := Direction{
+		Dx: diffVecX / tempMag,
+		Dy: diffVecY / tempMag,
 	}
 
 	bullet := &Bullet{
@@ -269,7 +269,7 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 		Y:                startPos.Y,
 		StartAtPoint:     &startPos,
 		EndAtPoint:       &endPos,
-		LinearUnitVector: linearUnitVector,
+		Dir: &linearUnitVector,
 	}
 
 	bullet.CollidableBody = b2Body
@@ -737,7 +737,7 @@ func (pR *Room) StartBattle() {
 					continue
 				}
 				elapsedMag := bullet.LinearSpeed * float64(bulletElapsedTime)
-				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X+float64(elapsedMag)*bullet.LinearUnitVector.X, bullet.Y+float64(elapsedMag)*bullet.LinearUnitVector.Y)
+				newB2Vec2Pos := box2d.MakeB2Vec2(bullet.X+float64(elapsedMag)*bullet.Dir.Dx, bullet.Y+float64(elapsedMag)*bullet.Dir.Dy)
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y

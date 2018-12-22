@@ -7,12 +7,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Use type `float64` for json unmarshalling of numbers.
-type Direction struct {
-	Dx float64 `protobuf:"fixed64,1,opt,name=dx,proto3" json:"dx,omitempty"`
-	Dy float64 `protobuf:"fixed64,2,opt,name=dy,proto3" json:"dy,omitempty"`
-}
-
 type PlayerBattleState struct {
 	ACTIVE                int32
 	DISCONNECTED          int32

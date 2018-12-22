@@ -37,6 +37,7 @@ message Bullet {
   double x = 3;
   double y = 4;
   bool removed = 5;
+  // Direction dir = 5;
 }
 
 message Trap {
@@ -46,22 +47,6 @@ message Trap {
   double x = 4; 
   double y = 5;
   bool removed = 6;
-}
-
-message Hostage {
-    int32 localIdInBattle = 1;
-    int32 pairedPlayer = 2;
-    double x = 3;
-    double y = 4;
-    Direction dir = 5;
-    bool removed = 6;
-}
-
-message HostageSanctuary {
-    int32 localIdInBattle = 1;
-    double x = 2;
-    double y = 3;
-    bool removed = 4;
 }
 
 message RoomDownsyncFrame {

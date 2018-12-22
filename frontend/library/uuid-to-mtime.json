@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1545392597374,
+    "asset": 1545398097827,
     "meta": 1545031560260,
     "relativePath": "plugin_scripts"
   },
@@ -35,7 +35,7 @@
     "relativePath": "plugin_scripts\\auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1545392596936,
+    "asset": 1545461919232,
     "meta": 1545031560270,
     "relativePath": "resources"
   },
@@ -55,7 +55,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1545394320380,
+    "asset": 1545462220122,
     "meta": 1545031560427,
     "relativePath": "scripts"
   },
@@ -235,12 +235,12 @@
     "relativePath": "resources\\textures\\mikado_outline_shadow.png"
   },
   "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f": {
-    "asset": 1545031560292,
-    "meta": 1545394333900,
+    "asset": 1545463223936,
+    "meta": 1545463223979,
     "relativePath": "resources\\prefabs\\BulletPrefab.prefab"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
-    "asset": 1545308213064,
+    "asset": 1545461936163,
     "meta": 1545031560290,
     "relativePath": "resources\\pbfiles"
   },
@@ -924,11 +924,6 @@
     "meta": 1545394333931,
     "relativePath": "resources\\prefabs\\TiledAnim.prefab"
   },
-  "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
-    "asset": 1545308213065,
-    "meta": 1545394333898,
-    "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
-  },
   "fa76a967-ed72-4ba0-b9d6-4d5054d5829a": {
     "asset": 1545308213062,
     "meta": 1545394333825,
@@ -1150,8 +1145,8 @@
     "relativePath": "scripts\\CountdownToBeginGame.js"
   },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
-    "asset": 1545375356067,
-    "meta": 1545394337205,
+    "asset": 1545460424696,
+    "meta": 1545462223645,
     "relativePath": "scripts\\BasePlayer.js"
   },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
@@ -1165,39 +1160,14 @@
     "relativePath": "resources\\map\\tile_1.png"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545396945893,
-    "meta": 1545396945920,
+    "asset": 1545464585242,
+    "meta": 1545464585269,
     "relativePath": "scenes\\login.fire"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
     "asset": 1545392597377,
     "meta": 1545394333870,
     "relativePath": "resources\\map\\tile_1.tsx"
-  },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1544274621863,
-    "meta": 1545394340595,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1544274621865,
-    "meta": 1545394340602,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1544274621867,
-    "meta": 1545394340640,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1544274621869,
-    "meta": 1545394340653,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1544274621870,
-    "meta": 1545394340660,
-    "relativePath": "SpriteFrameSet.js"
   },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1545394683724,
@@ -1224,9 +1194,44 @@
     "meta": 1545396423818,
     "relativePath": "scripts\\ResultPanel.js"
   },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1544274621863,
+    "meta": 1545462226619,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1544274621865,
+    "meta": 1545462226636,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1544274621867,
+    "meta": 1545462226720,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1544274621869,
+    "meta": 1545462226726,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1544274621870,
+    "meta": 1545462226730,
+    "relativePath": "SpriteFrameSet.js"
+  },
+  "ea965d25-ec82-478c-bdb2-9ac07981ab0e": {
+    "asset": 1545463096980,
+    "meta": 1545463101758,
+    "relativePath": "scripts\\Bullet.js"
+  },
+  "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
+    "asset": 1545463784875,
+    "meta": 1545463878199,
+    "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545397741069,
-    "meta": 1545397744895,
+    "asset": 1545464729311,
+    "meta": 1545464732903,
     "relativePath": "scripts\\Map.js"
   }
 }
