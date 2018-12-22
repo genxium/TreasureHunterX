@@ -1220,8 +1220,8 @@
     "relativePath": "SpriteFrameSet.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545483864700,
-    "meta": 1545483864719,
+    "asset": 1545485574144,
+    "meta": 1545485574191,
     "relativePath": "scenes\\login.fire"
   },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
@@ -1230,8 +1230,8 @@
     "relativePath": "scripts\\BasePlayer.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545483799384,
-    "meta": 1545483804589,
+    "asset": 1545485567456,
+    "meta": 1545485572101,
     "relativePath": "scripts\\Map.js"
   }
 }

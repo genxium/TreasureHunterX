@@ -231,16 +231,21 @@ cc.Class({
 
   _lazilyTriggerResync() {
     if (true == this.resyncing) return;
-    this.resyncing = false;
+    this.resyncing = true;
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
-      this.popupSimplePressToGo("Resyncing your battle, please wait...");
+      if (null == this.resyncingHintPopup) {
+        this.resyncingHintPopup = this.popupSimplePressToGo("Resyncing your battle, please wait...");
+      }
     }
   },
 
   _onResyncCompleted() {
     if (false == this.resyncing) return;
     cc.log(`_onResyncCompleted`);
-    this.resyncing = true;
+    this.resyncing = false;
+    if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
+      this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
+    }
   },
 
   popupSimplePressToGo(labelString) {
@@ -263,6 +268,7 @@ cc.Class({
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
+    return simplePressToGoDialogNode;
   },
 
   alertForGoingBackToLoginScene(labelString, mapIns, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
