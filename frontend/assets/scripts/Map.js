@@ -784,10 +784,6 @@ cc.Class({
       const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
-      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
-        const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
-        aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
-      }
       const oldPos = cc.v2(
         targetNode.x,
         targetNode.y
@@ -816,8 +812,20 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag,
           };
-          aControlledOtherPlayerScriptIns.activeDirection = normalizedDir;
+          if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
+            aControlledOtherPlayerScriptIns.activeDirection = {
+              dx: 0,
+              dy: 0,
+            };
+          } else {
+            aControlledOtherPlayerScriptIns.activeDirection = normalizedDir;
+          } 
         }
+      }
+
+      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
+        const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
       }
 
       if (null != toRemovePlayerNodeDict[playerId]) {
@@ -868,7 +876,7 @@ cc.Class({
 
       const oldPos = cc.v2(
         targetNode.x,
-        targetNode.y
+        targetNode.y,
       );
       const toMoveByVec = newPos.sub(oldPos);
       const toMoveByVecMag = toMoveByVec.mag();
@@ -877,7 +885,7 @@ cc.Class({
       if (toMoveByVecMag < notToMoveDisThreshold) {
         aBulletScriptIns.activeDirection = {
           dx: 0,
-          dy: 0
+          dy: 0,
         };
       } else {
         if (toMoveByVecMag > toTeleportDisThreshold) {
@@ -894,7 +902,14 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag,
           };
-          aBulletScriptIns.activeDirection = normalizedDir;
+          if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
+            aBulletScriptIns.activeDirection = {
+              dx: 0,
+              dy: 0,
+            };
+          } else {
+            aBulletScriptIns.activeDirection = normalizedDir;
+          } 
         }
       }
       if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {

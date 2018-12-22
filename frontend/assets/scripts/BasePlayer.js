@@ -78,16 +78,19 @@ module.export = cc.Class({
     }
     if (forceAnimSwitch || null == this.scheduledDirection || (newScheduledDirection.dx != this.scheduledDirection.dx || newScheduledDirection.dy != this.scheduledDirection.dy)) {
       this.scheduledDirection = newScheduledDirection;
-      const clipKey = newScheduledDirection.dx.toString() + newScheduledDirection.dy.toString()
-      const clips = this.attacked ? this.attackedClips : this.clips; 
+      const clipKey = newScheduledDirection.dx.toString() + newScheduledDirection.dy.toString();
+      const clips = (this.attacked ? this.attackedClips : this.clips); 
       let clip = clips[clipKey];
       if (!clip) {
         // Keep playing the current anim.
         if (0 !== newScheduledDirection.dx || 0 !== newScheduledDirection.dy) {
-          console.warn('Clip for clipKey === ' + clipKey + ' is invalid: ' + clip + '.');
+          cc.warn('Clip for clipKey === ' + clipKey + ' is invalid: ' + clip + '.');
         }
       } else {
         this.animComp.play(clip);
+        if (this.attacked) {
+          cc.log(`Attacked, switching to play clipKey = ${clipKey}, clip == ${clip}, this.activeDirection == ${JSON.stringify(this.activeDirection)}, this.scheduledDirection == ${JSON.stringify(this.scheduledDirection)}.`);
+        }
       }
     }
   },
@@ -363,7 +366,7 @@ module.export = cc.Class({
     const self = this;
     if (0 != self.activeDirection.dx || 0 != self.activeDirection.dy) {
       const newScheduledDirectionInLocalCoordinate = self.ctrl.discretizeDirection(self.activeDirection.dx, self.activeDirection.dy, self.eps);
-      self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+      self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate, false);
     }
     const now = new Date().getTime();
     self.lastMovedAt = now;
@@ -456,17 +459,13 @@ module.export = cc.Class({
 
   startFrozenDisplay() {
     const self =  this;
-    const clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString()
-    let clip = this.attackedClips[clipKey];
-    self.animComp.play(clip);
     self.attacked = true;
+    self.scheduleNewDirection(self.scheduledDirection, true);
   },
 
   stopFrozenDisplay() {
     const self = this;
-    const clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString()
-    let clip = this.clips[clipKey];
-    self.animComp.play(clip);
     self.attacked = false;
+    self.scheduleNewDirection(self.scheduledDirection, true);
   },
 });

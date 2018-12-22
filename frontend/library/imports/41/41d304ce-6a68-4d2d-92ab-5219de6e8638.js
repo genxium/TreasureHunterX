@@ -219,6 +219,9 @@ cc.Class({
   },
   onDestroy: function onDestroy() {
     var self = this;
+    if (null != window.handleRoomDownsyncFrame) {
+      window.handleRoomDownsyncFrame = null;
+    }
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
     }
@@ -929,10 +932,6 @@ cc.Class({
       var aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
-      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
-        var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
-        aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
-      }
       var oldPos = cc.v2(targetNode.x, targetNode.y);
       var toMoveByVec = newPos.sub(oldPos);
       var toMoveByVecMag = toMoveByVec.mag();
@@ -958,8 +957,20 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag
           };
-          aControlledOtherPlayerScriptIns.activeDirection = normalizedDir;
+          if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
+            aControlledOtherPlayerScriptIns.activeDirection = {
+              dx: 0,
+              dy: 0
+            };
+          } else {
+            aControlledOtherPlayerScriptIns.activeDirection = normalizedDir;
+          }
         }
+      }
+
+      if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
+        var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
       }
 
       if (null != toRemovePlayerNodeDict[playerId]) {
@@ -1027,7 +1038,14 @@ cc.Class({
             dx: _toMoveByVec.x / _toMoveByVecMag,
             dy: _toMoveByVec.y / _toMoveByVecMag
           };
-          aBulletScriptIns.activeDirection = _normalizedDir;
+          if (isNaN(_normalizedDir.dx) || isNaN(_normalizedDir.dy)) {
+            aBulletScriptIns.activeDirection = {
+              dx: 0,
+              dy: 0
+            };
+          } else {
+            aBulletScriptIns.activeDirection = _normalizedDir;
+          }
         }
       }
       if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {

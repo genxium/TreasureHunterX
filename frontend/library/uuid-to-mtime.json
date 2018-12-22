@@ -35,7 +35,7 @@
     "relativePath": "plugin_scripts\\auxiliaries.js"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1545461919232,
+    "asset": 1545463735343,
     "meta": 1545031560270,
     "relativePath": "resources"
   },
@@ -55,7 +55,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1545462220122,
+    "asset": 1545466257278,
     "meta": 1545031560427,
     "relativePath": "scripts"
   },
@@ -175,8 +175,8 @@
     "relativePath": "plugin_scripts\\NetworkUtils.js"
   },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
-    "asset": 1545031560306,
-    "meta": 1545394333927,
+    "asset": 1545482791589,
+    "meta": 1545482791606,
     "relativePath": "resources\\prefabs\\SimplePressToGoDialog.prefab"
   },
   "7754aaae-2816-4803-b0c9-199ffaeaa433": {
@@ -240,7 +240,7 @@
     "relativePath": "resources\\prefabs\\BulletPrefab.prefab"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
-    "asset": 1545461936163,
+    "asset": 1545463843202,
     "meta": 1545031560290,
     "relativePath": "resources\\pbfiles"
   },
@@ -1144,11 +1144,6 @@
     "meta": 1545394337262,
     "relativePath": "scripts\\CountdownToBeginGame.js"
   },
-  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
-    "asset": 1545460424696,
-    "meta": 1545462223645,
-    "relativePath": "scripts\\BasePlayer.js"
-  },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
     "asset": 1545392597379,
     "meta": 1545394338385,
@@ -1158,11 +1153,6 @@
     "asset": 1545392597376,
     "meta": 1545394333881,
     "relativePath": "resources\\map\\tile_1.png"
-  },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545464585242,
-    "meta": 1545464585269,
-    "relativePath": "scenes\\login.fire"
   },
   "f2bbe1e0-cda4-4c52-9339-b45d4b9dffd3": {
     "asset": 1545392597377,
@@ -1194,31 +1184,6 @@
     "meta": 1545396423818,
     "relativePath": "scripts\\ResultPanel.js"
   },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1544274621863,
-    "meta": 1545462226619,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1544274621865,
-    "meta": 1545462226636,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1544274621867,
-    "meta": 1545462226720,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1544274621869,
-    "meta": 1545462226726,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1544274621870,
-    "meta": 1545462226730,
-    "relativePath": "SpriteFrameSet.js"
-  },
   "ea965d25-ec82-478c-bdb2-9ac07981ab0e": {
     "asset": 1545463096980,
     "meta": 1545463101758,
@@ -1229,9 +1194,44 @@
     "meta": 1545463878199,
     "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
   },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1544274621863,
+    "meta": 1545478091541,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1544274621865,
+    "meta": 1545478091559,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1544274621867,
+    "meta": 1545478091667,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1544274621869,
+    "meta": 1545478091673,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1544274621870,
+    "meta": 1545478091676,
+    "relativePath": "SpriteFrameSet.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1545483864700,
+    "meta": 1545483864719,
+    "relativePath": "scenes\\login.fire"
+  },
+  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
+    "asset": 1545483094746,
+    "meta": 1545483097357,
+    "relativePath": "scripts\\BasePlayer.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545464729311,
-    "meta": 1545464732903,
+    "asset": 1545483799384,
+    "meta": 1545483804589,
     "relativePath": "scripts\\Map.js"
   }
 }

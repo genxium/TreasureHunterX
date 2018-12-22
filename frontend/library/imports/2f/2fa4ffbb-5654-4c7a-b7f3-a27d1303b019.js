@@ -88,10 +88,13 @@ module.export = cc.Class({
       if (!clip) {
         // Keep playing the current anim.
         if (0 !== newScheduledDirection.dx || 0 !== newScheduledDirection.dy) {
-          console.warn('Clip for clipKey === ' + clipKey + ' is invalid: ' + clip + '.');
+          cc.warn('Clip for clipKey === ' + clipKey + ' is invalid: ' + clip + '.');
         }
       } else {
         this.animComp.play(clip);
+        if (this.attacked) {
+          cc.log('Attacked, switching to play clipKey = ' + clipKey + ', clip == ' + clip + ', this.activeDirection == ' + JSON.stringify(this.activeDirection) + ', this.scheduledDirection == ' + JSON.stringify(this.scheduledDirection) + '.');
+        }
       }
     }
   },
@@ -502,7 +505,7 @@ module.export = cc.Class({
     var self = this;
     if (0 != self.activeDirection.dx || 0 != self.activeDirection.dy) {
       var newScheduledDirectionInLocalCoordinate = self.ctrl.discretizeDirection(self.activeDirection.dx, self.activeDirection.dy, self.eps);
-      self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate);
+      self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate, false);
     }
     var now = new Date().getTime();
     self.lastMovedAt = now;
@@ -588,17 +591,13 @@ module.export = cc.Class({
   },
   startFrozenDisplay: function startFrozenDisplay() {
     var self = this;
-    var clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString();
-    var clip = this.attackedClips[clipKey];
-    self.animComp.play(clip);
     self.attacked = true;
+    self.scheduleNewDirection(self.scheduledDirection, true);
   },
   stopFrozenDisplay: function stopFrozenDisplay() {
     var self = this;
-    var clipKey = self.scheduledDirection.dx.toString() + self.scheduledDirection.dy.toString();
-    var clip = this.clips[clipKey];
-    self.animComp.play(clip);
     self.attacked = false;
+    self.scheduleNewDirection(self.scheduledDirection, true);
   }
 });
 

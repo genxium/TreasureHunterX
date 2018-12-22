@@ -1021,12 +1021,17 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 }
 
 func (pR *Room) onPlayerLost(playerId int32) {
-	if _, existent := pR.Players[playerId]; existent {
-		pR.Players[playerId].BattleState = PlayerBattleStateIns.LOST
-		pR.JoinIndexBooleanArr[pR.Players[playerId].JoinIndex-1] = false
-		pR.Players[playerId].JoinIndex = -1
-		utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
-		delete(pR.PlayerDownsyncChanDict, playerId)
+	if player, existent := pR.Players[playerId]; existent {
+		player.BattleState = PlayerBattleStateIns.LOST
+    indiceInjoinIndexBooleanArr := int(player.JoinIndex - 1)
+    if indiceInjoinIndexBooleanArr < len(pR.JoinIndexBooleanArr) {
+		  pR.JoinIndexBooleanArr[indiceInjoinIndexBooleanArr] = false
+    }
+		player.JoinIndex = -1
+    if _, chanExistent := pR.PlayerDownsyncChanDict[playerId]; chanExistent {
+		  utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
+      delete(pR.PlayerDownsyncChanDict, playerId)
+    }
 		pR.EffectivePlayerCount--
 	}
 }
@@ -1037,7 +1042,7 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		pR.State = RoomBattleStateIns.WAITING
 	}
 	for index, value := range pR.JoinIndexBooleanArr {
-		if value == false {
+		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
 			pR.JoinIndexBooleanArr[index] = true
 			break
