@@ -289,6 +289,33 @@ cc.Class({
       }
     });
   },
+  onWechatLoggedIn: function onWechatLoggedIn(res) {
+    var self = this;
+    cc.log('OnLoggedIn ' + JSON.stringify(res) + '.');
+    if (res.ret === self.retCodeDict.OK) {
+      self.enableInteractiveControls(false);
+      var date = Number(res.expiresAt);
+      var selfPlayer = {
+        expiresAt: date,
+        playerId: res.playerId,
+        intAuthToken: res.intAuthToken,
+        displayName: res.displayName
+      };
+      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
+      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
+      if (self.countdownTimer) {
+        clearInterval(self.countdownTimer);
+      }
+      var inputControls = self.backgroundNode.getChildByName("InteractiveControls");
+      self.backgroundNode.removeChild(inputControls);
+      safelyAddChild(self.backgroundNode, self.loadingNode);
+      self.loadingNode.getChildByName('loadingSprite').runAction(cc.repeatForever(cc.rotateBy(1.0, 360)));
+      cc.director.loadScene('default_map');
+    } else {
+      self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
+      window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname); // WARNING: Hardcoded temporarily.
+    }
+  },
   onLoggedIn: function onLoggedIn(res) {
     var self = this;
     cc.log('OnLoggedIn ' + JSON.stringify(res) + '.');
@@ -359,14 +386,17 @@ cc.Class({
     NetworkUtils.ajax({
       url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + backendAddress.PROXY + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.LOGIN,
       type: "POST",
-      data: { code: _code },
+      data: {
+        code: _code
+      },
       success: function success(res) {
-        self.onLoggedIn(res);
+        self.onWechatLoggedIn(res);
       },
       error: function error(xhr, status, errMsg) {
         cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS;
+        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
+        window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname); // WARNING: Hardcoded temporarily.
       }
     });
   },
@@ -375,7 +405,6 @@ cc.Class({
     self.wechatLoginTips.string = "";
     var wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + (null != wechatAddress.PORT && "" != wechatAddress.PORT.trim() ? ":" + wechatAddress.PORT : "");
     var url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
-
     window.location.href = url;
   }
 });

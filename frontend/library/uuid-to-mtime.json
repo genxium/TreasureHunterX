@@ -924,11 +924,6 @@
     "meta": 1545290189000,
     "relativePath": "resources/animation/PickedTreasures"
   },
-  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
-    "asset": 1545291751000,
-    "meta": 1545291753000,
-    "relativePath": "scripts/Treasure.js"
-  },
   "697ef72c-27ee-4184-9ae3-885808d58153": {
     "asset": 1545295082000,
     "meta": 1545295084000,
@@ -1205,19 +1200,9 @@
     "relativePath": "SpriteFrameSet.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545633142000,
-    "meta": 1545633142000,
+    "asset": 1545637669000,
+    "meta": 1545637669000,
     "relativePath": "scenes/login.fire"
-  },
-  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
-    "asset": 1545625884000,
-    "meta": 1545626334000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
-  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
-    "asset": 1545632547000,
-    "meta": 1545632557000,
-    "relativePath": "plugin_scripts/constants.js"
   },
   "c116dddb-470e-47de-af9b-560adb7c78fb": {
     "asset": 1545632834000,
@@ -1229,11 +1214,6 @@
     "meta": 1545633142000,
     "relativePath": "scripts/FindingPlayer.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545632974000,
-    "meta": 1545633142000,
-    "relativePath": "scripts/Login.js"
-  },
   "5ae774fb-4f9c-445d-a057-5d32522b975d": {
     "asset": 1545633139000,
     "meta": 1545633142000,
@@ -1243,5 +1223,55 @@
     "asset": 1545633236000,
     "meta": 1545633240000,
     "relativePath": "scripts/Map.js"
+  },
+  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
+    "asset": 1545633487000,
+    "meta": 1545633488000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "0d4a2516-47b9-420b-86c4-fc312599d4aa": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect"
+  },
+  "261d1d7d-a5cc-4cb7-a737-194427055fd4": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect/countDown10SecToEnd.mp3"
+  },
+  "64a79efa-97de-4cb5-b2a9-01500c60573a": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect/BGM.mp3"
+  },
+  "1d604e42-8cee-466f-884d-e74cae21ce3b": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect/CrashedByTrapBullet.mp3"
+  },
+  "0164d22c-d965-461f-867e-b30e2d56cc5c": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect/HighScoreTreasurePicked.mp3"
+  },
+  "7704b97e-6367-420c-b7af-d0750a2bbb30": {
+    "asset": 1545634605000,
+    "meta": 1545634605000,
+    "relativePath": "resources/musicEffect/TreasurePicked.mp3"
+  },
+  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
+    "asset": 1545634955000,
+    "meta": 1545634958000,
+    "relativePath": "plugin_scripts/constants.js"
+  },
+  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
+    "asset": 1545635211000,
+    "meta": 1545635229000,
+    "relativePath": "scripts/Treasure.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545638848000,
+    "meta": 1545639708000,
+    "relativePath": "scripts/Login.js"
   }
 }

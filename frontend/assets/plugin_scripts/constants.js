@@ -19,6 +19,16 @@ function _defineProperty(obj, key, value) {
 }
 
 var constants = {
+  BGM: {
+    DIR_PATH: "resources/musicEffect/",
+    FILE_NAME: {
+      TREASURE_PICKEDUP: "TreasurePicked",
+      CRASHED_BY_TRAP_BULLET: "CrashedByTrapBullet",
+      HIGH_SCORE_TREASURE_PICKED:"HighScoreTreasurePicked",
+      COUNT_DOWN_10SEC_TO_END:"countDown10SecToEnd",
+      BGM: "BGM" 
+    }
+  },
   PLAYER_NAME: {
     1: "Merdan",
     2: "Monroe",

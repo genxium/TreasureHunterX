@@ -78,12 +78,12 @@ cc.Class({
     self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
     self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
 
-    cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */) {
+    cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */ ) {
       if (err) {
         cc.error(err.message || err);
         return;
       }
-      let protoRoot = new protobuf.Root; 
+      let protoRoot = new protobuf.Root;
       protobuf.parse(textAsset.text, protoRoot);
       window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
       self.checkIntAuthTokenExpire().then(
@@ -96,10 +96,10 @@ cc.Class({
           const code = self.getQueryVariable("code");
           if (code) {
             //TODO: 请求credentialsAuthToken api with code
-            cc.log("Got the code: "+ code);
+            cc.log("Got the code: " + code);
             self.useWXCodeLogin(code);
-          }        
-         }
+          }
+        }
       );
     });
   },
@@ -300,7 +300,35 @@ cc.Class({
       }
     });
   },
-
+  onWechatLoggedIn(res) {
+    const self = this;
+    cc.log(`OnLoggedIn ${JSON.stringify(res)}.`)
+    if (res.ret === self.retCodeDict.OK) {
+      self.enableInteractiveControls(false);
+      const date = Number(res.expiresAt);
+      const selfPlayer = {
+        expiresAt: date,
+        playerId: res.playerId,
+        intAuthToken: res.intAuthToken,
+        displayName: res.displayName
+      }
+      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
+      cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);
+      if (self.countdownTimer) {
+        clearInterval(self.countdownTimer);
+      }
+      const inputControls = self.backgroundNode.getChildByName("InteractiveControls");
+      self.backgroundNode.removeChild(inputControls);
+      safelyAddChild(self.backgroundNode, self.loadingNode);
+      self.loadingNode.getChildByName('loadingSprite').runAction(
+        cc.repeatForever(cc.rotateBy(1.0, 360))
+      );
+      cc.director.loadScene('default_map');
+    } else {
+      self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
+      window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname) // WARNING: Hardcoded temporarily.
+    }
+  },
   onLoggedIn(res) {
     const self = this;
     cc.log(`OnLoggedIn ${JSON.stringify(res)}.`)
@@ -357,39 +385,41 @@ cc.Class({
       }
     }
   },
-  getQueryVariable(variable){
-     let query = window.location.search.substring(1);
-     let vars = query.split("&");
-     for (let i=0; i < vars.length; i++) {
-       let pair = vars[i].split("=");
-       if (pair[0] == variable) {
+  getQueryVariable(variable) {
+    let query = window.location.search.substring(1);
+    let vars = query.split("&");
+    for (let i = 0; i < vars.length; i++) {
+      let pair = vars[i].split("=");
+      if (pair[0] == variable) {
         return pair[1];
-       }
-     }
-     return(false);
+      }
+    }
+    return (false);
   },
   useWXCodeLogin(_code) {
     const self = this;
     NetworkUtils.ajax({
       url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + backendAddress.PROXY + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.LOGIN,
       type: "POST",
-      data: {code: _code}, 
-      success: function (res) {
-        self.onLoggedIn(res);
+      data: {
+        code: _code
+      },
+      success: function(res) {
+        self.onWechatLoggedIn(res);
       },
       error: function(xhr, status, errMsg) {
         cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS;
+        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
+        window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname) // WARNING: Hardcoded temporarily.
       },
     });
   },
   getWechatCode(evt) {
     let self = this;
     self.wechatLoginTips.string = "";
-    const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");  
-    const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" +constants.WECHAT.REDIRECT_RUI_KEY  + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
-
+    const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");
+    const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
     window.location.href = url;
-  }, 
+  },
 });
