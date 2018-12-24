@@ -72,8 +72,8 @@ cc.Class({
       }
     }
     //TODO Hardecode the name
-    winnerNameNode.getComponent(cc.Label).string = "Player" + winnerInfo.joinIndex;
-    loserNameNode.getComponent(cc.Label).string = "Player" + loserInfo.joinIndex;
+    winnerNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[winnerInfo.joinIndex];
+    loserNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[loserInfo.joinIndex];
 
     var progressComp = compareProgressNode.getComponent(cc.ProgressBar);
     var winnerScore = parseInt(winnerInfo.score);

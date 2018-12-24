@@ -703,10 +703,6 @@ cc.Class({
       window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
-        if (0 > refFrameId) {
-          cc.log(diffFrame.players);
-          cc.log(refFrameId);
-        }
         if (-99 == refFrameId) {
           //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
