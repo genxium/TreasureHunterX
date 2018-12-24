@@ -12,7 +12,7 @@
 CREATE TABLE `player` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
-  `display_name` varchar(32) DEFAULT NULL,
+  `display_name` varchar(32)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` bigint(20) unsigned NOT NULL,
   `updated_at` bigint(20) unsigned NOT NULL,
   `deleted_at` bigint(20) unsigned DEFAULT NULL,

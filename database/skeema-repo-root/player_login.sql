@@ -13,7 +13,7 @@ CREATE TABLE `player_login` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `int_auth_token` varchar(64) NOT NULL,
   `player_id` int(11) unsigned NOT NULL,
-  `display_name` varchar(32) DEFAULT NULL,
+  `display_name` varchar(32)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `from_public_ip` varchar(32) DEFAULT NULL,
   `created_at` bigint(20) unsigned NOT NULL,
   `updated_at` bigint(20) unsigned NOT NULL,

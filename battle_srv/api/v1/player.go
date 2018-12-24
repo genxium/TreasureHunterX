@@ -207,8 +207,8 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		FromPublicIP: models.NewNullString(c.ClientIP()),
 		IntAuthToken: token,
 		PlayerID:     int(player.Id),
-		//DisplayName:  models.NewNullString(player.DisplayName),
-		UpdatedAt: now,
+		DisplayName:  models.NewNullString(player.DisplayName),
+		UpdatedAt:    now,
 	}
 	err = playerLogin.Insert()
 	api.CErr(c, err)
@@ -218,12 +218,12 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	}
 	storage.RedisManagerIns.Del(redisKey)
 	resp := struct {
-		Ret       int    `json:"ret"`
-		Token     string `json:"intAuthToken"`
-		ExpiresAt int64  `json:"expiresAt"`
-		PlayerID  int    `json:"playerId"`
-		//DisplayName string `json:"displayName"`
-	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id) /*player.DisplayName*/}
+		Ret         int    `json:"ret"`
+		Token       string `json:"intAuthToken"`
+		ExpiresAt   int64  `json:"expiresAt"`
+		PlayerID    int    `json:"playerId"`
+		DisplayName string `json:"displayName"`
+	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName}
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -271,8 +271,8 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		FromPublicIP: models.NewNullString(c.ClientIP()),
 		IntAuthToken: token,
 		PlayerID:     int(player.Id),
-		//DisplayName:  models.NewNullString(player.DisplayName),
-		UpdatedAt: now,
+		DisplayName:  models.NewNullString(player.DisplayName),
+		UpdatedAt:    now,
 	}
 	err = playerLogin.Insert()
 	api.CErr(c, err)
@@ -282,13 +282,13 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	}
 
 	resp := struct {
-		Ret       int    `json:"ret"`
-		Token     string `json:"intAuthToken"`
-		ExpiresAt int64  `json:"expiresAt"`
-		PlayerID  int    `json:"playerId"`
-		//DisplayName models.NullString `json:"displayName"`
+		Ret         int               `json:"ret"`
+		Token       string            `json:"intAuthToken"`
+		ExpiresAt   int64             `json:"expiresAt"`
+		PlayerID    int               `json:"playerId"`
+		DisplayName models.NullString `json:"displayName"`
 	}{Constants.RetCode.Ok, token, expiresAt,
-		playerLogin.PlayerID /*playerLogin.DisplayName*/}
+		playerLogin.PlayerID, playerLogin.DisplayName}
 	c.JSON(http.StatusOK, resp)
 }
 
