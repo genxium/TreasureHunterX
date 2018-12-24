@@ -378,7 +378,12 @@ NetworkUtils.ajax = function(o) {
       o.timeout();
     }
   };
+  xhr.onerror  = function() {
+    if ('function' === typeof o.error) {
+      o.error();
+    }
 
+  }
   xhr.send(data);
   return xhr;
 };

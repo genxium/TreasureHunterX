@@ -20,14 +20,21 @@ function _defineProperty(obj, key, value) {
 
 var constants = {
   PLAYER_NAME: {
-    1: "Player1",
-    2: "Player2",
+    1: "Merdan",
+    2: "Monroe",
   },
   SOCKET_EVENT: {
     CONTROL: "control",
     SYNC: "sync",
     LOGIN: "login",
     CREATE: "create"
+  },
+  WECHAT: {
+    AUTHORIZE_PATH: "/connect/oauth2/authorize",
+    REDIRECT_RUI_KEY: "redirect_uri=",
+    RESPONSE_TYPE: "response_type=code",
+    SCOPE: "scope=snsapi_userinfo",
+    FIN: "#wechat_redirect"
   },
   ROUTE_PATH: (_ROUTE_PATH = {
     PLAYER: "/player",
@@ -43,6 +50,7 @@ var constants = {
     LIST: "/list",
     READ: "/read",
     PROFILE: "/profile",
+    WECHAT: "/wechat",
     FETCH: "/fetch",
   }, _defineProperty(_ROUTE_PATH, "LOGIN", "/login"), _defineProperty(_ROUTE_PATH, "RET_CODE", "/retCode"), _defineProperty(_ROUTE_PATH, "REGEX", "/regex"), _defineProperty(_ROUTE_PATH, "SMS_CAPTCHA", "/SmsCaptcha"), _defineProperty(_ROUTE_PATH, "GET", "/get"), _ROUTE_PATH),
   REQUEST_QUERY: {
@@ -117,7 +125,8 @@ var constants = {
       TEST_USER: '该账号为测试账号',
       INCORRECT_PHONE_NUMBER: '手机号不正确',
       LOG_OUT: '您已在其他地方登陆',
-      GAME_OVER: '游戏结束,您的得分是'
+      GAME_OVER: '游戏结束,您的得分是',
+      WECHAT_LOGIN_FAILS: "微信登录失败",
     },
     CONFIRM_BUTTON_LABEL: {
       RESTART: '重新开始'

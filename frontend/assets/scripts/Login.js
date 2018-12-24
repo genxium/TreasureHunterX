@@ -51,7 +51,15 @@ cc.Class({
     loadingPrefab: {
       default: null,
       type: cc.Prefab
-    }
+    },
+    wechatLoginButton: {
+      default: null,
+      type: cc.Button,
+    },
+    wechatLoginTips: {
+      default: null,
+      type: cc.Label,
+    },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -85,7 +93,13 @@ cc.Class({
         },
         () => {
           // TODO: Handle expired intAuthToken appropriately.
-        }
+          const code = self.getQueryVariable("code");
+          if (code) {
+            //TODO: 请求credentialsAuthToken api with code
+            cc.log("Got the code: "+ code);
+            self.useWXCodeLogin(code);
+          }        
+         }
       );
     });
   },
@@ -343,4 +357,39 @@ cc.Class({
       }
     }
   },
+  getQueryVariable(variable){
+     let query = window.location.search.substring(1);
+     let vars = query.split("&");
+     for (let i=0; i < vars.length; i++) {
+       let pair = vars[i].split("=");
+       if (pair[0] == variable) {
+        return pair[1];
+       }
+     }
+     return(false);
+  },
+  useWXCodeLogin(_code) {
+    const self = this;
+    NetworkUtils.ajax({
+      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + backendAddress.PROXY + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.LOGIN,
+      type: "POST",
+      data: {code: _code}, 
+      success: function (res) {
+        self.onLoggedIn(res);
+      },
+      error: function(xhr, status, errMsg) {
+        cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS;
+      },
+    });
+  },
+  getWechatCode(evt) {
+    let self = this;
+    self.wechatLoginTips.string = "";
+    const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");  
+    const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" +constants.WECHAT.REDIRECT_RUI_KEY  + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
+
+    window.location.href = url;
+  }, 
 });

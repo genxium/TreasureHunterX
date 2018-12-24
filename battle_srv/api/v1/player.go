@@ -209,7 +209,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 }
 
 type wechatLogin struct {
-	Authcode string `form:"authcode"`
+	Authcode string `form:"code"`
 }
 
 func (p *playerController) WechatLogin(c *gin.Context) {
