@@ -1139,11 +1139,6 @@
     "meta": 1545621260000,
     "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
   },
-  "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1545621249000,
-    "meta": 1545621260000,
-    "relativePath": "scenes/default_map.fire"
-  },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
     "asset": 1545621249000,
     "meta": 1545621260000,
@@ -1199,11 +1194,6 @@
     "meta": 1545622278000,
     "relativePath": "SpriteFrameSet.js"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545637669000,
-    "meta": 1545637669000,
-    "relativePath": "scenes/login.fire"
-  },
   "c116dddb-470e-47de-af9b-560adb7c78fb": {
     "asset": 1545632834000,
     "meta": 1545632842000,
@@ -1218,11 +1208,6 @@
     "asset": 1545633139000,
     "meta": 1545633142000,
     "relativePath": "scripts/ResultPanel.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545633236000,
-    "meta": 1545633240000,
-    "relativePath": "scripts/Map.js"
   },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1545633487000,
@@ -1264,14 +1249,34 @@
     "meta": 1545634958000,
     "relativePath": "plugin_scripts/constants.js"
   },
-  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
-    "asset": 1545635211000,
-    "meta": 1545635229000,
-    "relativePath": "scripts/Treasure.js"
-  },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
     "asset": 1545638848000,
     "meta": 1545639708000,
     "relativePath": "scripts/Login.js"
+  },
+  "92160186-3e0d-4e0a-ae20-97286170ba58": {
+    "asset": 1545641966000,
+    "meta": 1545642019000,
+    "relativePath": "scenes/default_map.fire"
+  },
+  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
+    "asset": 1545643101000,
+    "meta": 1545643109000,
+    "relativePath": "scripts/Treasure.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545643901000,
+    "meta": 1545643903000,
+    "relativePath": "scripts/Map.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1545644388000,
+    "meta": 1545644388000,
+    "relativePath": "scenes/login.fire"
+  },
+  "09e1bfed-132e-4ada-a68f-229a870db69e": {
+    "asset": 1545644386000,
+    "meta": 1545644387000,
+    "relativePath": "scripts/MusicEffectManager.js"
   }
 }

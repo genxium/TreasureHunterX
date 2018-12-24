@@ -376,7 +376,7 @@ cc.Class({
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
-
+    self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
     /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
@@ -584,6 +584,9 @@ cc.Class({
         if (isNaN(countdownSeconds)) {
           cc.log(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
         }
+       // if(self.musicEffectManagerScriptIns && 10 == countdownSeconds ) {
+       //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
+       // }
         self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = (
         (isInitiatingFrame || !self.useDiffFrameAlgo)
@@ -690,6 +693,8 @@ cc.Class({
 
   onBattleStarted() {
     const self = this;
+    if(self.musicEffectManagerScriptIns)
+      self.musicEffectManagerScriptIns.playBGM();
     const canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
@@ -703,6 +708,8 @@ cc.Class({
 
   onBattleStopped(players) {
     const self = this;
+    if(self.musicEffectManagerScriptIns)
+      self.musicEffectManagerScriptIns.stopAllMusic();
     const canvasNode = self.canvasNode;
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
@@ -966,6 +973,13 @@ cc.Class({
       const treasureLocalIdInBattle = parseInt(k);
       const treasureScriptIns = toRemoveTreasureNodeDict[k].getComponent("Treasure");
       treasureScriptIns.playPickedUpAnimAndDestroy();
+      if(self.musicEffectManagerScriptIns) {
+        if(2 == treasureScriptIns.type) {
+          self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
+        }else {
+          self.musicEffectManagerScriptIns.playTreasurePicked();
+        }
+      }
       delete self.treasureNodeDict[treasureLocalIdInBattle];
     }
 
@@ -981,6 +995,9 @@ cc.Class({
       const bulletLocalIdInBattle = parseInt(k);
       toRemoveBulletNodeDict[k].parent.removeChild(toRemoveBulletNodeDict[k]);
       delete self.trapBulletNodeDict[bulletLocalIdInBattle];
+      if(self.musicEffectManagerScriptIns) {
+        self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
+      }
     }
   },
 

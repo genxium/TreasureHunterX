@@ -9,8 +9,7 @@ cc.Class({
     animNode: {
       type: cc.Node,
       default: null
-    }
-    
+    },
   },
 
   setData (treasureInfo) {

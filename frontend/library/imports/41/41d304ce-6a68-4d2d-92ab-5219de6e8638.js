@@ -393,7 +393,7 @@ cc.Class({
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
-
+    self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
     /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
@@ -748,6 +748,9 @@ cc.Class({
         if (isNaN(countdownSeconds)) {
           cc.log("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
         }
+        // if(self.musicEffectManagerScriptIns && 10 == countdownSeconds ) {
+        //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
+        // }
         self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
         if (countdownNanos <= 0) {
@@ -844,6 +847,7 @@ cc.Class({
   },
   onBattleStarted: function onBattleStarted() {
     var self = this;
+    if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.playBGM();
     var canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
@@ -856,6 +860,7 @@ cc.Class({
   },
   onBattleStopped: function onBattleStopped(players) {
     var self = this;
+    if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.stopAllMusic();
     var canvasNode = self.canvasNode;
     var resultPanelNode = self.resultPanelNode;
     var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
@@ -1096,6 +1101,13 @@ cc.Class({
       var _treasureLocalIdInBattle = parseInt(_k11);
       var treasureScriptIns = toRemoveTreasureNodeDict[_k11].getComponent("Treasure");
       treasureScriptIns.playPickedUpAnimAndDestroy();
+      if (self.musicEffectManagerScriptIns) {
+        if (2 == treasureScriptIns.type) {
+          self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
+        } else {
+          self.musicEffectManagerScriptIns.playTreasurePicked();
+        }
+      }
       delete self.treasureNodeDict[_treasureLocalIdInBattle];
     }
 
@@ -1111,6 +1123,9 @@ cc.Class({
       var _bulletLocalIdInBattle = parseInt(_k13);
       toRemoveBulletNodeDict[_k13].parent.removeChild(toRemoveBulletNodeDict[_k13]);
       delete self.trapBulletNodeDict[_bulletLocalIdInBattle];
+      if (self.musicEffectManagerScriptIns) {
+        self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
+      }
     }
   },
   transitToState: function transitToState(s) {
