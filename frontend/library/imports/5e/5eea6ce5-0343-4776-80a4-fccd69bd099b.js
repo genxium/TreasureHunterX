@@ -16,7 +16,6 @@ cc.Class({
       type: cc.Node,
       default: null
     }
-
   },
 
   setData: function setData(treasureInfo) {

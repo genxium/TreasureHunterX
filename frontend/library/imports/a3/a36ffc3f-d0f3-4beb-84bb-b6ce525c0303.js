@@ -22,21 +22,22 @@ if (CC_DEBUG) {
   };
 }
 // Production config.
-/*var wechatAddress = {
-   PROTOCOL: "https",
-   HOST: "open.weixin.qq.com",
-   PORT: "",
-   PROXY: "",
-   APPID_LITERAL: "appid=wxe7063ab415266544",
-};*/
-// fserver config.
 var wechatAddress = {
-  PROTOCOL: "http",
-  HOST: "192.168.31.241",
-  PORT: "8089",
+  PROTOCOL: "https",
+  HOST: "open.weixin.qq.com",
+  PORT: "",
   PROXY: "",
-  APPID_LITERAL: "appid=wx5432dc1d6164d4e"
+  APPID_LITERAL: "appid=wxe7063ab415266544"
 };
+// fserver config.
+/*
+var wechatAddress = {
+   PROTOCOL: "http",
+   HOST: "192.168.31.241",
+   PORT: "8089",
+   PROXY: "",
+   APPID_LITERAL: "appid=wx5432dc1d6164d4e",
+};*/
 window.language = "en";
 window.backendAddress = backendAddress;
 window.wechatAddress = wechatAddress;
