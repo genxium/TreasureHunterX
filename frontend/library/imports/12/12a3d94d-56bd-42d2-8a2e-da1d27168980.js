@@ -303,17 +303,13 @@ cc.Class({
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
-      if (self.countdownTimer) {
-        clearInterval(self.countdownTimer);
-      }
-      var inputControls = self.backgroundNode.getChildByName("InteractiveControls");
-      self.backgroundNode.removeChild(inputControls);
-      safelyAddChild(self.backgroundNode, self.loadingNode);
-      self.loadingNode.getChildByName('loadingSprite').runAction(cc.repeatForever(cc.rotateBy(1.0, 360)));
-      cc.director.loadScene('default_map');
+
+      window.history.replaceState({}, null, window.location.pathname);
+      self.useTokenLogin(res.intAuthToken);
     } else {
+      cc.sys.localStorage.removeItem("selfPlayer");
       self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
-      window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname); // WARNING: Hardcoded temporarily.
+      window.history.replaceState({}, null, window.location.pathname);
     }
   },
   onLoggedIn: function onLoggedIn(res) {
@@ -339,6 +335,7 @@ cc.Class({
       self.loadingNode.getChildByName('loadingSprite').runAction(cc.repeatForever(cc.rotateBy(1.0, 360)));
       cc.director.loadScene('default_map');
     } else {
+      cc.sys.localStorage.removeItem("selfPlayer");
       self.enableInteractiveControls(true);
       switch (res.ret) {
         case self.retCodeDict.DUPLICATED:
@@ -384,7 +381,7 @@ cc.Class({
   useWXCodeLogin: function useWXCodeLogin(_code) {
     var self = this;
     NetworkUtils.ajax({
-      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + backendAddress.PROXY + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.LOGIN,
+      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.LOGIN,
       type: "POST",
       data: {
         code: _code
@@ -394,9 +391,10 @@ cc.Class({
       },
       error: function error(xhr, status, errMsg) {
         cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
-        window.history.replaceState(null, null, window.location.protocol + "//" + window.location.host + window.location.pathname); // WARNING: Hardcoded temporarily.
+        window.history.replaceState({}, null, window.location.pathname);
       }
     });
   },

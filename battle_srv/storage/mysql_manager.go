@@ -14,7 +14,7 @@ var (
 
 func initMySQL() {
 	var err error
-	MySQLManagerIns, err = sqlx.Connect("mysql", Conf.MySQL.DSN+"?charset=utf8mb64")
+	MySQLManagerIns, err = sqlx.Connect("mysql", Conf.MySQL.DSN+"?charset=utf8mb4")
 	ErrFatal(err)
 	err = MySQLManagerIns.Ping()
 	ErrFatal(err)
