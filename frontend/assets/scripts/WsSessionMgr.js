@@ -1,3 +1,5 @@
+
+
 window.sendSafely = function(msgStr) {
   /**
   * - "If the data can't be sent (for example, because it needs to be buffered but the buffer is full), the socket is closed automatically."
@@ -55,6 +57,17 @@ window.handleHbPong = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
 // TBD.
 };
+function getQueryVariable(variable) {
+    let query = window.location.search.substring(1);
+    let vars = query.split("&");
+    for (let i = 0; i < vars.length; i++) {
+      let pair = vars[i].split("=");
+      if (pair[0] == variable) {
+        return pair[1];
+      }
+    }
+    return (false);
+  }
 
 function _base64ToUint8Array(base64) {
     var binary_string =  window.atob(base64);
@@ -86,6 +99,13 @@ window.initPersistentSessionClient = function(onopenCb) {
   window.boundRoomId = getBoundRoomIdFromPersistentStorage();
   if (null != window.boundRoomId) {
     urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
+  }else {
+      //处理expectedRoomId
+      const expectedRoomId = getQueryVariable("expectedRoomId");
+      if(expectedRoomId) {
+        urlToConnect = urlToConnect + "&expectingRoomId=" + expectedRoomId;
+        window.history.replaceState({}, null, window.location.pathname); 
+      }
   }
   const clientSession = new WebSocket(urlToConnect);
 

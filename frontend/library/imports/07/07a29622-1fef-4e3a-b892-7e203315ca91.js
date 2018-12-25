@@ -61,6 +61,17 @@ window.handleHbPong = function (resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   // TBD.
 };
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    if (pair[0] == variable) {
+      return pair[1];
+    }
+  }
+  return false;
+}
 
 function _base64ToUint8Array(base64) {
   var binary_string = window.atob(base64);
@@ -91,6 +102,13 @@ window.initPersistentSessionClient = function (onopenCb) {
   window.boundRoomId = getBoundRoomIdFromPersistentStorage();
   if (null != window.boundRoomId) {
     urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
+  } else {
+    //处理expectedRoomId
+    var expectedRoomId = getQueryVariable("expectedRoomId");
+    if (expectedRoomId) {
+      urlToConnect = urlToConnect + "&expectingRoomId=" + expectedRoomId;
+      window.history.replaceState({}, null, window.location.pathname);
+    }
   }
   var clientSession = new WebSocket(urlToConnect);
 

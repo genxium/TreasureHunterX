@@ -372,8 +372,6 @@ cc.Class({
   onLoad() {
     const self = this;
 
-    window.initwxSDK = self.initwxSDK.bind(self);
-    window.initwxSDK();
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -540,7 +538,7 @@ cc.Class({
         if (-99 == refFrameId) { //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
         } else if (-98 == refFrameId) { //显示匹配玩家
-          window.initwxSDK();
+          window.initWxSdk();
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           if (!self.findingPlayerNode.parent) {
             self.showPopopInCanvas(self.findingPlayerNode);
@@ -1102,73 +1100,4 @@ cc.Class({
     }, 2000);
   },
 
-  initwxSDK() {
-    if (undefined == wx) {
-      cc.warn("please build the project in web-mobile to use the wx jssdk");
-      return;
-    }
-    const selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
-    const origUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    /*
-    * The `shareLink` must 
-    * - have its 2nd-order-domain registered as trusted 2nd-order under the targetd `res.jsConfig.app_id`, and
-    * - extracted from current window.location.href.   
-    */
-    const shareLink = origUrl;
-    const updateAppMsgShareDataObj = {
-      type: 'link', // 分享类型,music、video或link，不填默认为link
-      dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-      title: document.title, // 分享标题
-      desc: 'Let\'s play together!', // 分享描述
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : ("?expectedRoomId=" + cc.sys.localStorage.boundRoomId)),
-      imgUrl: '', // 分享图标
-      success: function() {
-        // 设置成功
-      }
-    };
-    const menuShareTimelineObj = {
-      title: document.title, // 分享标题
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : ("?expectedRoomId=" + cc.sys.localStorage.boundRoomId)),
-      imgUrl: '', // 分享图标
-      success: function() {}
-    };
-    //接入微信登录接口
-    NetworkUtils.ajax({
-      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.JSCONFIG,
-      type: "POST",
-      data: {
-        "url": shareLink,
-        "intAuthToken": selfPlayer.intAuthToken,
-      },
-      success: function(res) {
-        if (constants.RET_CODE.OK != res.ret) {
-          console.log("cannot get the wsConfig. retCode == " + res.ret);
-          return;
-        }
-        console.log(res.jsConfig);
-        const jsConfig = res.jsConfig;
-        console.log(updateAppMsgShareDataObj);
-        const configData = {
-          debug: CC_DEBUG, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          appId: jsConfig.app_id, // 必填，公众号的唯一标识
-          timestamp: jsConfig.timestamp.toString(), // 必填，生成签名的时间戳
-          nonceStr: jsConfig.nonce_str, // 必填，生成签名的随机串
-          jsApiList: ['onMenuShareAppMessage'],
-          signature: jsConfig.signature, // 必填，签名
-        };
-        wx.config(configData);
-        wx.ready(function() {
-          console.log("wx config has succeeded, and there is wx.ready")
-          wx.onMenuShareAppMessage(updateAppMsgShareDataObj);
-          wx.onMenuShareTimeline(menuShareTimelineObj);
-        });
-        wx.error(function(res) {
-          console.error("wx config fails and error is " + JSON.stringify(res));
-        });
-      },
-      error: function(xhr, status, errMsg) {
-        console.log("cannot get the wsConfig. errMsg == " + errMsg);
-      },
-    });
-  },
 });
