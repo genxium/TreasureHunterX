@@ -18,8 +18,8 @@ window.closeWSConnection = function() {
 
 window.getBoundRoomIdFromPersistentStorage = function() {
   const expiresAt = parseInt(cc.sys.localStorage.expiresAt);
-  if(!expiresAt || Date.now() >= expiresAt) {
-    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();    
+  if (!expiresAt || Date.now() >= expiresAt) {
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
   return cc.sys.localStorage.boundRoomId;
@@ -35,10 +35,10 @@ window.boundRoomId = getBoundRoomIdFromPersistentStorage();
 window.handleHbRequirements = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
-    window.boundRoomId = resp.data.boundRoomId; 
+    window.boundRoomId = resp.data.boundRoomId;
     cc.sys.localStorage.boundRoomId = window.boundRoomId;
-    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000 ;//TODO: hardcoded, boundRoomId过期时间
-  } 
+    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
+  }
 
   window.clientSessionPingInterval = setInterval(() => {
     if (clientSession.readyState != WebSocket.OPEN) return;
@@ -57,30 +57,19 @@ window.handleHbPong = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
 // TBD.
 };
-function getQueryVariable(variable) {
-    let query = window.location.search.substring(1);
-    let vars = query.split("&");
-    for (let i = 0; i < vars.length; i++) {
-      let pair = vars[i].split("=");
-      if (pair[0] == variable) {
-        return pair[1];
-      }
-    }
-    return (false);
-  }
 
 function _base64ToUint8Array(base64) {
-    var binary_string =  window.atob(base64);
-    var len = binary_string.length;
-    var bytes = new Uint8Array( len );
-    for (var i = 0; i < len; i++)        {
-        bytes[i] = binary_string.charCodeAt(i);
-    }
-    return bytes;
+  var binary_string = window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array(len);
+  for (var i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
 }
 
 function _base64ToArrayBuffer(base64) {
-    return _base64ToUint8Array(base64).buffer;
+  return _base64ToUint8Array(base64).buffer;
 }
 
 
@@ -99,13 +88,21 @@ window.initPersistentSessionClient = function(onopenCb) {
   window.boundRoomId = getBoundRoomIdFromPersistentStorage();
   if (null != window.boundRoomId) {
     urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
-  }else {
-      //处理expectedRoomId
-      const expectedRoomId = getQueryVariable("expectedRoomId");
-      if(expectedRoomId) {
-        urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
-        window.history.replaceState({}, null, window.location.pathname); 
+  } else {
+    let expectedRoomId = null;
+    const qDict = window.getQueryParamDict();
+    if (qDict) {
+      expectedRoomId = qDict["expectedRoomId"];
+    } else {
+      if (window.history) {
+        expectedRoomId = window.history.state.expectedRoomId;
       }
+    }
+    if (expectedRoomId) {
+      console.log("initPersistentSessionClient with expectedRoomId == " +  expectedRoomId);
+      urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
+      window.history.replaceState({}, null, window.location.pathname);
+    }
   }
   const clientSession = new WebSocket(urlToConnect);
 
@@ -131,7 +128,7 @@ window.initPersistentSessionClient = function(onopenCb) {
           const parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
-        break; 
+        break;
       case "Ready": {
         if (window.handleGameReadyResp) {
           window.handleGameReadyResp(resp);

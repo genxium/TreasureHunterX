@@ -1234,11 +1234,6 @@
     "meta": 1545749617513,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1545749389518,
-    "meta": 1545749624757,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
     "asset": 1545747302672,
     "meta": 1545749617499,
@@ -1274,14 +1269,19 @@
     "meta": 1545749626833,
     "relativePath": "SpriteFrameSet.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545750738274,
-    "meta": 1545750786795,
-    "relativePath": "scripts/Login.js"
-  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1545751089667,
     "meta": 1545751092167,
     "relativePath": "scripts/Map.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545754017882,
+    "meta": 1545754030449,
+    "relativePath": "scripts/Login.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1545753982067,
+    "meta": 1545754030451,
+    "relativePath": "scripts/WsSessionMgr.js"
   }
 }

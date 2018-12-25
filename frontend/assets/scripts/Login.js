@@ -92,11 +92,12 @@ cc.Class({
           self.useTokenLogin(intAuthToken);
         },
         () => {
-          // TODO: Handle expired intAuthToken appropriately.
-          const code = self.getQueryVariable("code");
+          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          const qDict = window.getQueryParamDict();
+          const code = qDict["code"];
           if (code) {
-            //TODO: 请求credentialsAuthToken api with code
-            cc.log("Got the code: " + code);
+            console.log("Got the wx authcode: " + code);
+            console.log("while at full url: " + window.location.href);
             self.useWXCodeLogin(code);
           }
         }
@@ -302,7 +303,6 @@ cc.Class({
   },
   onWechatLoggedIn(res) {
     const self = this;
-    cc.log(`OnLoggedIn ${JSON.stringify(res)}.`)
     if (res.ret === self.retCodeDict.OK) {
       self.enableInteractiveControls(false);
       const date = Number(res.expiresAt);
@@ -313,17 +313,17 @@ cc.Class({
         displayName: res.displayName
       }
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);  
-      const qDict = {};
-      if (null != cc.sys.localStorage.boundRoomId) {
-        Object.assign(qDict, {
-          expectedRoomId: cc.sys.localStorage.boundRoomId,
-        });
+      const qDict = window.getQueryParamDict();
+      const expectedRoomId = qDict["expectedRoomId"];
+      if (null != expectedRoomId) {
+        console.log("OnLoggedIn using expectedRoomId == " + expectedRoomId);
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
-      window.history.replaceState(qDict, null, window.location.pathname); 
+      window.history.replaceState(qDict, null, window.location.pathname);
       self.useTokenLogin(res.intAuthToken);
-    }  else {
+    } else {
       cc.sys.localStorage.removeItem("selfPlayer");
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
       window.history.replaceState({}, null, window.location.pathname);
     }
@@ -357,6 +357,7 @@ cc.Class({
       cc.director.loadScene('default_map');
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
       switch (res.ret) {
         case self.retCodeDict.DUPLICATED:
@@ -388,17 +389,6 @@ cc.Class({
       }
     }
   },
-  getQueryVariable(variable) {
-    let query = window.location.search.substring(1);
-    let vars = query.split("&");
-    for (let i = 0; i < vars.length; i++) {
-      let pair = vars[i].split("=");
-      if (pair[0] == variable) {
-        return pair[1];
-      }
-    }
-    return (false);
-  },
   useWXCodeLogin(_code) {
     const self = this;
     NetworkUtils.ajax({
@@ -415,7 +405,7 @@ cc.Class({
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
-        window.history.replaceState({}, null, window.location.pathname); 
+        window.history.replaceState({}, null, window.location.pathname);
       },
     });
   },
@@ -424,6 +414,7 @@ cc.Class({
     self.wechatLoginTips.string = "";
     const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");
     const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
+    console.log("To visit wechat auth addr: " + url); 
     window.location.href = url;
   },
   initWxSdk() {
