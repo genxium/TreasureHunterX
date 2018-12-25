@@ -12,6 +12,7 @@ import (
 	"net/http"
 	. "server/common"
 	. "server/configs"
+	"server/storage"
 	"sort"
 	"time"
 )
@@ -89,13 +90,23 @@ func (w *wechat) GetJsConfig(uri string) (config *JsConfig, err error) {
 
 //TODO add cache, getTicket 获取jsapi_ticket
 func (w *wechat) getTicket() (ticketStr string, err error) {
-	var ticket resTicket
-	ticket, err = w.getTicketFromServer()
+	jsAPITicketCacheKey := fmt.Sprintf("jsapi_ticket_%s", w.config.AppID)
+	ttl, err := storage.RedisManagerIns.TTL(jsAPITicketCacheKey).Result()
 	if err != nil {
 		return
 	}
-	ticketStr = ticket.Ticket
-	return
+	if ttl > 0 {
+		ticketStr = storage.RedisManagerIns.Get(jsAPITicketCacheKey).Val()
+		return
+	} else {
+		var ticket resTicket
+		ticket, err = w.getTicketFromServer()
+		if err != nil {
+			return
+		}
+		ticketStr = ticket.Ticket
+		return
+	}
 }
 
 func (w *wechat) GetOauth2Basic(authcode string) (result resAccessToken, err error) {
@@ -217,11 +228,19 @@ func randomStr(length int) string {
 //getTicketFromServer 强制从服务器中获取ticket
 func (w *wechat) getTicketFromServer() (ticket resTicket, err error) {
 	var accessToken string
-	accessToken, err = w.getAccessTokenFromServer()
+	accessTokenCacheKey := fmt.Sprintf("access_token_%s", w.config.AppID)
+	ttl, err := storage.RedisManagerIns.TTL(accessTokenCacheKey).Result()
 	if err != nil {
 		return
 	}
-
+	if ttl > 0 {
+		accessToken = storage.RedisManagerIns.Get(accessTokenCacheKey).Val()
+	} else {
+		accessToken, err = w.getAccessTokenFromServer()
+		if err != nil {
+			return
+		}
+	}
 	getTicketURL := w.config.ApiProtocol + "://" + w.config.ApiGateway + "/cgi-bin/ticket/getticket?access_token=%s&type=jsapi"
 	var response []byte
 	url := fmt.Sprintf(getTicketURL, accessToken)
@@ -235,10 +254,9 @@ func (w *wechat) getTicketFromServer() (ticket resTicket, err error) {
 		return
 	}
 
-	//jsAPITicketCacheKey := fmt.Sprintf("jsapi_ticket_%s", w.config.AppID)
-	//expires := ticket.ExpiresIn - 1500
-	//set
-	//err = js.Cache.Set(jsAPITicketCacheKey, ticket.Ticket, time.Duration(expires)*time.Second)
+	jsAPITicketCacheKey := fmt.Sprintf("jsapi_ticket_%s", w.config.AppID)
+	expires := ticket.ExpiresIn
+	storage.RedisManagerIns.Set(jsAPITicketCacheKey, ticket.Ticket, time.Duration(expires)*time.Second)
 	return
 }
 
@@ -261,9 +279,9 @@ func (w *wechat) getAccessTokenFromServer() (accessToken string, err error) {
 		return
 	}
 
-	//accessTokenCacheKey := fmt.Sprintf("access_token_%s", w.config.AppID)
-	//expires := r.ExpiresIn - 1500
-	//set to redis err = ctx.Cache.Set(accessTokenCacheKey, r.AccessToken, time.Duration(expires)*time.Second)
+	accessTokenCacheKey := fmt.Sprintf("access_token_%s", w.config.AppID)
+	expires := r.ExpiresIn
+	storage.RedisManagerIns.Set(accessTokenCacheKey, r.AccessToken, time.Duration(expires)*time.Second)
 	accessToken = r.AccessToken
 	return
 }
