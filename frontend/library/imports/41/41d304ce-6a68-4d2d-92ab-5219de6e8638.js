@@ -219,6 +219,9 @@ cc.Class({
   },
   onDestroy: function onDestroy() {
     var self = this;
+    if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+    }
     if (null != window.handleRoomDownsyncFrame) {
       window.handleRoomDownsyncFrame = null;
     }
@@ -687,7 +690,7 @@ cc.Class({
           break;
       }
       if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
-        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, false);
       }
     };
 

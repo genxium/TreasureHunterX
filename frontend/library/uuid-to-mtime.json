@@ -1239,16 +1239,6 @@
     "meta": 1545749624757,
     "relativePath": "scripts/WsSessionMgr.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545747302676,
-    "meta": 1545749624159,
-    "relativePath": "scripts/Login.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545747302677,
-    "meta": 1545749624172,
-    "relativePath": "scripts/Map.js"
-  },
   "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
     "asset": 1545747302672,
     "meta": 1545749617499,
@@ -1283,5 +1273,15 @@
     "asset": 1545658661446,
     "meta": 1545749626833,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545750738274,
+    "meta": 1545750786795,
+    "relativePath": "scripts/Login.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545751089667,
+    "meta": 1545751092167,
+    "relativePath": "scripts/Map.js"
   }
 }

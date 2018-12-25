@@ -246,7 +246,7 @@ cc.Class({
         intAuthToken: _intAuthToken
       },
       success: function(resp) {
-        self.onLoggedIn(resp)
+        self.onLoggedIn(resp);
       },
       error: function(xhr, status, errMsg) {
         cc.log(`Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
@@ -313,8 +313,14 @@ cc.Class({
         displayName: res.displayName
       }
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);
-      window.history.replaceState({}, null, window.location.pathname); 
+      cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);  
+      const qDict = {};
+      if (null != cc.sys.localStorage.boundRoomId) {
+        Object.assign(qDict, {
+          expectedRoomId: cc.sys.localStorage.boundRoomId,
+        });
+      }
+      window.history.replaceState(qDict, null, window.location.pathname); 
       self.useTokenLogin(res.intAuthToken);
     }  else {
       cc.sys.localStorage.removeItem("selfPlayer");

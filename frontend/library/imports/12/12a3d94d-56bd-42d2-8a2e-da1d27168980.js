@@ -303,7 +303,13 @@ cc.Class({
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
-      window.history.replaceState({}, null, window.location.pathname);
+      var qDict = {};
+      if (null != cc.sys.localStorage.boundRoomId) {
+        Object.assign(qDict, {
+          expectedRoomId: cc.sys.localStorage.boundRoomId
+        });
+      }
+      window.history.replaceState(qDict, null, window.location.pathname);
       self.useTokenLogin(res.intAuthToken);
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
