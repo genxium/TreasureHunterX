@@ -1034,7 +1034,7 @@ func (pR *Room) onPlayerLost(playerId int32) {
 		pR.EffectivePlayerCount--
     indiceInJoinIndexBooleanArr := int(player.JoinIndex - 1)
     Logger.Info("Room OnPlayerLost, about to turn one of pR.JoinIndexBooleanArr to false: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr))
-    if indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr) {
+    if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
       Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr has enough length: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
 		  pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
     }
