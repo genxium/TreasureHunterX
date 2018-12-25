@@ -1019,20 +1019,26 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 		break
 	}
 }
-
 func (pR *Room) onPlayerLost(playerId int32) {
+	defer func() {
+		if r := recover(); r != nil {
+			Logger.Error("Room OnPlayerLost, recovery spot, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("panic", r))
+		}
+	}()
 	if player, existent := pR.Players[playerId]; existent {
 		player.BattleState = PlayerBattleStateIns.LOST
-    indiceInjoinIndexBooleanArr := int(player.JoinIndex - 1)
-    if indiceInjoinIndexBooleanArr < len(pR.JoinIndexBooleanArr) {
-		  pR.JoinIndexBooleanArr[indiceInjoinIndexBooleanArr] = false
-    }
-		player.JoinIndex = -1
     if _, chanExistent := pR.PlayerDownsyncChanDict[playerId]; chanExistent {
 		  utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
       delete(pR.PlayerDownsyncChanDict, playerId)
     }
 		pR.EffectivePlayerCount--
+    indiceInJoinIndexBooleanArr := int(player.JoinIndex - 1)
+    Logger.Info("Room OnPlayerLost, about to turn one of pR.JoinIndexBooleanArr to false: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr))
+    if indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr) {
+      Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr has enough length: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
+		  pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
+    }
+		player.JoinIndex = -1
 	}
 }
 

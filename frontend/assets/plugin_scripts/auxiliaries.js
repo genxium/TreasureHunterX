@@ -15,6 +15,14 @@ window.getQueryParamDict = function() {
   return toRet;
 }
 
+window.isUsingX5BlinkKernel = function() {
+  return (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType);
+};
+
+window.isUsingX5BlinkKernelOrWebkitWeChatKernel = function() {
+  return (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType || cc.sys.BROWSER_TYPE_WECHAT == cc.sys.browserType);
+};
+
 window.getRandomInt = function(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
