@@ -326,6 +326,14 @@ cc.Class({
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
+      //处理expectedRoomId
+      var expectedRoomId = self.getQueryVariable("expectedRoomId");
+      if (expectedRoomId) {
+        window.boundRoomId = expectedRoomId;
+        cc.sys.localStorage.boundRoomId = window.boundRoomId;
+        cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
+        window.history.replaceState({}, null, window.location.pathname);
+      }
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }

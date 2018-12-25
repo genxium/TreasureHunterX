@@ -48,6 +48,7 @@ var constants = {
   },
   ROUTE_PATH: (_ROUTE_PATH = {
     PLAYER: "/player",
+    JSCONFIG: "/jsconfig",
     API: "/api",
     VERSION: "/v1",
     SMS_CAPTCHA: "/SmsCaptcha",

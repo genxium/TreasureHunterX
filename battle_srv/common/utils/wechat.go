@@ -94,7 +94,9 @@ func (w *wechat) getTicket() (ticketStr string, err error) {
 	if err != nil {
 		return
 	}
+
 	ticketStr = ticket.Ticket
+  Logger.Info("getTicketFromServer :", zap.Any("tickedtStr", ticket.Ticket))
 	return
 }
 
