@@ -263,13 +263,13 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	}
 
 	bullet := &Bullet{
-		LocalIdInBattle:  pR.AccumulatedLocalIdForBullets,
-		LinearSpeed:      0.0000004,
-		X:                startPos.X,
-		Y:                startPos.Y,
-		StartAtPoint:     &startPos,
-		EndAtPoint:       &endPos,
-		Dir: &linearUnitVector,
+		LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
+		LinearSpeed:     0.0000004,
+		X:               startPos.X,
+		Y:               startPos.Y,
+		StartAtPoint:    &startPos,
+		EndAtPoint:      &endPos,
+		Dir:             &linearUnitVector,
 	}
 
 	bullet.CollidableBody = b2Body
@@ -300,7 +300,7 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 		Id:              0,
 		LocalIdInBattle: treasureLocalIdInBattle,
 		Score:           0,
-    Type:            0,
+		Type:            0,
 		X:               pAnchor.X,
 		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
@@ -330,9 +330,9 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				X: float64(value.InitPos.X),
 				Y: float64(value.InitPos.Y),
 			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns )
-      theTreasure.Score = value.Score
-      theTreasure.Type = value.Type
+			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+			theTreasure.Score = value.Score
+			theTreasure.Type = value.Type
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
 	}
@@ -342,9 +342,9 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				X: float64(value.InitPos.X),
 				Y: float64(value.InitPos.Y),
 			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns )
-      theTreasure.Score = value.Score
-      theTreasure.Type = value.Type
+			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+			theTreasure.Score = value.Score
+			theTreasure.Type = value.Type
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
 	}
@@ -1027,17 +1027,18 @@ func (pR *Room) onPlayerLost(playerId int32) {
 	}()
 	if player, existent := pR.Players[playerId]; existent {
 		player.BattleState = PlayerBattleStateIns.LOST
-    if _, chanExistent := pR.PlayerDownsyncChanDict[playerId]; chanExistent {
-		  utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
-      delete(pR.PlayerDownsyncChanDict, playerId)
-    }
+		if _, chanExistent := pR.PlayerDownsyncChanDict[playerId]; chanExistent {
+			utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
+			delete(pR.PlayerDownsyncChanDict, playerId)
+		}
 		pR.EffectivePlayerCount--
-    indiceInJoinIndexBooleanArr := int(player.JoinIndex - 1)
-    Logger.Info("Room OnPlayerLost, about to turn one of pR.JoinIndexBooleanArr to false: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr))
-    if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
-      Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr has enough length: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
-		  pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
-    }
+		indiceInJoinIndexBooleanArr := int(player.JoinIndex - 1)
+		Logger.Info("Room OnPlayerLost, about to turn one of pR.JoinIndexBooleanArr to false: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr))
+		if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
+			pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
+		} else {
+			Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr has enough length: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
+		}
 		player.JoinIndex = -1
 	}
 }
