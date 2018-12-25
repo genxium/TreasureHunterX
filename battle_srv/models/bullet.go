@@ -10,7 +10,7 @@ type Bullet struct {
 	X                float64       `protobuf:"fixed64,3,opt,name=x,proto3" json:"x,omitempty"`
 	Y                float64       `protobuf:"fixed64,4,opt,name=y,proto3" json:"y,omitempty"`
 	Removed          bool          `protobuf:"varint,5,opt,name=removed,proto3" json:"removed,omitempty"`
-  Dir              *Direction    `json:"-"`
+	Dir              *Direction    `json:"-"`
 	StartAtPoint     *Vec2D        `json:"-"`
 	EndAtPoint       *Vec2D        `json:"-"`
 	DamageBoundary   *Polygon2D    `json:"-"`

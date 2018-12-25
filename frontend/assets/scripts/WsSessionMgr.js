@@ -103,7 +103,7 @@ window.initPersistentSessionClient = function(onopenCb) {
       //处理expectedRoomId
       const expectedRoomId = getQueryVariable("expectedRoomId");
       if(expectedRoomId) {
-        urlToConnect = urlToConnect + "&expectingRoomId=" + expectedRoomId;
+        urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
         window.history.replaceState({}, null, window.location.pathname); 
       }
   }

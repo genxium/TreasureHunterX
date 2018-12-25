@@ -7,12 +7,14 @@ import (
 	"strconv"
 	"strings"
 )
+
 const (
-  HIGH_SCORE_TREASURE_SCORE = 200
-  HIGH_SCORE_TREASURE_TYPE = 2
-  TREASURE_SCORE = 100
-  TREASURE_TYPE = 1 
+	HIGH_SCORE_TREASURE_SCORE = 200
+	HIGH_SCORE_TREASURE_TYPE  = 2
+	TREASURE_SCORE            = 100
+	TREASURE_TYPE             = 1
 )
+
 type TmxMap struct {
 	Version      string           `xml:"version,attr"`
 	Orientation  string           `xml:"orientation,attr"`
@@ -27,13 +29,13 @@ type TmxMap struct {
 
 	ControlledPlayersInitPosList []Vec2D
 	TreasuresInfo                []TreasuresInfo
-	HighTreasuresInfo                []TreasuresInfo
+	HighTreasuresInfo            []TreasuresInfo
 	TrapsInitPosList             []Vec2D
 }
 type TreasuresInfo struct {
-  InitPos     Vec2D 
-  Type        int32
-  Score       int32
+	InitPos Vec2D
+	Type    int32
+	Score   int32
 }
 type Tsx struct {
 	Name                 string     `xml:"name,attr"`
@@ -112,10 +114,10 @@ type TmxObjectGroup struct {
 }
 
 type TmxObject struct {
-	Id   string  `xml:"id,attr"`
-	X      float64 `xml:"x,attr"`
-	Y      float64 `xml:"y,attr"`
-	Properties   TmxProperties  `xml:"properties"`
+	Id         string        `xml:"id,attr"`
+	X          float64       `xml:"x,attr"`
+	Y          float64       `xml:"y,attr"`
+	Properties TmxProperties `xml:"properties"`
 }
 
 type TreasurePolyline struct {
@@ -126,7 +128,7 @@ type TreasurePolyline struct {
 func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	err := xml.Unmarshal(byteArr, pTsxIns)
 	for _, tile := range pTsxIns.Tiles {
-		if 7 == tile.Id || 8 == tile.Id || 9 == tile.Id{
+		if 7 == tile.Id || 8 == tile.Id || 9 == tile.Id {
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]TreasurePolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects {
@@ -164,7 +166,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 			}
 			if tile.Id == 7 {
 				pTsxIns.TreasurePolyLineList = pPolyLineList
-			}else if 9 == tile.Id {
+			} else if 9 == tile.Id {
 				pTsxIns.TrapPolyLineList = pPolyLineList
 			}
 		}
@@ -189,61 +191,61 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 		}
 
 		if "highTreasures" == objGroup.Name {
-      pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects)) 
+			pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-        pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
-        pTmxMapIns.HighTreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
-        pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos 
-      }
-    }
+				pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
+				pTmxMapIns.HighTreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
+				pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos
+			}
+		}
 		if "treasures" == objGroup.Name {
-      pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects)) 
+			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-        pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
-        pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
-        pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos 
-      }
-    /*if "treasures" == objGroup.Name {
+				pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
+				pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
 				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
-        if "highTreasures" == objGroup.Name {
-          pTmxMapIns.TreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE 
-          pTmxMapIns.TreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE 
-        } else {
-          pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE 
-          pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE 
-        }
-       // 由于分数现在只有2种，不读取tmx文件属性
-        properties := obj.Properties
-         for _, prop := range properties.Property {
-            if("type" == prop.Name){
-              typeValue , err := strconv.Atoi(prop.Value)
-              if err != nil {
-                fmt.Printf("transit tmx fails and error: %v\n", err)
-              }else {
-                pTmxMapIns.TreasuresInfo[index].Type = int32(typeValue)
-              }
-            }
+			}
+			/*if "treasures" == objGroup.Name {
+							pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
+			        if "highTreasures" == objGroup.Name {
+			          pTmxMapIns.TreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
+			          pTmxMapIns.TreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
+			        } else {
+			          pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
+			          pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
+			        }
+			       // 由于分数现在只有2种，不读取tmx文件属性
+			        properties := obj.Properties
+			         for _, prop := range properties.Property {
+			            if("type" == prop.Name){
+			              typeValue , err := strconv.Atoi(prop.Value)
+			              if err != nil {
+			                fmt.Printf("transit tmx fails and error: %v\n", err)
+			              }else {
+			                pTmxMapIns.TreasuresInfo[index].Type = int32(typeValue)
+			              }
+			            }
 
-            if("score" == prop.Name){
-              scoreValue , err := strconv.Atoi(prop.Value)
-              if err != nil {
-                fmt.Printf("transit tmx fails and error: %v\n", err)
-              }else {
-                pTmxMapIns.TreasuresInfo[index].Score = int32(scoreValue)
-              }
-            }
-          }
-			}*/
+			            if("score" == prop.Name){
+			              scoreValue , err := strconv.Atoi(prop.Value)
+			              if err != nil {
+			                fmt.Printf("transit tmx fails and error: %v\n", err)
+			              }else {
+			                pTmxMapIns.TreasuresInfo[index].Score = int32(scoreValue)
+			              }
+			            }
+			          }
+						}*/
 		}
 
 		if "traps" == objGroup.Name {

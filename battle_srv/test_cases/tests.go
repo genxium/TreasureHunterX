@@ -19,10 +19,10 @@ func loadTMX(fp string, pTmxMapIns *models.TmxMap) {
 	byteArr, err := ioutil.ReadFile(fp)
 	ErrFatal(err)
 	models.DeserializeToTmxMapIns(byteArr, pTmxMapIns)
-	for _, info := range pTmxMapIns.TreasuresInfo{
+	for _, info := range pTmxMapIns.TreasuresInfo {
 		fmt.Printf("treasuresInfo: %v\n", info)
 	}
-	for _, info := range pTmxMapIns.HighTreasuresInfo{
+	for _, info := range pTmxMapIns.HighTreasuresInfo {
 		fmt.Printf("treasuresInfo: %v\n", info)
 	}
 }
@@ -75,5 +75,5 @@ func getTSXInfo() {
 }
 
 func main() {
-getTSXInfo()
+	getTSXInfo()
 }
