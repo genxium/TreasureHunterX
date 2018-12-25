@@ -55,7 +55,7 @@ func Serve(c *gin.Context) {
 			return
 		}
 	}
-	if expectRoomIdStr,hasExpectRoomId := c.GetQuery("expectingRoomId"); hasExpectRoomId {
+	if expectRoomIdStr,hasExpectRoomId := c.GetQuery("expectedRoomId"); hasExpectRoomId {
 		expectRoomId,err =strconv.Atoi(expectRoomIdStr)
 		if err != nil {
 			c.AbortWithStatus(http.StatusBadRequest)

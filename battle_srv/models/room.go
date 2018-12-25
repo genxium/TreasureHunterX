@@ -1037,7 +1037,7 @@ func (pR *Room) onPlayerLost(playerId int32) {
 		if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
 			pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
 		} else {
-			Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr has enough length: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
+			Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr is out of range: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
 		}
 		player.JoinIndex = -1
 	}
