@@ -15,6 +15,15 @@ window.getQueryParamDict = function() {
   return toRet;
 }
 
+let IS_USING_WKWECHAT_KERNEL = null;
+window.isUsingWebkitWechatKernel = function() {
+  if (null == IS_USING_WKWECHAT_KERNEL) {
+    // The extraction of `browserType` might take a considerable amount of time in mobile browser kernels.
+    IS_USING_WKWECHAT_KERNEL = (cc.sys.BROWSER_TYPE_WECHAT == cc.sys.browserType);  
+  }
+  return IS_USING_WKWECHAT_KERNEL;
+};
+
 let IS_USING_X5_BLINK_KERNEL = null;
 window.isUsingX5BlinkKernel = function() {
   if (null == IS_USING_X5_BLINK_KERNEL) {

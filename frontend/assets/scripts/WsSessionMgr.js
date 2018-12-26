@@ -104,6 +104,11 @@ window.initPersistentSessionClient = function(onopenCb) {
       urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
     }
   }
+
+  const currentHistoryState = window.history && window.history.state ? window.history.state : {}; 
+  window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+
+
   const clientSession = new WebSocket(urlToConnect);
 
   clientSession.onopen = function(event) {
