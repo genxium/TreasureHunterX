@@ -1129,11 +1129,6 @@
     "meta": 1545749623308,
     "relativePath": "scripts/BasePlayer.js"
   },
-  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
-    "asset": 1545488226465,
-    "meta": 1545749623437,
-    "relativePath": "scripts/GameRule.js"
-  },
   "ea965d25-ec82-478c-bdb2-9ac07981ab0e": {
     "asset": 1545488226463,
     "meta": 1545749623325,
@@ -1200,8 +1195,8 @@
     "relativePath": "scripts/Treasure.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1545747302675,
-    "meta": 1545749622943,
+    "asset": 1545807674137,
+    "meta": 1545807674163,
     "relativePath": "scenes/login.fire"
   },
   "09e1bfed-132e-4ada-a68f-229a870db69e": {
@@ -1223,11 +1218,6 @@
     "asset": 1545657345501,
     "meta": 1545749618020,
     "relativePath": "plugin_scripts/NetworkUtils.js"
-  },
-  "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
-    "asset": 1545747302672,
-    "meta": 1545749617499,
-    "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "178fb58b-08bb-4084-8379-473c0661bad7": {
     "asset": 1542113066852,
@@ -1259,11 +1249,6 @@
     "meta": 1545749626833,
     "relativePath": "SpriteFrameSet.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1545753982067,
-    "meta": 1545754030451,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1545792547087,
     "meta": 1545792550723,
@@ -1274,14 +1259,29 @@
     "meta": 1545798225288,
     "relativePath": "resources/i18n/en.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545797069799,
-    "meta": 1545798227072,
-    "relativePath": "scripts/Login.js"
+  "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
+    "asset": 1545802547802,
+    "meta": 1545802828667,
+    "relativePath": "plugin_scripts/auxiliaries.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1545804988747,
+    "meta": 1545805631404,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "dd92b295-cbc1-4963-bbaa-de27a8359099": {
+    "asset": 1545805981110,
+    "meta": 1545805988712,
+    "relativePath": "scripts/GameRule.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545798162589,
-    "meta": 1545798227216,
+    "asset": 1545805975241,
+    "meta": 1545805988714,
     "relativePath": "scripts/Map.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545807620727,
+    "meta": 1545807624055,
+    "relativePath": "scripts/Login.js"
   }
 }

@@ -15,12 +15,22 @@ window.getQueryParamDict = function() {
   return toRet;
 }
 
+let IS_USING_X5_BLINK_KERNEL = null;
 window.isUsingX5BlinkKernel = function() {
-  return (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType);
+  if (null == IS_USING_X5_BLINK_KERNEL) {
+    // The extraction of `browserType` might take a considerable amount of time in mobile browser kernels.
+    IS_USING_X5_BLINK_KERNEL = (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType);  
+  }
+  return IS_USING_X5_BLINK_KERNEL;
 };
 
+let IS_USING_X5_BLINK_KERNEL_OR_WKWECHAT_KERNEL = null;
 window.isUsingX5BlinkKernelOrWebkitWeChatKernel = function() {
-  return (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType || cc.sys.BROWSER_TYPE_WECHAT == cc.sys.browserType);
+  if (null == IS_USING_X5_BLINK_KERNEL_OR_WKWECHAT_KERNEL) {
+    // The extraction of `browserType` might take a considerable amount of time in mobile browser kernels.
+    IS_USING_X5_BLINK_KERNEL_OR_WKWECHAT_KERNEL = (cc.sys.BROWSER_TYPE_MOBILE_QQ == cc.sys.browserType || cc.sys.BROWSER_TYPE_WECHAT == cc.sys.browserType); 
+  }
+  return IS_USING_X5_BLINK_KERNEL_OR_WKWECHAT_KERNEL;
 };
 
 window.getRandomInt = function(min, max) {

@@ -524,7 +524,8 @@ cc.Class({
           break;
       }
       if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
-        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, false);
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
       }
     };
 
@@ -669,6 +670,21 @@ cc.Class({
       // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
     }
+
+    /*
+    * The following code snippet is a dirty fix.
+    */
+    const qDict = window.getQueryParamDict();
+    if (!qDict) return;
+    if (qDict["expectedRoomId"]) {
+      self.gameRuleNode.active = false;
+      window.initPersistentSessionClient(self.initAfterWSConncted);
+    } else {
+      if (cc.sys.localStorage.boundRoomId) {
+        self.gameRuleNode.active = false;
+        window.initPersistentSessionClient(self.initAfterWSConncted);
+      }
+    }
   },
 
   setupInputControls() {
@@ -712,8 +728,9 @@ cc.Class({
 
   onBattleStopped(players) {
     const self = this;
-    if (self.musicEffectManagerScriptIns)
+    if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
+    }
     const canvasNode = self.canvasNode;
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");

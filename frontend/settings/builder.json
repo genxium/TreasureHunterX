@@ -1,4 +1,12 @@
 {
+  "android-instant": {
+    "REMOTE_SERVER_ROOT": "",
+    "host": "",
+    "pathPattern": "",
+    "recordPath": "",
+    "scheme": "https",
+    "skipRecord": false
+  },
   "appKey": "",
   "appSecret": "",
   "encryptJs": true,
@@ -27,20 +35,12 @@
   },
   "startScene": "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4",
   "title": "TreasureHunterX",
-  "webOrientation": "auto",
+  "webOrientation": "portrait",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",
     "appid": "wx6ac3f5090a6b99c5",
     "orientation": "landscape"
   },
   "xxteaKey": "4d54a3d5-e6f3-49",
-  "zipCompressJs": true,
-  "android-instant": {
-    "REMOTE_SERVER_ROOT": "",
-    "pathPattern": "",
-    "scheme": "https",
-    "host": "",
-    "skipRecord": false,
-    "recordPath": ""
-  }
+  "zipCompressJs": true
 }

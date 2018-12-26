@@ -16,6 +16,14 @@ cc.Class({
       default: null,
       type: cc.Node
     },
+    phoneLabel: {
+      default: null,
+      type: cc.Node
+    },
+    smsLoginCaptchaLabel: {
+      default: null,
+      type: cc.Node
+    },
     phoneCountryCodeInput: {
       default: null,
       type: cc.Node
@@ -68,6 +76,24 @@ cc.Class({
     const self = this;
     self.getRetCodeList();
     self.getRegexList();
+
+    const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    if (!CC_DEBUG) {
+      self.wechatLoginButton.node.active = isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.captchaTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.phoneCountryCodeInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.phoneNumberInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.phoneLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.loginButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+    }
     self.checkPhoneNumber = self.checkPhoneNumber.bind(self);
     self.checkIntAuthTokenExpire = self.checkIntAuthTokenExpire.bind(self);
     self.checkCaptcha = self.checkCaptcha.bind(self);
@@ -78,9 +104,9 @@ cc.Class({
     self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
     self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
 
-    const qDict = window.getQueryParamDict(); 
+    const qDict = window.getQueryParamDict();
     if (null != qDict && qDict["expectedRoomId"]) {
-      window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); 
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
 
     cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */ ) {
@@ -98,12 +124,19 @@ cc.Class({
         },
         () => {
           window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-          if (null == qDict) return;
-          const code = qDict["code"];
-          if (code) {
-            console.log("Got the wx authcode: " + code);
-            console.log("while at full url: " + window.location.href);
-            self.useWXCodeLogin(code);
+          if ( (CC_DEBUG || isUsingX5BlinkKernelOrWebkitWeChatKernel) ) {
+            if (null != qDict && qDict["code"]) {
+              const code = qDict["code"];
+              console.log("Got the wx authcode: " + code);
+              console.log("while at full url: " + window.location.href);
+              self.useWXCodeLogin(code);
+            } else {
+              if (isUsingX5BlinkKernelOrWebkitWeChatKernel) {
+                self.getWechatCode(null);
+              } else {
+                // Deliberately left blank.
+              }
+            }
           }
         }
       );
@@ -419,7 +452,7 @@ cc.Class({
     self.wechatLoginTips.string = "";
     const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");
     const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
-    console.log("To visit wechat auth addr: " + url); 
+    console.log("To visit wechat auth addr: " + url);
     window.location.href = url;
   },
   initWxSdk() {

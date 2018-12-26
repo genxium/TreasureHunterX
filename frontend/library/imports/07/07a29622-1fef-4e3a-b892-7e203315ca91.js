@@ -97,7 +97,7 @@ window.initPersistentSessionClient = function (onopenCb) {
     if (qDict) {
       expectedRoomId = qDict["expectedRoomId"];
     } else {
-      if (window.history) {
+      if (window.history && window.history.state) {
         expectedRoomId = window.history.state.expectedRoomId;
       }
     }
@@ -160,26 +160,24 @@ window.initPersistentSessionClient = function (onopenCb) {
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
     }
-    if (!event.wasClean) {
+    if (false == event.wasClean) {
       // Chrome doesn't allow the use of "CustomCloseCode"s (yet) and will callback with a "WebsocketStdCloseCode 1006" and "false == event.wasClean" here. See https://tools.ietf.org/html/rfc6455#section-7.4 for more information.
-      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-    }
-    switch (event.code) {
-      case constants.RET_CODE.LOCALLY_NO_SPECIFIED_ROOM:
-      case constants.RET_CODE.PLAYER_NOT_ADDABLE_TO_ROOM:
-      case constants.RET_CODE.PLAYER_NOT_READDABLE_TO_ROOM:
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        window.initPersistentSessionClient(onopenCb);
-        return;
-      case constants.RET_CODE.PLAYER_NOT_FOUND:
-      case constants.RET_CODE.PLAYER_CHEATING:
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        break;
-      default:
-        break;
-    }
-    if (window.handleClientSessionCloseOrError) {
-      window.handleClientSessionCloseOrError();
+      if (window.handleClientSessionCloseOrError) {
+        window.handleClientSessionCloseOrError();
+      }
+    } else {
+      switch (event.code) {
+        case constants.RET_CODE.PLAYER_NOT_FOUND:
+        case constants.RET_CODE.PLAYER_CHEATING:
+          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          break;
+        default:
+          break;
+      }
+
+      if (window.handleClientSessionCloseOrError) {
+        window.handleClientSessionCloseOrError();
+      }
     }
   };
 };

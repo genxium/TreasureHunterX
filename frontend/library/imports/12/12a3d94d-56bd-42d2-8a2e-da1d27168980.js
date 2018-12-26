@@ -22,6 +22,14 @@ cc.Class({
       default: null,
       type: cc.Node
     },
+    phoneLabel: {
+      default: null,
+      type: cc.Node
+    },
+    smsLoginCaptchaLabel: {
+      default: null,
+      type: cc.Node
+    },
     phoneCountryCodeInput: {
       default: null,
       type: cc.Node
@@ -74,6 +82,24 @@ cc.Class({
     var self = this;
     self.getRetCodeList();
     self.getRegexList();
+
+    var isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    if (!CC_DEBUG) {
+      self.wechatLoginButton.node.active = isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.captchaTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.phoneCountryCodeInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.phoneNumberInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.phoneLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+      self.smsLoginCaptchaLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+
+      self.loginButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
+    }
     self.checkPhoneNumber = self.checkPhoneNumber.bind(self);
     self.checkIntAuthTokenExpire = self.checkIntAuthTokenExpire.bind(self);
     self.checkCaptcha = self.checkCaptcha.bind(self);
@@ -102,12 +128,19 @@ cc.Class({
         self.useTokenLogin(intAuthToken);
       }, function () {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        if (null == qDict) return;
-        var code = qDict["code"];
-        if (code) {
-          console.log("Got the wx authcode: " + code);
-          console.log("while at full url: " + window.location.href);
-          self.useWXCodeLogin(code);
+        if (CC_DEBUG || isUsingX5BlinkKernelOrWebkitWeChatKernel) {
+          if (null != qDict && qDict["code"]) {
+            var code = qDict["code"];
+            console.log("Got the wx authcode: " + code);
+            console.log("while at full url: " + window.location.href);
+            self.useWXCodeLogin(code);
+          } else {
+            if (isUsingX5BlinkKernelOrWebkitWeChatKernel) {
+              self.getWechatCode(null);
+            } else {
+              // Deliberately left blank.
+            }
+          }
         }
       });
     });
