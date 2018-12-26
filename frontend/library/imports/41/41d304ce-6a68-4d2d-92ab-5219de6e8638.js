@@ -832,15 +832,24 @@ cc.Class({
     /*
     * The following code snippet is a dirty fix.
     */
+    var expectedRoomId = null;
     var qDict = window.getQueryParamDict();
-    if (!qDict) return;
-    if (qDict["expectedRoomId"]) {
+    if (qDict) {
+      expectedRoomId = qDict["expectedRoomId"];
+    } else {
+      if (window.history && window.history.state) {
+        expectedRoomId = window.history.state.expectedRoomId;
+      }
+    }
+    if (expectedRoomId) {
       self.gameRuleNode.active = false;
       window.initPersistentSessionClient(self.initAfterWSConncted);
+      return;
     } else {
       if (cc.sys.localStorage.boundRoomId) {
         self.gameRuleNode.active = false;
         window.initPersistentSessionClient(self.initAfterWSConncted);
+        return;
       }
     }
   },

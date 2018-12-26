@@ -25,12 +25,12 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1545749427873,
+    "asset": 1545802816159,
     "meta": 1543401414384,
     "relativePath": "plugin_scripts"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1545749616469,
+    "asset": 1545797532991,
     "meta": 1543401414401,
     "relativePath": "resources"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1545749411157,
+    "asset": 1545811843380,
     "meta": 1543401414530,
     "relativePath": "scripts"
   },
@@ -70,7 +70,7 @@
     "relativePath": "scripts/Type2NPCPlayer.js"
   },
   "9c88608b-f02d-4bcc-b0e3-f486509e7fe1": {
-    "asset": 1545488226393,
+    "asset": 1545797569919,
     "meta": 1543401414412,
     "relativePath": "resources/i18n"
   },
@@ -1224,31 +1224,6 @@
     "meta": 1545749616469,
     "relativePath": "resources/maps"
   },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1545658661442,
-    "meta": 1545749626750,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1545658661443,
-    "meta": 1545749626769,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1545658661444,
-    "meta": 1545749626825,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1545658661448,
-    "meta": 1545749626830,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1545658661446,
-    "meta": 1545749626833,
-    "relativePath": "SpriteFrameSet.js"
-  },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1545792547087,
     "meta": 1545792550723,
@@ -1264,24 +1239,49 @@
     "meta": 1545802828667,
     "relativePath": "plugin_scripts/auxiliaries.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1545804988747,
-    "meta": 1545805631404,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1545805981110,
     "meta": 1545805988712,
     "relativePath": "scripts/GameRule.js"
   },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545811842956,
+    "meta": 1545811905920,
+    "relativePath": "scripts/Login.js"
+  },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1545658661442,
+    "meta": 1545811907974,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1545658661443,
+    "meta": 1545811908011,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1545658661444,
+    "meta": 1545811908126,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1545658661448,
+    "meta": 1545811908145,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1545658661446,
+    "meta": 1545811908148,
+    "relativePath": "SpriteFrameSet.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545805975241,
-    "meta": 1545805988714,
+    "asset": 1545812324032,
+    "meta": 1545812337462,
     "relativePath": "scripts/Map.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545807620727,
-    "meta": 1545807624055,
-    "relativePath": "scripts/Login.js"
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1545812331863,
+    "meta": 1545812337463,
+    "relativePath": "scripts/WsSessionMgr.js"
   }
 }

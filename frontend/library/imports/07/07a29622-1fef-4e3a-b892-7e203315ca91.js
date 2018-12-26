@@ -88,23 +88,23 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   var urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
-  window.boundRoomId = getBoundRoomIdFromPersistentStorage();
-  if (null != window.boundRoomId) {
-    urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
+  var expectedRoomId = null;
+  var qDict = window.getQueryParamDict();
+  if (qDict) {
+    expectedRoomId = qDict["expectedRoomId"];
   } else {
-    var expectedRoomId = null;
-    var qDict = window.getQueryParamDict();
-    if (qDict) {
-      expectedRoomId = qDict["expectedRoomId"];
-    } else {
-      if (window.history && window.history.state) {
-        expectedRoomId = window.history.state.expectedRoomId;
-      }
+    if (window.history && window.history.state) {
+      expectedRoomId = window.history.state.expectedRoomId;
     }
-    if (expectedRoomId) {
-      console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
-      urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
-      window.history.replaceState({}, null, window.location.pathname);
+  }
+  if (expectedRoomId) {
+    console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
+    urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
+  } else {
+    window.boundRoomId = getBoundRoomIdFromPersistentStorage();
+    if (null != window.boundRoomId) {
+      console.log("initPersistentSessionClient with boundRoomId == " + boundRoomId);
+      urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
     }
   }
   var clientSession = new WebSocket(urlToConnect);

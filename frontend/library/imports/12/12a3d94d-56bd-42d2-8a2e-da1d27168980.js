@@ -346,12 +346,14 @@ cc.Class({
         console.log("OnLoggedIn using expectedRoomId == " + expectedRoomId);
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
+      // To remove "code=XXX" in "query string".
       window.history.replaceState(qDict, null, window.location.pathname);
       self.useTokenLogin(res.intAuthToken);
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
+      // To remove "code=XXX" in "query string".
       window.history.replaceState({}, null, window.location.pathname);
     }
   },
