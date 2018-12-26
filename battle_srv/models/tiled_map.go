@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/xml"
-	"fmt"
+	// "fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -176,7 +176,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 
 func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	err := xml.Unmarshal(byteArr, pTmxMapIns)
-	fmt.Printf("%s\n", byteArr)
+	// fmt.Printf("%s\n", byteArr)
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
 		if "controlled_players_starting_pos_list" == objGroup.Name {
 			pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
@@ -215,37 +215,6 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
 				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
 			}
-			/*if "treasures" == objGroup.Name {
-							pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
-			        if "highTreasures" == objGroup.Name {
-			          pTmxMapIns.TreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
-			          pTmxMapIns.TreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
-			        } else {
-			          pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
-			          pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
-			        }
-			       // 由于分数现在只有2种，不读取tmx文件属性
-			        properties := obj.Properties
-			         for _, prop := range properties.Property {
-			            if("type" == prop.Name){
-			              typeValue , err := strconv.Atoi(prop.Value)
-			              if err != nil {
-			                fmt.Printf("transit tmx fails and error: %v\n", err)
-			              }else {
-			                pTmxMapIns.TreasuresInfo[index].Type = int32(typeValue)
-			              }
-			            }
-
-			            if("score" == prop.Name){
-			              scoreValue , err := strconv.Atoi(prop.Value)
-			              if err != nil {
-			                fmt.Printf("transit tmx fails and error: %v\n", err)
-			              }else {
-			                pTmxMapIns.TreasuresInfo[index].Score = int32(scoreValue)
-			              }
-			            }
-			          }
-						}*/
 		}
 
 		if "traps" == objGroup.Name {

@@ -94,6 +94,7 @@ cc.Class({
         () => {
           window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
           const qDict = window.getQueryParamDict();
+          if (null == qDict) return;
           const code = qDict["code"];
           if (code) {
             console.log("Got the wx authcode: " + code);

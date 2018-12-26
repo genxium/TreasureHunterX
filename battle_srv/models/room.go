@@ -164,11 +164,11 @@ func (pR *Room) updateScore() {
 
 func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	if RoomBattleStateIns.IDLE != pR.State && RoomBattleStateIns.WAITING != pR.State {
-		Logger.Error("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("AddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	if _, existent := pR.Players[pPlayer.Id]; existent {
-		Logger.Error("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	defer pR.onPlayerAdded(pPlayer.Id)
@@ -959,6 +959,9 @@ func (pR *Room) onDismissed() {
 	pR.Traps = make(map[int32]*Trap)
 	pR.Bullets = make(map[int32]*Bullet)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
+  for indice, _ := range(pR.JoinIndexBooleanArr) {
+    pR.JoinIndexBooleanArr[indice] = false
+  }
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
 }
@@ -1037,7 +1040,7 @@ func (pR *Room) onPlayerLost(playerId int32) {
 		if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
 			pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
 		} else {
-			Logger.Error("Room OnPlayerLost, pR.JoinIndexBooleanArr is out of range: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
+			Logger.Warn("Room OnPlayerLost, pR.JoinIndexBooleanArr is out of range: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
 		}
 		player.JoinIndex = -1
 	}
@@ -1045,9 +1048,10 @@ func (pR *Room) onPlayerLost(playerId int32) {
 
 func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
-	if pR.EffectivePlayerCount == 1 {
+	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
 	}
+  Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	for index, value := range pR.JoinIndexBooleanArr {
 		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
@@ -1074,17 +1078,15 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 
-	Logger.Info("Player added:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
+	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 	if pR.Capacity == len(pR.Players) {
 		pR.StartBattle()
 	}
 }
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
-	// TODO
-	//xiaomai 重新加入时重新分配joinIndex
 	for index, value := range pR.JoinIndexBooleanArr {
-		if value == false {
+		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
 			pR.JoinIndexBooleanArr[index] = true
 			break

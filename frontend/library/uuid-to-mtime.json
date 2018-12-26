@@ -1229,11 +1229,6 @@
     "meta": 1545749618020,
     "relativePath": "plugin_scripts/NetworkUtils.js"
   },
-  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
-    "asset": 1545659894089,
-    "meta": 1545749617513,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
     "asset": 1545747302672,
     "meta": 1545749617499,
@@ -1274,14 +1269,19 @@
     "meta": 1545751092167,
     "relativePath": "scripts/Map.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545754017882,
-    "meta": 1545754030449,
-    "relativePath": "scripts/Login.js"
-  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
     "asset": 1545753982067,
     "meta": 1545754030451,
     "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545789757200,
+    "meta": 1545789821800,
+    "relativePath": "scripts/Login.js"
+  },
+  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
+    "asset": 1545792547087,
+    "meta": 1545792550723,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }

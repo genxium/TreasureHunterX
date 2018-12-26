@@ -78,7 +78,7 @@ func Serve(c *gin.Context) {
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		Logger.Error("upgrade:", zap.Error(err))
+		Logger.Error("upgrade:", zap.Error(err), zap.Any("playerId", playerId))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
