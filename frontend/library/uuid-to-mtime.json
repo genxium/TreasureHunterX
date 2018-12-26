@@ -734,11 +734,6 @@
     "meta": 1545749618334,
     "relativePath": "resources/map/HighTreasure.png"
   },
-  "225415b8-1a4c-4fd9-bb42-68b60c50bd7e": {
-    "asset": 1545488226392,
-    "meta": 1545749618299,
-    "relativePath": "resources/i18n/en.js"
-  },
   "09bff2b7-f9a2-4eac-b561-f02ff8e28abe": {
     "asset": 1545488226393,
     "meta": 1545749618312,
@@ -1264,24 +1259,29 @@
     "meta": 1545749626833,
     "relativePath": "SpriteFrameSet.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1545751089667,
-    "meta": 1545751092167,
-    "relativePath": "scripts/Map.js"
-  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
     "asset": 1545753982067,
     "meta": 1545754030451,
     "relativePath": "scripts/WsSessionMgr.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1545789757200,
-    "meta": 1545789821800,
-    "relativePath": "scripts/Login.js"
-  },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1545792547087,
     "meta": 1545792550723,
     "relativePath": "plugin_scripts/conf.js"
+  },
+  "225415b8-1a4c-4fd9-bb42-68b60c50bd7e": {
+    "asset": 1545797569535,
+    "meta": 1545798225288,
+    "relativePath": "resources/i18n/en.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1545797069799,
+    "meta": 1545798227072,
+    "relativePath": "scripts/Login.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1545798162589,
+    "meta": 1545798227216,
+    "relativePath": "scripts/Map.js"
   }
 }

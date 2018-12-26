@@ -84,6 +84,11 @@ cc.Class({
     self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
     self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
 
+    var qDict = window.getQueryParamDict();
+    if (null != qDict && qDict["expectedRoomId"]) {
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+    }
+
     cc.loader.loadRes("pbfiles/room_downsync_frame", function (err, textAsset /* cc.TextAsset */) {
       if (err) {
         cc.error(err.message || err);
@@ -97,7 +102,6 @@ cc.Class({
         self.useTokenLogin(intAuthToken);
       }, function () {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        var qDict = window.getQueryParamDict();
         if (null == qDict) return;
         var code = qDict["code"];
         if (code) {

@@ -388,6 +388,7 @@ cc.Class({
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = () => {
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self._resetCurrentMatch();
       let shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
       switch (shouldReconnectState) {
