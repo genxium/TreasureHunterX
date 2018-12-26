@@ -355,6 +355,7 @@ cc.Class({
       self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
       // To remove "code=XXX" in "query string".
       window.history.replaceState({}, null, window.location.pathname);
+      window.initWxSdk();
     }
   },
   onLoggedIn: function onLoggedIn(res) {
@@ -432,6 +433,7 @@ cc.Class({
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
         window.history.replaceState({}, null, window.location.pathname);
+        window.initWxSdk();
       }
     });
   },
@@ -449,6 +451,8 @@ cc.Class({
       return;
     }
     var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+
+    var url = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
     var origUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     /*
     * The `shareLink` must 
@@ -478,7 +482,7 @@ cc.Class({
       url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.JSCONFIG,
       type: "POST",
       data: {
-        "url": shareLink,
+        "url": url,
         "intAuthToken": selfPlayer.intAuthToken
       },
       success: function success(res) {
@@ -486,6 +490,8 @@ cc.Class({
           console.log("cannot get the wsConfig. retCode == " + res.ret);
           return;
         }
+        console.log("url ==" + shareLink);
+        console.log("wx.config == ");
         console.log(res.jsConfig);
         var jsConfig = res.jsConfig;
         console.log(updateAppMsgShareDataObj);

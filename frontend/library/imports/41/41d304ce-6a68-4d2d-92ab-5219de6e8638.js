@@ -391,7 +391,7 @@ cc.Class({
   },
   onLoad: function onLoad() {
     var self = this;
-
+    window.initWxSdk();
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
