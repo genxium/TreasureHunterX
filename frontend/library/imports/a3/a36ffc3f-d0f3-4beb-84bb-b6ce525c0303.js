@@ -7,14 +7,14 @@ cc._RF.push(module, 'a36ffw/0PNL64S7ts5SXAMD', 'conf');
 if (CC_DEBUG) {
   var backendAddress = {
     PROTOCOL: 'http',
-    HOST: '192.168.31.241',
+    HOST: 'localhost',
     PORT: "9992",
     WS_PATH_PREFIX: "/tsrht"
   };
 
   var wechatAddress = {
     PROTOCOL: "http",
-    HOST: "192.168.31.241",
+    HOST: "119.29.236.44",
     PORT: "8089",
     PROXY: "",
     APPID_LITERAL: "appid=wx5432dc1d6164d4e"

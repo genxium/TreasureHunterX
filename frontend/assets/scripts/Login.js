@@ -76,7 +76,6 @@ cc.Class({
 
     const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
     if (!CC_DEBUG) {
-
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
 

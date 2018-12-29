@@ -415,6 +415,8 @@ cc.Class({
     self.gameRuleScriptIns.mapNode = self.node;
 
     self.findingPlayerNode = cc.instantiate(self.findingPlayerPrefab);
+    self.findingPlayerNode.width = self.canvasNode.width;
+    self.findingPlayerNode.height = self.canvasNode.height;
     const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
     findingPlayerScriptIns.init();
 
@@ -542,7 +544,9 @@ cc.Class({
         if (-99 == refFrameId) { //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
         } else if (-98 == refFrameId) { //显示匹配玩家
-          window.initWxSdk();
+          if (window.initWxSdk) {
+            window.initWxSdk();
+          }
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           if (!self.findingPlayerNode.parent) {
             self.showPopopInCanvas(self.findingPlayerNode);

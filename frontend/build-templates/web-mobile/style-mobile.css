@@ -83,12 +83,12 @@ p.footer {
 
 #splash {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background: #171717 url(./loading.png) no-repeat center;
-  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Let LoginScene's background image to be attached to the CanvasNode, with "FitWidth" option && "cc.Sprite.SizeMode == Custom && cc.Sprite.Type == SIMPLE && cc.Sprite.Trim == false". */
+  background-size: 100% 100%;
 }
 
 .progress-bar {

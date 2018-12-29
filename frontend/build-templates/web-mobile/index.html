@@ -43,9 +43,6 @@
 <body>
   <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
   <div id="splash">
-    <div class="progress-bar stripes">
-      <span style="width: 0%"></span>
-    </div>
   </div>
 <script src="src/settings.js" charset="utf-8"></script>
 <script src="vconsole.min.js"></script>
@@ -59,6 +56,7 @@
 
     var splash = document.getElementById('splash');
     splash.style.display = 'block';
+    splash.style.backgroundImage = "url(./loading.png)";  
 
     var cocos2d = document.createElement('script');
     cocos2d.async = true;
