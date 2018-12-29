@@ -77,13 +77,13 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 72
+        "__id__": 66
       },
       {
-        "__id__": 73
+        "__id__": 67
       },
       {
-        "__id__": 74
+        "__id__": 68
       }
     ],
     "_prefab": null,
@@ -245,10 +245,10 @@
     "_level": 0,
     "_components": [
       {
-        "__id__": 70
+        "__id__": 64
       },
       {
-        "__id__": 71
+        "__id__": 65
       }
     ],
     "_prefab": null,
@@ -335,9 +335,6 @@
       },
       {
         "__id__": 62
-      },
-      {
-        "__id__": 64
       }
     ],
     "_active": true,
@@ -2578,286 +2575,6 @@
     "_id": "9eaPcp3+lDpL8fBz6ohCMN"
   },
   {
-    "__type__": "cc.Node",
-    "_name": "wechatLoginButton",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 6
-    },
-    "_children": [
-      {
-        "__id__": 65
-      }
-    ],
-    "_active": false,
-    "_level": 1,
-    "_components": [
-      {
-        "__id__": 67
-      },
-      {
-        "__id__": 68
-      }
-    ],
-    "_prefab": null,
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 200,
-      "height": 100
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 20,
-      "y": 399,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_quat": {
-      "__type__": "cc.Quat",
-      "x": 0,
-      "y": 0,
-      "z": 0,
-      "w": 1
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
-    "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
-    "_id": "48nMlxT+BBE6Tti7xvHH3m"
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "Label",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 64
-    },
-    "_children": [],
-    "_active": true,
-    "_level": 0,
-    "_components": [
-      {
-        "__id__": 66
-      }
-    ],
-    "_prefab": null,
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 200,
-      "height": 40
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_quat": {
-      "__type__": "cc.Quat",
-      "x": 0,
-      "y": 0,
-      "z": 0,
-      "w": 1
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
-    "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
-    "_id": "6aWxhPag5L/aVTCLIsxXTn"
-  },
-  {
-    "__type__": "cc.Label",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 65
-    },
-    "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
-    "_useOriginalSize": false,
-    "_string": "微信登录",
-    "_N$string": "微信登录",
-    "_fontSize": 30,
-    "_lineHeight": 40,
-    "_enableWrapText": false,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
-    "_spacingX": 0,
-    "_N$horizontalAlign": 1,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 1,
-    "_id": "81XJOirhZF6ZZ3H5HSWBj+"
-  },
-  {
-    "__type__": "cc.Sprite",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 64
-    },
-    "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "3edbf54b-c305-426e-a6a1-c1473b5f0895"
-    },
-    "_type": 1,
-    "_sizeMode": 0,
-    "_fillType": 0,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_state": 0,
-    "_atlas": {
-      "__uuid__": "9fd2b2d4-473f-418f-a650-7558879ac029"
-    },
-    "_id": "51YGL4trlDrK+a1xVG7vRB"
-  },
-  {
-    "__type__": "cc.Button",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 64
-    },
-    "_enabled": true,
-    "duration": 0.1,
-    "zoomScale": 1.2,
-    "clickEvents": [
-      {
-        "__id__": 69
-      }
-    ],
-    "_N$interactable": true,
-    "_N$enableAutoGrayEffect": false,
-    "_N$transition": 2,
-    "transition": 2,
-    "_N$normalColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_N$pressedColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "pressedColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_N$hoverColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "hoverColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_N$disabledColor": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_N$normalSprite": {
-      "__uuid__": "3edbf54b-c305-426e-a6a1-c1473b5f0895"
-    },
-    "_N$pressedSprite": {
-      "__uuid__": "37e909da-7f67-464b-badf-949d6dfd4f05"
-    },
-    "pressedSprite": {
-      "__uuid__": "37e909da-7f67-464b-badf-949d6dfd4f05"
-    },
-    "_N$hoverSprite": {
-      "__uuid__": "37e909da-7f67-464b-badf-949d6dfd4f05"
-    },
-    "hoverSprite": {
-      "__uuid__": "37e909da-7f67-464b-badf-949d6dfd4f05"
-    },
-    "_N$disabledSprite": {
-      "__uuid__": "37e909da-7f67-464b-badf-949d6dfd4f05"
-    },
-    "_N$target": {
-      "__id__": 64
-    },
-    "_id": "97cvBwK7FIXqmAohYkVyPr"
-  },
-  {
-    "__type__": "cc.ClickEvent",
-    "target": {
-      "__id__": 2
-    },
-    "component": "",
-    "_componentId": "12a3dlNVr1C0oou2h0nFomA",
-    "handler": "getWechatCode",
-    "customEventData": ""
-  },
-  {
     "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
@@ -3005,9 +2722,6 @@
     },
     "loadingPrefab": {
       "__uuid__": "f2a3cece-30bf-4f62-bc20-34d44a9ddf98"
-    },
-    "wechatLoginButton": {
-      "__id__": 68
     },
     "wechatLoginTips": {
       "__id__": 63
