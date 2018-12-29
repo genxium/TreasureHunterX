@@ -37,14 +37,14 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 41
+        "__id__": 42
       },
       {
-        "__id__": 42
+        "__id__": 43
       }
     ],
     "_prefab": {
-      "__id__": 43
+      "__id__": 44
     },
     "_opacity": 255,
     "_color": {
@@ -194,7 +194,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 33.34,
+      "width": 80,
       "height": 200
     },
     "_anchorPoint": {
@@ -241,10 +241,10 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Exi\nt",
-    "_N$string": "Exi\nt",
+    "_string": "退出",
+    "_N$string": "退出",
     "_fontSize": 57,
-    "_lineHeight": 48,
+    "_lineHeight": 70,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -263,7 +263,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "_dataID": "",
+    "_dataID": "findingPlayer.exit",
     "_id": ""
   },
   {
@@ -558,8 +558,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Please wait for 1 more player to start this round!",
-    "_N$string": "Please wait for 1 more player to start this round!",
+    "_string": "我们正在为你匹配另一位玩家，请稍等",
+    "_N$string": "我们正在为你匹配另一位玩家，请稍等",
     "_fontSize": 40,
     "_lineHeight": 50,
     "_enableWrapText": true,
@@ -580,7 +580,7 @@
       "__id__": 12
     },
     "_enabled": true,
-    "_dataID": "",
+    "_dataID": "findingPlayer.tip",
     "_id": ""
   },
   {
@@ -1217,14 +1217,14 @@
     "_level": 2,
     "_components": [
       {
-        "__id__": 38
+        "__id__": 39
       },
       {
-        "__id__": 39
+        "__id__": 40
       }
     ],
     "_prefab": {
-      "__id__": 40
+      "__id__": 41
     },
     "_opacity": 255,
     "_color": {
@@ -1285,10 +1285,13 @@
     "_components": [
       {
         "__id__": 36
+      },
+      {
+        "__id__": 37
       }
     ],
     "_prefab": {
-      "__id__": 37
+      "__id__": 38
     },
     "_opacity": 255,
     "_color": {
@@ -1300,7 +1303,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 296.16,
+      "width": 350,
       "height": 80
     },
     "_anchorPoint": {
@@ -1310,8 +1313,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 9,
-      "y": -302,
+      "x": 17,
+      "y": -270,
       "z": 0
     },
     "_scale": {
@@ -1347,9 +1350,9 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Finding...",
-    "_N$string": "Finding...",
-    "_fontSize": 72,
+    "_string": "等等我，马上到",
+    "_N$string": "等等我，马上到",
+    "_fontSize": 50,
     "_lineHeight": 80,
     "_enableWrapText": true,
     "_N$file": null,
@@ -1359,6 +1362,17 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "744dcs4DCdNprNhG0xwq6FK",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 35
+    },
+    "_enabled": true,
+    "_dataID": "findingPlayer.finding",
     "_id": ""
   },
   {

@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "black-board",
-    "texture": "8ee0889b-2a83-43eb-8d35-c2d877107ef1",
+    "name": "loading&login",
+    "texture": "9a9bbd94-d3fa-485c-8847-3e48741c1158",
     "atlas": "",
     "rect": [
-      108,
-      199,
-      850,
-      927
+      0,
+      0,
+      640,
+      960
     ],
     "offset": [
-      21,
-      297.5
+      0,
+      0
     ],
     "originalSize": [
-      1024,
-      1920
+      640,
+      960
     ],
     "capInsets": [
       0,

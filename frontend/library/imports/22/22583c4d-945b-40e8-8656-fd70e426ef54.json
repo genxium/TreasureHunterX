@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "Sign-in 4",
-    "texture": "41a9d39f-b315-4f49-b661-b612ad955339",
+    "name": "rule",
+    "texture": "8fd2d7b5-8bdf-493f-a73d-9dc40ef848bf",
     "atlas": "",
     "rect": [
       0,
       0,
-      640,
-      960
+      1878,
+      1922
     ],
     "offset": [
-      0,
+      -1,
       0
     ],
     "originalSize": [
-      640,
-      960
+      1880,
+      1922
     ],
     "capInsets": [
       0,

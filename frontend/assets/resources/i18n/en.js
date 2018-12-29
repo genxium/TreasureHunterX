@@ -23,6 +23,15 @@ window.i18n.languages['en'] = {
     tips: {
       loginSuccess: "Successfully logged, please wait..."
     }
-  }
+  },
+  findingPlayer: {
+    exit: "退出",
+    tip: "我们正在为你匹配另一位玩家，请稍等",
+    finding: "等等我，马上到...",
+  },
+  gameTip: {
+    start: "游戏开始!",
+    resyncing: "Resyncing your battle, please wait...",
+  },
 
 };

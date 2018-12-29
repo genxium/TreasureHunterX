@@ -237,7 +237,7 @@ cc.Class({
     this.resyncing = true;
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
       if (null == this.resyncingHintPopup) {
-        this.resyncingHintPopup = this.popupSimplePressToGo("Resyncing your battle, please wait...");
+        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"));
       }
     }
   },
@@ -820,7 +820,7 @@ cc.Class({
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
             // No need to prompt upon rejoined.
-            self.popupSimplePressToGo("Battle started!");
+            self.popupSimplePressToGo(i18n.t("gameTip.start"));
           }
           self.onBattleStarted();
         }
@@ -1252,10 +1252,6 @@ cc.Class({
     }, 2000);
   },
   initWxSdk: function initWxSdk() {
-    if (undefined == wx) {
-      cc.warn("please build the project in web-mobile to use the wx jssdk");
-      return;
-    }
     var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
     var origUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     /*

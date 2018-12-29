@@ -24,7 +24,7 @@
  <tile id="7">
   <objectgroup draworder="index">
    <object id="4" x="32" y="8">
-    <polyline points="-8,-9 -33,18 -18,46 17,49 32,24 6,-10"/>
+    <polyline points="-31,-10 -33,18 -18,46 17,49 32,24 6,-10"/>
    </object>
   </objectgroup>
  </tile>

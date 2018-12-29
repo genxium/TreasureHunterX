@@ -14,7 +14,7 @@ if (CC_DEBUG) {
 
   var wechatAddress = {
     PROTOCOL: "http",
-    HOST: "119.29.236.44",
+    HOST: "192.168.31.241",
     PORT: "8089",
     PROXY: "",
     APPID_LITERAL: "appid=wx5432dc1d6164d4e"
@@ -36,7 +36,7 @@ if (CC_DEBUG) {
   };
 }
 
-window.language = "en";
+window.language = "zh";
 window.backendAddress = backendAddress;
 window.wechatAddress = wechatAddress;
 

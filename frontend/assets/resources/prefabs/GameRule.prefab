@@ -28,14 +28,14 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 16
+        "__id__": 17
       },
       {
-        "__id__": 17
+        "__id__": 18
       }
     ],
     "_prefab": {
-      "__id__": 18
+      "__id__": 19
     },
     "_opacity": 255,
     "_color": {
@@ -115,8 +115,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 850,
-      "height": 927
+      "width": 852,
+      "height": 930
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -229,8 +229,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "游戏以1 v 1形式展开，玩家在1分钟之内获得的分数越高，则最终获胜。分数来自于拾取的宝物，拾取越多的宝物（蘑菇、金块）则分数越高。但要注意躲避蜘蛛射出来的蜘蛛网哦，被击中会被定住5秒的哦。开始游戏吧~",
-    "_N$string": "游戏以1 v 1形式展开，玩家在1分钟之内获得的分数越高，则最终获胜。分数来自于拾取的宝物，拾取越多的宝物（蘑菇、金块）则分数越高。但要注意躲避蜘蛛射出来的蜘蛛网哦，被击中会被定住5秒的哦。开始游戏吧~",
+    "_string": "  游戏以1 v 1形式展开，玩家在1分钟之内获得的分数越高，则最终获胜。分数来自于拾取的宝物，拾取越多的宝物（蘑菇、金块）则分数越高。但要注意躲避蜘蛛射出来的蜘蛛网哦，被击中会被定住5秒的哦。开始游戏吧~",
+    "_N$string": "  游戏以1 v 1形式展开，玩家在1分钟之内获得的分数越高，则最终获胜。分数来自于拾取的宝物，拾取越多的宝物（蘑菇、金块）则分数越高。但要注意躲避蜘蛛射出来的蜘蛛网哦，被击中会被定住5秒的哦。开始游戏吧~",
     "_fontSize": 50,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -251,7 +251,7 @@
       "__id__": 3
     },
     "_enabled": true,
-    "_dataID": "gameRule",
+    "_dataID": "gameRule.tip",
     "_id": ""
   },
   {
@@ -276,7 +276,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "ecd767f4-cb1d-40e3-8c9d-2195429894aa"
+      "__uuid__": "7c4b4ca1-99bb-46ba-8bbd-cc60c84157e8"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -290,7 +290,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "16a1443c-063c-45cc-8231-d26386466b21"
+    },
     "_id": ""
   },
   {
@@ -320,14 +322,14 @@
     "_level": 2,
     "_components": [
       {
-        "__id__": 13
+        "__id__": 14
       },
       {
-        "__id__": 14
+        "__id__": 15
       }
     ],
     "_prefab": {
-      "__id__": 15
+      "__id__": 16
     },
     "_opacity": 255,
     "_color": {
@@ -388,10 +390,13 @@
     "_components": [
       {
         "__id__": 11
+      },
+      {
+        "__id__": 12
       }
     ],
     "_prefab": {
-      "__id__": 12
+      "__id__": 13
     },
     "_opacity": 255,
     "_color": {
@@ -404,7 +409,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 300,
-      "height": 40
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -450,8 +455,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": " 1v1 mode",
-    "_N$string": " 1v1 mode",
+    "_string": "1v1 模式",
+    "_N$string": "1v1 模式",
     "_fontSize": 56,
     "_lineHeight": 56,
     "_enableWrapText": false,
@@ -462,6 +467,17 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 1,
+    "_id": ""
+  },
+  {
+    "__type__": "744dcs4DCdNprNhG0xwq6FK",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 10
+    },
+    "_enabled": true,
+    "_dataID": "gameRule.mode",
     "_id": ""
   },
   {
@@ -486,7 +502,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "b96f6b95-c510-4171-8c4a-6078ccf1149b"
+      "__uuid__": "5f183793-0cc7-4785-872b-f9e083e4fde5"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -500,7 +516,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "16a1443c-063c-45cc-8231-d26386466b21"
+    },
     "_id": ""
   },
   {
@@ -561,22 +579,22 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "b96f6b95-c510-4171-8c4a-6078ccf1149b"
+      "__uuid__": "5f183793-0cc7-4785-872b-f9e083e4fde5"
     },
     "_N$pressedSprite": {
-      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
+      "__uuid__": "b0d9b7cd-7f18-4507-9e00-54126057749f"
     },
     "pressedSprite": {
-      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
+      "__uuid__": "b0d9b7cd-7f18-4507-9e00-54126057749f"
     },
     "_N$hoverSprite": {
-      "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
+      "__uuid__": "5f183793-0cc7-4785-872b-f9e083e4fde5"
     },
     "hoverSprite": {
-      "__uuid__": "e5d4a890-a112-4a5e-ad70-7e7e33e7bd85"
+      "__uuid__": "5f183793-0cc7-4785-872b-f9e083e4fde5"
     },
     "_N$disabledSprite": {
-      "__uuid__": "6a7ed4a6-a522-498c-83e3-dff51d08f4c5"
+      "__uuid__": "b0d9b7cd-7f18-4507-9e00-54126057749f"
     },
     "_N$target": {
       "__id__": 9
@@ -603,7 +621,7 @@
     },
     "_enabled": true,
     "modeButton": {
-      "__id__": 14
+      "__id__": 15
     },
     "mapNode": null,
     "_id": ""
@@ -619,7 +637,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "0eb7f3ca-2fe7-4848-9347-c59d4235c121"
+      "__uuid__": "675d052a-2767-4e9f-84e4-f7f213e01476"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -633,7 +651,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "16a1443c-063c-45cc-8231-d26386466b21"
+    },
     "_id": ""
   },
   {
