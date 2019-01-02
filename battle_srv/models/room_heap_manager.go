@@ -90,11 +90,11 @@ func InitRoomHeapManager() {
 	roomMap := make(RoomMap, initialCountOfRooms)
 
 	for i := 0; i < initialCountOfRooms; i++ {
-    roomCapacity := 2
-    joinIndexBooleanArr := make([]bool, roomCapacity)
-    for index, _ := range joinIndexBooleanArr {
-      joinIndexBooleanArr[index] = false
-    }
+		roomCapacity := 2
+		joinIndexBooleanArr := make([]bool, roomCapacity)
+		for index, _ := range joinIndexBooleanArr {
+			joinIndexBooleanArr[index] = false
+		}
 		currentRoomBattleState := RoomBattleStateIns.IDLE
 		pq[i] = &Room{
 			Id:                           int32(i + 1),
@@ -112,6 +112,8 @@ func InitRoomHeapManager() {
 			Treasures:                    make(map[int32]*Treasure),
 			Traps:                        make(map[int32]*Trap),
 			Bullets:                      make(map[int32]*Bullet),
+			Barrier:					  make(map[int32]*Barrier),
+			Pumpkin:					  make(map[int32]*Pumpkin),
 			AccumulatedLocalIdForBullets: 0,
 			RoomDownsyncFrameBuffer:      NewRingBuffer(512),
 			JoinIndexBooleanArr:          joinIndexBooleanArr,

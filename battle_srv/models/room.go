@@ -25,11 +25,15 @@ const (
 	COLLISION_CATEGORY_TREASURE          = (1 << 2)
 	COLLISION_CATEGORY_TRAP              = (1 << 3)
 	COLLISION_CATEGORY_TRAP_BULLET       = (1 << 4)
+	COLLISION_CATEGORY_BARRIER	 		 = (1 << 5)
+	COLLISION_CATEGORY_PUMPKIN			 = (1 << 6)
 
 	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET)
 	COLLISION_MASK_FOR_TREASURE          = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP              = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP_BULLET       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
+	COLLISION_MASK_FOR_BARRIER 			 = (COLLISION_CATEGORY_PUMPKIN)
+	COLLISION_MASK_FOR_PUMPKIN           = (COLLISION_CATEGORY_BARRIER)
 )
 
 type RoomBattleState struct {
@@ -97,6 +101,8 @@ type Room struct {
 	Treasures                    map[int32]*Treasure
 	Traps                        map[int32]*Trap
 	Bullets                      map[int32]*Bullet
+	Barrier						 map[int32]*Barrier
+	Pumpkin						 map[int32]*Pumpkin
 	AccumulatedLocalIdForBullets int32
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
@@ -156,6 +162,33 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
 		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
+}
+
+func (pR *Room) onPumpkinEncounterBarrier(pumpkin *Pumpkin,barrier *Barrier){
+	bvecX := pumpkin.CollidableBody.GetPosition().X - barrier.CollidableBody.GetPosition().X
+	bvecY := pumpkin.CollidableBody.GetPosition().Y - barrier.CollidableBody.GetPosition().Y
+	bvecLen := math.Sqrt(bvecX*bvecX + bvecY*bvecY)
+	directionVec1 := &Direction{bvecX/bvecLen,bvecY/bvecLen}
+
+	var pvecLen float64 = 1000 * 1000
+	directionVec2 := &Direction{0,0}
+	for _,player := range pR.Players {
+		pvecX := player.CollidableBody.GetPosition().X - pumpkin.CollidableBody.GetPosition().X
+		pvecY := player.CollidableBody.GetPosition().Y - pumpkin.CollidableBody.GetPosition().Y
+		l := math.Sqrt(pvecX*pvecX + pvecY*pvecY)
+		if pvecLen > l{
+			pvecLen = l
+			directionVec2.Dx = pvecX/l
+			directionVec2.Dy = pvecY/l
+		}
+	}
+	factor:= 0.5
+	directionVec:=&Direction{directionVec1.Dx + directionVec2.Dx*factor,directionVec2.Dy + directionVec2.Dy*factor}
+	pumpkin.Dir = directionVec
+}
+
+func (pR *Room) onPumpkinEncounterPlayer(pumpkin *Pumpkin,player *Player){
+	Logger.Info("pumpkin has catched the player: ",zap.Any("pumpkinId",pumpkin.LocalIdInBattle),zap.Any("playerId",player.Id))
 }
 
 func (pR *Room) updateScore() {
@@ -351,12 +384,85 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.Treasures))
 }
 
+func (pR *Room) InitPumpkin(pTmxMapIns *TmxMap){
+	for key,value:=range pTmxMapIns.Pumpkin{
+		p:=&Pumpkin{}
+		p.LocalIdInBattle = int32(key)
+		p.LinearSpeed = 0.0000004
+		p.X = value.X
+		p.Y = value.Y
+		p.Dir = &Direction{1,1} // todo
+		pR.Pumpkin[p.LocalIdInBattle] = p
+	}
+}
+
+func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx){
+	for _,lay:=range pTmxMapIns.Layers{
+		if lay.Name != "tile_1 human skeleton" && lay.Name != "tile_1 board" && lay.Name != "tile_1 stone"{
+			continue
+		}
+		for index,tile:=range lay.Tile {
+			if tile == nil || tile.Tileset == nil{
+				continue
+			}
+			if tile.Tileset.Source != "tile_1.tsx"{
+				continue
+			}
+
+			barrier := &Barrier{}
+			barrier.X,barrier.Y = pTmxMapIns.getCoordByGid(index)
+			barrier.Type = tile.Id
+			if v,ok:=pTsxIns.BarrierPolyLineList[int(tile.Id)];ok {
+				thePoints := make([]*Vec2D, 0)
+				for _, p := range v.Points {
+					 thePoints = append(thePoints,&Vec2D{
+						 X: p.X,
+						 Y: p.Y,
+					 })
+				}
+				barrier.Boundary = &Polygon2D{Points:thePoints}
+			}
+
+			var bdDef box2d.B2BodyDef
+			bdDef = box2d.MakeB2BodyDef()
+			bdDef.Type = box2d.B2BodyType.B2_staticBody
+			bdDef.Position.Set(barrier.X, barrier.Y) // todo ？？？？？
+			b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+			fd := box2d.MakeB2FixtureDef()
+			if barrier.Boundary != nil{
+				b2Vertices := make([]box2d.B2Vec2, len(barrier.Boundary.Points))
+				for vIndex, v2 := range barrier.Boundary.Points {
+					b2Vertices[vIndex] = v2.ToB2Vec2()
+				}
+				b2PolygonShape := box2d.MakeB2PolygonShape()
+				b2PolygonShape.Set(b2Vertices, len(barrier.Boundary.Points))
+				fd.Shape = &b2PolygonShape
+			}else {
+				b2CircleShape := box2d.MakeB2CircleShape()
+				b2CircleShape.M_radius = 32
+				fd.Shape = &b2CircleShape
+			}
+
+			fd.Filter.CategoryBits = COLLISION_CATEGORY_BARRIER
+			fd.Filter.MaskBits = COLLISION_MASK_FOR_BARRIER
+			fd.Density = 0.0
+			b2PlayerBody.CreateFixtureFromDef(&fd)
+
+			barrier.CollidableBody = b2PlayerBody
+			b2PlayerBody.SetUserData(barrier)
+			pR.Barrier[int32(index)] = barrier
+		}
+	}
+}
+
 func (pR *Room) InitColliders() {
 	gravity := box2d.MakeB2Vec2(0.0, 0.0)
 	world := box2d.MakeB2World(gravity)
+	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
 
-	// Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
+	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -379,6 +485,29 @@ func (pR *Room) InitColliders() {
 		player.CollidableBody = b2PlayerBody
 		b2PlayerBody.SetUserData(player)
 		// PrettyPrintBody(player.CollidableBody)
+	}
+
+	Logger.Info("InitColliders for pR.Pumpkin:", zap.Any("roomId", pR.Id))
+	for _, p := range pR.Pumpkin {
+		var bdDef box2d.B2BodyDef
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef.Position.Set(p.X, p.Y)
+
+		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		b2CircleShape := box2d.MakeB2CircleShape()
+		b2CircleShape.M_radius = 32
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2CircleShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_PUMPKIN
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_PUMPKIN
+		fd.Density = 0.0
+		b2PlayerBody.CreateFixtureFromDef(&fd)
+
+		p.CollidableBody = b2PlayerBody
+		b2PlayerBody.SetUserData(p)
 	}
 
 	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
@@ -609,7 +738,9 @@ func (pR *Room) StartBattle() {
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
+	pR.InitPumpkin(pTmxMapIns)
 	pR.InitColliders()
+	pR.InitBarrier(pTmxMapIns, pTsxIns)
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
@@ -742,6 +873,17 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 			}
+			for _,pumpkin := range pR.Pumpkin {
+				if pumpkin.Removed {
+					continue
+				}
+				elapsedMag := pumpkin.LinearSpeed * float64(nanosPerFrame)
+				newB2Vec2Pos := box2d.MakeB2Vec2(pumpkin.X+float64(elapsedMag)*pumpkin.Dir.Dx, pumpkin.Y+float64(elapsedMag)*pumpkin.Dir.Dy)
+				MoveDynamicBody(pumpkin.CollidableBody, &newB2Vec2Pos, 0)
+				pumpkin.X = newB2Vec2Pos.X
+				pumpkin.Y = newB2Vec2Pos.Y
+			}
+
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 			itContacts := pR.CollidableWorld.GetContactList()
 			for itContacts != nil {
@@ -777,6 +919,19 @@ func (pR *Room) StartBattle() {
 				}
 				itContacts = itContacts.GetNext()
 			}
+			for _,pumpkin := range pR.Pumpkin {
+				for edge := pumpkin.CollidableBody.GetContactList();edge != nil;edge = edge.Next{
+					if edge.Contact.IsTouching(){
+						if barrier,ok:=edge.Other.GetUserData().(*Barrier);ok{
+							pR.onPumpkinEncounterBarrier(pumpkin,barrier)
+						}else if player,ok:=edge.Other.GetUserData().(*Player);ok {
+							pR.onPumpkinEncounterPlayer(pumpkin,player)
+						}
+					}
+				}
+			}
+
+
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
@@ -959,9 +1114,9 @@ func (pR *Room) onDismissed() {
 	pR.Traps = make(map[int32]*Trap)
 	pR.Bullets = make(map[int32]*Bullet)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
-  for indice, _ := range(pR.JoinIndexBooleanArr) {
-    pR.JoinIndexBooleanArr[indice] = false
-  }
+	for indice, _ := range pR.JoinIndexBooleanArr {
+		pR.JoinIndexBooleanArr[indice] = false
+	}
 	pR.CmdFromPlayersChan = nil
 	pR.updateScore()
 }
@@ -1051,7 +1206,7 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
 	}
-  Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
+	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	for index, value := range pR.JoinIndexBooleanArr {
 		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1

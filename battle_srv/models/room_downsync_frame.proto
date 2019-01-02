@@ -56,3 +56,11 @@ message RoomDownsyncFrame {
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8; 
 }
+
+message Pumpkin {
+    int32 localIdInBattle = 1;
+    double linearSpeed = 2;
+    double x = 3;
+    double	y = 4;
+    bool removed = 5;
+}
