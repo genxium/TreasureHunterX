@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Tile_W128_H128_S01",
+    "texture": "67f6b57d-1fe8-4ef8-9dd7-1fe6b88a4b68",
+    "atlas": "",
+    "rect": [
+      7,
+      16,
+      481,
+      232
+    ],
+    "offset": [
+      -8.5,
+      124
+    ],
+    "originalSize": [
+      512,
+      512
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

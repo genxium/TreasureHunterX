@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Tile_W512_H512_S02",
+    "texture": "e9caecf0-f495-425f-901d-90b3e8f379a6",
+    "atlas": "",
+    "rect": [
+      0,
+      145,
+      1915,
+      1903
+    ],
+    "offset": [
+      -66.5,
+      -72.5
+    ],
+    "originalSize": [
+      2048,
+      2048
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -45,6 +45,10 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
+    acceleratorPrefab: {
+      type: cc.Prefab,
+      default: null,
+    },
     barrierPrefab: {
       type: cc.Prefab,
       default: null,
@@ -331,6 +335,15 @@ cc.Class({
       }
     }
 
+    if (self.acceleratorNodeDict) {
+      for (let i in self.acceleratorNodeDict) {
+        let node = self.acceleratorNodeDict[i];
+        if (node.parent) {
+          node.parent.removeChild(node);
+        }
+      }
+    }
+
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
     }
@@ -364,6 +377,7 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
+    self.acceleratorNodeDict = {};
     if (self.findingPlayerNode) {
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
@@ -641,6 +655,18 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
+        self.acceleratorInfoDict = {};
+        const accelartors = roomDownsyncFrame.speedShoes;
+        if(accelartors) {
+          const accLocalIdStrList = Object.keys(accelartors);
+          for (let i = 0; i < accLocalIdStrList.length; ++i) {
+            const k = accLocalIdStrList[i];
+            const accLocalIdInBattle = parseInt(k);
+            const accInfo = accelartors[k];
+            self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
+          }
+        }
+
         self.trapInfoDict = {};
         const traps = roomDownsyncFrame.traps;
         const trapsLocalIdStrList = Object.keys(traps);
@@ -787,6 +813,9 @@ cc.Class({
       }
     }
 
+    let toRemoveAcceleratorNodeDict = {};
+    Object.assign(toRemoveAcceleratorNodeDict, self.acceleratorNodeDict);
+
     let toRemovePlayerNodeDict = {};
     Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
 
@@ -875,6 +904,26 @@ cc.Class({
       }
     }
 
+    // 更新加速鞋显示 
+    for (let k in self.acceleratorInfoDict) {
+      const accLocalIdInBattle = parseInt(k);
+      const acceleratorInfo = self.acceleratorInfoDict[accLocalIdInBattle];
+      const newPos = cc.v2(
+        acceleratorInfo.x,
+        acceleratorInfo.y
+      );
+      let targetNode = self.acceleratorNodeDict[accLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.acceleratorPrefab);
+        self.acceleratorNodeDict[accLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
+      }
+      if (null != toRemoveAcceleratorNodeDict[accLocalIdInBattle]) {
+        delete toRemoveAcceleratorNodeDict[accLocalIdInBattle];
+      }
+    }
     // 更新陷阱显示 
     for (let k in self.trapInfoDict) {
       const trapLocalIdInBattle = parseInt(k);
@@ -1021,6 +1070,13 @@ cc.Class({
       const trapLocalIdInBattle = parseInt(k);
       toRemoveTrapNodeDict[k].parent.removeChild(toRemoveTrapNodeDict[k]);
       delete self.trapNodeDict[trapLocalIdInBattle];
+    }
+
+    // Coping with removed accelerators.
+    for (let k in toRemoveAcceleratorNodeDict) {
+      const accLocalIdInBattle = parseInt(k);
+      toRemoveAcceleratorNodeDict[k].parent.removeChild(toRemoveAcceleratorNodeDict[k]);
+      delete self.acceleratorNodeDict[accLocalIdInBattle];
     }
 
     // Coping with removed bullets.

@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "traps",
-    "texture": "ab39536e-a03e-4e67-90ff-89b9f6426708",
+    "name": "Tile_W512_H512_S03",
+    "texture": "253ef490-5ca3-4a29-bd77-107e059e0d17",
     "atlas": "",
     "rect": [
-      20,
-      67,
-      219,
-      161
+      40,
+      2,
+      1885,
+      1878
     ],
     "offset": [
-      1.5,
-      -19.5
+      -41.5,
+      83
     ],
     "originalSize": [
-      256,
-      256
+      2048,
+      2048
     ],
     "capInsets": [
       0,

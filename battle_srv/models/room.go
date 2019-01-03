@@ -405,7 +405,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx){
 			if tile == nil || tile.Tileset == nil{
 				continue
 			}
-			if tile.Tileset.Source != "tile_1.tsx"{
+			if tile.Tileset.Source != "Tile_W128_H128_S01.tsx"{
 				continue
 			}
 
@@ -725,7 +725,7 @@ func (pR *Room) StartBattle() {
 
 	tsxIns := Tsx{}
 	pTsxIns := &tsxIns
-	relativePath = "../frontend/assets/resources/map/tile_1.tsx"
+	relativePath = "../frontend/assets/resources/map/Tile_W128_H128_S01.tsx"
 	fp = filepath.Join(pwd, relativePath)
 	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {

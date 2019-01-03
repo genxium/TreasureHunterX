@@ -1,0 +1,7 @@
+{
+  "__type__": "cc.TextAsset",
+  "_name": "Tile_W128_H128_S01",
+  "_objFlags": 0,
+  "_native": "",
+  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<tileset name=\"Tile_W128_H128_S01\" tilewidth=\"128\" tileheight=\"128\" tilecount=\"16\" columns=\"4\">\n <image source=\"Tile_W128_H128_S01.png\" width=\"512\" height=\"512\"/>\n <tile id=\"0\">\n  <animation>\n   <frame tileid=\"0\" duration=\"100\"/>\n   <frame tileid=\"1\" duration=\"100\"/>\n   <frame tileid=\"4\" duration=\"100\"/>\n   <frame tileid=\"5\" duration=\"100\"/>\n  </animation>\n </tile>\n <tile id=\"1\">\n  <objectgroup draworder=\"index\">\n   <object id=\"1\" x=\"31\" y=\"1\">\n    <polyline points=\"0,0 -32,19 -31,126 101,126 98,20 78,1\"/>\n   </object>\n  </objectgroup>\n </tile>\n <tile id=\"2\">\n  <objectgroup draworder=\"index\">\n   <object id=\"1\" x=\"16\" y=\"2\">\n    <polyline points=\"0,0 -14,11 -14,122 112,126 112,9 94,-1\"/>\n   </object>\n  </objectgroup>\n </tile>\n <tile id=\"3\">\n  <objectgroup draworder=\"index\">\n   <object id=\"3\" x=\"21\" y=\"2\">\n    <polyline points=\"0,0 -21,8 -20,123 48,125 107,123 107,4 93,0\"/>\n   </object>\n  </objectgroup>\n </tile>\n <tile id=\"6\">\n  <objectgroup draworder=\"index\">\n   <object id=\"2\" x=\"64\" y=\"1\">\n    <polyline points=\"0,0 -64,28 -64,125 64,127 64,29 18,-1\"/>\n   </object>\n  </objectgroup>\n </tile>\n</tileset>\n"
+}
