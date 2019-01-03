@@ -25,15 +25,17 @@ const (
 	COLLISION_CATEGORY_TREASURE          = (1 << 2)
 	COLLISION_CATEGORY_TRAP              = (1 << 3)
 	COLLISION_CATEGORY_TRAP_BULLET       = (1 << 4)
-	COLLISION_CATEGORY_BARRIER	 		 = (1 << 5)
-	COLLISION_CATEGORY_PUMPKIN			 = (1 << 6)
+	COLLISION_CATEGORY_BARRIER           = (1 << 5)
+	COLLISION_CATEGORY_PUMPKIN           = (1 << 6)
+	COLLISION_CATEGORY_SPEED_SHOES       = (1 << 7)
 
-	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET)
+	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET | COLLISION_CATEGORY_SPEED_SHOES)
 	COLLISION_MASK_FOR_TREASURE          = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP              = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP_BULLET       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
-	COLLISION_MASK_FOR_BARRIER 			 = (COLLISION_CATEGORY_PUMPKIN)
+	COLLISION_MASK_FOR_BARRIER           = (COLLISION_CATEGORY_PUMPKIN)
 	COLLISION_MASK_FOR_PUMPKIN           = (COLLISION_CATEGORY_BARRIER)
+	COLLISION_MASK_FOR_SPEED_SHOES       = (COLLISION_CATEGORY_SPEED_SHOES)
 )
 
 type RoomBattleState struct {
@@ -101,8 +103,9 @@ type Room struct {
 	Treasures                    map[int32]*Treasure
 	Traps                        map[int32]*Trap
 	Bullets                      map[int32]*Bullet
-	Barrier						 map[int32]*Barrier
-	Pumpkin						 map[int32]*Pumpkin
+	SpeedShoes                   map[int32]*SpeedShoes
+	Barrier                      map[int32]*Barrier
+	Pumpkin                      map[int32]*Pumpkin
 	AccumulatedLocalIdForBullets int32
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
@@ -115,14 +118,15 @@ type RoomDownsyncFrame struct {
 
 	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
 	*/
-	Id             int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId     int32               `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players        map[int32]*Player   `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt         int64               `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
-	CountdownNanos int64               `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures      map[int32]*Treasure `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps          map[int32]*Trap     `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets        map[int32]*Bullet   `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id             int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId     int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players        map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt         int64                 `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
+	CountdownNanos int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SpeedShoes     map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speed_shoes,proto3" json:"speed_shoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -164,31 +168,31 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 	}
 }
 
-func (pR *Room) onPumpkinEncounterBarrier(pumpkin *Pumpkin,barrier *Barrier){
+func (pR *Room) onPumpkinEncounterBarrier(pumpkin *Pumpkin, barrier *Barrier) {
 	bvecX := pumpkin.CollidableBody.GetPosition().X - barrier.CollidableBody.GetPosition().X
 	bvecY := pumpkin.CollidableBody.GetPosition().Y - barrier.CollidableBody.GetPosition().Y
 	bvecLen := math.Sqrt(bvecX*bvecX + bvecY*bvecY)
-	directionVec1 := &Direction{bvecX/bvecLen,bvecY/bvecLen}
+	directionVec1 := &Direction{bvecX / bvecLen, bvecY / bvecLen}
 
 	var pvecLen float64 = 1000 * 1000
-	directionVec2 := &Direction{0,0}
-	for _,player := range pR.Players {
+	directionVec2 := &Direction{0, 0}
+	for _, player := range pR.Players {
 		pvecX := player.CollidableBody.GetPosition().X - pumpkin.CollidableBody.GetPosition().X
 		pvecY := player.CollidableBody.GetPosition().Y - pumpkin.CollidableBody.GetPosition().Y
 		l := math.Sqrt(pvecX*pvecX + pvecY*pvecY)
-		if pvecLen > l{
+		if pvecLen > l {
 			pvecLen = l
-			directionVec2.Dx = pvecX/l
-			directionVec2.Dy = pvecY/l
+			directionVec2.Dx = pvecX / l
+			directionVec2.Dy = pvecY / l
 		}
 	}
-	factor:= 0.5
-	directionVec:=&Direction{directionVec1.Dx + directionVec2.Dx*factor,directionVec2.Dy + directionVec2.Dy*factor}
+	factor := 0.5
+	directionVec := &Direction{directionVec1.Dx + directionVec2.Dx*factor, directionVec2.Dy + directionVec2.Dy*factor}
 	pumpkin.Dir = directionVec
 }
 
-func (pR *Room) onPumpkinEncounterPlayer(pumpkin *Pumpkin,player *Player){
-	Logger.Info("pumpkin has catched the player: ",zap.Any("pumpkinId",pumpkin.LocalIdInBattle),zap.Any("playerId",player.Id))
+func (pR *Room) onPumpkinEncounterPlayer(pumpkin *Pumpkin, player *Player) {
+	Logger.Info("pumpkin has catched the player: ", zap.Any("pumpkinId", pumpkin.LocalIdInBattle), zap.Any("playerId", player.Id))
 }
 
 func (pR *Room) updateScore() {
@@ -342,6 +346,35 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 	return &theTreasure
 }
 
+func (pR *Room) createSpeedShoes(pAnchor *Vec2D, speedShoesLocalIdInBattle int32, pTsxIns *Tsx) *SpeedShoes {
+
+	polyLine := pTsxIns.SpeedShoesPolyLineList[0]
+
+	thePoints := make([]*Vec2D, len(polyLine.Points))
+	for index, value := range polyLine.Points {
+		thePoints[index] = &Vec2D{
+			X: value.X,
+			Y: value.Y,
+		}
+	}
+
+	thePolygon := Polygon2D{
+		Anchor: pAnchor,
+		Points: thePoints,
+	}
+
+	theSpeedShoes := SpeedShoes{
+		Id:              0,
+		LocalIdInBattle: speedShoesLocalIdInBattle,
+		Type:            0,
+		X:               pAnchor.X,
+		Y:               pAnchor.Y,
+		PickupBoundary:  &thePolygon,
+	}
+
+	return &theSpeedShoes
+}
+
 func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 	for key, value := range pTmxMapIns.TrapsInitPosList {
 		{
@@ -384,43 +417,58 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.Treasures))
 }
 
-func (pR *Room) InitPumpkin(pTmxMapIns *TmxMap){
-	for key,value:=range pTmxMapIns.Pumpkin{
-		p:=&Pumpkin{}
+func (pR *Room) InitSpeedShoes(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
+	for key, value := range pTmxMapIns.SpeedShoesList {
+		{
+			pAnchor := &Vec2D{
+				X: float64(value.InitPos.X),
+				Y: float64(value.InitPos.Y),
+			}
+			theSpeedShoes := pR.createSpeedShoes(pAnchor, int32(key), pTsxIns)
+			theSpeedShoes.Type = value.Type
+			pR.SpeedShoes[theSpeedShoes.LocalIdInBattle] = theSpeedShoes
+		}
+	}
+	Logger.Info("InitSpeedShoes finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.SpeedShoes))
+}
+
+func (pR *Room) InitPumpkin(pTmxMapIns *TmxMap) {
+	for key, value := range pTmxMapIns.Pumpkin {
+		p := &Pumpkin{}
 		p.LocalIdInBattle = int32(key)
 		p.LinearSpeed = 0.0000004
 		p.X = value.X
 		p.Y = value.Y
-		p.Dir = &Direction{1,1} // todo
+		p.Dir = &Direction{1, 1} // todo
 		pR.Pumpkin[p.LocalIdInBattle] = p
 	}
 }
 
-func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx){
-	for _,lay:=range pTmxMapIns.Layers{
-		if lay.Name != "tile_1 human skeleton" && lay.Name != "tile_1 board" && lay.Name != "tile_1 stone"{
+func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
+	for _, lay := range pTmxMapIns.Layers {
+		if lay.Name != "tile_1 human skeleton" && lay.Name != "tile_1 board" && lay.Name != "tile_1 stone" {
 			continue
 		}
-		for index,tile:=range lay.Tile {
-			if tile == nil || tile.Tileset == nil{
+		for index, tile := range lay.Tile {
+			if tile == nil || tile.Tileset == nil {
 				continue
 			}
-			if tile.Tileset.Source != "tile_1.tsx"{
+			if tile.Tileset.Source != "tile_1.tsx" {
 				continue
 			}
 
 			barrier := &Barrier{}
-			barrier.X,barrier.Y = pTmxMapIns.getCoordByGid(index)
+			barrier.X, barrier.Y = pTmxMapIns.getCoordByGid(index)
 			barrier.Type = tile.Id
-			if v,ok:=pTsxIns.BarrierPolyLineList[int(tile.Id)];ok {
+			if v, ok := pTsxIns.BarrierPolyLineList[int(tile.Id)]; ok {
 				thePoints := make([]*Vec2D, 0)
 				for _, p := range v.Points {
-					 thePoints = append(thePoints,&Vec2D{
-						 X: p.X,
-						 Y: p.Y,
-					 })
+					thePoints = append(thePoints, &Vec2D{
+						X: p.X,
+						Y: p.Y,
+					})
 				}
-				barrier.Boundary = &Polygon2D{Points:thePoints}
+				barrier.Boundary = &Polygon2D{Points: thePoints}
 			}
 
 			var bdDef box2d.B2BodyDef
@@ -430,7 +478,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx){
 			b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
 
 			fd := box2d.MakeB2FixtureDef()
-			if barrier.Boundary != nil{
+			if barrier.Boundary != nil {
 				b2Vertices := make([]box2d.B2Vec2, len(barrier.Boundary.Points))
 				for vIndex, v2 := range barrier.Boundary.Points {
 					b2Vertices[vIndex] = v2.ToB2Vec2()
@@ -438,7 +486,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx){
 				b2PolygonShape := box2d.MakeB2PolygonShape()
 				b2PolygonShape.Set(b2Vertices, len(barrier.Boundary.Points))
 				fd.Shape = &b2PolygonShape
-			}else {
+			} else {
 				b2CircleShape := box2d.MakeB2CircleShape()
 				b2CircleShape.M_radius = 32
 				fd.Shape = &b2CircleShape
@@ -571,6 +619,37 @@ func (pR *Room) InitColliders() {
 		b2TreasureBody.SetUserData(trap)
 		// PrettyPrintBody(trap.CollidableBody)
 	}
+
+	Logger.Info("InitColliders for pR.SpeedShoes:", zap.Any("roomId", pR.Id))
+	for _, v := range pR.SpeedShoes {
+		var bdDef box2d.B2BodyDef
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Position.Set(v.PickupBoundary.Anchor.X, v.PickupBoundary.Anchor.Y)
+
+		b2SpeedShoesBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		pointsCount := len(v.PickupBoundary.Points)
+
+		b2Vertices := make([]box2d.B2Vec2, pointsCount)
+		for vIndex, v2 := range v.PickupBoundary.Points {
+			b2Vertices[vIndex] = v2.ToB2Vec2()
+		}
+
+		b2PolygonShape := box2d.MakeB2PolygonShape()
+		b2PolygonShape.Set(b2Vertices, pointsCount)
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2PolygonShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_SPEED_SHOES
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_SPEED_SHOES
+		fd.Density = 0.0
+		b2SpeedShoesBody.CreateFixtureFromDef(&fd)
+
+		v.CollidableBody = b2SpeedShoesBody
+		b2SpeedShoesBody.SetUserData(v)
+		// PrettyPrintBody(trap.CollidableBody)
+	}
 }
 
 func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
@@ -586,6 +665,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Bullets:        currentFrame.Bullets,
 		Treasures:      make(map[int32]*Treasure, 0),
 		Traps:          make(map[int32]*Trap, 0),
+		SpeedShoes:     make(map[int32]*SpeedShoes, 0),
 	}
 
 	for k, last := range lastFrame.Treasures {
@@ -632,6 +712,22 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		}
 	}
 
+	for k, last := range lastFrame.SpeedShoes {
+		if last.Removed {
+			diffFrame.SpeedShoes[k] = last
+			continue
+		}
+		curr, ok := currentFrame.SpeedShoes[k]
+		if !ok {
+			diffFrame.SpeedShoes[k] = &SpeedShoes{Removed: true}
+			Logger.Info("A SpeedShoes is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("speedShoes.LocalIdInBattle", curr.LocalIdInBattle))
+			continue
+		}
+		if ok, v := diffSpeedShoes(last, curr); ok {
+			diffFrame.SpeedShoes[k] = v
+		}
+	}
+
 	return diffFrame
 }
 
@@ -665,6 +761,20 @@ func diffTrap(last, curr *Trap) (bool, *Trap) {
 		t = true
 	}
 	return t, trap
+}
+
+func diffSpeedShoes(last, curr *SpeedShoes) (bool, *SpeedShoes) {
+	speedShoes := &SpeedShoes{}
+	t := false
+	if last.X != curr.X {
+		speedShoes.X = curr.X
+		t = true
+	}
+	if last.Y != curr.Y {
+		speedShoes.Y = curr.Y
+		t = true
+	}
+	return t, speedShoes
 }
 
 func diffBullet(last, curr *Bullet) (bool, *Bullet) {
@@ -739,6 +849,7 @@ func (pR *Room) StartBattle() {
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
 	pR.InitPumpkin(pTmxMapIns)
+	pR.InitSpeedShoes(pTmxMapIns, pTsxIns)
 	pR.InitColliders()
 	pR.InitBarrier(pTmxMapIns, pTsxIns)
 
@@ -782,6 +893,7 @@ func (pR *Room) StartBattle() {
 				Treasures:      pR.Treasures,
 				Traps:          pR.Traps,
 				Bullets:        pR.Bullets,
+				SpeedShoes:     pR.SpeedShoes,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
@@ -873,7 +985,7 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 			}
-			for _,pumpkin := range pR.Pumpkin {
+			for _, pumpkin := range pR.Pumpkin {
 				if pumpkin.Removed {
 					continue
 				}
@@ -885,10 +997,10 @@ func (pR *Room) StartBattle() {
 			}
 
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
-			
-			for _,player:= range pR.Players {
-				for edge:=player.CollidableBody.GetContactList();edge != nil; edge = edge.Next{
-					if edge.Contact.IsTouching(){
+
+			for _, player := range pR.Players {
+				for edge := player.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
+					if edge.Contact.IsTouching() {
 						switch v := edge.Other.GetUserData().(type) {
 						case *Treasure:
 							pR.onTreasurePickedUp(player, v)
@@ -897,18 +1009,18 @@ func (pR *Room) StartBattle() {
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						default:
-							Logger.Warn("player Collision ",zap.Any("playerId",player.Id),zap.Any("collision",v))
+							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
 					}
 				}
 			}
-			for _,pumpkin := range pR.Pumpkin {
-				for edge := pumpkin.CollidableBody.GetContactList();edge != nil;edge = edge.Next{
-					if edge.Contact.IsTouching(){
-						if barrier,ok:=edge.Other.GetUserData().(*Barrier);ok{
-							pR.onPumpkinEncounterBarrier(pumpkin,barrier)
-						}else if player,ok:=edge.Other.GetUserData().(*Player);ok {
-							pR.onPumpkinEncounterPlayer(pumpkin,player)
+			for _, pumpkin := range pR.Pumpkin {
+				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
+					if edge.Contact.IsTouching() {
+						if barrier, ok := edge.Other.GetUserData().(*Barrier); ok {
+							pR.onPumpkinEncounterBarrier(pumpkin, barrier)
+						} else if player, ok := edge.Other.GetUserData().(*Player); ok {
+							pR.onPumpkinEncounterPlayer(pumpkin, player)
 						}
 					}
 				}
@@ -987,6 +1099,7 @@ func (pR *Room) StopBattleForSettlement() {
 			Treasures:      pR.Treasures,
 			Traps:          pR.Traps,
 			Bullets:        pR.Bullets,
+			SpeedShoes:     pR.SpeedShoes,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		theBytes, marshalErr := proto.Marshal(assembledFrame)
@@ -1094,6 +1207,7 @@ func (pR *Room) onDismissed() {
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
 	pR.Bullets = make(map[int32]*Bullet)
+	pR.SpeedShoes = make(map[int32]*SpeedShoes)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
 	for indice, _ := range pR.JoinIndexBooleanArr {
 		pR.JoinIndexBooleanArr[indice] = false
