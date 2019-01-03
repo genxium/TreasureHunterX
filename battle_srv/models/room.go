@@ -885,39 +885,22 @@ func (pR *Room) StartBattle() {
 			}
 
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
-			itContacts := pR.CollidableWorld.GetContactList()
-			for itContacts != nil {
-				// Logger.Info("Found an AABB contact:", zap.Any("roomId", pR.Id))
-				if itContacts.IsTouching() {
-					bodyA := itContacts.GetFixtureA().GetBody()
-					bodyB := itContacts.GetFixtureB().GetBody()
-					if contactingPlayer, validPlayer := bodyA.GetUserData().(*Player); validPlayer {
-						if contactingTreasure, validTreasure := bodyB.GetUserData().(*Treasure); validTreasure {
-							pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-						} else if contactingTrap, validTrap := bodyB.GetUserData().(*Trap); validTrap {
-							pR.onTrapPickedUp(contactingPlayer, contactingTrap)
-						} else {
-							if contactingBullet, validBullet := bodyB.GetUserData().(*Bullet); validBullet {
-								// Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #1:", zap.Any("roomId", pR.Id))
-								pR.onBulletCrashed(contactingPlayer, contactingBullet, collisionNowMillis)
-							}
-						}
-					} else {
-						if contactingPlayer, validPlayer := bodyB.GetUserData().(*Player); validPlayer {
-							if contactingTreasure, validTreasure := bodyA.GetUserData().(*Treasure); validTreasure {
-								pR.onTreasurePickedUp(contactingPlayer, contactingTreasure)
-							} else if contactingTrap, validTrap := bodyA.GetUserData().(*Trap); validTrap {
-								pR.onTrapPickedUp(contactingPlayer, contactingTrap)
-							} else {
-								if contactingBullet, validBullet := bodyA.GetUserData().(*Bullet); validBullet {
-									// Logger.Info("Found an AABB contact which is potentially a <bullet, player> pair case #2:", zap.Any("roomId", pR.Id))
-									pR.onBulletCrashed(contactingPlayer, contactingBullet, collisionNowMillis)
-								}
-							}
+			
+			for _,player:= range pR.Players {
+				for edge:=player.CollidableBody.GetContactList();edge != nil; edge = edge.Next{
+					if edge.Contact.IsTouching(){
+						switch v := edge.Other.GetUserData().(type) {
+						case *Treasure:
+							pR.onTreasurePickedUp(player, v)
+						case *Trap:
+							pR.onTrapPickedUp(player, v)
+						case *Bullet:
+							pR.onBulletCrashed(player, v, collisionNowMillis)
+						default:
+							Logger.Warn("player Collision ",zap.Any("playerId",player.Id),zap.Any("collision",v))
 						}
 					}
 				}
-				itContacts = itContacts.GetNext()
 			}
 			for _,pumpkin := range pR.Pumpkin {
 				for edge := pumpkin.CollidableBody.GetContactList();edge != nil;edge = edge.Next{
@@ -930,8 +913,6 @@ func (pR *Room) StartBattle() {
 					}
 				}
 			}
-
-
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
