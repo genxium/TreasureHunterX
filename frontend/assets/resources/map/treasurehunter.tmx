@@ -1,296 +1,359 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextobjectid="299">
- <tileset firstgid="1" source="tile_1.tsx"/>
- <tileset firstgid="13" source="HighTreasure.tsx"/>
- <tileset firstgid="17" source="traps.tsx"/>
- <layer name="tile_1 floor" width="70" height="70">
+<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="128" tileheight="64" infinite="0" nextobjectid="82">
+ <tileset firstgid="1" source="Tile_W512_H512_S01.tsx"/>
+ <tileset firstgid="17" source="Tile_W512_H512_S03.tsx"/>
+ <tileset firstgid="33" source="Tile_W512_H512_S02.tsx"/>
+ <tileset firstgid="49" source="Tile_W512_H512_S04.tsx"/>
+ <tileset firstgid="65" source="Tile_W1024_H1024_S06.tsx"/>
+ <tileset firstgid="69" source="Tile_W1024_H1024_S02.tsx"/>
+ <tileset firstgid="73" source="Tile_W1024_H1024_S01.tsx"/>
+ <tileset firstgid="77" source="Tile_W512_H512_S05.tsx"/>
+ <tileset firstgid="86" source="Tile_W128_H128_S01.tsx"/>
+ <layer name="floor" width="70" height="70">
   <properties>
    <property name="type" value="normal"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztwwENAAAMw6DOv+kLOSSsmqqqqqqqqqqqqqqqqqqqqqqqqvryAVfrEyU=
+   eJztwwENAAAMw6AamH+7F3JIWDVVVVVVVVVVVVVVVVVVVVVVVVX15QPgL/jV
   </data>
  </layer>
- <layer name="tile_1 human skeleton" width="70" height="70">
+ <layer name="Grass" width="70" height="70">
+  <properties>
+   <property name="type" value="normal"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztm9EOgjAMRX3X//9eH4xhzNu1hYJdd09CqoBjqWcFBz4ehPh4NREt0jZt/dGo9SOifXSsdj+y5wVej76XSmgOkV8kX76xcv4stYfs6X3R6nglMo6P7HlH9aUaT2G9tb7cmRf6MidReXkaY38syRdre22UxssRKvmSMS+RfcoAfcHQFwx9wdAXDH3B0JeN9lqIvmDoC4a+YOgLZjS/exXab8qz7UZAXzD/9EV6H9XuGeiLzp2+XDGfJLVzZA4rKgfZfTlT67POQVvRfPGwQn3px4137M7qyReej3z0db6NPSgH9GVjBV880Jcx9GUPfRlDX/bQlzH0RYe+bFTyJUMfqkNfdGavL5HQF0yl+42R3P08pvX5zBWfx4y+z3gFWcZRtjn3LHnJRpa80Jc5yJKXGXzJfJ64C8mXq68PpH5k9YWufPD4siqj//utRpbz0b+wuEBfNujLOFr3WQVLXirj8UX67Kq0ubIs0r5o/Wjd0ejpl6ev7bY3ilYSBQ==
+  </data>
+ </layer>
+ <layer name="Tile_W512_H512_S03" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0KENACAQwMBX7D8yAkcqwN8lXaBrZpb0GYcvzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ov7f4ivbQBmKgMwQ==
+   eJzt2TEKgDAMQNGeQXQR0d7/lIKjVBAUU8l7Y6c/JFBIKQAAAAAAnM3RAaRgzgDa6sX78mUEaZgrMpuiA4CmNTrgoTE6gMPf5wjekm0XanQAALds0QF0I9tfhX64U+M2AtCvIToAAACA9HZYSgG1
   </data>
  </layer>
- <layer name="tile_1 board" width="70" height="70">
+ <layer name="Tile_W512_H512_S04" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmcGOwyAMRHvp///yKodKFSzEhrFnSP0uUVVqD4NJYvp6FcUa78E1K4/K1aIVDXvOHk9GmtGw54yoFzQr65SR11MvaFieWPNb6iVbUxY79RKFgoaZDiVvWCA8acfuzontyQekNyrrjQIxr6d40YLcS0+jPOlZeX95uicfFPqjGQrvDoz+aIZ6boU6ydTA7I9mjHIyvWHFaGNF5rBqQHiCwBor0xtEjEx/I72JiJ3ZT6jov4vF6LEY+9gTi9l3Rt7vd2Ip9OJqz47ypI9VnvSxypM+VnnSx1LwZIfypCfSk1PPOyPfjU+tl4h+VO0cYjW3dRzLm0xW68Tyu4wzp0jucu6cDT7Vm1XPvr/L9CbjXAVxL464bzLOtlfnMfs/QGkNkTl3xiuuYQYsTzJzeFHUxMbzjP4Vfm2+Fk7tiS+i9KjN04PSs0tBwwXjXedUmN6or4u6PiZKPboK6voY1P2lR0GXgoZvsvVkn7+soKLjIsob5BlRJJZ6QWnzxlP0EO3NaZ546gV1XdGEHL+DZ65vx3hvftQ4L7v18p8/qD3I+M/pLq7Xk7vv0BqjPVmtlwxPWj2jzygsulU8GelBY9n7ap60unZ/79kPReHlD8GOCME=
+   eJzt2dENgzAMBUBWait1/9E6AB/FkmNHzt0AYAh6Nsl1AcA87+4CDhV5769lVdx9Cu/1xG71AETIsPkia1zZz6cytwLUmpa7054HdvF0JvZ/BHSZOgPYZwCiKvPQ7Af/TZ1RALLJS8jx7S5gOFkFcFexPyR/od9u51Vy4Rwrvr1I7/KPBf12OI88KQtW9fys65oBgF2c1BsyZeV4Zz+w9vwAtqIHUg==
   </data>
  </layer>
- <layer name="tile_1 stone" width="70" height="70">
+ <layer name="Tile_W512_H512_S05" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmssSwiAMRTv+/0c77pzSKI/ccBPu2bjQhnAKJVCvSwghxMm8jM/ZOJVYdXKPUwmvPlV044XctHjNyUp4PcMrYblAuMni+9/4yNIPD0bnzAlu9ByxkRMbOeECOVaz32ukk+xuPImou3pZadszb6a6i2WsMtVdHm1Fxohwk2WcrP6eJfYITGe12Z14XY+KtcIOJ0xr3RM7nTDVRt/snDtVnXjCkgtLHh9Y1rIMTqJzzOQkeo/I4KZ3nET3j/Gs4OQ5Ndv3E92w7N1784rYJ7Ps3Xvr7+znKiOxe98JM6xXK3g6mYnJCMJJBn71IWstt4q3E49ro4leBzK4mXHC8h4liky5oliZO9X9VVg70TU5+hoEFe4rGgY3DDk8wZrX6ei+2LCcbzHSe14gN/b3u8cXwxmy9f2IG5b3oqg2705270sZ3FhOUGc7VruesXeA/A+YnMTGRiInLXLSIictctIiJ+JU3gFXAZU=
+   eJztzjENAAAIA7BJxL8aHOwjPK2CJgAAAAAAAAAAAABwZ74DAAAAAAAAAABUC+MmAFE=
   </data>
  </layer>
- <objectgroup name="controlled_players_starting_pos_list">
-  <object id="26" x="1433.21" y="1460.24">
-   <point/>
-  </object>
-  <object id="275" x="1738.18" y="1143.03">
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup name="traps">
-  <object id="231" x="2790.88" y="2801.37">
-   <point/>
-  </object>
-  <object id="232" x="3118.15" y="2642.7">
-   <point/>
-  </object>
-  <object id="250" x="2921.28" y="3154.97">
-   <point/>
-  </object>
-  <object id="252" x="2285" y="2209.73">
-   <point/>
-  </object>
-  <object id="268" x="3483.67" y="3454.94">
-   <point/>
-  </object>
-  <object id="270" x="815.21" y="420.303">
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup name="treasures">
-  <object id="227" x="2404" y="3938.67">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="228" x="2629.33" y="4168">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="229" x="4173.33" y="2618.67">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="230" x="3938" y="2395.33">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="254" x="1444.06" y="2166.24">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="255" x="2234.24" y="1367.82">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="256" x="1778" y="2490">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="257" x="2534" y="1718">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="259" x="326" y="950">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="260" x="628" y="652">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="261" x="606" y="1566">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="262" x="598" y="2046">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="264" x="1721.58" y="4147.03">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="265" x="2554" y="3434">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="266" x="3795.7" y="4223.33">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="267" x="4210.18" y="3790.79">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="271" x="1518.12" y="414.848">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="273" x="444.242" y="2418.79">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="274" x="2223.03" y="500.606">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="276" x="801.82" y="3794.55">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="277" x="1447.27" y="3779.39">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="278" x="3453.33" y="633.939">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="279" x="3786.67" y="1579.39">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="280" x="1138.18" y="2500.61">
-   <properties>
-    <property name="score" value="100"/>
-    <property name="type" value="1"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup name="highTreasures">
-  <object id="223" x="1997.15" y="1921.88">
-   <properties>
-    <property name="score" value="200"/>
-    <property name="type" value="2"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="224" x="2519.33" y="4050">
-   <properties>
-    <property name="score" value="200"/>
-    <property name="type" value="2"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="226" x="4086.18" y="4110.73">
-   <point/>
-  </object>
-  <object id="246" x="4066" y="2514">
-   <properties>
-    <property name="score" value="200"/>
-    <property name="type" value="2"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
+ <layer name="Tile_W512_H512_S02" width="70" height="70">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt29sKwjAQhOG+ioJn3//5RFAogR62psnO+H83gUrLZjOEttRhAIAcbr0LSIq+IOL+GR/B8bLxvLUjctq6vyydx77lSSkvZLA/8oIIpTVQqtWV0hoo1eqi7LnSGqjUeuxdQEVKeSmfsa8Tx3kW30/5vuXZqxBhp5nfnPaWtxr7yaHCNZSdexfQ0K95+fesOJjbH0uZ71eQD3lBBHlBBHlBBHlBBHlBhEteXOaRnUufXeaRnUufXeaRXcs+7/kumLwggrxoa71+5EXb1Pp9j9f+vwnfYWhbygswRl4QQV68rf0Wdu04dT3uMwAAALZ5AW/0Efc=
+  </data>
+ </layer>
+ <layer name="Tile_W512_H512_S01" width="70" height="70">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt22ELgjAQgOFKC+qD9pP76RUVSOx0zu3u5t4HQpGYuu7mzfRwAPIbM7VzydQObI0R63vR0rlqow/bQR4B25FHqM258PffcsY/uYSQXlgH9uQV24/pskD7wXXUaRonpWKmRqfC7Uu5M3eftbV8k85XqvEs+6d0vKRoLV6Q5j+fvMTNMbDtrn4U8KD71iad4xpF697DTWk/gIXa7uENgW1b60GLPugM9vmWOp7VFidzUusay3mHVbzM+fXH+LdE/XphqcXDHH9Qrn9L5xHzOX3WeWQlVKdpWcqj0NjiYbyBLn7zOJp1XT/51OhqvP9a+20Lz/FCzeWT13ix4DlGSx7b2uta7POWa57LzHlt5b0xYL3W5uYA9MyNL/xngiXEyEdsHvG+X9uIhXQt9l3Ocw49R4t9iYmXFvMol1AfSXmV+56X1J70LIi0fU0sPAHv8Qlj
+  </data>
+ </layer>
+ <layer name="Tile_W1024_H1024_S06" width="70" height="70">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt2bkNACAMBEFa4+m/JgogIQDZoJkCrNWlLgUAAABgNaIDgONa0ltAHj06AAAAAAAAAC7x5wYAAAAAdtXogA/YEN40AdvVAdA=
+  </data>
+ </layer>
+ <layer name="Tile_W1024_H1024_S02" width="70" height="70">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzkkNACAQBLA1x+FfERbIhmQetApaBQAAAAAAwAszHQAAAAAAAAAACBjpQNNOBwDgEysdAADgygGfggEb
+  </data>
+ </layer>
+ <layer name="Tile_W1024_H1024_S01" width="70" height="70">
+  <properties>
+   <property name="type" value="barrier_and_shelter"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6AHtH8eY9xNSEACAAAAAAAA8M+0AwAAAAAAAAAAAAAAcMQCXxIATQ==
+  </data>
+ </layer>
  <objectgroup name="barrier">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
-  <object id="281" x="-56" y="-32">
+  <object id="1" x="-80" y="-64">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 -8,4584 236,4588 264,-88 120,-88"/>
+   <polyline points="0,0 62,4538 346,4574 266,-2"/>
   </object>
-  <object id="282" x="4464" y="-64">
+  <object id="3" x="-200" y="3736">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 -4436,12 -4432,232 80,224 92,132"/>
+   <polyline points="20,412 44,756 4832,832 4776,504 392,504"/>
   </object>
-  <object id="283" x="4352" y="4336">
+  <object id="4" x="4120" y="-56">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 -4340,-28 -4304,216 156,236 176,-16"/>
+   <polyline points="128,-32 168,4600 636,4724 480,16 292,-20"/>
   </object>
-  <object id="284" x="4308" y="44">
+  <object id="5" x="-172" y="-196">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 40,4392 216,4400 212,-28 140,-36"/>
+   <polyline points="0,0 -20,388 4712,392 4708,-20 504,-8"/>
+  </object>
+  <object id="6" x="4124" y="2076">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 2,622 450,646 418,6 162,-18"/>
+  </object>
+  <object id="7" x="3870" y="3866">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -4,532 652,596 626,-34 134,-46"/>
+  </object>
+  <object id="9" x="-38" y="3750">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 24,704 702,738 624,64 106,-10"/>
+  </object>
+  <object id="10" x="-46" y="1446">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 30,658 366,666 358,34 108,-12"/>
+  </object>
+  <object id="11" x="-40" y="-48">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -14,510 674,622 664,-8 166,-22"/>
+  </object>
+  <object id="12" x="3802" y="-42">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-80,-16 -36,644 -38,734 608,784 542,-94 130,-74"/>
+  </object>
+  <object id="13" x="934" y="770">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -4,2516 254,2546 260,-108 54,-126"/>
+  </object>
+  <object id="14" x="926" y="2946">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 0,368 990,370 974,162 102,98"/>
+  </object>
+  <object id="15" x="2360" y="3056">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 18,230 942,218 928,0 124,20"/>
+  </object>
+  <object id="16" x="3026" y="686">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="54,10 6,2450 228,2420 244,-4 114,-18"/>
+  </object>
+  <object id="17" x="2250" y="638">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 28,236 874,262 854,18 126,50"/>
+  </object>
+  <object id="18" x="940" y="652">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 14,274 710,226 696,48 72,0"/>
   </object>
  </objectgroup>
- <objectgroup name="frame anim">
-  <properties>
-   <property name="type" value="frame_anim"/>
-  </properties>
+ <objectgroup name="controlled_players_starting_pos_list">
+  <object id="20" x="2079.77" y="2048.35">
+   <point/>
+  </object>
+  <object id="21" x="2198.35" y="1929.77">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="treasures">
+  <object id="22" x="2346.36" y="2459.7">
+   <point/>
+  </object>
+  <object id="23" x="2464.55" y="2353.64">
+   <point/>
+  </object>
+  <object id="24" x="3023.64" y="2643.03">
+   <point/>
+  </object>
+  <object id="25" x="2560" y="3064.24">
+   <point/>
+  </object>
+  <object id="28" x="1481.21" y="2840">
+   <point/>
+  </object>
+  <object id="29" x="1260" y="1261.21">
+   <point/>
+  </object>
+  <object id="30" x="1532.73" y="1006.67">
+   <point/>
+  </object>
+  <object id="31" x="1238.79" y="930.909">
+   <point/>
+  </object>
+  <object id="32" x="3019.09" y="1126.36">
+   <point/>
+  </object>
+  <object id="33" x="2903.94" y="1308.18">
+   <point/>
+  </object>
+  <object id="34" x="1384.24" y="2664.24">
+   <point/>
+  </object>
+  <object id="35" x="563.03" y="1164.24">
+   <point/>
+  </object>
+  <object id="36" x="681.212" y="264.242">
+   <point/>
+  </object>
+  <object id="39" x="1191.82" y="250.606">
+   <point/>
+  </object>
+  <object id="40" x="1428.18" y="250.606">
+   <point/>
+  </object>
+  <object id="41" x="1672.12" y="255.152">
+   <point/>
+  </object>
+  <object id="42" x="388.788" y="1811.21">
+   <point/>
+  </object>
+  <object id="43" x="393.333" y="1982.42">
+   <point/>
+  </object>
+  <object id="44" x="379.697" y="1626.36">
+   <point/>
+  </object>
+  <object id="45" x="1960" y="4161.21">
+   <point/>
+  </object>
+  <object id="46" x="2947.88" y="4094.55">
+   <point/>
+  </object>
+  <object id="47" x="3302.42" y="4121.82">
+   <point/>
+  </object>
+  <object id="48" x="4088.79" y="1771.82">
+   <point/>
+  </object>
+  <object id="49" x="3756.97" y="1764.24">
+   <point/>
+  </object>
+  <object id="51" x="4069.09" y="1367.27">
+   <point/>
+  </object>
+  <object id="52" x="3603.94" y="620.303">
+   <point/>
+  </object>
+  <object id="53" x="3700.91" y="614.242">
+   <point/>
+  </object>
+  <object id="54" x="3481.21" y="621.818">
+   <point/>
+  </object>
+  <object id="55" x="3814.55" y="749.091">
+   <point/>
+  </object>
+  <object id="56" x="1340.3" y="4168.79">
+   <point/>
+  </object>
+  <object id="57" x="332.727" y="3606.67">
+   <point/>
+  </object>
+  <object id="58" x="449.394" y="3623.33">
+   <point/>
+  </object>
+  <object id="59" x="361.515" y="1135.45">
+   <point/>
+  </object>
+  <object id="76" x="2723.64" y="949.091">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="highTreasures">
+  <object id="61" x="625.152" y="4162.73">
+   <point/>
+  </object>
+  <object id="64" x="258.485" y="3038.48">
+   <point/>
+  </object>
+  <object id="65" x="3353.94" y="246.061">
+   <point/>
+  </object>
+  <object id="66" x="3738.79" y="4097.58">
+   <point/>
+  </object>
+  <object id="73" x="4141.82" y="1646.06">
+   <point/>
+  </object>
+  <object id="75" x="332.727" y="649.091">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="traps">
+  <object id="62" x="903.939" y="3986.97">
+   <point/>
+  </object>
+  <object id="63" x="1470.61" y="3547.58">
+   <point/>
+  </object>
+  <object id="70" x="3632.73" y="3718.79">
+   <point/>
+  </object>
+  <object id="71" x="3141.82" y="3888.48">
+   <point/>
+  </object>
+  <object id="72" x="3740.3" y="1483.94">
+   <point/>
+  </object>
+  <object id="77" x="1696.36" y="564.242">
+   <point/>
+  </object>
+  <object id="78" x="1458.48" y="2117.27">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="shoes">
+  <object id="79" x="2694.91" y="1840.85">
+   <point/>
+  </object>
+  <object id="80" x="2409.03" y="1901.27">
+   <point/>
+  </object>
+  <object id="81" x="2321.33" y="1650.3">
+   <point/>
+  </object>
  </objectgroup>
 </map>
