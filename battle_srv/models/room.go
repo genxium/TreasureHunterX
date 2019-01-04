@@ -126,7 +126,7 @@ type RoomDownsyncFrame struct {
 	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SpeedShoes     map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speed_shoes,proto3" json:"speed_shoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SpeedShoes     map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -945,16 +945,16 @@ func (pR *Room) StartBattle() {
 				delete(pR.Traps, localIdInBattle)
 			}
 
-			for localIdInBattle, speedShoes := range pR.SpeedShoes {
-				if !speedShoes.Removed {
-					continue
-				}
-				if speedShoes.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
-					// The trap removal information is NOT YET acknowledged by some players.
-					continue
-				}
-				delete(pR.SpeedShoes, localIdInBattle)
-			}
+			//for localIdInBattle, speedShoes := range pR.SpeedShoes {
+			//	if !speedShoes.Removed {
+			//		continue
+			//	}
+			//	if speedShoes.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
+			//		// The trap removal information is NOT YET acknowledged by some players.
+			//		continue
+			//	}
+			//	delete(pR.SpeedShoes, localIdInBattle)
+			//}
 
 			for playerId, player := range pR.Players {
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]

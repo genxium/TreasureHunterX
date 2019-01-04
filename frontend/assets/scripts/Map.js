@@ -147,6 +147,19 @@ cc.Class({
       }
     }
 
+    const speedShoes = diffFrame.speedShoes;
+    const speedShoesLocalIdStrList = Object.keys(speedShoes);
+    for (let i = 0; i < speedShoesLocalIdStrList.length; ++i) {
+      const k = speedShoesLocalIdStrList[i];
+      const speedShoesLocalIdInBattle = parseInt(k);
+      if (true == diffFrame.speedShoes[speedShoesLocalIdInBattle].removed) {
+        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
+        delete newFullFrame.speedShoes[speedShoesLocalIdInBattle];
+      } else {
+        newFullFrame.speedShoes[speedShoesLocalIdInBattle] = diffFrame.speedShoes[speedShoesLocalIdInBattle];
+      }
+    }
+
     const traps = diffFrame.traps;
     const trapsLocalIdStrList = Object.keys(traps);
     for (let i = 0; i < trapsLocalIdStrList.length; ++i) {

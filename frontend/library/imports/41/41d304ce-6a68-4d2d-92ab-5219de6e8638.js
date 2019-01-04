@@ -127,7 +127,6 @@ cc.Class({
       players: refFullFrame.players,
       speedShoes: refFullFrame.speedShoes
     };
-
     var players = diffFrame.players;
     var playersLocalIdStrList = Object.keys(players);
     for (var i = 0; i < playersLocalIdStrList.length; ++i) {
@@ -154,11 +153,24 @@ cc.Class({
       }
     }
 
+    var speedShoes = diffFrame.speedShoes;
+    var speedShoesLocalIdStrList = Object.keys(speedShoes);
+    for (var _i2 = 0; _i2 < speedShoesLocalIdStrList.length; ++_i2) {
+      var _k2 = speedShoesLocalIdStrList[_i2];
+      var speedShoesLocalIdInBattle = parseInt(_k2);
+      if (true == diffFrame.speedShoes[speedShoesLocalIdInBattle].removed) {
+        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
+        delete newFullFrame.speedShoes[speedShoesLocalIdInBattle];
+      } else {
+        newFullFrame.speedShoes[speedShoesLocalIdInBattle] = diffFrame.speedShoes[speedShoesLocalIdInBattle];
+      }
+    }
+
     var traps = diffFrame.traps;
     var trapsLocalIdStrList = Object.keys(traps);
-    for (var _i2 = 0; _i2 < trapsLocalIdStrList.length; ++_i2) {
-      var _k2 = trapsLocalIdStrList[_i2];
-      var trapLocalIdInBattle = parseInt(_k2);
+    for (var _i3 = 0; _i3 < trapsLocalIdStrList.length; ++_i3) {
+      var _k3 = trapsLocalIdStrList[_i3];
+      var trapLocalIdInBattle = parseInt(_k3);
       if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
         // cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
         delete newFullFrame.traps[trapLocalIdInBattle];
@@ -169,17 +181,29 @@ cc.Class({
 
     var bullets = diffFrame.bullets;
     var bulletsLocalIdStrList = Object.keys(bullets);
-    for (var _i3 = 0; _i3 < bulletsLocalIdStrList.length; ++_i3) {
-      var _k3 = bulletsLocalIdStrList[_i3];
-      var bulletLocalIdInBattle = parseInt(_k3);
+    for (var _i4 = 0; _i4 < bulletsLocalIdStrList.length; ++_i4) {
+      var _k4 = bulletsLocalIdStrList[_i4];
+      var bulletLocalIdInBattle = parseInt(_k4);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        // cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
+        cc.log("Bullet with localIdInBattle == " + bulletLocalIdInBattle + " is removed.");
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
       }
     }
 
+    var accs = diffFrame.speedShoes;
+    var accsLocalIdStrList = Object.keys(accs);
+    for (var _i5 = 0; _i5 < accsLocalIdStrList.length; ++_i5) {
+      var _k5 = accsLocalIdStrList[_i5];
+      var accLocalIdInBattle = parseInt(_k5);
+      if (true == diffFrame.speedShoes[accLocalIdInBattle].removed) {
+        cc.log("acc with localIdInBattle == " + accLocalIdInBattle + " is removed.");
+        delete newFullFrame.speedShoes[accLocalIdInBattle];
+      } else {
+        newFullFrame.speedShoes[accLocalIdInBattle] = diffFrame.speedShoes[accLocalIdInBattle];
+      }
+    }
     return newFullFrame;
   },
 
@@ -297,8 +321,8 @@ cc.Class({
       }
     }
     if (self.otherPlayerNodeDict) {
-      for (var _i4 in self.otherPlayerNodeDict) {
-        var _node = self.otherPlayerNodeDict[_i4];
+      for (var _i6 in self.otherPlayerNodeDict) {
+        var _node = self.otherPlayerNodeDict[_i6];
         if (_node.parent) {
           _node.parent.removeChild(_node);
         }
@@ -308,24 +332,24 @@ cc.Class({
       self.selfPlayerNode.parent.removeChild(self.selfPlayerNode);
     }
     if (self.treasureNodeDict) {
-      for (var _i5 in self.treasureNodeDict) {
-        var _node2 = self.treasureNodeDict[_i5];
+      for (var _i7 in self.treasureNodeDict) {
+        var _node2 = self.treasureNodeDict[_i7];
         if (_node2.parent) {
           _node2.parent.removeChild(_node2);
         }
       }
     }
     if (self.trapBulletNodeDict) {
-      for (var _i6 in self.trapBulletNodeDict) {
-        var _node3 = self.trapBulletNodeDict[_i6];
+      for (var _i8 in self.trapBulletNodeDict) {
+        var _node3 = self.trapBulletNodeDict[_i8];
         if (_node3.parent) {
           _node3.parent.removeChild(_node3);
         }
       }
     }
     if (self.trapNodeDict) {
-      for (var _i7 in self.trapNodeDict) {
-        var _node4 = self.trapNodeDict[_i7];
+      for (var _i9 in self.trapNodeDict) {
+        var _node4 = self.trapNodeDict[_i9];
         if (_node4.parent) {
           _node4.parent.removeChild(_node4);
         }
@@ -333,8 +357,8 @@ cc.Class({
     }
 
     if (self.acceleratorNodeDict) {
-      for (var _i8 in self.acceleratorNodeDict) {
-        var _node5 = self.acceleratorNodeDict[_i8];
+      for (var _i10 in self.acceleratorNodeDict) {
+        var _node5 = self.acceleratorNodeDict[_i10];
         if (_node5.parent) {
           _node5.parent.removeChild(_node5);
         }
@@ -807,39 +831,39 @@ cc.Class({
         self.treasureInfoDict = {};
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
-        for (var _i9 = 0; _i9 < treasuresLocalIdStrList.length; ++_i9) {
-          var _k4 = treasuresLocalIdStrList[_i9];
-          var treasureLocalIdInBattle = parseInt(_k4);
-          var treasureInfo = treasures[_k4];
+        for (var _i11 = 0; _i11 < treasuresLocalIdStrList.length; ++_i11) {
+          var _k6 = treasuresLocalIdStrList[_i11];
+          var treasureLocalIdInBattle = parseInt(_k6);
+          var treasureInfo = treasures[_k6];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
         self.acceleratorInfoDict = {};
         var accelartors = roomDownsyncFrame.speedShoes;
         var accLocalIdStrList = Object.keys(accelartors);
-        for (var _i10 = 0; _i10 < accLocalIdStrList.length; ++_i10) {
-          var _k5 = accLocalIdStrList[_i10];
-          var accLocalIdInBattle = parseInt(_k5);
-          var accInfo = accelartors[_k5];
+        for (var _i12 = 0; _i12 < accLocalIdStrList.length; ++_i12) {
+          var _k7 = accLocalIdStrList[_i12];
+          var accLocalIdInBattle = parseInt(_k7);
+          var accInfo = accelartors[_k7];
           self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
         }
 
         self.trapInfoDict = {};
         var traps = roomDownsyncFrame.traps;
         var trapsLocalIdStrList = Object.keys(traps);
-        for (var _i11 = 0; _i11 < trapsLocalIdStrList.length; ++_i11) {
-          var _k6 = trapsLocalIdStrList[_i11];
-          var trapLocalIdInBattle = parseInt(_k6);
-          var trapInfo = traps[_k6];
+        for (var _i13 = 0; _i13 < trapsLocalIdStrList.length; ++_i13) {
+          var _k8 = trapsLocalIdStrList[_i13];
+          var trapLocalIdInBattle = parseInt(_k8);
+          var trapInfo = traps[_k8];
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
         }
 
         self.trapBulletInfoDict = {};
         var bullets = roomDownsyncFrame.bullets;
         var bulletsLocalIdStrList = Object.keys(bullets);
-        for (var _i12 = 0; _i12 < bulletsLocalIdStrList.length; ++_i12) {
-          var _k7 = bulletsLocalIdStrList[_i12];
-          var bulletLocalIdInBattle = parseInt(_k7);
-          var bulletInfo = bullets[_k7];
+        for (var _i14 = 0; _i14 < bulletsLocalIdStrList.length; ++_i14) {
+          var _k9 = bulletsLocalIdStrList[_i14];
+          var bulletLocalIdInBattle = parseInt(_k9);
+          var bulletInfo = bullets[_k9];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
 
@@ -1047,8 +1071,8 @@ cc.Class({
     }
 
     // 更新加速鞋显示 
-    for (var _k8 in self.acceleratorInfoDict) {
-      var accLocalIdInBattle = parseInt(_k8);
+    for (var _k10 in self.acceleratorInfoDict) {
+      var accLocalIdInBattle = parseInt(_k10);
       var acceleratorInfo = self.acceleratorInfoDict[accLocalIdInBattle];
       var _newPos = cc.v2(acceleratorInfo.x, acceleratorInfo.y);
       var _targetNode = self.acceleratorNodeDict[accLocalIdInBattle];
@@ -1064,8 +1088,8 @@ cc.Class({
       }
     }
     // 更新陷阱显示 
-    for (var _k9 in self.trapInfoDict) {
-      var trapLocalIdInBattle = parseInt(_k9);
+    for (var _k11 in self.trapInfoDict) {
+      var trapLocalIdInBattle = parseInt(_k11);
       var trapInfo = self.trapInfoDict[trapLocalIdInBattle];
       var _newPos2 = cc.v2(trapInfo.x, trapInfo.y);
       var _targetNode2 = self.trapNodeDict[trapLocalIdInBattle];
@@ -1082,8 +1106,8 @@ cc.Class({
     }
 
     // 更新bullet显示 
-    for (var _k10 in self.trapBulletInfoDict) {
-      var bulletLocalIdInBattle = parseInt(_k10);
+    for (var _k12 in self.trapBulletInfoDict) {
+      var bulletLocalIdInBattle = parseInt(_k12);
       var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
       var _newPos3 = cc.v2(bulletInfo.x, bulletInfo.y);
       var _targetNode3 = self.trapBulletNodeDict[bulletLocalIdInBattle];
@@ -1139,8 +1163,8 @@ cc.Class({
     }
 
     // 更新宝物显示 
-    for (var _k11 in self.treasureInfoDict) {
-      var treasureLocalIdInBattle = parseInt(_k11);
+    for (var _k13 in self.treasureInfoDict) {
+      var treasureLocalIdInBattle = parseInt(_k13);
       var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
       var _newPos4 = cc.v2(treasureInfo.x, treasureInfo.y);
       var _targetNode4 = self.treasureNodeDict[treasureLocalIdInBattle];
@@ -1168,16 +1192,16 @@ cc.Class({
     }
 
     // Coping with removed players.
-    for (var _k12 in toRemovePlayerNodeDict) {
-      var _playerId = parseInt(_k12);
-      toRemovePlayerNodeDict[_k12].parent.removeChild(toRemovePlayerNodeDict[_k12]);
+    for (var _k14 in toRemovePlayerNodeDict) {
+      var _playerId = parseInt(_k14);
+      toRemovePlayerNodeDict[_k14].parent.removeChild(toRemovePlayerNodeDict[_k14]);
       delete self.otherPlayerNodeDict[_playerId];
     }
 
     // Coping with removed treasures.
-    for (var _k13 in toRemoveTreasureNodeDict) {
-      var _treasureLocalIdInBattle = parseInt(_k13);
-      var treasureScriptIns = toRemoveTreasureNodeDict[_k13].getComponent("Treasure");
+    for (var _k15 in toRemoveTreasureNodeDict) {
+      var _treasureLocalIdInBattle = parseInt(_k15);
+      var treasureScriptIns = toRemoveTreasureNodeDict[_k15].getComponent("Treasure");
       treasureScriptIns.playPickedUpAnimAndDestroy();
       if (self.musicEffectManagerScriptIns) {
         if (2 == treasureScriptIns.type) {
@@ -1190,23 +1214,23 @@ cc.Class({
     }
 
     // Coping with removed traps.
-    for (var _k14 in toRemoveTrapNodeDict) {
-      var _trapLocalIdInBattle = parseInt(_k14);
-      toRemoveTrapNodeDict[_k14].parent.removeChild(toRemoveTrapNodeDict[_k14]);
+    for (var _k16 in toRemoveTrapNodeDict) {
+      var _trapLocalIdInBattle = parseInt(_k16);
+      toRemoveTrapNodeDict[_k16].parent.removeChild(toRemoveTrapNodeDict[_k16]);
       delete self.trapNodeDict[_trapLocalIdInBattle];
     }
 
     // Coping with removed accelerators.
-    for (var _k15 in toRemoveAcceleratorNodeDict) {
-      var _accLocalIdInBattle = parseInt(_k15);
-      toRemoveAcceleratorNodeDict[_k15].parent.removeChild(toRemoveAcceleratorNodeDict[_k15]);
+    for (var _k17 in toRemoveAcceleratorNodeDict) {
+      var _accLocalIdInBattle = parseInt(_k17);
+      toRemoveAcceleratorNodeDict[_k17].parent.removeChild(toRemoveAcceleratorNodeDict[_k17]);
       delete self.acceleratorNodeDict[_accLocalIdInBattle];
     }
 
     // Coping with removed bullets.
-    for (var _k16 in toRemoveBulletNodeDict) {
-      var _bulletLocalIdInBattle = parseInt(_k16);
-      toRemoveBulletNodeDict[_k16].parent.removeChild(toRemoveBulletNodeDict[_k16]);
+    for (var _k18 in toRemoveBulletNodeDict) {
+      var _bulletLocalIdInBattle = parseInt(_k18);
+      toRemoveBulletNodeDict[_k18].parent.removeChild(toRemoveBulletNodeDict[_k18]);
       delete self.trapBulletNodeDict[_bulletLocalIdInBattle];
       if (self.musicEffectManagerScriptIns) {
         self.musicEffectManagerScriptIns.playCrashedByTrapBullet();

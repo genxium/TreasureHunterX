@@ -64,7 +64,7 @@ message RoomDownsyncFrame {
   map<int32, Treasure> treasures = 6; 
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8; 
-  map<int32, SpeedShoes> speed_shoes = 9; 
+  map<int32, SpeedShoes> speedShoes = 9; 
 }
 
 message Pumpkin {
