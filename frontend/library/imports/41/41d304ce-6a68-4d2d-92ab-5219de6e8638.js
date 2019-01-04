@@ -813,8 +813,6 @@ cc.Class({
           var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
-        cc.log(diffFrame.speedShoes);
-        cc.log(roomDownsyncFrame);
         self.acceleratorInfoDict = {};
         var accelartors = roomDownsyncFrame.speedShoes;
         var accLocalIdStrList = Object.keys(accelartors);

@@ -35,7 +35,7 @@ const (
 	COLLISION_MASK_FOR_TRAP_BULLET       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_BARRIER           = (COLLISION_CATEGORY_PUMPKIN)
 	COLLISION_MASK_FOR_PUMPKIN           = (COLLISION_CATEGORY_BARRIER)
-	COLLISION_MASK_FOR_SPEED_SHOES       = (COLLISION_CATEGORY_SPEED_SHOES)
+	COLLISION_MASK_FOR_SPEED_SHOES       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 )
 
 type RoomBattleState struct {
@@ -139,6 +139,17 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 		pR.CollidableWorld.DestroyBody(contactingTreasure.CollidableBody)
 		pR.Treasures[contactingTreasure.LocalIdInBattle] = &Treasure{Removed: true}
 		pR.Players[contactingPlayer.Id].Score += contactingTreasure.Score
+	}
+}
+
+func (pR *Room) onSpeedShoesPickedUp(contactingPlayer *Player, contactingSpeedShoes *SpeedShoes) {
+	Logger.Info("onSpeedShoesPickedUp")
+	if _, existent := pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle]; existent {
+		Logger.Info("Player has picked up speedShoes:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingSpeedShoes.LocalIdInBattle", contactingSpeedShoes.LocalIdInBattle))
+		pR.CollidableWorld.DestroyBody(contactingSpeedShoes.CollidableBody)
+		pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle] = &SpeedShoes{Removed: true}
+		//HARDcode
+		pR.Players[contactingPlayer.Id].Speed += 100
 	}
 }
 
@@ -645,7 +656,7 @@ func (pR *Room) InitColliders() {
 
 		v.CollidableBody = b2SpeedShoesBody
 		b2SpeedShoesBody.SetUserData(v)
-		// PrettyPrintBody(trap.CollidableBody)
+		//PrettyPrintBody(v.CollidableBody)
 	}
 }
 
@@ -934,6 +945,17 @@ func (pR *Room) StartBattle() {
 				delete(pR.Traps, localIdInBattle)
 			}
 
+			for localIdInBattle, speedShoes := range pR.SpeedShoes {
+				if !speedShoes.Removed {
+					continue
+				}
+				if speedShoes.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
+					// The trap removal information is NOT YET acknowledged by some players.
+					continue
+				}
+				delete(pR.SpeedShoes, localIdInBattle)
+			}
+
 			for playerId, player := range pR.Players {
 				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
@@ -1005,6 +1027,8 @@ func (pR *Room) StartBattle() {
 							pR.onTrapPickedUp(player, v)
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
+						case *SpeedShoes:
+							pR.onSpeedShoesPickedUp(player, v)
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
