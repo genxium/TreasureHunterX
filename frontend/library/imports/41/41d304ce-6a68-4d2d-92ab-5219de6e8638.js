@@ -124,7 +124,8 @@ cc.Class({
       treasures: refFullFrame.treasures,
       traps: refFullFrame.traps,
       bullets: refFullFrame.bullets,
-      players: refFullFrame.players
+      players: refFullFrame.players,
+      speedShoes: refFullFrame.speedShoes
     };
 
     var players = diffFrame.players;
@@ -812,17 +813,16 @@ cc.Class({
           var treasureInfo = treasures[_k4];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
-
+        cc.log(diffFrame.speedShoes);
+        cc.log(roomDownsyncFrame);
         self.acceleratorInfoDict = {};
         var accelartors = roomDownsyncFrame.speedShoes;
-        if (accelartors) {
-          var accLocalIdStrList = Object.keys(accelartors);
-          for (var _i10 = 0; _i10 < accLocalIdStrList.length; ++_i10) {
-            var _k5 = accLocalIdStrList[_i10];
-            var accLocalIdInBattle = parseInt(_k5);
-            var accInfo = accelartors[_k5];
-            self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
-          }
+        var accLocalIdStrList = Object.keys(accelartors);
+        for (var _i10 = 0; _i10 < accLocalIdStrList.length; ++_i10) {
+          var _k5 = accLocalIdStrList[_i10];
+          var accLocalIdInBattle = parseInt(_k5);
+          var accInfo = accelartors[_k5];
+          self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
         }
 
         self.trapInfoDict = {};

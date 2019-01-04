@@ -119,6 +119,7 @@ cc.Class({
       traps: refFullFrame.traps,
       bullets: refFullFrame.bullets,
       players: refFullFrame.players,
+      speedShoes: refFullFrame.speedShoes,
     };
 
     const players = diffFrame.players;
@@ -654,18 +655,15 @@ cc.Class({
           const treasureInfo = treasures[k];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
-
         self.acceleratorInfoDict = {};
         const accelartors = roomDownsyncFrame.speedShoes;
-        if(accelartors) {
-          const accLocalIdStrList = Object.keys(accelartors);
-          for (let i = 0; i < accLocalIdStrList.length; ++i) {
-            const k = accLocalIdStrList[i];
-            const accLocalIdInBattle = parseInt(k);
-            const accInfo = accelartors[k];
-            self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
-          }
-        }
+				const accLocalIdStrList = Object.keys(accelartors);
+				for (let i = 0; i < accLocalIdStrList.length; ++i) {
+					const k = accLocalIdStrList[i];
+					const accLocalIdInBattle = parseInt(k);
+					const accInfo = accelartors[k];
+					self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
+				}
 
         self.trapInfoDict = {};
         const traps = roomDownsyncFrame.traps;

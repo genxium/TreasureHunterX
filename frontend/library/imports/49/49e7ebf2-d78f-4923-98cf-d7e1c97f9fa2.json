@@ -25,13 +25,10 @@
       },
       {
         "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 4
     },
     "_opacity": 255,
     "_color": {
@@ -143,20 +140,6 @@
         "y": 50
       }
     ],
-    "_id": ""
-  },
-  {
-    "__type__": "5eea6zlA0NHdoCk/M1pvQmb",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "pickedUpanimPrefab": {
-      "__uuid__": "4b4216c4-2a64-4f27-b83e-86a0a2779d26"
-    },
-    "animNode": null,
     "_id": ""
   },
   {
