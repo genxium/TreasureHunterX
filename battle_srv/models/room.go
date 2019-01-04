@@ -118,15 +118,18 @@ type RoomDownsyncFrame struct {
 
 	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
 	*/
-	Id             int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId     int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players        map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt         int64                 `protobuf:"varint,4,opt,name=sendAt,proto3" json:"sendAt,omitempty"`
-	CountdownNanos int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SpeedShoes     map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id               int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId       int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players          map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt           int64                 `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
+	CountdownNanos   int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures        map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps            map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets          map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SpeedShoes       map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
