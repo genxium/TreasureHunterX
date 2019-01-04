@@ -1,29 +1,29 @@
 syntax = "proto3";
 package models;
 
-message direction {
+message Direction {
   double dx = 1;
   double dy = 2;
 }
 
-message player {
+message Player {
   int64 id = 1;
   double x = 2; 
   double y = 3; 
-  direction dir = 4;
+  Direction dir = 4;
   int32 speed = 5;
-  int32 battlestate = 6;
-  int32 lastmovegmtmillis = 7;
+  int32 battleState = 6;
+  int32 lastMoveGmtMillis = 7;
   string name = 8;
-  string displayname = 9;
+  string displayName = 9;
   int32 score = 10;
   bool removed = 11;
-  int32 joinindex = 12;
+  int32 joinIndex = 12;
 }
 
-message treasure {
+message Treasure {
   int32 id = 1;
-  int32 localidinbattle = 2;
+  int32 localIdInBattle = 2;
   int32 score = 3;
   double x = 4; 
   double y = 5;
@@ -31,45 +31,42 @@ message treasure {
   int32 type = 7;
 }
 
-message bullet {
-  int32 localidinbattle = 1;
-  double linearspeed = 2;
+message Bullet {
+  int32 localIdInBattle = 1;
+  double linearSpeed = 2;
   double x = 3;
   double y = 4;
   bool removed = 5;
-  // direction dir = 5;
+  // Direction dir = 5;
 }
 
-message trap {
+message Trap {
   int32 id = 1;
-  int32 localidinbattle = 2;
+  int32 localIdInBattle = 2;
   int32 type = 3;
   double x = 4; 
   double y = 5;
   bool removed = 6;
 }
 
-message speedshoes {
+message SpeedShoes {
   int32 id = 1;
-  int32 localidinbattle = 2;
+  int32 localIdInBattle = 2;
   double x = 3; 
   double y = 4; 
   bool removed = 5;
   int32 type = 6;
 }
 
-message roomdownsyncframe {
+message RoomDownsyncFrame {
   int32 id = 1;
-  int32 refframeid = 2;
-  map<int32, player> players = 3;
-  int64 sentat = 4;
-  int64 countdownnanos = 5;
-  map<int32, treasure> treasures = 6; 
-  map<int32, trap> traps = 7; 
-  map<int32, bullet> bullets = 8;
-  map<int32, speedshoes> speedshoes = 9; 
+  int32 refFrameId = 2;
+  map<int32, Player> players = 3;
+  int64 sentAt = 4;
+  int64 countdownNanos = 5;
+  map<int32, Treasure> treasures = 6; 
+  map<int32, Trap> traps = 7; 
+  map<int32, Bullet> bullets = 8;
+  map<int32, SpeedShoes> speedShoes = 9; 
 
-  map<int32, int32> removedtreasures = 12;
-  map<int32, int32> removedtraps = 13;
-  map<int32, int32> removedbullets = 11;
 }

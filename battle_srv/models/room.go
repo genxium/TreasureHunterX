@@ -145,14 +145,21 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 	}
 }
 
-func (pR *Room) onSpeedShoesPickedUp(contactingPlayer *Player, contactingSpeedShoes *SpeedShoes) {
-	Logger.Info("onSpeedShoesPickedUp")
-	if _, existent := pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle]; existent {
+const (
+	PLAYER_DEFAULT_SPEED = 300 //Hardcoded
+	ADD_SPEED            = 100 //Hardcoded
+)
+
+func (pR *Room) onSpeedShoesPickedUp(contactingPlayer *Player, contactingSpeedShoes *SpeedShoes, nowMillis int64) {
+	if _, existent := pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle]; existent && contactingPlayer.AddSpeedAtGmtMillis == -1 {
 		Logger.Info("Player has picked up speedShoes:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingSpeedShoes.LocalIdInBattle", contactingSpeedShoes.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingSpeedShoes.CollidableBody)
 		pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle] = &SpeedShoes{Removed: true}
 		//HARDcode
-		pR.Players[contactingPlayer.Id].Speed += 100
+		pR.Players[contactingPlayer.Id].Speed += ADD_SPEED
+		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = nowMillis
+	} else {
+		Logger.Info("player got one SpeedShoes early")
 	}
 }
 
@@ -178,6 +185,8 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 		pR.Players[contactingPlayer.Id].Speed = 0
 		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+		//被冻住同时加速效果消除
+		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
 		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
 }
@@ -227,8 +236,9 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, 1024 /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
-	pPlayer.FrozenAtGmtMillis = -1 // Hardcoded temporarily.
-	pPlayer.Speed = 300            // Hardcoded temporarily.
+	pPlayer.FrozenAtGmtMillis = -1       // Hardcoded temporarily.
+	pPlayer.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
+	pPlayer.AddSpeedAtGmtMillis = -1     // Hardcoded temporarily.
 	return true
 }
 
@@ -871,7 +881,8 @@ func (pR *Room) StartBattle() {
 	velocityIterationsPerFrame := 0
 	positionIterationsPerFrame := 0
 	pR.Tick = 0
-	maxMillisToFreezePerPlayer := int64(5000) // Hardcoded temporarily.
+	maxMillisToFreezePerPlayer := int64(5000)   // Hardcoded temporarily.
+	maxMillisToAddSpeedPerPlayer := int64(3000) // Hardcoded temporarily.
 	/**
 	 * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached.
 	 * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
@@ -978,6 +989,19 @@ func (pR *Room) StartBattle() {
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
 			for _, player := range pR.Players {
+				if -1 == player.AddSpeedAtGmtMillis {
+					// TODO: Removed the magic number `-1`.
+					continue
+				}
+				if maxMillisToAddSpeedPerPlayer > (collisionNowMillis - player.AddSpeedAtGmtMillis) {
+					continue
+				}
+				player.AddSpeedAtGmtMillis = -1
+				player.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
+			}
+
+			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
+			for _, player := range pR.Players {
 				/**
 				 * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
 				 */
@@ -991,8 +1015,7 @@ func (pR *Room) StartBattle() {
 				if maxMillisToFreezePerPlayer > (collisionNowMillis - player.FrozenAtGmtMillis) {
 					continue
 				}
-				player.Speed = 300 // Hardcoded temporarily.
-				// TODO: Removed the magic number `-1`.
+				player.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
 				player.FrozenAtGmtMillis = -1
 			}
 
@@ -1031,7 +1054,7 @@ func (pR *Room) StartBattle() {
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						case *SpeedShoes:
-							pR.onSpeedShoesPickedUp(player, v)
+							pR.onSpeedShoesPickedUp(player, v, collisionNowMillis)
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}

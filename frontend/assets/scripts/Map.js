@@ -192,7 +192,6 @@ cc.Class({
       const k = accsLocalIdStrList[i];
       const accLocalIdInBattle = parseInt(k);
       if (true == diffFrame.speedShoes[accLocalIdInBattle].removed) {
-         cc.log(`acc with localIdInBattle == ${accLocalIdInBattle} is removed.`);
         delete newFullFrame.speedShoes[accLocalIdInBattle];
       } else {
         newFullFrame.speedShoes[accLocalIdInBattle] = diffFrame.speedShoes[accLocalIdInBattle];

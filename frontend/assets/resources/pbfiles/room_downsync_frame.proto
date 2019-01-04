@@ -68,8 +68,4 @@ message RoomDownsyncFrame {
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8;
   map<int32, SpeedShoes> speedShoes = 9; 
-
-  map<int32, int32> RemovedTreasures = 12;
-  map<int32, int32> RemovedTraps = 13;
-  map<int32, int32> RemovedBullets = 11;
 }
