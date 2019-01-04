@@ -121,7 +121,6 @@ cc.Class({
       players: refFullFrame.players,
       speedShoes: refFullFrame.speedShoes,
     };
-
     const players = diffFrame.players;
     const playersLocalIdStrList = Object.keys(players);
     for (let i = 0; i < playersLocalIdStrList.length; ++i) {
@@ -167,13 +166,25 @@ cc.Class({
       const k = bulletsLocalIdStrList[i];
       const bulletLocalIdInBattle = parseInt(k);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        // cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
+         cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
       }
     }
 
+    const accs = diffFrame.speedShoes;
+    const accsLocalIdStrList = Object.keys(accs);
+    for (let i = 0; i < accsLocalIdStrList.length; ++i) {
+      const k = accsLocalIdStrList[i];
+      const accLocalIdInBattle = parseInt(k);
+      if (true == diffFrame.speedShoes[accLocalIdInBattle].removed) {
+         cc.log(`acc with localIdInBattle == ${accLocalIdInBattle} is removed.`);
+        delete newFullFrame.speedShoes[accLocalIdInBattle];
+      } else {
+        newFullFrame.speedShoes[accLocalIdInBattle] = diffFrame.speedShoes[accLocalIdInBattle];
+      }
+    }
     return newFullFrame;
   },
 
