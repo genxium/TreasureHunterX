@@ -347,7 +347,6 @@ func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pT
 }
 
 func (pR *Room) createSpeedShoes(pAnchor *Vec2D, speedShoesLocalIdInBattle int32, pTsxIns *Tsx) *SpeedShoes {
-
 	polyLine := pTsxIns.SpeedShoesPolyLineList[0]
 
 	thePoints := make([]*Vec2D, len(polyLine.Points))
@@ -419,15 +418,13 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 
 func (pR *Room) InitSpeedShoes(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 	for key, value := range pTmxMapIns.SpeedShoesList {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.InitPos.X),
-				Y: float64(value.InitPos.Y),
-			}
-			theSpeedShoes := pR.createSpeedShoes(pAnchor, int32(key), pTsxIns)
-			theSpeedShoes.Type = value.Type
-			pR.SpeedShoes[theSpeedShoes.LocalIdInBattle] = theSpeedShoes
+		pAnchor := &Vec2D{
+			X: float64(value.InitPos.X),
+			Y: float64(value.InitPos.Y),
 		}
+		theSpeedShoes := pR.createSpeedShoes(pAnchor, int32(key), pTsxIns)
+		theSpeedShoes.Type = value.Type
+		pR.SpeedShoes[theSpeedShoes.LocalIdInBattle] = theSpeedShoes
 	}
 	Logger.Info("InitSpeedShoes finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.SpeedShoes))
 }
@@ -453,7 +450,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			if tile == nil || tile.Tileset == nil {
 				continue
 			}
-			if tile.Tileset.Source != "Tile_W128_H128_S01.tsx"{
+			if tile.Tileset.Source != "Tile_W128_H128_S01.tsx" {
 				continue
 			}
 

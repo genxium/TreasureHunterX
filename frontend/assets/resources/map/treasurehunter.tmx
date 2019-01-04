@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="128" tileheight="64" infinite="0" nextobjectid="82">
+<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="128" tileheight="64" infinite="0" nextlayerid="17" nextobjectid="82">
  <tileset firstgid="1" source="Tile_W512_H512_S01.tsx"/>
  <tileset firstgid="17" source="Tile_W512_H512_S03.tsx"/>
  <tileset firstgid="33" source="Tile_W512_H512_S02.tsx"/>
@@ -9,7 +9,7 @@
  <tileset firstgid="73" source="Tile_W1024_H1024_S01.tsx"/>
  <tileset firstgid="77" source="Tile_W512_H512_S05.tsx"/>
  <tileset firstgid="86" source="Tile_W128_H128_S01.tsx"/>
- <layer name="floor" width="70" height="70">
+ <layer id="1" name="floor" width="70" height="70">
   <properties>
    <property name="type" value="normal"/>
   </properties>
@@ -17,7 +17,7 @@
    eJztwwENAAAMw6AamH+7F3JIWDVVVVVVVVVVVVVVVVVVVVVVVVX15QPgL/jV
   </data>
  </layer>
- <layer name="Grass" width="70" height="70">
+ <layer id="2" name="Grass" width="70" height="70">
   <properties>
    <property name="type" value="normal"/>
   </properties>
@@ -25,7 +25,7 @@
    eJztm9EOgjAMRX3X//9eH4xhzNu1hYJdd09CqoBjqWcFBz4ehPh4NREt0jZt/dGo9SOifXSsdj+y5wVej76XSmgOkV8kX76xcv4stYfs6X3R6nglMo6P7HlH9aUaT2G9tb7cmRf6MidReXkaY38syRdre22UxssRKvmSMS+RfcoAfcHQFwx9wdAXDH3B0JeN9lqIvmDoC4a+YOgLZjS/exXab8qz7UZAXzD/9EV6H9XuGeiLzp2+XDGfJLVzZA4rKgfZfTlT67POQVvRfPGwQn3px4137M7qyReej3z0db6NPSgH9GVjBV880Jcx9GUPfRlDX/bQlzH0RYe+bFTyJUMfqkNfdGavL5HQF0yl+42R3P08pvX5zBWfx4y+z3gFWcZRtjn3LHnJRpa80Jc5yJKXGXzJfJ64C8mXq68PpH5k9YWufPD4siqj//utRpbz0b+wuEBfNujLOFr3WQVLXirj8UX67Kq0ubIs0r5o/Wjd0ejpl6ev7bY3ilYSBQ==
   </data>
  </layer>
- <layer name="Tile_W512_H512_S03" width="70" height="70">
+ <layer id="3" name="Tile_W512_H512_S03" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -33,7 +33,7 @@
    eJzt2TEKgDAMQNGeQXQR0d7/lIKjVBAUU8l7Y6c/JFBIKQAAAAAAnM3RAaRgzgDa6sX78mUEaZgrMpuiA4CmNTrgoTE6gMPf5wjekm0XanQAALds0QF0I9tfhX64U+M2AtCvIToAAACA9HZYSgG1
   </data>
  </layer>
- <layer name="Tile_W512_H512_S04" width="70" height="70">
+ <layer id="4" name="Tile_W512_H512_S04" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -41,7 +41,7 @@
    eJzt2dENgzAMBUBWait1/9E6AB/FkmNHzt0AYAh6Nsl1AcA87+4CDhV5769lVdx9Cu/1xG71AETIsPkia1zZz6cytwLUmpa7054HdvF0JvZ/BHSZOgPYZwCiKvPQ7Af/TZ1RALLJS8jx7S5gOFkFcFexPyR/od9u51Vy4Rwrvr1I7/KPBf12OI88KQtW9fys65oBgF2c1BsyZeV4Zz+w9vwAtqIHUg==
   </data>
  </layer>
- <layer name="Tile_W512_H512_S05" width="70" height="70">
+ <layer id="5" name="Tile_W512_H512_S05" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -49,7 +49,7 @@
    eJztzjENAAAIA7BJxL8aHOwjPK2CJgAAAAAAAAAAAABwZ74DAAAAAAAAAABUC+MmAFE=
   </data>
  </layer>
- <layer name="Tile_W512_H512_S02" width="70" height="70">
+ <layer id="6" name="Tile_W512_H512_S02" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -57,7 +57,7 @@
    eJzt29sKwjAQhOG+ioJn3//5RFAogR62psnO+H83gUrLZjOEttRhAIAcbr0LSIq+IOL+GR/B8bLxvLUjctq6vyydx77lSSkvZLA/8oIIpTVQqtWV0hoo1eqi7LnSGqjUeuxdQEVKeSmfsa8Tx3kW30/5vuXZqxBhp5nfnPaWtxr7yaHCNZSdexfQ0K95+fesOJjbH0uZ71eQD3lBBHlBBHlBBHlBBHlBhEteXOaRnUufXeaRnUufXeaRXcs+7/kumLwggrxoa71+5EXb1Pp9j9f+vwnfYWhbygswRl4QQV68rf0Wdu04dT3uMwAAALZ5AW/0Efc=
   </data>
  </layer>
- <layer name="Tile_W512_H512_S01" width="70" height="70">
+ <layer id="7" name="Tile_W512_H512_S01" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -65,7 +65,7 @@
    eJzt22ELgjAQgOFKC+qD9pP76RUVSOx0zu3u5t4HQpGYuu7mzfRwAPIbM7VzydQObI0R63vR0rlqow/bQR4B25FHqM258PffcsY/uYSQXlgH9uQV24/pskD7wXXUaRonpWKmRqfC7Uu5M3eftbV8k85XqvEs+6d0vKRoLV6Q5j+fvMTNMbDtrn4U8KD71iad4xpF697DTWk/gIXa7uENgW1b60GLPugM9vmWOp7VFidzUusay3mHVbzM+fXH+LdE/XphqcXDHH9Qrn9L5xHzOX3WeWQlVKdpWcqj0NjiYbyBLn7zOJp1XT/51OhqvP9a+20Lz/FCzeWT13ix4DlGSx7b2uta7POWa57LzHlt5b0xYL3W5uYA9MyNL/xngiXEyEdsHvG+X9uIhXQt9l3Ocw49R4t9iYmXFvMol1AfSXmV+56X1J70LIi0fU0sPAHv8Qlj
   </data>
  </layer>
- <layer name="Tile_W1024_H1024_S06" width="70" height="70">
+ <layer id="8" name="Tile_W1024_H1024_S06" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -73,7 +73,7 @@
    eJzt2bkNACAMBEFa4+m/JgogIQDZoJkCrNWlLgUAAABgNaIDgONa0ltAHj06AAAAAAAAAC7x5wYAAAAAdtXogA/YEN40AdvVAdA=
   </data>
  </layer>
- <layer name="Tile_W1024_H1024_S02" width="70" height="70">
+ <layer id="9" name="Tile_W1024_H1024_S02" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -81,7 +81,7 @@
    eJztzkkNACAQBLA1x+FfERbIhmQetApaBQAAAAAAwAszHQAAAAAAAAAACBjpQNNOBwDgEysdAADgygGfggEb
   </data>
  </layer>
- <layer name="Tile_W1024_H1024_S01" width="70" height="70">
+ <layer id="10" name="Tile_W1024_H1024_S01" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -89,7 +89,7 @@
    eJztzgENAAAIA6AHtH8eY9xNSEACAAAAAAAA8M+0AwAAAAAAAAAAAAAAcMQCXxIATQ==
   </data>
  </layer>
- <objectgroup name="barrier">
+ <objectgroup id="11" name="barrier">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -190,7 +190,7 @@
    <polyline points="0,0 14,274 710,226 696,48 72,0"/>
   </object>
  </objectgroup>
- <objectgroup name="controlled_players_starting_pos_list">
+ <objectgroup id="12" name="controlled_players_starting_pos_list">
   <object id="20" x="2079.77" y="2048.35">
    <point/>
   </object>
@@ -198,7 +198,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="treasures">
+ <objectgroup id="13" name="treasures">
   <object id="22" x="2346.36" y="2459.7">
    <point/>
   </object>
@@ -302,7 +302,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="highTreasures">
+ <objectgroup id="14" name="highTreasures">
   <object id="61" x="625.152" y="4162.73">
    <point/>
   </object>
@@ -322,7 +322,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="traps">
+ <objectgroup id="15" name="traps">
   <object id="62" x="903.939" y="3986.97">
    <point/>
   </object>
@@ -345,7 +345,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="shoes">
+ <objectgroup id="16" name="speed_shoes">
   <object id="79" x="2694.91" y="1840.85">
    <point/>
   </object>

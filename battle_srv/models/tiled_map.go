@@ -254,7 +254,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	}
 	pPolyLineMap := make(map[int]*TmxPolyline, 0)
 	for _, tile := range pTsxIns.Tiles {
-		if 1 == tile.Id || 2 == tile.Id || 6 == tile.Id || 1 == tile.Id || 4 == tile.Id {
+		if 1 == tile.Id || 2 == tile.Id || 6 == tile.Id || 1 == tile.Id || 4 == tile.Id || 3 == tile.Id {
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects {
@@ -300,7 +300,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 				pTsxIns.TreasurePolyLineList = pPolyLineList
 			} else if 6 == tile.Id {
 				pTsxIns.TrapPolyLineList = pPolyLineList
-			} else if 6 == tile.Id {
+			} else if 3 == tile.Id {
 				pTsxIns.SpeedShoesPolyLineList = pPolyLineList
 			}
 		}

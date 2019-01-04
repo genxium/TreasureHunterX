@@ -49,6 +49,15 @@ message Trap {
   bool removed = 6;
 }
 
+message SpeedShoes {
+  int32 id = 1;
+  int32 localIdInBattle = 2;
+  double x = 3; 
+  double y = 4; 
+  double removed = 5;
+  int32 type = 6;
+}
+
 message RoomDownsyncFrame {
   int32 id = 1;
   int32 refFrameId = 2;
@@ -58,6 +67,7 @@ message RoomDownsyncFrame {
   map<int32, Treasure> treasures = 6; 
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8;
+  map<int32, SpeedShoes> speed_shoes = 9; 
 
   map<int32, int32> RemovedTreasures = 12;
   map<int32, int32> RemovedTraps = 13;
