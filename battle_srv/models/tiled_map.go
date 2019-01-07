@@ -27,6 +27,61 @@ const (
 	FLIPPED_DIAGONALLY_FLAG   uint32 = 0x20000000
 )
 
+type TmxTile struct {
+	Id             uint32
+	Tileset        *TmxTileset
+	FlipHorizontal bool
+	FlipVertical   bool
+	FlipDiagonal   bool
+}
+
+type TmxLayer struct {
+	Name   string  `xml:"name,attr"`
+	Width  int     `xml:"width,attr"`
+	Height int     `xml:"height,attr"`
+	Data   TmxData `xml:"data"`
+	Tile   []*TmxTile
+}
+
+type TmxProperty struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
+}
+
+type TmxProperties struct {
+	Property []TmxProperty `xml:"property"`
+}
+
+type TmxImage struct {
+	Source string `xml:"source,attr"`
+	Width  int    `xml:"width,attr"`
+	Height int    `xml:"height,attr"`
+}
+
+// w tileSet
+type TmxTileset struct {
+	FirstGid   uint32     `xml:"firstgid,attr"` // w 此图块集的第一个图块在全局图块集中的位置
+	Name       string     `xml:"name,attr"`
+	TileWidth  int        `xml:"tilewidth,attr"`
+	TileHeight int        `xml:"tileheight,attr"`
+	Images     []TmxImage `xml:"image"`
+	Source     string     `xml:"source,attr"`
+}
+
+type TmxObject struct {
+	Id         string        `xml:"id,attr"`
+	X          float64       `xml:"x,attr"`
+	Y          float64       `xml:"y,attr"`
+	Properties TmxProperties `xml:"properties"`
+}
+
+type TmxObjectGroup struct {
+	Name    string      `xml:"name,attr"`
+	Width   int         `xml:"width,attr"`
+	Height  int         `xml:"height,attr"`
+	Objects []TmxObject `xml:"object"`
+}
+
 // w map
 type TmxMap struct {
 	Version      string            `xml:"version,attr"`
@@ -68,15 +123,17 @@ type Tsx struct {
 	Image      []TmxImage `xml:"image"`
 	Tiles      []TsxTile  `xml:"tile"`
 
-	TreasurePolyLineList   []*TmxPolyline
-	TrapPolyLineList       []*TmxPolyline
-	SpeedShoesPolyLineList []*TmxPolyline
-	BarrierPolyLineList    map[int]*TmxPolyline // w barrier polyline
+	HigherTreasurePolyLineList []*TmxPolyline
+	LowTreasurePolyLineList    []*TmxPolyline
+	TrapPolyLineList           []*TmxPolyline
+	SpeedShoesPolyLineList     []*TmxPolyline
+	BarrierPolyLineList        map[int]*TmxPolyline // w barrier polyline
 }
 
 type TsxTile struct {
 	Id          int            `xml:"id,attr"`
 	ObjectGroup TsxObjectGroup `xml:"objectgroup"`
+	Properties  TmxProperties  `xml:"properties"`
 }
 
 type TsxObjectGroup struct {
@@ -92,69 +149,14 @@ type TsxObject struct {
 	Polyline   TsxPolyline     `xml:"polyline"`
 }
 
-type TmxProperties struct {
-	Property []TmxProperty `xml:"property"`
-}
-
 type TsxPolyline struct {
 	Points string `xml:"points,attr"`
-}
-
-type TmxProperty struct {
-	Name  string `xml:"name,attr"`
-	Value string `xml:"value,attr"`
-}
-
-// w tileSet
-type TmxTileset struct {
-	FirstGid   uint32     `xml:"firstgid,attr"` // w 此图块集的第一个图块在全局图块集中的位置
-	Name       string     `xml:"name,attr"`
-	TileWidth  int        `xml:"tilewidth,attr"`
-	TileHeight int        `xml:"tileheight,attr"`
-	Images     []TmxImage `xml:"image"`
-	Source     string     `xml:"source,attr"`
-}
-
-type TmxImage struct {
-	Source string `xml:"source,attr"`
-	Width  int    `xml:"width,attr"`
-	Height int    `xml:"height,attr"`
-}
-
-type TmxLayer struct {
-	Name   string  `xml:"name,attr"`
-	Width  int     `xml:"width,attr"`
-	Height int     `xml:"height,attr"`
-	Data   TmxData `xml:"data"`
-	Tile   []*TmxTile
-}
-
-type TmxTile struct {
-	Id             uint32
-	Tileset        *TmxTileset
-	FlipHorizontal bool
-	FlipVertical   bool
-	FlipDiagonal   bool
 }
 
 type TmxData struct {
 	Encoding    string `xml:"encoding,attr"`
 	Compression string `xml:"compression,attr"`
 	Value       string `xml:",chardata"`
-}
-
-type TmxObjectGroup struct {
-	Name    string      `xml:"name,attr"`
-	Width   int         `xml:"width,attr"`
-	Height  int         `xml:"height,attr"`
-	Objects []TmxObject `xml:"object"`
-}
-
-type TmxObject struct {
-	Id         string        `xml:"id,attr"`
-	X          float64       `xml:"x,attr"`
-	Y          float64       `xml:"y,attr"`
-	Properties TmxProperties `xml:"properties"`
 }
 
 type TmxPolyline struct {
@@ -254,7 +256,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	}
 	pPolyLineMap := make(map[int]*TmxPolyline, 0)
 	for _, tile := range pTsxIns.Tiles {
-		if 1 == tile.Id || 2 == tile.Id || 6 == tile.Id || 1 == tile.Id || 4 == tile.Id || 3 == tile.Id {
+		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" {
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects {
@@ -296,15 +298,17 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 					}
 				}
 			}
-			if tile.Id == 2 {
-				pTsxIns.TreasurePolyLineList = pPolyLineList
-			} else if 6 == tile.Id {
+			if tile.Properties.Property[0].Value == "highScoreTreasure" {
+				pTsxIns.HigherTreasurePolyLineList = pPolyLineList
+			} else if tile.Properties.Property[0].Value == "lowScoreTreasure" {
+				pTsxIns.LowTreasurePolyLineList = pPolyLineList
+			} else if "trap" == tile.Properties.Property[0].Value {
 				pTsxIns.TrapPolyLineList = pPolyLineList
-			} else if 3 == tile.Id {
+			} else if "speedShoes" == tile.Properties.Property[0].Value {
 				pTsxIns.SpeedShoesPolyLineList = pPolyLineList
 			}
+			pTsxIns.BarrierPolyLineList = pPolyLineMap
 		}
-		pTsxIns.BarrierPolyLineList = pPolyLineMap
 	}
 	return nil
 }

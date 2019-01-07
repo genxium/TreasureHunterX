@@ -158,8 +158,6 @@ func (pR *Room) onSpeedShoesPickedUp(contactingPlayer *Player, contactingSpeedSh
 		//HARDcode
 		pR.Players[contactingPlayer.Id].Speed += ADD_SPEED
 		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = nowMillis
-	} else {
-		Logger.Info("player got one SpeedShoes early")
 	}
 }
 
@@ -340,9 +338,14 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	return bullet
 }
 
-func (pR *Room) createTreasure(pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
-
-	polyLine := pTsxIns.TreasurePolyLineList[0]
+func (pR *Room) createTreasure(Type int32, pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
+	var polyLine *TmxPolyline
+	if Type == HIGH_SCORE_TREASURE_TYPE {
+		polyLine = pTsxIns.HigherTreasurePolyLineList[0]
+	}
+	if Type == TREASURE_TYPE {
+		polyLine = pTsxIns.LowTreasurePolyLineList[0]
+	}
 
 	thePoints := make([]*Vec2D, len(polyLine.Points))
 	for index, value := range polyLine.Points {
@@ -419,7 +422,7 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				X: float64(value.InitPos.X),
 				Y: float64(value.InitPos.Y),
 			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
 			theTreasure.Score = value.Score
 			theTreasure.Type = value.Type
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
@@ -431,7 +434,7 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				X: float64(value.InitPos.X),
 				Y: float64(value.InitPos.Y),
 			}
-			theTreasure := pR.createTreasure(pAnchor, int32(key), pTsxIns)
+			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
 			theTreasure.Score = value.Score
 			theTreasure.Type = value.Type
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
@@ -474,7 +477,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			if tile == nil || tile.Tileset == nil {
 				continue
 			}
-			if tile.Tileset.Source != "Tile_W128_H128_S01.tsx" {
+			if tile.Tileset.Source != "tile_1.tsx" {
 				continue
 			}
 
@@ -856,7 +859,7 @@ func (pR *Room) StartBattle() {
 
 	tsxIns := Tsx{}
 	pTsxIns := &tsxIns
-	relativePath = "../frontend/assets/resources/map/Tile_W128_H128_S01.tsx"
+	relativePath = "../frontend/assets/resources/map/tile_1.tsx"
 	fp = filepath.Join(pwd, relativePath)
 	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
@@ -997,7 +1000,9 @@ func (pR *Room) StartBattle() {
 					continue
 				}
 				player.AddSpeedAtGmtMillis = -1
-				player.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
+				if player.Speed == PLAYER_DEFAULT_SPEED+ADD_SPEED {
+					player.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
+				}
 			}
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
