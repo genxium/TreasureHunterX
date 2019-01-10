@@ -29,11 +29,11 @@ const (
 	COLLISION_CATEGORY_PUMPKIN           = (1 << 6)
 	COLLISION_CATEGORY_SPEED_SHOES       = (1 << 7)
 
-	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET | COLLISION_CATEGORY_SPEED_SHOES)
+	COLLISION_MASK_FOR_CONTROLLED_PLAYER = (COLLISION_CATEGORY_TREASURE | COLLISION_CATEGORY_TRAP | COLLISION_CATEGORY_TRAP_BULLET | COLLISION_CATEGORY_SPEED_SHOES )
 	COLLISION_MASK_FOR_TREASURE          = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP              = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 	COLLISION_MASK_FOR_TRAP_BULLET       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
-	COLLISION_MASK_FOR_BARRIER           = (COLLISION_CATEGORY_PUMPKIN)
+	COLLISION_MASK_FOR_BARRIER           = (COLLISION_CATEGORY_PUMPKIN )
 	COLLISION_MASK_FOR_PUMPKIN           = (COLLISION_CATEGORY_BARRIER)
 	COLLISION_MASK_FOR_SPEED_SHOES       = (COLLISION_CATEGORY_CONTROLLED_PLAYER)
 )
@@ -127,9 +127,10 @@ type RoomDownsyncFrame struct {
 	Traps            map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Bullets          map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SpeedShoes       map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Pumpkin          map[int32]*Pumpkin	   `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	//RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	//RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	//RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -751,7 +752,6 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 			diffFrame.SpeedShoes[k] = v
 		}
 	}
-
 	return diffFrame
 }
 
@@ -1060,6 +1060,8 @@ func (pR *Room) StartBattle() {
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						case *SpeedShoes:
 							pR.onSpeedShoesPickedUp(player, v, collisionNowMillis)
+						case *Barrier:
+							fmt.Println("++++++++++player ",player.Id,"has met barrier ")
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
