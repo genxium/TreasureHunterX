@@ -1060,8 +1060,6 @@ func (pR *Room) StartBattle() {
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						case *SpeedShoes:
 							pR.onSpeedShoesPickedUp(player, v, collisionNowMillis)
-						case *Barrier:
-							fmt.Println("++++++++++player ",player.Id,"has met barrier ")
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
