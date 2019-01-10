@@ -1345,8 +1345,8 @@
     "relativePath": "SpriteFrameSet.js"
   },
   "0e13eee2-1abe-40bf-8714-064feec158c7": {
-    "asset": 1547109136000,
-    "meta": 1547109136000,
+    "asset": 1547109691000,
+    "meta": 1547109691000,
     "relativePath": "resources/prefabs/Pumpkin.prefab"
   },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
@@ -1385,8 +1385,13 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1547109142000,
-    "meta": 1547109142000,
+    "asset": 1547109587000,
+    "meta": 1547109587000,
     "relativePath": "scenes/login.fire"
+  },
+  "eefe5c91-0433-487e-a62b-a70aae961b56": {
+    "asset": 1547109566000,
+    "meta": 1547109566000,
+    "relativePath": "resources/textures/81547109546_.pic_hd.jpg"
   }
 }
