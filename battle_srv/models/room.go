@@ -13,6 +13,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
+	"math/rand"
 )
 
 const (
@@ -464,7 +465,7 @@ func (pR *Room) InitPumpkin(pTmxMapIns *TmxMap) {
 		p.LinearSpeed = 0.0000004
 		p.X = value.X
 		p.Y = value.Y
-		p.Dir = &Direction{1, 1} // todo
+		p.Dir = &Direction{rand.Float64(), rand.Float64()} // todo
 		pR.Pumpkin[p.LocalIdInBattle] = p
 	}
 }
@@ -919,6 +920,7 @@ func (pR *Room) StartBattle() {
 				Traps:          pR.Traps,
 				Bullets:        pR.Bullets,
 				SpeedShoes:     pR.SpeedShoes,
+				Pumpkin:		pR.Pumpkin,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
