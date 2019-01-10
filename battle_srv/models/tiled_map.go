@@ -381,6 +381,7 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.Pumpkin[index] = &pos
 			}
 		}
+    Logger.Info("pumpkinInfo", zap.Any("p:", pTmxMapIns.Pumpkin))
 		if "speed_shoes" == objGroup.Name {
 			pTmxMapIns.SpeedShoesList = make([]SpeedShoesInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {

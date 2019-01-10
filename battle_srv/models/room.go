@@ -692,6 +692,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Treasures:      make(map[int32]*Treasure, 0),
 		Traps:          make(map[int32]*Trap, 0),
 		SpeedShoes:     make(map[int32]*SpeedShoes, 0),
+		Pumpkin:        currentFrame.Pumpkin,
 	}
 
 	for k, last := range lastFrame.Treasures {
