@@ -865,7 +865,7 @@ func (pR *Room) StartBattle() {
 	fp = filepath.Join(pwd, relativePath)
 	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
-		panic("Tmx filepath must be absolute!")
+		panic("Filepath must be absolute!")
 	}
 
 	byteArr, err = ioutil.ReadFile(fp)

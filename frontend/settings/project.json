@@ -38,7 +38,20 @@
   ],
   "design-resolution-height": 640,
   "design-resolution-width": 960,
-  "excluded-modules": [],
+  "excluded-modules": [
+    "Spine Skeleton",
+    "RichText",
+    "MotionStreak",
+    "PageView",
+    "PageViewIndicator",
+    "Slider",
+    "VideoPlayer",
+    "WebView",
+    "Physics",
+    "StudioComponent",
+    "3D",
+    "Mesh"
+  ],
   "fit-height": true,
   "fit-width": false,
   "group-list": [
@@ -54,6 +67,5 @@
     "width": 960
   },
   "use-customize-simulator": false,
-  "use-project-simulator-setting": false,
-  "start-scene": "current"
+  "use-project-simulator-setting": false
 }
