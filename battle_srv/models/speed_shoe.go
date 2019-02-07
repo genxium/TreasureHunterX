@@ -4,7 +4,7 @@ import (
 	"github.com/ByteArena/box2d"
 )
 
-type SpeedShoes struct {
+type SpeedShoe struct {
 	Id               int32         `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LocalIdInBattle  int32         `protobuf:"varint,2,opt,name=localIdInBattle,proto3" json:"localIdInBattle,omitempty"`
 	X                float64       `protobuf:"fixed64,3,opt,name=x,proto3" json:"x,omitempty"`

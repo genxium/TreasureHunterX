@@ -104,9 +104,9 @@ type Room struct {
 	Treasures                    map[int32]*Treasure
 	Traps                        map[int32]*Trap
 	Bullets                      map[int32]*Bullet
-	SpeedShoes                   map[int32]*SpeedShoes
-	Barrier                      map[int32]*Barrier
-	Pumpkin                      map[int32]*Pumpkin
+	SpeedShoes                   map[int32]*SpeedShoe
+	Barriers                      map[int32]*Barrier
+	Pumpkins                      map[int32]*Pumpkin
 	AccumulatedLocalIdForBullets int32
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
@@ -127,8 +127,8 @@ type RoomDownsyncFrame struct {
 	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SpeedShoes     map[int32]*SpeedShoes `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Pumpkin        map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SpeedShoes     map[int32]*SpeedShoe `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Pumpkins        map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	//RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
@@ -152,12 +152,14 @@ const (
 	ADD_SPEED            = 100 //Hardcoded
 )
 
-func (pR *Room) onSpeedShoesPickedUp(contactingPlayer *Player, contactingSpeedShoes *SpeedShoes, nowMillis int64) {
-	if _, existent := pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle]; existent && contactingPlayer.AddSpeedAtGmtMillis == -1 {
-		Logger.Info("Player has picked up speedShoes:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingSpeedShoes.LocalIdInBattle", contactingSpeedShoes.LocalIdInBattle))
-		pR.CollidableWorld.DestroyBody(contactingSpeedShoes.CollidableBody)
-		pR.SpeedShoes[contactingSpeedShoes.LocalIdInBattle] = &SpeedShoes{Removed: true}
-		//HARDcode
+func (pR *Room) onSpeedShoePickedUp(contactingPlayer *Player, contactingSpeedShoe *SpeedShoe, nowMillis int64) {
+	if _, existent := pR.SpeedShoes[contactingSpeedShoe.LocalIdInBattle]; existent && contactingPlayer.AddSpeedAtGmtMillis == -1 {
+		Logger.Info("Player has picked up a SpeedShoe:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingSpeedShoe.LocalIdInBattle", contactingSpeedShoe.LocalIdInBattle))
+		pR.CollidableWorld.DestroyBody(contactingSpeedShoe.CollidableBody)
+		pR.SpeedShoes[contactingSpeedShoe.LocalIdInBattle] = &SpeedShoe{
+      Removed: true,
+			RemovedAtFrameId: pR.Tick,
+    }
 		pR.Players[contactingPlayer.Id].Speed += ADD_SPEED
 		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = nowMillis
 	}
@@ -375,7 +377,7 @@ func (pR *Room) createTreasure(Type int32, pAnchor *Vec2D, treasureLocalIdInBatt
 	return &theTreasure
 }
 
-func (pR *Room) createSpeedShoes(pAnchor *Vec2D, speedShoesLocalIdInBattle int32, pTsxIns *Tsx) *SpeedShoes {
+func (pR *Room) createSpeedShoe(pAnchor *Vec2D, speedShoesLocalIdInBattle int32, pTsxIns *Tsx) *SpeedShoe {
 	polyLine := pTsxIns.SpeedShoesPolyLineList[0]
 
 	thePoints := make([]*Vec2D, len(polyLine.Points))
@@ -391,7 +393,7 @@ func (pR *Room) createSpeedShoes(pAnchor *Vec2D, speedShoesLocalIdInBattle int32
 		Points: thePoints,
 	}
 
-	theSpeedShoes := SpeedShoes{
+	theSpeedShoe := SpeedShoe{
 		Id:              0,
 		LocalIdInBattle: speedShoesLocalIdInBattle,
 		Type:            0,
@@ -400,7 +402,7 @@ func (pR *Room) createSpeedShoes(pAnchor *Vec2D, speedShoesLocalIdInBattle int32
 		PickupBoundary:  &thePolygon,
 	}
 
-	return &theSpeedShoes
+	return &theSpeedShoe
 }
 
 func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
@@ -451,22 +453,22 @@ func (pR *Room) InitSpeedShoes(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			X: float64(value.InitPos.X),
 			Y: float64(value.InitPos.Y),
 		}
-		theSpeedShoes := pR.createSpeedShoes(pAnchor, int32(key), pTsxIns)
-		theSpeedShoes.Type = value.Type
-		pR.SpeedShoes[theSpeedShoes.LocalIdInBattle] = theSpeedShoes
+		theSpeedShoe := pR.createSpeedShoe(pAnchor, int32(key), pTsxIns)
+		theSpeedShoe.Type = value.Type
+		pR.SpeedShoes[theSpeedShoe.LocalIdInBattle] = theSpeedShoe
 	}
-	Logger.Info("InitSpeedShoes finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.SpeedShoes))
+	Logger.Info("InitSpeedShoes finished:", zap.Any("roomId", pR.Id), zap.Any("speedshoes", pR.SpeedShoes))
 }
 
-func (pR *Room) InitPumpkin(pTmxMapIns *TmxMap) {
-	for key, value := range pTmxMapIns.Pumpkin {
+func (pR *Room) InitPumpkins(pTmxMapIns *TmxMap) {
+	for key, value := range pTmxMapIns.Pumpkins {
 		p := &Pumpkin{}
 		p.LocalIdInBattle = int32(key)
 		p.LinearSpeed = 0.0000004
 		p.X = value.X
 		p.Y = value.Y
 		p.Dir = &Direction{rand.Float64(), rand.Float64()} // todo
-		pR.Pumpkin[p.LocalIdInBattle] = p
+		pR.Pumpkins[p.LocalIdInBattle] = p
 	}
 }
 
@@ -500,8 +502,8 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			var bdDef box2d.B2BodyDef
 			bdDef = box2d.MakeB2BodyDef()
 			bdDef.Type = box2d.B2BodyType.B2_staticBody
-			bdDef.Position.Set(barrier.X, barrier.Y) // todo ？？？？？
-			b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+			bdDef.Position.Set(barrier.X, barrier.Y)
+			b2BarrierBody := pR.CollidableWorld.CreateBody(&bdDef)
 
 			fd := box2d.MakeB2FixtureDef()
 			if barrier.Boundary != nil {
@@ -521,11 +523,11 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			fd.Filter.CategoryBits = COLLISION_CATEGORY_BARRIER
 			fd.Filter.MaskBits = COLLISION_MASK_FOR_BARRIER
 			fd.Density = 0.0
-			b2PlayerBody.CreateFixtureFromDef(&fd)
+			b2BarrierBody.CreateFixtureFromDef(&fd)
 
-			barrier.CollidableBody = b2PlayerBody
-			b2PlayerBody.SetUserData(barrier)
-			pR.Barrier[int32(index)] = barrier
+			barrier.CollidableBody = b2BarrierBody
+			b2BarrierBody.SetUserData(barrier)
+			pR.Barriers[int32(index)] = barrier
 		}
 	}
 }
@@ -561,14 +563,14 @@ func (pR *Room) InitColliders() {
 		// PrettyPrintBody(player.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.Pumpkin:", zap.Any("roomId", pR.Id))
-	for _, p := range pR.Pumpkin {
+	Logger.Info("InitColliders for pR.Pumpkins:", zap.Any("roomId", pR.Id))
+	for _, p := range pR.Pumpkins {
 		var bdDef box2d.B2BodyDef
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
 		bdDef.Position.Set(p.X, p.Y)
 
-		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2PumpkinBody := pR.CollidableWorld.CreateBody(&bdDef)
 
 		b2CircleShape := box2d.MakeB2CircleShape()
 		b2CircleShape.M_radius = 32
@@ -578,10 +580,10 @@ func (pR *Room) InitColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_PUMPKIN
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_PUMPKIN
 		fd.Density = 0.0
-		b2PlayerBody.CreateFixtureFromDef(&fd)
+		b2PumpkinBody.CreateFixtureFromDef(&fd)
 
-		p.CollidableBody = b2PlayerBody
-		b2PlayerBody.SetUserData(p)
+		p.CollidableBody = b2PumpkinBody
+		b2PumpkinBody.SetUserData(p)
 	}
 
 	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
@@ -622,7 +624,7 @@ func (pR *Room) InitColliders() {
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Position.Set(trap.PickupBoundary.Anchor.X, trap.PickupBoundary.Anchor.Y)
 
-		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2TrapBody := pR.CollidableWorld.CreateBody(&bdDef)
 
 		pointsCount := len(trap.PickupBoundary.Points)
 
@@ -639,11 +641,10 @@ func (pR *Room) InitColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
 		fd.Density = 0.0
-		b2TreasureBody.CreateFixtureFromDef(&fd)
+		b2TrapBody.CreateFixtureFromDef(&fd)
 
-		trap.CollidableBody = b2TreasureBody
-		b2TreasureBody.SetUserData(trap)
-		// PrettyPrintBody(trap.CollidableBody)
+		trap.CollidableBody = b2TrapBody
+		b2TrapBody.SetUserData(trap)
 	}
 
 	Logger.Info("InitColliders for pR.SpeedShoes:", zap.Any("roomId", pR.Id))
@@ -653,7 +654,7 @@ func (pR *Room) InitColliders() {
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Position.Set(v.PickupBoundary.Anchor.X, v.PickupBoundary.Anchor.Y)
 
-		b2SpeedShoesBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2SpeedShoeBody := pR.CollidableWorld.CreateBody(&bdDef)
 
 		pointsCount := len(v.PickupBoundary.Points)
 
@@ -670,10 +671,10 @@ func (pR *Room) InitColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_SPEED_SHOES
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_SPEED_SHOES
 		fd.Density = 0.0
-		b2SpeedShoesBody.CreateFixtureFromDef(&fd)
+		b2SpeedShoeBody.CreateFixtureFromDef(&fd)
 
-		v.CollidableBody = b2SpeedShoesBody
-		b2SpeedShoesBody.SetUserData(v)
+		v.CollidableBody = b2SpeedShoeBody
+		b2SpeedShoeBody.SetUserData(v)
 		//PrettyPrintBody(v.CollidableBody)
 	}
 }
@@ -691,8 +692,8 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Bullets:        currentFrame.Bullets,
 		Treasures:      make(map[int32]*Treasure, 0),
 		Traps:          make(map[int32]*Trap, 0),
-		SpeedShoes:     make(map[int32]*SpeedShoes, 0),
-		Pumpkin:        currentFrame.Pumpkin,
+		SpeedShoes:     make(map[int32]*SpeedShoe, 0),
+		Pumpkins:        currentFrame.Pumpkins,
 	}
 
 	for k, last := range lastFrame.Treasures {
@@ -746,11 +747,11 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		}
 		curr, ok := currentFrame.SpeedShoes[k]
 		if !ok {
-			diffFrame.SpeedShoes[k] = &SpeedShoes{Removed: true}
-			Logger.Info("A SpeedShoes is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("speedShoes.LocalIdInBattle", curr.LocalIdInBattle))
+			diffFrame.SpeedShoes[k] = &SpeedShoe{Removed: true}
+			Logger.Info("A SpeedShoe is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("speedShoes.LocalIdInBattle", curr.LocalIdInBattle))
 			continue
 		}
-		if ok, v := diffSpeedShoes(last, curr); ok {
+		if ok, v := diffSpeedShoe(last, curr); ok {
 			diffFrame.SpeedShoes[k] = v
 		}
 	}
@@ -789,18 +790,18 @@ func diffTrap(last, curr *Trap) (bool, *Trap) {
 	return t, trap
 }
 
-func diffSpeedShoes(last, curr *SpeedShoes) (bool, *SpeedShoes) {
-	speedShoes := &SpeedShoes{}
+func diffSpeedShoe(last, curr *SpeedShoe) (bool, *SpeedShoe) {
+	speedShoe := &SpeedShoe{}
 	t := false
 	if last.X != curr.X {
-		speedShoes.X = curr.X
+		speedShoe.X = curr.X
 		t = true
 	}
 	if last.Y != curr.Y {
-		speedShoes.Y = curr.Y
+		speedShoe.Y = curr.Y
 		t = true
 	}
-	return t, speedShoes
+	return t, speedShoe
 }
 
 func diffBullet(last, curr *Bullet) (bool, *Bullet) {
@@ -874,7 +875,7 @@ func (pR *Room) StartBattle() {
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
-	pR.InitPumpkin(pTmxMapIns)
+	pR.InitPumpkins(pTmxMapIns)
 	pR.InitSpeedShoes(pTmxMapIns, pTsxIns)
 	pR.InitColliders()
 	pR.InitBarrier(pTmxMapIns, pTsxIns)
@@ -921,7 +922,7 @@ func (pR *Room) StartBattle() {
 				Traps:          pR.Traps,
 				Bullets:        pR.Bullets,
 				SpeedShoes:     pR.SpeedShoes,
-				Pumpkin:        pR.Pumpkin,
+				Pumpkins:        pR.Pumpkins,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
@@ -965,22 +966,16 @@ func (pR *Room) StartBattle() {
 				delete(pR.Traps, localIdInBattle)
 			}
 
-			/**
-			 * TODO
-			 *
-			 * Please investigate why `speedShoes` WON'T disappear in frontend accordingly if the following snippet is uncommented. -- YFLu
-			 *
-			 */
-			//			for localIdInBattle, speedShoes := range pR.SpeedShoes {
-			//				if !speedShoes.Removed {
-			//					continue
-			//				}
-			//				if speedShoes.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
-			//					// The trap removal information is NOT YET acknowledged by some players.
-			//					continue
-			//				}
-			//				delete(pR.SpeedShoes, localIdInBattle)
-			//			}
+			for localIdInBattle, speedShoe := range pR.SpeedShoes {
+				if !speedShoe.Removed {
+					continue
+				}
+				if speedShoe.RemovedAtFrameId > minAckingFrameId-MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN {
+					// The trap removal information is NOT YET acknowledged by some players.
+					continue
+				}
+				delete(pR.SpeedShoes, localIdInBattle)
+			}
 
 			for playerId, player := range pR.Players {
 				/*
@@ -1049,7 +1044,7 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 			}
-			for _, pumpkin := range pR.Pumpkin {
+			for _, pumpkin := range pR.Pumpkins {
 				if pumpkin.Removed {
 					continue
 				}
@@ -1072,15 +1067,15 @@ func (pR *Room) StartBattle() {
 							pR.onTrapPickedUp(player, v)
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
-						case *SpeedShoes:
-							pR.onSpeedShoesPickedUp(player, v, collisionNowMillis)
+						case *SpeedShoe:
+							pR.onSpeedShoePickedUp(player, v, collisionNowMillis)
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
 					}
 				}
 			}
-			for _, pumpkin := range pR.Pumpkin {
+			for _, pumpkin := range pR.Pumpkins {
 				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						if barrier, ok := edge.Other.GetUserData().(*Barrier); ok {
@@ -1273,7 +1268,7 @@ func (pR *Room) onDismissed() {
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
 	pR.Bullets = make(map[int32]*Bullet)
-	pR.SpeedShoes = make(map[int32]*SpeedShoes)
+	pR.SpeedShoes = make(map[int32]*SpeedShoe)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
 	for indice, _ := range pR.JoinIndexBooleanArr {
 		pR.JoinIndexBooleanArr[indice] = false

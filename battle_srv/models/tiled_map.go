@@ -100,7 +100,7 @@ type TmxMap struct {
 	HighTreasuresInfo            []TreasuresInfo
 	SpeedShoesList               []SpeedShoesInfo
 	TrapsInitPosList             []Vec2D
-	Pumpkin                      []*Vec2D
+	Pumpkins                      []*Vec2D
 }
 
 type TreasuresInfo struct {
@@ -370,18 +370,18 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.TrapsInitPosList[index] = trapPos
 			}
 		}
-		if "pumpkin" == objGroup.Name {
-			pTmxMapIns.Pumpkin = make([]*Vec2D, len(objGroup.Objects))
+		if "pumpkins" == objGroup.Name {
+			pTmxMapIns.Pumpkins = make([]*Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
 				pos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.Pumpkin[index] = &pos
+				pTmxMapIns.Pumpkins[index] = &pos
 			}
 		}
-		Logger.Info("pumpkinInfo", zap.Any("p:", pTmxMapIns.Pumpkin))
+		Logger.Info("pumpkinInfo", zap.Any("p:", pTmxMapIns.Pumpkins))
 		if "speed_shoes" == objGroup.Name {
 			pTmxMapIns.SpeedShoesList = make([]SpeedShoesInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
