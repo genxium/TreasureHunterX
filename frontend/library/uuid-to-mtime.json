@@ -1374,19 +1374,19 @@
     "meta": 1551403683000,
     "relativePath": "SpriteFrameSet.js"
   },
-  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
-    "asset": 1551419627000,
-    "meta": 1551419630000,
-    "relativePath": "scripts/BasePlayer.js"
-  },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
     "asset": 1551421540000,
     "meta": 1551421540000,
     "relativePath": "scenes/login.fire"
   },
+  "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
+    "asset": 1551422666000,
+    "meta": 1551424477000,
+    "relativePath": "scripts/BasePlayer.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1551421534000,
-    "meta": 1551421537000,
+    "asset": 1551422680000,
+    "meta": 1551424477000,
     "relativePath": "scripts/Map.js"
   }
 }

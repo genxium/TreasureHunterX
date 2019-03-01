@@ -81,14 +81,6 @@ module.export = cc.Class({
       return;
     }
 
-    if (this.isBot) {
-      if (newScheduledDirection.dx != this.scheduledDirection.dx || newScheduledDirection.dy != this.scheduledDirection.dy) {
-        //console.log(newScheduledDirection, this.activeDirection, this.newpos);
-        console.log('\u8F6C\u6362\u65B9\u5411: \u4E4B\u524D\u7684\u4F4D\u7F6E: ' + this.oldPos + ' \u5E94\u5F53\u79FB\u52A8\u5230\u7684\u4F4D\u7F6E: ' + this.newPos + ' \u65E7\u65B9\u5411:x' + this.scheduledDirection.dx + ', y' + this.scheduledDirection.dy + ' \u65B0\u65B9\u5411: x: ' + newScheduledDirection.dx + ', y: ' + newScheduledDirection.dy);
-        //console.log(this.newScheduledDirection,this.toMoveByVec, this.toMoveByVecMag )
-      }
-    }
-
     if (forceAnimSwitch || null == this.scheduledDirection || newScheduledDirection.dx != this.scheduledDirection.dx || newScheduledDirection.dy != this.scheduledDirection.dy) {
       this.scheduledDirection = newScheduledDirection;
       var clipKey = newScheduledDirection.dx.toString() + newScheduledDirection.dy.toString();

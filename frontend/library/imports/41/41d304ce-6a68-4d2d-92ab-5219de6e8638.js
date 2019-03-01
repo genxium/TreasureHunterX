@@ -844,7 +844,6 @@ cc.Class({
         self._dumpToFullFrameCache(roomDownsyncFrame);
         var sentAt = roomDownsyncFrame.sentAt;
 
-        //kobako: 根据downFrame更新玩家信息, 供后面显示
         //update players Info
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
@@ -1067,10 +1066,6 @@ cc.Class({
       var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
       var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
 
-      //kobako: print out bot player's Direction
-      //console.log(cachedPlayerData);
-      //kobako
-
       //更新玩家信息展示
       if (null != cachedPlayerData) {
         var _playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
@@ -1089,11 +1084,6 @@ cc.Class({
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
       var oldPos = cc.v2(targetNode.x, targetNode.y);
-
-      //kobako
-      aControlledOtherPlayerScriptIns.isBot = true;
-      aControlledOtherPlayerScriptIns.oldPos = oldPos;
-      aControlledOtherPlayerScriptIns.newPos = newPos;
 
       var toMoveByVec = newPos.sub(oldPos);
       var toMoveByVecMag = toMoveByVec.mag();
@@ -1124,11 +1114,7 @@ cc.Class({
           };
           aControlledOtherPlayerScriptIns.toMoveByVec = toMoveByVec;
           aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
-          /*
-          if (normalizedDir.dx != aControlledOtherPlayerScriptIns.activeDirection.dx || normalizedDir.dy != aControlledOtherPlayerScriptIns.activeDirection.dy) {
-            cc.log(`Player ${cachedPlayerData.id} is moving normally but with a direction change! Having toMoveByVecMag == ${toMoveByVecMag}, notToMoveDisThreshold == ${notToMoveDisThreshold}`);
-          }
-          */
+
           if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
