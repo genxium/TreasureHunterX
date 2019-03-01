@@ -76,6 +76,7 @@ module.export = cc.Class({
     if (!newScheduledDirection) {
       return;
     }
+
     if (forceAnimSwitch || null == this.scheduledDirection || (newScheduledDirection.dx != this.scheduledDirection.dx || newScheduledDirection.dy != this.scheduledDirection.dy)) {
       this.scheduledDirection = newScheduledDirection;
       const clipKey = newScheduledDirection.dx.toString() + newScheduledDirection.dy.toString();
@@ -364,7 +365,7 @@ module.export = cc.Class({
 
   lateUpdate(dt) {
     const self = this;
-    if (0 != self.activeDirection.dx || 0 != self.activeDirection.dy) {
+    if (0 != self.activeDirection.dx || 0 != self.activeDirection.dy) {// 如果其中一个为0 就不会改变方向
       const newScheduledDirectionInLocalCoordinate = self.ctrl.discretizeDirection(self.activeDirection.dx, self.activeDirection.dy, self.eps);
       self.scheduleNewDirection(newScheduledDirectionInLocalCoordinate, false);
     }

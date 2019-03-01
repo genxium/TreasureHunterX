@@ -36,7 +36,7 @@ if (CC_DEBUG) {
   };
 }
 
-window.language = "zh";
+window.language = "en";
 window.backendAddress = backendAddress;
 window.wechatAddress = wechatAddress;
 

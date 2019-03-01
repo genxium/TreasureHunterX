@@ -463,10 +463,12 @@ cc.Class({
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
+
     /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
 
+    //Result panel init
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
@@ -482,6 +484,7 @@ cc.Class({
         default:
           break;
       }
+
       if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) {
         // Already disconnected. 
         cc.log("Ws session is already closed when `again/replay` button is clicked. Reconnecting now.");
@@ -774,6 +777,8 @@ cc.Class({
       self._inputControlEnabled = false;
       self.setupInputControls();
       window.handleRoomDownsyncFrame = function (diffFrame) {
+        //console.log(diffFrame);
+
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
@@ -791,6 +796,9 @@ cc.Class({
           _findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
           return;
         }
+
+        //根据downFrame显示游戏场景
+
         var frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -836,6 +844,7 @@ cc.Class({
         self._dumpToFullFrameCache(roomDownsyncFrame);
         var sentAt = roomDownsyncFrame.sentAt;
 
+        //kobako: 根据downFrame更新玩家信息, 供后面显示
         //update players Info
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
@@ -1057,6 +1066,11 @@ cc.Class({
       var playerId = parseInt(k);
       var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
       var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
+
+      //kobako: print out bot player's Direction
+      //console.log(cachedPlayerData);
+      //kobako
+
       //更新玩家信息展示
       if (null != cachedPlayerData) {
         var _playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
@@ -1075,17 +1089,26 @@ cc.Class({
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
       var oldPos = cc.v2(targetNode.x, targetNode.y);
+
+      //kobako
+      aControlledOtherPlayerScriptIns.isBot = true;
+      aControlledOtherPlayerScriptIns.oldPos = oldPos;
+      aControlledOtherPlayerScriptIns.newPos = newPos;
+
       var toMoveByVec = newPos.sub(oldPos);
       var toMoveByVecMag = toMoveByVec.mag();
+      aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
       var toTeleportDisThreshold = cachedPlayerData.speed * dt * 100;
-      var notToMoveDisThreshold = cachedPlayerData.speed * dt * 0.5;
+      //const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
+      var notToMoveDisThreshold = cachedPlayerData.speed * dt * 1.0;
       if (toMoveByVecMag < notToMoveDisThreshold) {
-        aControlledOtherPlayerScriptIns.activeDirection = {
+        aControlledOtherPlayerScriptIns.activeDirection = { //任意一个值为0都不会改变方向
           dx: 0,
           dy: 0
         };
       } else {
         if (toMoveByVecMag > toTeleportDisThreshold) {
+          //如果移动过大 打印log但还是会移动
           cc.log("Player " + cachedPlayerData.id + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
           aControlledOtherPlayerScriptIns.activeDirection = {
             dx: 0,
@@ -1099,6 +1122,13 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag
           };
+          aControlledOtherPlayerScriptIns.toMoveByVec = toMoveByVec;
+          aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
+          /*
+          if (normalizedDir.dx != aControlledOtherPlayerScriptIns.activeDirection.dx || normalizedDir.dy != aControlledOtherPlayerScriptIns.activeDirection.dy) {
+            cc.log(`Player ${cachedPlayerData.id} is moving normally but with a direction change! Having toMoveByVecMag == ${toMoveByVecMag}, notToMoveDisThreshold == ${notToMoveDisThreshold}`);
+          }
+          */
           if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
@@ -1112,6 +1142,7 @@ cc.Class({
 
       if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
         var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        //console.log(newScheduledDirection);
         aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
       }
 

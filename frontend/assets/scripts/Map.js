@@ -446,10 +446,12 @@ cc.Class({
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
+
     /** init requeired prefab started */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
 
+    //Result panel init
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
@@ -465,6 +467,7 @@ cc.Class({
         default:
           break;
       }
+
       if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) {
         // Already disconnected. 
         cc.log("Ws session is already closed when `again/replay` button is clicked. Reconnecting now.");
@@ -607,6 +610,8 @@ cc.Class({
       self._inputControlEnabled = false;
       self.setupInputControls();
       window.handleRoomDownsyncFrame = function(diffFrame) {
+        //console.log(diffFrame);
+
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) { //显示倒计时
@@ -622,6 +627,9 @@ cc.Class({
           findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
           return;
         }
+
+        //根据downFrame显示游戏场景
+
         const frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -912,6 +920,7 @@ cc.Class({
         cachedPlayerData.x,
         cachedPlayerData.y
       );
+
       //更新玩家信息展示
       if (null != cachedPlayerData) {
         const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
@@ -929,21 +938,26 @@ cc.Class({
       const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
       aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
+
+
       const oldPos = cc.v2(
         targetNode.x,
         targetNode.y
       );
+
       const toMoveByVec = newPos.sub(oldPos);
       const toMoveByVecMag = toMoveByVec.mag();
+      aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
       const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
-      const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
-      if (toMoveByVecMag < notToMoveDisThreshold) {
-        aControlledOtherPlayerScriptIns.activeDirection = {
+      //const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
+      const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 1.0);
+      if (toMoveByVecMag < notToMoveDisThreshold) { 
+        aControlledOtherPlayerScriptIns.activeDirection = { //任意一个值为0都不会改变方向
           dx: 0,
           dy: 0
         };
       } else {
-        if (toMoveByVecMag > toTeleportDisThreshold) {
+        if (toMoveByVecMag > toTeleportDisThreshold) { //如果移动过大 打印log但还是会移动
           cc.log(`Player ${cachedPlayerData.id} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
           aControlledOtherPlayerScriptIns.activeDirection = {
             dx: 0,
@@ -957,6 +971,9 @@ cc.Class({
             dx: toMoveByVec.x / toMoveByVecMag,
             dy: toMoveByVec.y / toMoveByVecMag,
           };
+          aControlledOtherPlayerScriptIns.toMoveByVec = toMoveByVec;
+          aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
+
           if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
@@ -968,14 +985,17 @@ cc.Class({
         }
       }
 
+
       if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
         const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
+        //console.log(newScheduledDirection);
         aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
       }
 
       if (null != toRemovePlayerNodeDict[playerId]) {
         delete toRemovePlayerNodeDict[playerId];
       }
+
 
     }
 
