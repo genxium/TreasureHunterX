@@ -103,6 +103,7 @@ type Room struct {
 	DismissalWaitGroup           sync.WaitGroup
 	Treasures                    map[int32]*Treasure
 	Traps                        map[int32]*Trap
+	GuardTowers                  map[int32]*GuardTower
 	Bullets                      map[int32]*Bullet
 	SpeedShoes                   map[int32]*SpeedShoe
 	Barriers                      map[int32]*Barrier
@@ -112,6 +113,7 @@ type Room struct {
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
 }
+
 
 type RoomDownsyncFrame struct {
 	/* TODO
@@ -165,10 +167,11 @@ func (pR *Room) onSpeedShoePickedUp(contactingPlayer *Player, contactingSpeedSho
 	}
 }
 
+
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
 		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
-		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody)
+		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody) //触碰后即刻删除
 		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{
 			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
@@ -287,7 +290,40 @@ func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *T
 	return &theTrap
 }
 
-func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
+func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *Tsx) *GuardTower {
+
+	polyLine := pTsxIns.GuardTowerPolyLineList[0]
+
+	thePoints := make([]*Vec2D, len(polyLine.Points))
+	for index, value := range polyLine.Points {
+		thePoints[index] = &Vec2D{
+			X: value.X,
+			Y: value.Y,
+		}
+	}
+
+	thePolygon := Polygon2D{
+		Anchor: pAnchor,
+		Points: thePoints,
+	}
+
+	theGuardTower := GuardTower{
+		Id:              0,
+		LocalIdInBattle: trapLocalIdInBattle,
+		X:               pAnchor.X,
+		Y:               pAnchor.Y,
+		PickupBoundary:  &thePolygon,
+
+    InRangePlayerList: make(map[int32]*Player),
+    CurrentAttackingIndex: 0,
+    LastAttackTick:  utils.UnixtimeNano(),
+	}
+
+	return &theGuardTower
+}
+
+func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet{
+  /*
 	startPos := Vec2D{
 		X: pTrap.CollidableBody.GetPosition().X,
 		Y: pTrap.CollidableBody.GetPosition().Y,
@@ -296,6 +332,7 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 		X: pPlayer.CollidableBody.GetPosition().X,
 		Y: pPlayer.CollidableBody.GetPosition().Y,
 	}
+  */
 
 	pR.AccumulatedLocalIdForBullets++
 
@@ -340,6 +377,63 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 
 	pR.Bullets[bullet.LocalIdInBattle] = bullet
 	return bullet
+}
+
+func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
+	startPos := Vec2D{
+		X: pTrap.CollidableBody.GetPosition().X,
+		Y: pTrap.CollidableBody.GetPosition().Y,
+	}
+	endPos := Vec2D{
+		X: pPlayer.CollidableBody.GetPosition().X,
+		Y: pPlayer.CollidableBody.GetPosition().Y,
+	}
+	return pR.createTrapBulletByPos(startPos, endPos)
+
+  /*
+	pR.AccumulatedLocalIdForBullets++
+
+	var bdDef box2d.B2BodyDef
+	colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
+	bdDef = box2d.MakeB2BodyDef()
+	bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+	bdDef.Position.Set(startPos.X+colliderOffset.X, startPos.Y+colliderOffset.Y)
+
+	b2Body := pR.CollidableWorld.CreateBody(&bdDef)
+
+	b2CircleShape := box2d.MakeB2CircleShape()
+	b2CircleShape.M_radius = 32 // Matching that of client-side setting.
+
+	fd := box2d.MakeB2FixtureDef()
+	fd.Shape = &b2CircleShape
+	fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
+	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
+	fd.Density = 0.0
+	b2Body.CreateFixtureFromDef(&fd)
+
+	diffVecX := (endPos.X - startPos.X)
+	diffVecY := (endPos.Y - startPos.Y)
+	tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
+	linearUnitVector := Direction{
+		Dx: diffVecX / tempMag,
+		Dy: diffVecY / tempMag,
+	}
+
+	bullet := &Bullet{
+		LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
+		LinearSpeed:     0.0000004,
+		X:               startPos.X,
+		Y:               startPos.Y,
+		StartAtPoint:    &startPos,
+		EndAtPoint:      &endPos,
+		Dir:             &linearUnitVector,
+	}
+
+	bullet.CollidableBody = b2Body
+	b2Body.SetUserData(bullet)
+
+	pR.Bullets[bullet.LocalIdInBattle] = bullet
+  */
 }
 
 func (pR *Room) createTreasure(Type int32, pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
@@ -403,6 +497,22 @@ func (pR *Room) createSpeedShoe(pAnchor *Vec2D, speedShoesLocalIdInBattle int32,
 	}
 
 	return &theSpeedShoe
+}
+
+func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
+	for key, value := range pTmxMapIns.GuardTowersInitPosList {
+		{
+			pAnchor := &Vec2D{
+				X: float64(value.X),
+				Y: float64(value.Y),
+			}
+			tower := pR.createGuardTower(pAnchor, int32(key), pTsxIns)
+      fmt.Println("-1-1-1-1-1-1-1-1: ",tower.LocalIdInBattle , pR.GuardTowers)
+			pR.GuardTowers[tower.LocalIdInBattle] = tower
+      fmt.Println("000000 InitGuardTower: ",tower.LocalIdInBattle , pR.GuardTowers)
+		}
+	}
+	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
 }
 
 func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
@@ -472,6 +582,9 @@ func (pR *Room) InitPumpkins(pTmxMapIns *TmxMap) {
 	}
 }
 
+//从layers获取所有遮挡物的tile, 然后根据gid获取坐标,
+//从tsx获取对应的多边形线条, 初始化一个Boundary
+//
 func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 	for _, lay := range pTmxMapIns.Layers {
 		if lay.Name != "tile_1 human skeleton" && lay.Name != "tile_1 board" && lay.Name != "tile_1 stone" {
@@ -486,6 +599,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			}
 
 			barrier := &Barrier{}
+      //Set coord
 			barrier.X, barrier.Y = pTmxMapIns.getCoordByGid(index)
 			barrier.Type = tile.Id
 			if v, ok := pTsxIns.BarrierPolyLineList[int(tile.Id)]; ok {
@@ -496,15 +610,18 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 						Y: p.Y,
 					})
 				}
+        //Get points
 				barrier.Boundary = &Polygon2D{Points: thePoints}
 			}
 
+      //Get body def by X,Y
 			var bdDef box2d.B2BodyDef
 			bdDef = box2d.MakeB2BodyDef()
 			bdDef.Type = box2d.B2BodyType.B2_staticBody
 			bdDef.Position.Set(barrier.X, barrier.Y)
 			b2BarrierBody := pR.CollidableWorld.CreateBody(&bdDef)
 
+      //Get fixture def by Points
 			fd := box2d.MakeB2FixtureDef()
 			if barrier.Boundary != nil {
 				b2Vertices := make([]box2d.B2Vec2, len(barrier.Boundary.Points))
@@ -537,6 +654,9 @@ func (pR *Room) InitColliders() {
 	world := box2d.MakeB2World(gravity)
 	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
+
+
+
 
 	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
@@ -647,6 +767,38 @@ func (pR *Room) InitColliders() {
 		b2TrapBody.SetUserData(trap)
 	}
 
+
+  //kobako: init guardTower
+	Logger.Info("InitColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
+	for _, tower := range pR.GuardTowers {
+		var bdDef box2d.B2BodyDef
+		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
+		bdDef = box2d.MakeB2BodyDef()
+		bdDef.Position.Set(tower.PickupBoundary.Anchor.X, tower.PickupBoundary.Anchor.Y)
+
+		b2TrapBody := pR.CollidableWorld.CreateBody(&bdDef)
+
+		pointsCount := len(tower.PickupBoundary.Points)
+
+		b2Vertices := make([]box2d.B2Vec2, pointsCount)
+		for vIndex, v2 := range tower.PickupBoundary.Points {
+			b2Vertices[vIndex] = v2.ToB2Vec2()
+		}
+
+		b2PolygonShape := box2d.MakeB2PolygonShape()
+		b2PolygonShape.Set(b2Vertices, pointsCount)
+
+		fd := box2d.MakeB2FixtureDef()
+		fd.Shape = &b2PolygonShape
+		fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
+		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
+		fd.Density = 0.0
+		b2TrapBody.CreateFixtureFromDef(&fd)
+
+		tower.CollidableBody = b2TrapBody
+		b2TrapBody.SetUserData(tower)
+	}
+
 	Logger.Info("InitColliders for pR.SpeedShoes:", zap.Any("roomId", pR.Id))
 	for _, v := range pR.SpeedShoes {
 		var bdDef box2d.B2BodyDef
@@ -678,6 +830,16 @@ func (pR *Room) InitColliders() {
 		//PrettyPrintBody(v.CollidableBody)
 	}
 }
+
+
+func (pR *Room) InitContactListener(){
+  listener := Listener{
+    name: "kobako",
+    room: pR,
+  }
+	pR.CollidableWorld.SetContactListener(listener)
+}
+
 
 func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
 	if lastFrame == nil {
@@ -873,12 +1035,24 @@ func (pR *Room) StartBattle() {
 	ErrFatal(err)
 	DeserializeToTsxIns(byteArr, pTsxIns)
 
+
+  //kobako
+  pR.GuardTowers = make(map[int32]*GuardTower)
+  //kobako
+
+
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
+	pR.InitGuardTower(pTmxMapIns, pTsxIns)
 	pR.InitPumpkins(pTmxMapIns)
 	pR.InitSpeedShoes(pTmxMapIns, pTsxIns)
 	pR.InitColliders()
 	pR.InitBarrier(pTmxMapIns, pTsxIns)
+
+
+  //kobako: 初始化listener, 如果需要监听BeginContact或者EndContact事件, hack这个函数
+  pR.InitContactListener()
+  //kobako
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
@@ -899,9 +1073,14 @@ func (pR *Room) StartBattle() {
 			pR.onBattleStoppedForSettlement()
 		}()
 		battleMainLoopStartedNanos := utils.UnixtimeNano()
-		var totalElapsedNanos int64
+		var totalElapsedNanos int64 //离游戏开始的时间
 		totalElapsedNanos = 0
-		for {
+
+
+    hardcodeAttackInterval := int64(1 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+
+
+		for { //主循环
 			if totalElapsedNanos > pR.BattleDurationNanos {
 				pR.StopBattleForSettlement()
 			}
@@ -1000,7 +1179,7 @@ func (pR *Room) StartBattle() {
 			collisionNowMillis := utils.UnixtimeMilli()
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players {
+			for _, player := range pR.Players {//加速鞋相关
 				if -1 == player.AddSpeedAtGmtMillis {
 					// TODO: Removed the magic number `-1`.
 					continue
@@ -1015,7 +1194,7 @@ func (pR *Room) StartBattle() {
 			}
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players {
+			for _, player := range pR.Players { //被蜘蛛网网住
 				/**
 				 * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
 				 */
@@ -1034,7 +1213,7 @@ func (pR *Room) StartBattle() {
 			}
 
 			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant.
-			for _, bullet := range pR.Bullets {
+			for _, bullet := range pR.Bullets { //子弹飞行
 				if bullet.Removed {
 					continue
 				}
@@ -1044,7 +1223,7 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 			}
-			for _, pumpkin := range pR.Pumpkins {
+			for _, pumpkin := range pR.Pumpkins { //移动南瓜
 				if pumpkin.Removed {
 					continue
 				}
@@ -1057,14 +1236,44 @@ func (pR *Room) StartBattle() {
 
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 
-			for _, player := range pR.Players {
+
+      //kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
+      for _, tower := range pR.GuardTowers {
+        length := len(tower.InRangePlayerList)
+        if(length < 1){
+          continue
+        }
+        now := utils.UnixtimeNano()
+        if now - tower.LastAttackTick > hardcodeAttackInterval{
+          tower.LastAttackTick = now
+
+          for _, player := range tower.InRangePlayerList{
+            startPos := Vec2D{
+          		X: tower.CollidableBody.GetPosition().X,
+          		Y: tower.CollidableBody.GetPosition().Y,
+          	}
+            endPos := Vec2D{
+          		X: player.CollidableBody.GetPosition().X,
+          		Y: player.CollidableBody.GetPosition().Y,
+          	}
+            pR.createTrapBulletByPos(startPos, endPos)
+          }
+        }
+      }
+
+
+			for _, player := range pR.Players { //如果玩家碰到以下物品, 触发对应的回调
 				for edge := player.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						switch v := edge.Other.GetUserData().(type) {
 						case *Treasure:
 							pR.onTreasurePickedUp(player, v)
 						case *Trap:
-							pR.onTrapPickedUp(player, v)
+							pR.onTrapPickedUp(player, v) //触发陷阱
+						case *GuardTower:
+              //这部分的操作在Listener做
+              //fmt.Printf("GGGGGGGGGGGGGGGGg \n");
+              //pR.onGuardTower
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						case *SpeedShoe:
@@ -1075,7 +1284,7 @@ func (pR *Room) StartBattle() {
 					}
 				}
 			}
-			for _, pumpkin := range pR.Pumpkins {
+			for _, pumpkin := range pR.Pumpkins { //南瓜撞到墙和玩家产生的回调
 				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						if barrier, ok := edge.Other.GetUserData().(*Barrier); ok {
@@ -1087,11 +1296,11 @@ func (pR *Room) StartBattle() {
 				}
 			}
 			now := utils.UnixtimeNano()
-			elapsedInCalculation := now - stCalculation
+			elapsedInCalculation := now - stCalculation //计算过程中损失的时间, 用于计算睡眠时间
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
 			// Logger.Info("Elapsed time statistics:", zap.Any("roomId", pR.Id), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
 			time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
-		}
+		} //END 主循环
 	}
 
 	cmdReceivingLoop := func() {
@@ -1267,6 +1476,8 @@ func (pR *Room) onDismissed() {
 	pR.Players = make(map[int32]*Player)
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
+  //fmt.Printf("222222222");
+  pR.GuardTowers = make(map[int32]*GuardTower)
 	pR.Bullets = make(map[int32]*Bullet)
 	pR.SpeedShoes = make(map[int32]*SpeedShoe)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
@@ -1406,3 +1617,76 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 	Logger.Info("room JoinIndexBooleanArr", zap.Any(":", pR.JoinIndexBooleanArr))
 	pR.updateScore()
 }
+
+
+type Listener struct{
+  name string
+  room *Room
+}
+
+//Implement interface Start                                                     
+func (l Listener) BeginContact(contact box2d.B2ContactInterface){
+   var pTower *GuardTower
+   var pPlayer *Player
+
+   switch v := contact.GetNodeA().Other.GetUserData().(type){
+   case *GuardTower:
+     pTower = v
+   case *Player:
+     pPlayer = v
+   default:
+     //
+   }
+
+  switch v := contact.GetNodeB().Other.GetUserData().(type){
+   case *GuardTower:
+     pTower = v
+   case *Player:
+     pPlayer = v
+   default:
+   }
+
+   if(pTower != nil && pPlayer != nil){
+     fmt.Printf("One Player Left the range of guard \n")
+
+     pTower.InRangePlayerList[pPlayer.Id] = pPlayer
+     fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerList))
+   }
+
+}
+
+func (l Listener) EndContact(contact box2d.B2ContactInterface){
+   var pTower *GuardTower
+   var pPlayer *Player
+
+   switch v := contact.GetNodeA().Other.GetUserData().(type){
+   case *GuardTower:
+     pTower = v
+   case *Player:
+     pPlayer = v
+   default:
+   }
+
+  switch v := contact.GetNodeB().Other.GetUserData().(type){
+   case *GuardTower:
+     pTower = v
+   case *Player:
+     pPlayer = v
+   default:
+   }
+
+   if(pTower != nil && pPlayer != nil){
+     delete(pTower.InRangePlayerList, pPlayer.Id)
+
+     fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerList))
+   }
+}
+
+func (l Listener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold){
+  //fmt.Printf("I am PreSolve %s\n", l.name);                                   
+}
+
+func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse){
+  //fmt.Printf("PostSolve %s\n", l.name);
+}
+//Implement interface End

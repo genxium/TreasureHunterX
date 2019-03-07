@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/xml"
-	// "fmt"
+	"fmt"
 	"bytes"
 	"compress/zlib"
 	"encoding/base64"
@@ -100,6 +100,7 @@ type TmxMap struct {
 	HighTreasuresInfo            []TreasuresInfo
 	SpeedShoesList               []SpeedShoesInfo
 	TrapsInitPosList             []Vec2D
+	GuardTowersInitPosList       []Vec2D
 	Pumpkins                      []*Vec2D
 }
 
@@ -128,6 +129,7 @@ type Tsx struct {
 	TrapPolyLineList           []*TmxPolyline
 	SpeedShoesPolyLineList     []*TmxPolyline
 	BarrierPolyLineList        map[int]*TmxPolyline // w barrier polyline
+	GuardTowerPolyLineList     []*TmxPolyline
 }
 
 type TsxTile struct {
@@ -256,14 +258,16 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	}
 	pPolyLineMap := make(map[int]*TmxPolyline, 0)
 	for _, tile := range pTsxIns.Tiles {
-		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" {
+		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" { //目前的地图上石头, 人头骨, 箱子都没有type, 所以不会生成碰撞框
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
-			for index, obj := range tileObjectGroup.TsxObjects {
+			for index, obj := range tileObjectGroup.TsxObjects { //初始化tsx.BarrierPolyLineList, 这个gid -> polyline的map, 只有对象组属性值为barrier的时候(石头, 人头骨, 箱子)才存到BarrierPolyLineList这个map里面
+        //初始化initPos
 				initPos := &Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
+        //初始化Points
 				// fmt.Printf("%s\n",obj.Polyline.Points)
 				singleValueArray := strings.Split(obj.Polyline.Points, " ")
 				pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
@@ -290,7 +294,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 					InitPos: initPos,
 					Points:  pointsArrayTransted,
 				}
-				for _, pros := range obj.Properties {
+				for _, pros := range obj.Properties { //只有对象组属性值为barrier的时候才存到BarrierPolyLineList这个map里面
 					for _, p := range pros.Property {
 						if p.Value == "barrier" {
 							pPolyLineMap[tile.Id] = pPolyLineList[index]
@@ -306,6 +310,8 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 				pTsxIns.TrapPolyLineList = pPolyLineList
 			} else if "speedShoes" == tile.Properties.Property[0].Value {
 				pTsxIns.SpeedShoesPolyLineList = pPolyLineList
+			} else if "guardTower" == tile.Properties.Property[0].Value {
+				pTsxIns.GuardTowerPolyLineList = pPolyLineList
 			}
 			pTsxIns.BarrierPolyLineList = pPolyLineMap
 		}
@@ -370,6 +376,21 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.TrapsInitPosList[index] = trapPos
 			}
 		}
+
+		if "guardTower" == objGroup.Name {
+			pTmxMapIns.GuardTowersInitPosList = make([]Vec2D, len(objGroup.Objects))
+			for index, obj := range objGroup.Objects {
+        fmt.Printf("Init a guardTower")
+				tmp := Vec2D{
+					X: obj.X,
+					Y: obj.Y,
+				}
+				trapPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+				//pTmxMapIns.GuardTowerInitPosList[index] = trapPos
+				pTmxMapIns.GuardTowersInitPosList[index] = trapPos
+			}
+		}
+
 		if "pumpkins" == objGroup.Name {
 			pTmxMapIns.Pumpkins = make([]*Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {

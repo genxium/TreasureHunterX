@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextobjectid="309">
+<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="70" height="70" tilewidth="64" tileheight="64" infinite="0" nextlayerid="15" nextobjectid="310">
  <tileset firstgid="1" source="tile_1.tsx"/>
  <tileset firstgid="13" source="HighTreasure.tsx"/>
  <tileset firstgid="17" source="traps.tsx"/>
- <layer name="tile_1 floor" width="70" height="70">
+ <layer id="1" name="tile_1 floor" width="70" height="70">
   <properties>
    <property name="type" value="normal"/>
   </properties>
@@ -11,7 +11,7 @@
    eJztwwENAAAMw6DOv+kLOSSsmqqqqqqqqqqqqqqqqqqqqqqqqvryAVfrEyU=
   </data>
  </layer>
- <objectgroup name="speed_shoes">
+ <objectgroup id="2" name="speed_shoes">
   <object id="299" x="2208.48" y="2530.91">
    <point/>
   </object>
@@ -37,7 +37,7 @@
    <point/>
   </object>
  </objectgroup>
- <layer name="tile_1 human skeleton" width="70" height="70">
+ <layer id="3" name="tile_1 human skeleton" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -45,7 +45,7 @@
    eJzt0KENACAQwMBX7D8yAkcqwN8lXaBrZpb0GYcvzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ovzZfmS/Ol+dJ8ab40X5ov7f4ivbQBmKgMwQ==
   </data>
  </layer>
- <layer name="tile_1 board" width="70" height="70">
+ <layer id="4" name="tile_1 board" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -53,7 +53,17 @@
    eJztmcGOwyAMRHvp///yKodKFSzEhrFnSP0uUVVqD4NJYvp6FcUa78E1K4/K1aIVDXvOHk9GmtGw54yoFzQr65SR11MvaFieWPNb6iVbUxY79RKFgoaZDiVvWCA8acfuzontyQekNyrrjQIxr6d40YLcS0+jPOlZeX95uicfFPqjGQrvDoz+aIZ6boU6ydTA7I9mjHIyvWHFaGNF5rBqQHiCwBor0xtEjEx/I72JiJ3ZT6jov4vF6LEY+9gTi9l3Rt7vd2Ip9OJqz47ypI9VnvSxypM+VnnSx1LwZIfypCfSk1PPOyPfjU+tl4h+VO0cYjW3dRzLm0xW68Tyu4wzp0jucu6cDT7Vm1XPvr/L9CbjXAVxL464bzLOtlfnMfs/QGkNkTl3xiuuYQYsTzJzeFHUxMbzjP4Vfm2+Fk7tiS+i9KjN04PSs0tBwwXjXedUmN6or4u6PiZKPboK6voY1P2lR0GXgoZvsvVkn7+soKLjIsob5BlRJJZ6QWnzxlP0EO3NaZ546gV1XdGEHL+DZ65vx3hvftQ4L7v18p8/qD3I+M/pLq7Xk7vv0BqjPVmtlwxPWj2jzygsulU8GelBY9n7ap60unZ/79kPReHlD8GOCME=
   </data>
  </layer>
- <layer name="tile_1 stone" width="70" height="70">
+ <objectgroup id="13" name="guardTower">
+  <object id="309" x="1038.79" y="912.727">
+   <point/>
+  </object>
+ </objectgroup>
+ <layer id="14" name="guardTower" width="70" height="70">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7Al+PeMhF2Ep1XQBAAAAG7MdwAAAAAAAAAAAAAAAAAAAIBqAQbzAAQ=
+  </data>
+ </layer>
+ <layer id="5" name="tile_1 stone" width="70" height="70">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -61,7 +71,7 @@
    eJztmssSwiAMRTv+/0c77pzSKI/ccBPu2bjQhnAKJVCvSwghxMm8jM/ZOJVYdXKPUwmvPlV044XctHjNyUp4PcMrYblAuMni+9/4yNIPD0bnzAlu9ByxkRMbOeECOVaz32ukk+xuPImou3pZadszb6a6i2WsMtVdHm1Fxohwk2WcrP6eJfYITGe12Z14XY+KtcIOJ0xr3RM7nTDVRt/snDtVnXjCkgtLHh9Y1rIMTqJzzOQkeo/I4KZ3nET3j/Gs4OQ5Ndv3E92w7N1784rYJ7Ps3Xvr7+znKiOxe98JM6xXK3g6mYnJCMJJBn71IWstt4q3E49ro4leBzK4mXHC8h4liky5oliZO9X9VVg70TU5+hoEFe4rGgY3DDk8wZrX6ei+2LCcbzHSe14gN/b3u8cXwxmy9f2IG5b3oqg2705270sZ3FhOUGc7VruesXeA/A+YnMTGRiInLXLSIictctIiJ+JU3gFXAZU=
   </data>
  </layer>
- <objectgroup name="controlled_players_starting_pos_list">
+ <objectgroup id="6" name="controlled_players_starting_pos_list">
   <object id="26" x="1433.21" y="1460.24">
    <point/>
   </object>
@@ -69,7 +79,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="traps">
+ <objectgroup id="7" name="traps">
   <object id="231" x="2790.88" y="2801.37">
    <point/>
   </object>
@@ -89,7 +99,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="treasures">
+ <objectgroup id="8" name="treasures">
   <object id="227" x="2404" y="3938.67">
    <properties>
     <property name="score" value="100"/>
@@ -259,8 +269,8 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="pumpkin"/>
- <objectgroup name="highTreasures">
+ <objectgroup id="9" name="pumpkin"/>
+ <objectgroup id="10" name="highTreasures">
   <object id="223" x="1997.15" y="1921.88">
    <properties>
     <property name="score" value="200"/>
@@ -286,7 +296,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup name="barrier">
+ <objectgroup id="11" name="barrier">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -315,7 +325,7 @@
    <polyline points="0,0 40,4392 216,4400 212,-28 140,-36"/>
   </object>
  </objectgroup>
- <objectgroup name="frame anim">
+ <objectgroup id="12" name="frame anim">
   <properties>
    <property name="type" value="frame_anim"/>
   </properties>

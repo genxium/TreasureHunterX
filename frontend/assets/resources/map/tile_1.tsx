@@ -11,6 +11,16 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="2">
+  <properties>
+   <property name="type" value="guardTower"/>
+  </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="235" y="-15">
+    <polyline points="81,-55 106,191 -190,317 -530,161 -437,-191 -28,-191"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="4">
   <objectgroup draworder="index">
    <object id="2" x="63.3333" y="-0.666667">

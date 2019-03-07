@@ -5,12 +5,21 @@ cc._RF.push(module, 'a36ffw/0PNL64S7ts5SXAMD', 'conf');
 "use strict";
 
 if (CC_DEBUG) {
-  var backendAddress = {
+  var localAddress = {
     PROTOCOL: 'http',
     HOST: 'localhost',
     PORT: "9992",
     WS_PATH_PREFIX: "/tsrht"
   };
+
+  var serverAddress = {
+    PROTOCOL: 'https',
+    HOST: 'tsrht.lokcol.com',
+    PORT: "443",
+    WS_PATH_PREFIX: "/tsrht"
+  };
+
+  backendAddress = localAddress;
 
   var wechatAddress = {
     PROTOCOL: "http",
