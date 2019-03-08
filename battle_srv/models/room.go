@@ -14,6 +14,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
+  //au "github.com/logrusorgru/aurora"
 )
 
 const (
@@ -192,7 +193,7 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
 		//被冻住同时加速效果消除
 		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-		Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+		//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 	}
 }
 
@@ -314,8 +315,8 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 
-    InRangePlayerList: make(map[int32]*Player),
-    CurrentAttackingIndex: 0,
+    InRangePlayerMap: make(map[int32]*InRangePlayerNode),
+    CurrentAttackingNodePointer: nil,
     LastAttackTick:  utils.UnixtimeNano(),
 	}
 
@@ -323,16 +324,6 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 }
 
 func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet{
-  /*
-	startPos := Vec2D{
-		X: pTrap.CollidableBody.GetPosition().X,
-		Y: pTrap.CollidableBody.GetPosition().Y,
-	}
-	endPos := Vec2D{
-		X: pPlayer.CollidableBody.GetPosition().X,
-		Y: pPlayer.CollidableBody.GetPosition().Y,
-	}
-  */
 
 	pR.AccumulatedLocalIdForBullets++
 
@@ -389,51 +380,6 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 		Y: pPlayer.CollidableBody.GetPosition().Y,
 	}
 	return pR.createTrapBulletByPos(startPos, endPos)
-
-  /*
-	pR.AccumulatedLocalIdForBullets++
-
-	var bdDef box2d.B2BodyDef
-	colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
-	bdDef = box2d.MakeB2BodyDef()
-	bdDef.Type = box2d.B2BodyType.B2_dynamicBody
-	bdDef.Position.Set(startPos.X+colliderOffset.X, startPos.Y+colliderOffset.Y)
-
-	b2Body := pR.CollidableWorld.CreateBody(&bdDef)
-
-	b2CircleShape := box2d.MakeB2CircleShape()
-	b2CircleShape.M_radius = 32 // Matching that of client-side setting.
-
-	fd := box2d.MakeB2FixtureDef()
-	fd.Shape = &b2CircleShape
-	fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
-	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
-	fd.Density = 0.0
-	b2Body.CreateFixtureFromDef(&fd)
-
-	diffVecX := (endPos.X - startPos.X)
-	diffVecY := (endPos.Y - startPos.Y)
-	tempMag := math.Sqrt(diffVecX*diffVecX + diffVecY*diffVecY)
-	linearUnitVector := Direction{
-		Dx: diffVecX / tempMag,
-		Dy: diffVecY / tempMag,
-	}
-
-	bullet := &Bullet{
-		LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
-		LinearSpeed:     0.0000004,
-		X:               startPos.X,
-		Y:               startPos.Y,
-		StartAtPoint:    &startPos,
-		EndAtPoint:      &endPos,
-		Dir:             &linearUnitVector,
-	}
-
-	bullet.CollidableBody = b2Body
-	b2Body.SetUserData(bullet)
-
-	pR.Bullets[bullet.LocalIdInBattle] = bullet
-  */
 }
 
 func (pR *Room) createTreasure(Type int32, pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
@@ -1077,7 +1023,7 @@ func (pR *Room) StartBattle() {
 		totalElapsedNanos = 0
 
 
-    hardcodeAttackInterval := int64(1 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+    hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
 
 
 		for { //主循环
@@ -1239,7 +1185,7 @@ func (pR *Room) StartBattle() {
 
       //kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
       for _, tower := range pR.GuardTowers {
-        length := len(tower.InRangePlayerList)
+        length := len(tower.InRangePlayerMap)
         if(length < 1){
           continue
         }
@@ -1247,17 +1193,26 @@ func (pR *Room) StartBattle() {
         if now - tower.LastAttackTick > hardcodeAttackInterval{
           tower.LastAttackTick = now
 
-          for _, player := range tower.InRangePlayerList{
-            startPos := Vec2D{
-          		X: tower.CollidableBody.GetPosition().X,
-          		Y: tower.CollidableBody.GetPosition().Y,
-          	}
-            endPos := Vec2D{
-          		X: player.CollidableBody.GetPosition().X,
-          		Y: player.CollidableBody.GetPosition().Y,
-          	}
-            pR.createTrapBulletByPos(startPos, endPos)
+          player := tower.CurrentAttackingNodePointer.player
+          startPos := Vec2D{
+        		X: tower.CollidableBody.GetPosition().X,
+        		Y: tower.CollidableBody.GetPosition().Y,
+        	}
+          endPos := Vec2D{
+        		X: player.CollidableBody.GetPosition().X,
+        		Y: player.CollidableBody.GetPosition().Y,
+        	}
+          pR.createTrapBulletByPos(startPos, endPos)
+          if(tower.CurrentAttackingNodePointer.Next != nil){
+            tower.CurrentAttackingNodePointer = tower.CurrentAttackingNodePointer.Next
           }
+
+
+          /*
+          fmt.Println(au.Red("HITHITHITHIT"))
+          tower.CurrentAttackingNodePointer.Print()
+          fmt.Println(au.Red("HITHITHITHIT"))
+          */
         }
       }
 
@@ -1272,8 +1227,6 @@ func (pR *Room) StartBattle() {
 							pR.onTrapPickedUp(player, v) //触发陷阱
 						case *GuardTower:
               //这部分的操作在Listener做
-              //fmt.Printf("GGGGGGGGGGGGGGGGg \n");
-              //pR.onGuardTower
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis)
 						case *SpeedShoe:
@@ -1649,10 +1602,30 @@ func (l Listener) BeginContact(contact box2d.B2ContactInterface){
    if(pTower != nil && pPlayer != nil){
      fmt.Printf("One Player Left the range of guard \n")
 
-     pTower.InRangePlayerList[pPlayer.Id] = pPlayer
-     fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerList))
-   }
+     { //Append to attack list and map
+       node := InRangePlayerNode{
+         player: pPlayer,
+       }
+       pTower.InRangePlayerMap[pPlayer.Id] = &node
+       if(pTower.CurrentAttackingNodePointer == nil){
+        pTower.CurrentAttackingNodePointer = &node
+       }else{
+         //加到链表的尾部, 即cur指针的prev
+        pTower.CurrentAttackingNodePointer.PrependNode(&node)
+       }
+     }
 
+     /*
+     fmt.Println(au.Red("ININININININ"))
+     pTower.CurrentAttackingNodePointer.Print()
+     fmt.Println("Map:")
+     fmt.Println(pTower.InRangePlayerMap)
+     fmt.Println(au.Red("ININININININ"))
+     */
+
+
+     //fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerMap))
+   }
 }
 
 func (l Listener) EndContact(contact box2d.B2ContactInterface){
@@ -1676,9 +1649,23 @@ func (l Listener) EndContact(contact box2d.B2ContactInterface){
    }
 
    if(pTower != nil && pPlayer != nil){
-     delete(pTower.InRangePlayerList, pPlayer.Id)
+     node := pTower.InRangePlayerMap[pPlayer.Id]
+     if(pTower.CurrentAttackingNodePointer == node){
+       pTower.CurrentAttackingNodePointer = node.Next
+     }
+     node.RemoveFromLink()
+     delete(pTower.InRangePlayerMap, pPlayer.Id)
 
-     fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerList))
+     /*
+     fmt.Println(au.Red("OUTOUTOUTOUT"))
+     pTower.CurrentAttackingNodePointer.Print()
+     fmt.Println("Map:")
+     fmt.Println(pTower.InRangePlayerMap)
+     fmt.Println(au.Red("OUTOUTOUTOUT"))
+     */
+
+
+     //fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerMap))
    }
 }
 
