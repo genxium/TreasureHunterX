@@ -48,6 +48,9 @@ type Player struct {
 	CollidableBody      *box2d.B2Body `json:"-"`
 	AckingFrameId       int32         `json:"ackingFrameId"`
 	JoinIndex           int32         `protobuf:"varint,12,opt,name=joinIndex,proto3 " json:"joinIndex"`
+
+  //kobako
+  BeLockedAt          int64         `json:"-"`
 }
 
 func ExistPlayerByName(name string) (bool, error) {

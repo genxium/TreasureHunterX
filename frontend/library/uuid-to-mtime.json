@@ -1366,27 +1366,27 @@
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1552013462000,
+    "meta": 1552028597000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1552013462000,
+    "meta": 1552028597000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1552013463000,
+    "meta": 1552028597000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1552013463000,
+    "meta": 1552028597000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1552013463000,
+    "meta": 1552028597000,
     "relativePath": "SpriteFrameSet.js"
   }
 }

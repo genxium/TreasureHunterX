@@ -181,7 +181,7 @@ func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 	}
 }
 
-func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet, nowMillis int64) {
+func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bullet, nowMillis int64, maxMillisToFreezePerPlayer int64) {
 	if _, existent := pR.Bullets[contactingBullet.LocalIdInBattle]; existent {
 		pR.CollidableWorld.DestroyBody(contactingBullet.CollidableBody)
 		pR.Bullets[contactingBullet.LocalIdInBattle] = &Bullet{
@@ -189,11 +189,16 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 			RemovedAtFrameId: pR.Tick,
 		}
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
-		pR.Players[contactingPlayer.Id].Speed = 0
-		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-		//被冻住同时加速效果消除
-		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-		//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+
+		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
+      //Do nothing
+		}else{
+  		pR.Players[contactingPlayer.Id].Speed = 0
+  		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+  		//被冻住同时加速效果消除
+  		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
+  		//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+    }
 	}
 }
 
@@ -1023,7 +1028,9 @@ func (pR *Room) StartBattle() {
 		totalElapsedNanos = 0
 
 
-    hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+    //hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+    perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
+
 
 
 		for { //主循环
@@ -1190,6 +1197,9 @@ func (pR *Room) StartBattle() {
           continue
         }
         now := utils.UnixtimeNano()
+
+        /*
+         * 顺序攻击
         if now - tower.LastAttackTick > hardcodeAttackInterval{
           tower.LastAttackTick = now
 
@@ -1207,12 +1217,24 @@ func (pR *Room) StartBattle() {
             tower.CurrentAttackingNodePointer = tower.CurrentAttackingNodePointer.Next
           }
 
+        }
+        */
 
-          /*
-          fmt.Println(au.Red("HITHITHITHIT"))
-          tower.CurrentAttackingNodePointer.Print()
-          fmt.Println(au.Red("HITHITHITHIT"))
-          */
+        //Refer to todo#80, new tower attack pattern
+        for _, node := range tower.InRangePlayerMap {
+          player := node.player
+          if now - player.BeLockedAt > perPlayerSafeTime{
+            player.BeLockedAt = now
+            startPos := Vec2D{
+          		X: tower.CollidableBody.GetPosition().X,
+          		Y: tower.CollidableBody.GetPosition().Y,
+          	}
+            endPos := Vec2D{
+          		X: player.CollidableBody.GetPosition().X,
+          		Y: player.CollidableBody.GetPosition().Y,
+          	}
+            pR.createTrapBulletByPos(startPos, endPos)
+          }
         }
       }
 
@@ -1228,7 +1250,7 @@ func (pR *Room) StartBattle() {
 						case *GuardTower:
               //这部分的操作在Listener做
 						case *Bullet:
-							pR.onBulletCrashed(player, v, collisionNowMillis)
+							pR.onBulletCrashed(player, v, collisionNowMillis, maxMillisToFreezePerPlayer)
 						case *SpeedShoe:
 							pR.onSpeedShoePickedUp(player, v, collisionNowMillis)
 						default:
@@ -1576,6 +1598,8 @@ type Listener struct{
   name string
   room *Room
 }
+
+
 
 //Implement interface Start                                                     
 func (l Listener) BeginContact(contact box2d.B2ContactInterface){
