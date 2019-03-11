@@ -313,6 +313,8 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		Points: thePoints,
 	}
 
+  var pInRangePlayers *InRangePlayerCollection
+  pInRangePlayers = pInRangePlayers.Init(10)
 	theGuardTower := GuardTower{
 		Id:              0,
 		LocalIdInBattle: trapLocalIdInBattle,
@@ -320,10 +322,12 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 
-    InRangePlayerMap: make(map[int32]*InRangePlayerNode),
-    CurrentAttackingNodePointer: nil,
+    InRangePlayers:  pInRangePlayers,
     LastAttackTick:  utils.UnixtimeNano(),
 	}
+
+  //fmt.Println("+++++++++++++++++++")
+  //pInRangePlayers.Print()
 
 	return &theGuardTower
 }
@@ -1028,8 +1032,8 @@ func (pR *Room) StartBattle() {
 		totalElapsedNanos = 0
 
 
-    //hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
-    perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
+    hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+    //perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
 
 
 
@@ -1126,6 +1130,7 @@ func (pR *Room) StartBattle() {
 					continue
 				}
 				theStr := string(theBytes)
+        //mark
 				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
@@ -1192,34 +1197,32 @@ func (pR *Room) StartBattle() {
 
       //kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
       for _, tower := range pR.GuardTowers {
-        length := len(tower.InRangePlayerMap)
-        if(length < 1){
+        if(tower.InRangePlayers.CurrentSize < 1){
           continue
         }
         now := utils.UnixtimeNano()
 
         /*
          * 顺序攻击
+         */
         if now - tower.LastAttackTick > hardcodeAttackInterval{
           tower.LastAttackTick = now
 
-          player := tower.CurrentAttackingNodePointer.player
+          playerNode := tower.InRangePlayers.NextPlayerToAttack()
           startPos := Vec2D{
         		X: tower.CollidableBody.GetPosition().X,
         		Y: tower.CollidableBody.GetPosition().Y,
         	}
           endPos := Vec2D{
-        		X: player.CollidableBody.GetPosition().X,
-        		Y: player.CollidableBody.GetPosition().Y,
+        		X: playerNode.player.CollidableBody.GetPosition().X,
+        		Y: playerNode.player.CollidableBody.GetPosition().Y,
         	}
           pR.createTrapBulletByPos(startPos, endPos)
-          if(tower.CurrentAttackingNodePointer.Next != nil){
-            tower.CurrentAttackingNodePointer = tower.CurrentAttackingNodePointer.Next
-          }
 
         }
-        */
 
+
+        /*
         //Refer to todo#80, new tower attack pattern
         for _, node := range tower.InRangePlayerMap {
           player := node.player
@@ -1236,6 +1239,7 @@ func (pR *Room) StartBattle() {
             pR.createTrapBulletByPos(startPos, endPos)
           }
         }
+        */
       }
 
 
@@ -1601,7 +1605,7 @@ type Listener struct{
 
 
 
-//Implement interface Start                                                     
+//kobako: Implement interface Start                                                     
 func (l Listener) BeginContact(contact box2d.B2ContactInterface){
    var pTower *GuardTower
    var pPlayer *Player
@@ -1624,20 +1628,9 @@ func (l Listener) BeginContact(contact box2d.B2ContactInterface){
    }
 
    if(pTower != nil && pPlayer != nil){
-     fmt.Printf("One Player Left the range of guard \n")
+     //fmt.Printf("One Player enter the range of guard \n")
 
-     { //Append to attack list and map
-       node := InRangePlayerNode{
-         player: pPlayer,
-       }
-       pTower.InRangePlayerMap[pPlayer.Id] = &node
-       if(pTower.CurrentAttackingNodePointer == nil){
-        pTower.CurrentAttackingNodePointer = &node
-       }else{
-         //加到链表的尾部, 即cur指针的prev
-        pTower.CurrentAttackingNodePointer.PrependNode(&node)
-       }
-     }
+     pTower.InRangePlayers.AppendPlayer(pPlayer)
 
      /*
      fmt.Println(au.Red("ININININININ"))
@@ -1673,12 +1666,8 @@ func (l Listener) EndContact(contact box2d.B2ContactInterface){
    }
 
    if(pTower != nil && pPlayer != nil){
-     node := pTower.InRangePlayerMap[pPlayer.Id]
-     if(pTower.CurrentAttackingNodePointer == node){
-       pTower.CurrentAttackingNodePointer = node.Next
-     }
-     node.RemoveFromLink()
-     delete(pTower.InRangePlayerMap, pPlayer.Id)
+
+     pTower.InRangePlayers.RemovePlayerById(pPlayer.Id)
 
      /*
      fmt.Println(au.Red("OUTOUTOUTOUT"))
