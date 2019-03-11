@@ -14,7 +14,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
-  //au "github.com/logrusorgru/aurora"
+	//au "github.com/logrusorgru/aurora"
 )
 
 const (
@@ -107,14 +107,13 @@ type Room struct {
 	GuardTowers                  map[int32]*GuardTower
 	Bullets                      map[int32]*Bullet
 	SpeedShoes                   map[int32]*SpeedShoe
-	Barriers                      map[int32]*Barrier
-	Pumpkins                      map[int32]*Pumpkin
+	Barriers                     map[int32]*Barrier
+	Pumpkins                     map[int32]*Pumpkin
 	AccumulatedLocalIdForBullets int32
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
 }
-
 
 type RoomDownsyncFrame struct {
 	/* TODO
@@ -122,16 +121,16 @@ type RoomDownsyncFrame struct {
 
 	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
 	*/
-	Id             int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId     int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players        map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt         int64                 `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
-	CountdownNanos int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id             int32                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId     int32                `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players        map[int32]*Player    `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt         int64                `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
+	CountdownNanos int64                `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures      map[int32]*Treasure  `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps          map[int32]*Trap      `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets        map[int32]*Bullet    `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SpeedShoes     map[int32]*SpeedShoe `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Pumpkins        map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Pumpkins       map[int32]*Pumpkin   `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	//RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
@@ -160,14 +159,13 @@ func (pR *Room) onSpeedShoePickedUp(contactingPlayer *Player, contactingSpeedSho
 		Logger.Info("Player has picked up a SpeedShoe:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingSpeedShoe.LocalIdInBattle", contactingSpeedShoe.LocalIdInBattle))
 		pR.CollidableWorld.DestroyBody(contactingSpeedShoe.CollidableBody)
 		pR.SpeedShoes[contactingSpeedShoe.LocalIdInBattle] = &SpeedShoe{
-      Removed: true,
+			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
-    }
+		}
 		pR.Players[contactingPlayer.Id].Speed += ADD_SPEED
 		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = nowMillis
 	}
 }
-
 
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
@@ -191,14 +189,14 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 
 		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
-      //Do nothing
-		}else{
-  		pR.Players[contactingPlayer.Id].Speed = 0
-  		pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-  		//被冻住同时加速效果消除
-  		pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-  		//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
-    }
+			//Do nothing
+		} else {
+			pR.Players[contactingPlayer.Id].Speed = 0
+			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+			//被冻住同时加速效果消除
+			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
+			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+		}
 	}
 }
 
@@ -313,8 +311,8 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		Points: thePoints,
 	}
 
-  var pInRangePlayers *InRangePlayerCollection
-  pInRangePlayers = pInRangePlayers.Init(10)
+	var pInRangePlayers *InRangePlayerCollection
+	pInRangePlayers = pInRangePlayers.Init(10)
 	theGuardTower := GuardTower{
 		Id:              0,
 		LocalIdInBattle: trapLocalIdInBattle,
@@ -322,17 +320,17 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		Y:               pAnchor.Y,
 		PickupBoundary:  &thePolygon,
 
-    InRangePlayers:  pInRangePlayers,
-    LastAttackTick:  utils.UnixtimeNano(),
+		InRangePlayers: pInRangePlayers,
+		LastAttackTick: utils.UnixtimeNano(),
 	}
 
-  //fmt.Println("+++++++++++++++++++")
-  //pInRangePlayers.Print()
+	//fmt.Println("+++++++++++++++++++")
+	//pInRangePlayers.Print()
 
 	return &theGuardTower
 }
 
-func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet{
+func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet {
 
 	pR.AccumulatedLocalIdForBullets++
 
@@ -462,9 +460,9 @@ func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				Y: float64(value.Y),
 			}
 			tower := pR.createGuardTower(pAnchor, int32(key), pTsxIns)
-      fmt.Println("-1-1-1-1-1-1-1-1: ",tower.LocalIdInBattle , pR.GuardTowers)
+			fmt.Println("-1-1-1-1-1-1-1-1: ", tower.LocalIdInBattle, pR.GuardTowers)
 			pR.GuardTowers[tower.LocalIdInBattle] = tower
-      fmt.Println("000000 InitGuardTower: ",tower.LocalIdInBattle , pR.GuardTowers)
+			fmt.Println("000000 InitGuardTower: ", tower.LocalIdInBattle, pR.GuardTowers)
 		}
 	}
 	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
@@ -554,7 +552,7 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			}
 
 			barrier := &Barrier{}
-      //Set coord
+			//Set coord
 			barrier.X, barrier.Y = pTmxMapIns.getCoordByGid(index)
 			barrier.Type = tile.Id
 			if v, ok := pTsxIns.BarrierPolyLineList[int(tile.Id)]; ok {
@@ -565,18 +563,18 @@ func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 						Y: p.Y,
 					})
 				}
-        //Get points
+				//Get points
 				barrier.Boundary = &Polygon2D{Points: thePoints}
 			}
 
-      //Get body def by X,Y
+			//Get body def by X,Y
 			var bdDef box2d.B2BodyDef
 			bdDef = box2d.MakeB2BodyDef()
 			bdDef.Type = box2d.B2BodyType.B2_staticBody
 			bdDef.Position.Set(barrier.X, barrier.Y)
 			b2BarrierBody := pR.CollidableWorld.CreateBody(&bdDef)
 
-      //Get fixture def by Points
+			//Get fixture def by Points
 			fd := box2d.MakeB2FixtureDef()
 			if barrier.Boundary != nil {
 				b2Vertices := make([]box2d.B2Vec2, len(barrier.Boundary.Points))
@@ -609,9 +607,6 @@ func (pR *Room) InitColliders() {
 	world := box2d.MakeB2World(gravity)
 	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
-
-
-
 
 	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
@@ -722,8 +717,7 @@ func (pR *Room) InitColliders() {
 		b2TrapBody.SetUserData(trap)
 	}
 
-
-  //kobako: init guardTower
+	//kobako: init guardTower
 	Logger.Info("InitColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
 	for _, tower := range pR.GuardTowers {
 		var bdDef box2d.B2BodyDef
@@ -786,15 +780,13 @@ func (pR *Room) InitColliders() {
 	}
 }
 
-
-func (pR *Room) InitContactListener(){
-  listener := Listener{
-    name: "kobako",
-    room: pR,
-  }
+func (pR *Room) InitContactListener() {
+	listener := Listener{
+		name: "kobako",
+		room: pR,
+	}
 	pR.CollidableWorld.SetContactListener(listener)
 }
-
 
 func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
 	if lastFrame == nil {
@@ -810,7 +802,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Treasures:      make(map[int32]*Treasure, 0),
 		Traps:          make(map[int32]*Trap, 0),
 		SpeedShoes:     make(map[int32]*SpeedShoe, 0),
-		Pumpkins:        currentFrame.Pumpkins,
+		Pumpkins:       currentFrame.Pumpkins,
 	}
 
 	for k, last := range lastFrame.Treasures {
@@ -990,11 +982,9 @@ func (pR *Room) StartBattle() {
 	ErrFatal(err)
 	DeserializeToTsxIns(byteArr, pTsxIns)
 
-
-  //kobako
-  pR.GuardTowers = make(map[int32]*GuardTower)
-  //kobako
-
+	//kobako
+	pR.GuardTowers = make(map[int32]*GuardTower)
+	//kobako
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
@@ -1004,10 +994,9 @@ func (pR *Room) StartBattle() {
 	pR.InitColliders()
 	pR.InitBarrier(pTmxMapIns, pTsxIns)
 
-
-  //kobako: 初始化listener, 如果需要监听BeginContact或者EndContact事件, hack这个函数
-  pR.InitContactListener()
-  //kobako
+	//kobako: 初始化listener, 如果需要监听BeginContact或者EndContact事件, hack这个函数
+	pR.InitContactListener()
+	//kobako
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
@@ -1031,13 +1020,10 @@ func (pR *Room) StartBattle() {
 		var totalElapsedNanos int64 //离游戏开始的时间
 		totalElapsedNanos = 0
 
+		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
 
-    hardcodeAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
-    //perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
-
-
-
-		for { //主循环
+		for {
 			if totalElapsedNanos > pR.BattleDurationNanos {
 				pR.StopBattleForSettlement()
 			}
@@ -1058,7 +1044,7 @@ func (pR *Room) StartBattle() {
 				Traps:          pR.Traps,
 				Bullets:        pR.Bullets,
 				SpeedShoes:     pR.SpeedShoes,
-				Pumpkins:        pR.Pumpkins,
+				Pumpkins:       pR.Pumpkins,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
@@ -1130,14 +1116,13 @@ func (pR *Room) StartBattle() {
 					continue
 				}
 				theStr := string(theBytes)
-        //mark
 				utils.SendStrSafely(theStr, theForwardingChannel)
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
 			collisionNowMillis := utils.UnixtimeMilli()
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players {//加速鞋相关
+			for _, player := range pR.Players { //加速鞋相关
 				if -1 == player.AddSpeedAtGmtMillis {
 					// TODO: Removed the magic number `-1`.
 					continue
@@ -1170,7 +1155,7 @@ func (pR *Room) StartBattle() {
 				player.FrozenAtGmtMillis = -1
 			}
 
-			bulletElapsedTime := nanosPerFrame // TODO: Remove this hardcoded constant.
+			bulletElapsedTime := nanosPerFrame  // TODO: Remove this hardcoded constant.
 			for _, bullet := range pR.Bullets { //子弹飞行
 				if bullet.Removed {
 					continue
@@ -1194,54 +1179,51 @@ func (pR *Room) StartBattle() {
 
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 
+			//kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
+			for _, tower := range pR.GuardTowers {
+				if tower.InRangePlayers.CurrentSize < 1 {
+					continue
+				}
+				now := utils.UnixtimeNano()
 
-      //kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
-      for _, tower := range pR.GuardTowers {
-        if(tower.InRangePlayers.CurrentSize < 1){
-          continue
-        }
-        now := utils.UnixtimeNano()
+				/*
+				 * 顺序攻击
+				 */
+				if now-tower.LastAttackTick > hardcodedAttackInterval {
+					tower.LastAttackTick = now
 
-        /*
-         * 顺序攻击
-         */
-        if now - tower.LastAttackTick > hardcodeAttackInterval{
-          tower.LastAttackTick = now
+					playerNode := tower.InRangePlayers.NextPlayerToAttack()
+					startPos := Vec2D{
+						X: tower.CollidableBody.GetPosition().X,
+						Y: tower.CollidableBody.GetPosition().Y,
+					}
+					endPos := Vec2D{
+						X: playerNode.player.CollidableBody.GetPosition().X,
+						Y: playerNode.player.CollidableBody.GetPosition().Y,
+					}
+					pR.createTrapBulletByPos(startPos, endPos)
 
-          playerNode := tower.InRangePlayers.NextPlayerToAttack()
-          startPos := Vec2D{
-        		X: tower.CollidableBody.GetPosition().X,
-        		Y: tower.CollidableBody.GetPosition().Y,
-        	}
-          endPos := Vec2D{
-        		X: playerNode.player.CollidableBody.GetPosition().X,
-        		Y: playerNode.player.CollidableBody.GetPosition().Y,
-        	}
-          pR.createTrapBulletByPos(startPos, endPos)
+				}
 
-        }
-
-
-        /*
-        //Refer to todo#80, new tower attack pattern
-        for _, node := range tower.InRangePlayerMap {
-          player := node.player
-          if now - player.BeLockedAt > perPlayerSafeTime{
-            player.BeLockedAt = now
-            startPos := Vec2D{
-          		X: tower.CollidableBody.GetPosition().X,
-          		Y: tower.CollidableBody.GetPosition().Y,
-          	}
-            endPos := Vec2D{
-          		X: player.CollidableBody.GetPosition().X,
-          		Y: player.CollidableBody.GetPosition().Y,
-          	}
-            pR.createTrapBulletByPos(startPos, endPos)
-          }
-        }
-        */
-      }
-
+				/*
+				   //Refer to todo#80, new tower attack pattern
+				   for _, node := range tower.InRangePlayerMap {
+				     player := node.player
+				     if now - player.BeLockedAt > perPlayerSafeTime{
+				       player.BeLockedAt = now
+				       startPos := Vec2D{
+				     		X: tower.CollidableBody.GetPosition().X,
+				     		Y: tower.CollidableBody.GetPosition().Y,
+				     	}
+				       endPos := Vec2D{
+				     		X: player.CollidableBody.GetPosition().X,
+				     		Y: player.CollidableBody.GetPosition().Y,
+				     	}
+				       pR.createTrapBulletByPos(startPos, endPos)
+				     }
+				   }
+				*/
+			}
 
 			for _, player := range pR.Players { //如果玩家碰到以下物品, 触发对应的回调
 				for edge := player.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
@@ -1252,7 +1234,7 @@ func (pR *Room) StartBattle() {
 						case *Trap:
 							pR.onTrapPickedUp(player, v) //触发陷阱
 						case *GuardTower:
-              //这部分的操作在Listener做
+							//这部分的操作在Listener做
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis, maxMillisToFreezePerPlayer)
 						case *SpeedShoe:
@@ -1279,7 +1261,7 @@ func (pR *Room) StartBattle() {
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
 			// Logger.Info("Elapsed time statistics:", zap.Any("roomId", pR.Id), zap.Any("elapsedInCalculation", elapsedInCalculation), zap.Any("totalElapsedNanos", totalElapsedNanos))
 			time.Sleep(time.Duration(nanosPerFrame - elapsedInCalculation))
-		} //END 主循环
+		}
 	}
 
 	cmdReceivingLoop := func() {
@@ -1351,6 +1333,9 @@ func (pR *Room) StopBattleForSettlement() {
 			SpeedShoes:     pR.SpeedShoes,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+		/*
+		 * WARNING: Please note that the "marshalling of `assembledFrame`" is deliberately put within the `battleMainLoop(1 goroutine per room)` to avoid thread-safety issues, i.e. NOT AFTER extracting an `assembledFrame` from each `DedicatedForwardingChanForPlayer` in `forwardingLoopAgainstBoundRoom(another 1 goroutine per room, used in "<proj-root>/battle_srv/ws/serve.go")` for preventing simultaneous access to `pR.(Treasures | Traps | Bullets | SpeedShoes)` etc. from two different goroutines.
+		 */
 		theBytes, marshalErr := proto.Marshal(assembledFrame)
 		if marshalErr != nil {
 			Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
@@ -1455,8 +1440,8 @@ func (pR *Room) onDismissed() {
 	pR.Players = make(map[int32]*Player)
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
-  //fmt.Printf("222222222");
-  pR.GuardTowers = make(map[int32]*GuardTower)
+	//fmt.Printf("222222222");
+	pR.GuardTowers = make(map[int32]*GuardTower)
 	pR.Bullets = make(map[int32]*Bullet)
 	pR.SpeedShoes = make(map[int32]*SpeedShoe)
 	pR.PlayerDownsyncChanDict = make(map[int32]chan string)
@@ -1597,96 +1582,92 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 	pR.updateScore()
 }
 
-
-type Listener struct{
-  name string
-  room *Room
+type Listener struct {
+	name string
+	room *Room
 }
 
+//kobako: Implement interface Start
+func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
+	var pTower *GuardTower
+	var pPlayer *Player
 
+	switch v := contact.GetNodeA().Other.GetUserData().(type) {
+	case *GuardTower:
+		pTower = v
+	case *Player:
+		pPlayer = v
+	default:
+		//
+	}
 
-//kobako: Implement interface Start                                                     
-func (l Listener) BeginContact(contact box2d.B2ContactInterface){
-   var pTower *GuardTower
-   var pPlayer *Player
+	switch v := contact.GetNodeB().Other.GetUserData().(type) {
+	case *GuardTower:
+		pTower = v
+	case *Player:
+		pPlayer = v
+	default:
+	}
 
-   switch v := contact.GetNodeA().Other.GetUserData().(type){
-   case *GuardTower:
-     pTower = v
-   case *Player:
-     pPlayer = v
-   default:
-     //
-   }
+	if pTower != nil && pPlayer != nil {
+		//fmt.Printf("One Player enter the range of guard \n")
 
-  switch v := contact.GetNodeB().Other.GetUserData().(type){
-   case *GuardTower:
-     pTower = v
-   case *Player:
-     pPlayer = v
-   default:
-   }
+		pTower.InRangePlayers.AppendPlayer(pPlayer)
 
-   if(pTower != nil && pPlayer != nil){
-     //fmt.Printf("One Player enter the range of guard \n")
+		/*
+		   fmt.Println(au.Red("ININININININ"))
+		   pTower.CurrentAttackingNodePointer.Print()
+		   fmt.Println("Map:")
+		   fmt.Println(pTower.InRangePlayerMap)
+		   fmt.Println(au.Red("ININININININ"))
+		*/
 
-     pTower.InRangePlayers.AppendPlayer(pPlayer)
-
-     /*
-     fmt.Println(au.Red("ININININININ"))
-     pTower.CurrentAttackingNodePointer.Print()
-     fmt.Println("Map:")
-     fmt.Println(pTower.InRangePlayerMap)
-     fmt.Println(au.Red("ININININININ"))
-     */
-
-
-     //fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerMap))
-   }
+		//fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerMap))
+	}
 }
 
-func (l Listener) EndContact(contact box2d.B2ContactInterface){
-   var pTower *GuardTower
-   var pPlayer *Player
+func (l Listener) EndContact(contact box2d.B2ContactInterface) {
+	var pTower *GuardTower
+	var pPlayer *Player
 
-   switch v := contact.GetNodeA().Other.GetUserData().(type){
-   case *GuardTower:
-     pTower = v
-   case *Player:
-     pPlayer = v
-   default:
-   }
+	switch v := contact.GetNodeA().Other.GetUserData().(type) {
+	case *GuardTower:
+		pTower = v
+	case *Player:
+		pPlayer = v
+	default:
+	}
 
-  switch v := contact.GetNodeB().Other.GetUserData().(type){
-   case *GuardTower:
-     pTower = v
-   case *Player:
-     pPlayer = v
-   default:
-   }
+	switch v := contact.GetNodeB().Other.GetUserData().(type) {
+	case *GuardTower:
+		pTower = v
+	case *Player:
+		pPlayer = v
+	default:
+	}
 
-   if(pTower != nil && pPlayer != nil){
+	if pTower != nil && pPlayer != nil {
 
-     pTower.InRangePlayers.RemovePlayerById(pPlayer.Id)
+		pTower.InRangePlayers.RemovePlayerById(pPlayer.Id)
 
-     /*
-     fmt.Println(au.Red("OUTOUTOUTOUT"))
-     pTower.CurrentAttackingNodePointer.Print()
-     fmt.Println("Map:")
-     fmt.Println(pTower.InRangePlayerMap)
-     fmt.Println(au.Red("OUTOUTOUTOUT"))
-     */
+		/*
+		   fmt.Println(au.Red("OUTOUTOUTOUT"))
+		   pTower.CurrentAttackingNodePointer.Print()
+		   fmt.Println("Map:")
+		   fmt.Println(pTower.InRangePlayerMap)
+		   fmt.Println(au.Red("OUTOUTOUTOUT"))
+		*/
 
-
-     //fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerMap))
-   }
+		//fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerMap))
+	}
 }
 
-func (l Listener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold){
-  //fmt.Printf("I am PreSolve %s\n", l.name);                                   
+func (l Listener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
+	//fmt.Printf("I am PreSolve %s\n", l.name);
 }
 
-func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse){
-  //fmt.Printf("PostSolve %s\n", l.name);
+func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
+	//fmt.Printf("PostSolve %s\n", l.name);
 }
+
 //Implement interface End

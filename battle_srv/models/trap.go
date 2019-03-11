@@ -29,10 +29,6 @@ type GuardTower struct {
 	CollidableBody   *box2d.B2Body `json:"-"`
 	RemovedAtFrameId int32         `json:"-"`
 
-  InRangePlayers  *InRangePlayerCollection `json:"-"`
-  LastAttackTick  int64 `json:"-"`
+	InRangePlayers *InRangePlayerCollection `json:"-"`
+	LastAttackTick int64                    `json:"-"`
 }
-
-
-
-

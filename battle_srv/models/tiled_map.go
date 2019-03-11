@@ -1,12 +1,12 @@
 package models
 
 import (
-	"encoding/xml"
-	"fmt"
 	"bytes"
 	"compress/zlib"
 	"encoding/base64"
+	"encoding/xml"
 	"errors"
+	"fmt"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"math"
@@ -101,7 +101,7 @@ type TmxMap struct {
 	SpeedShoesList               []SpeedShoesInfo
 	TrapsInitPosList             []Vec2D
 	GuardTowersInitPosList       []Vec2D
-	Pumpkins                      []*Vec2D
+	Pumpkins                     []*Vec2D
 }
 
 type TreasuresInfo struct {
@@ -262,12 +262,12 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects { //初始化tsx.BarrierPolyLineList, 这个gid -> polyline的map, 只有对象组属性值为barrier的时候(石头, 人头骨, 箱子)才存到BarrierPolyLineList这个map里面
-        //初始化initPos
+				//初始化initPos
 				initPos := &Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
-        //初始化Points
+				//初始化Points
 				// fmt.Printf("%s\n",obj.Polyline.Points)
 				singleValueArray := strings.Split(obj.Polyline.Points, " ")
 				pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
@@ -380,7 +380,7 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 		if "guardTower" == objGroup.Name {
 			pTmxMapIns.GuardTowersInitPosList = make([]Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
-        fmt.Printf("Init a guardTower")
+				fmt.Printf("Init a guardTower")
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
