@@ -1101,6 +1101,10 @@ func (pR *Room) StartBattle() {
 
 			for playerId, player := range pR.Players {
 				/*
+				 * WARNING: Please note that the "marshalling of `assembledFrame`" is deliberately put within the `battleMainLoop(1 goroutine per room)` to avoid thread-safety issues, i.e. NOT AFTER extracting an `assembledFrame` from each `DedicatedForwardingChanForPlayer` in `forwardingLoopAgainstBoundRoom(another 1 goroutine per room, used in "<proj-root>/battle_srv/ws/serve.go")` for preventing simultaneous access to `pR.(Treasures | Traps | Bullets | SpeedShoes)` etc. from two different goroutines.
+				 */
+
+				/*
 				 * TODO
 				 *
 				 * DON'T send any DiffFrame into "DedicatedForwardingChanForPlayer" if the player is disconnected, because it could jam the channel and cause significant delay upon "battle recovery for reconnected player".
@@ -1333,9 +1337,6 @@ func (pR *Room) StopBattleForSettlement() {
 			SpeedShoes:     pR.SpeedShoes,
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-		/*
-		 * WARNING: Please note that the "marshalling of `assembledFrame`" is deliberately put within the `battleMainLoop(1 goroutine per room)` to avoid thread-safety issues, i.e. NOT AFTER extracting an `assembledFrame` from each `DedicatedForwardingChanForPlayer` in `forwardingLoopAgainstBoundRoom(another 1 goroutine per room, used in "<proj-root>/battle_srv/ws/serve.go")` for preventing simultaneous access to `pR.(Treasures | Traps | Bullets | SpeedShoes)` etc. from two different goroutines.
-		 */
 		theBytes, marshalErr := proto.Marshal(assembledFrame)
 		if marshalErr != nil {
 			Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
