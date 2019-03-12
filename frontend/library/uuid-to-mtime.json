@@ -1300,7 +1300,7 @@
     "relativePath": "resources/map/tile_1.png"
   },
   "1fe4b981-93b1-4e65-aefb-898c615219e5": {
-    "asset": 1551949419000,
+    "asset": 1552354942000,
     "meta": 1550807126000,
     "relativePath": "resources/map"
   },
@@ -1335,19 +1335,14 @@
     "relativePath": "resources/textures/81547109546_.pic_hd.jpg"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1551949445000,
-    "meta": 1551949445000,
+    "asset": 1552356260000,
+    "meta": 1552356260000,
     "relativePath": "scenes/login.fire"
   },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
     "asset": 1551422666000,
     "meta": 1551424477000,
     "relativePath": "scripts/BasePlayer.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1551422680000,
-    "meta": 1551424477000,
-    "relativePath": "scripts/Map.js"
   },
   "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
     "asset": 1551438130000,
@@ -1366,27 +1361,32 @@
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1552287208000,
+    "meta": 1552355093000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1552287208000,
+    "meta": 1552355093000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1552287208000,
+    "meta": 1552355093000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1552287208000,
+    "meta": 1552355093000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1552287208000,
+    "meta": 1552355093000,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1552356240000,
+    "meta": 1552356257000,
+    "relativePath": "scripts/Map.js"
   }
 }

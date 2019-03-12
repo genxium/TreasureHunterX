@@ -609,6 +609,9 @@ cc.Class({
       self.transitToState(ALL_MAP_STATES.VISUAL);
       self._inputControlEnabled = false;
       self.setupInputControls();
+
+
+      let kobakoCounter = 0
       window.handleRoomDownsyncFrame = function(diffFrame) {
         //console.log(diffFrame);
 
@@ -651,7 +654,7 @@ cc.Class({
           && self.useDiffFrameAlgo
           && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
           && null == cachedFullFrame
-        ) {
+        ) { //重连后重新同步
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -672,7 +675,7 @@ cc.Class({
         //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
         // }
         self.countdownLabel.string = countdownSeconds;
-        const roomDownsyncFrame = (
+        const roomDownsyncFrame = ( //根据refFrameId和diffFrame计算出新的一帧
         (isInitiatingFrame || !self.useDiffFrameAlgo)
           ?
           diffFrame
@@ -727,11 +730,17 @@ cc.Class({
         self.treasureInfoDict = {};
         const treasures = roomDownsyncFrame.treasures;
         const treasuresLocalIdStrList = Object.keys(treasures);
-        for (let i = 0; i < treasuresLocalIdStrList.length; ++i) {
+        for (let i = 0; i < treasuresLocalIdStrList.length; ++i) { //直接根据最新帧的数据覆盖掉treasureInfoDict
           const k = treasuresLocalIdStrList[i];
           const treasureLocalIdInBattle = parseInt(k);
           const treasureInfo = treasures[k];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
+        }
+
+        //kobako
+        kobakoCounter ++;
+        if(kobakoCounter < 100){
+          console.log(diffFrame);
         }
 
         //update acceleratorInfoDict

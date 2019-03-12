@@ -776,6 +776,8 @@ cc.Class({
       self.transitToState(ALL_MAP_STATES.VISUAL);
       self._inputControlEnabled = false;
       self.setupInputControls();
+
+      var kobakoCounter = 0;
       window.handleRoomDownsyncFrame = function (diffFrame) {
         //console.log(diffFrame);
 
@@ -817,6 +819,7 @@ cc.Class({
         var cachedFullFrame = self.recentFrameCache[refFrameId];
         if (!isInitiatingFrame && self.useDiffFrameAlgo && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
         && null == cachedFullFrame) {
+          //重连后重新同步
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -836,7 +839,8 @@ cc.Class({
         //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
         // }
         self.countdownLabel.string = countdownSeconds;
-        var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
+        var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
+        isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
         if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
@@ -884,10 +888,17 @@ cc.Class({
         var treasures = roomDownsyncFrame.treasures;
         var treasuresLocalIdStrList = Object.keys(treasures);
         for (var _i14 = 0; _i14 < treasuresLocalIdStrList.length; ++_i14) {
+          //直接根据最新帧的数据覆盖掉treasureInfoDict
           var _k8 = treasuresLocalIdStrList[_i14];
           var treasureLocalIdInBattle = parseInt(_k8);
           var treasureInfo = treasures[_k8];
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
+        }
+
+        //kobako
+        kobakoCounter++;
+        if (kobakoCounter < 100) {
+          console.log(diffFrame);
         }
 
         //update acceleratorInfoDict

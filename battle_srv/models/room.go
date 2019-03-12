@@ -788,6 +788,7 @@ func (pR *Room) InitContactListener() {
 	pR.CollidableWorld.SetContactListener(listener)
 }
 
+//currentFrame 是服务器目前所知的所有信息, lastFrame 是该玩家已知的帧
 func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
 	if lastFrame == nil {
 		return currentFrame
@@ -805,13 +806,13 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Pumpkins:       currentFrame.Pumpkins,
 	}
 
-	for k, last := range lastFrame.Treasures {
-		if last.Removed {
+	for k, last := range lastFrame.Treasures {//对于玩家已知帧的每一个宝物
+		if last.Removed { //如果之前已经标记删除, 就放到diffFrame
 			diffFrame.Treasures[k] = last
 			continue
 		}
 		curr, ok := currentFrame.Treasures[k]
-		if !ok {
+		if !ok {//说明之前没有被删除, 而现在刚刚被删除
 			diffFrame.Treasures[k] = &Treasure{Removed: true}
 			Logger.Info("A treasure is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("treasure.LocalIdInBattle", curr.LocalIdInBattle))
 			continue
