@@ -1,0 +1,7 @@
+{
+  "__type__": "cc.TextAsset",
+  "_name": "Tile_W64_H64_S01",
+  "_objFlags": 0,
+  "_native": "",
+  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<tileset version=\"1.2\" tiledversion=\"1.2.2\" name=\"Tile_W64_H64_S01\" tilewidth=\"64\" tileheight=\"64\" tilecount=\"16\" columns=\"4\">\n <image source=\"Tile_W64_H64_S01.png\" width=\"256\" height=\"256\"/>\n <tile id=\"12\">\n  <properties>\n   <property name=\"type\" value=\"lowScoreTreasure\"/>\n  </properties>\n </tile>\n <tile id=\"13\">\n  <properties>\n   <property name=\"type\" value=\"guardTower\"/>\n  </properties>\n </tile>\n <tile id=\"15\">\n  <properties>\n   <property name=\"type\" value=\"highScoreTreasure\"/>\n  </properties>\n </tile>\n</tileset>\n"
+}
