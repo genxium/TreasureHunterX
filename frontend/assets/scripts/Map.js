@@ -113,10 +113,14 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-
+    guardTowerPrefab: {
+      type: cc.Prefab,
+      default: null
+    },
   },
 
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
+
     let newFullFrame = {
       id: diffFrame.id,
       treasures: refFullFrame.treasures,
@@ -125,6 +129,7 @@ cc.Class({
       players: refFullFrame.players,
       speedShoes: refFullFrame.speedShoes,
       pumpkin: refFullFrame.pumpkin,
+      guardTowers: refFullFrame.guardTowers, //TODO: 根据diffFrame信息增删或者移动守护塔
     };
     const players = diffFrame.players;
     const playersLocalIdStrList = Object.keys(players);
@@ -430,6 +435,7 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
+    self.towerNodeDict = {};
     self.acceleratorNodeDict = {};
     if (self.findingPlayerNode) {
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
@@ -611,9 +617,12 @@ cc.Class({
       self.setupInputControls();
 
 
-      let kobakoCounter = 0
       window.handleRoomDownsyncFrame = function(diffFrame) {
-        //console.log(diffFrame);
+        /*
+        if(diffFrame.id < 50){
+          console.log(diffFrame);
+        }
+        */
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
@@ -682,6 +691,8 @@ cc.Class({
           :
           self._generateNewFullFrame(cachedFullFrame, diffFrame)
         );
+
+
         if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
@@ -737,12 +748,6 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
-        //kobako
-        kobakoCounter ++;
-        if(kobakoCounter < 100){
-          console.log(diffFrame);
-        }
-
         //update acceleratorInfoDict
         self.acceleratorInfoDict = {};
         const accelartors = roomDownsyncFrame.speedShoes;
@@ -774,6 +779,18 @@ cc.Class({
           const bulletInfo = bullets[k];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
+
+        //update guardTowerInfoDict
+        self.guardTowerInfoDict = {};
+        const guardTowers = roomDownsyncFrame.guardTowers;
+        const ids = Object.keys(guardTowers);
+        for (let i = 0; i < ids.length; ++i) {
+          const id = ids[i];
+          const localIdInBattle = parseInt(id);
+          const tower = guardTowers[id];
+          self.guardTowerInfoDict[localIdInBattle] = tower;
+        }
+
 
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
@@ -1046,6 +1063,24 @@ cc.Class({
       }
       if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
         delete toRemoveTrapNodeDict[trapLocalIdInBattle];
+      }
+    }
+
+    // 更新陷阱塔显示 
+    for (let k in self.guardTowerInfoDict) {
+      const trapLocalIdInBattle = parseInt(k);
+      const towerInfo = self.guardTowerInfoDict[trapLocalIdInBattle];
+      const newPos = cc.v2(
+        towerInfo.x,
+        towerInfo.y
+      );
+      let targetNode = self.towerNodeDict[trapLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.guardTowerPrefab);
+        self.towerNodeDict[trapLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
       }
     }
 

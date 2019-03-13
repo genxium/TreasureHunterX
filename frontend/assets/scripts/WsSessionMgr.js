@@ -130,6 +130,7 @@ window.initPersistentSessionClient = function(onopenCb) {
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
           const typedArray = _base64ToUint8Array(resp.data);
+          //console.log(typedArray)
           const parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }

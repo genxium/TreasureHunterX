@@ -131,6 +131,7 @@ type RoomDownsyncFrame struct {
 	Bullets        map[int32]*Bullet    `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SpeedShoes     map[int32]*SpeedShoe `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Pumpkins       map[int32]*Pumpkin   `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	GuardTowers    map[int32]*GuardTower   `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	//RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	//RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
@@ -804,6 +805,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		Traps:          make(map[int32]*Trap, 0),
 		SpeedShoes:     make(map[int32]*SpeedShoe, 0),
 		Pumpkins:       currentFrame.Pumpkins,
+		GuardTowers:    make(map[int32]*GuardTower, 0),
 	}
 
 	for k, last := range lastFrame.Treasures {//对于玩家已知帧的每一个宝物
@@ -865,6 +867,7 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 			diffFrame.SpeedShoes[k] = v
 		}
 	}
+
 	return diffFrame
 }
 
@@ -933,7 +936,8 @@ func (pR *Room) StartBattle() {
 		return
 	}
 
-	relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
+	//relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
+	relativePath := "../frontend/assets/resources/map/pacman/map.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
@@ -972,7 +976,8 @@ func (pR *Room) StartBattle() {
 
 	tsxIns := Tsx{}
 	pTsxIns := &tsxIns
-	relativePath = "../frontend/assets/resources/map/tile_1.tsx"
+	//relativePath = "../frontend/assets/resources/map/tile_1.tsx"
+	relativePath = "../frontend/assets/resources/map/pacman/Tile_W64_H64_S01.tsx"
 	fp = filepath.Join(pwd, relativePath)
 	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
@@ -1046,6 +1051,7 @@ func (pR *Room) StartBattle() {
 				Bullets:        pR.Bullets,
 				SpeedShoes:     pR.SpeedShoes,
 				Pumpkins:       pR.Pumpkins,
+        GuardTowers:    pR.GuardTowers,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.

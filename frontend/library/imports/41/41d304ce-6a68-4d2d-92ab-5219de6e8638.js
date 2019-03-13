@@ -118,11 +118,15 @@ cc.Class({
     playersInfoPrefab: {
       type: cc.Prefab,
       default: null
+    },
+    guardTowerPrefab: {
+      type: cc.Prefab,
+      default: null
     }
-
   },
 
   _generateNewFullFrame: function _generateNewFullFrame(refFullFrame, diffFrame) {
+
     var newFullFrame = {
       id: diffFrame.id,
       treasures: refFullFrame.treasures,
@@ -130,7 +134,8 @@ cc.Class({
       bullets: refFullFrame.bullets,
       players: refFullFrame.players,
       speedShoes: refFullFrame.speedShoes,
-      pumpkin: refFullFrame.pumpkin
+      pumpkin: refFullFrame.pumpkin,
+      guardTowers: refFullFrame.guardTowers //TODO: 根据diffFrame信息增删或者移动守护塔
     };
     var players = diffFrame.players;
     var playersLocalIdStrList = Object.keys(players);
@@ -448,6 +453,7 @@ cc.Class({
     self.trapBulletInfoDict = {};
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
+    self.towerNodeDict = {};
     self.acceleratorNodeDict = {};
     if (self.findingPlayerNode) {
       var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
@@ -777,9 +783,12 @@ cc.Class({
       self._inputControlEnabled = false;
       self.setupInputControls();
 
-      var kobakoCounter = 0;
       window.handleRoomDownsyncFrame = function (diffFrame) {
-        //console.log(diffFrame);
+        /*
+        if(diffFrame.id < 50){
+          console.log(diffFrame);
+        }
+        */
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
@@ -841,6 +850,7 @@ cc.Class({
         self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
         isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
+
         if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
           return;
@@ -895,12 +905,6 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
-        //kobako
-        kobakoCounter++;
-        if (kobakoCounter < 100) {
-          console.log(diffFrame);
-        }
-
         //update acceleratorInfoDict
         self.acceleratorInfoDict = {};
         var accelartors = roomDownsyncFrame.speedShoes;
@@ -931,6 +935,17 @@ cc.Class({
           var bulletLocalIdInBattle = parseInt(_k11);
           var bulletInfo = bullets[_k11];
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
+        }
+
+        //update guardTowerInfoDict
+        self.guardTowerInfoDict = {};
+        var guardTowers = roomDownsyncFrame.guardTowers;
+        var ids = Object.keys(guardTowers);
+        for (var _i18 = 0; _i18 < ids.length; ++_i18) {
+          var id = ids[_i18];
+          var localIdInBattle = parseInt(id);
+          var tower = guardTowers[id];
+          self.guardTowerInfoDict[localIdInBattle] = tower;
         }
 
         if (0 == self.lastRoomDownsyncFrameId) {
@@ -1183,25 +1198,40 @@ cc.Class({
       }
     }
 
-    // 更新bullet显示 
-    for (var _k14 in self.trapBulletInfoDict) {
-      var bulletLocalIdInBattle = parseInt(_k14);
-      var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
-      var _newPos3 = cc.v2(bulletInfo.x, bulletInfo.y);
-      var _targetNode3 = self.trapBulletNodeDict[bulletLocalIdInBattle];
+    // 更新陷阱塔显示 
+    for (var _k14 in self.guardTowerInfoDict) {
+      var _trapLocalIdInBattle = parseInt(_k14);
+      var towerInfo = self.guardTowerInfoDict[_trapLocalIdInBattle];
+      var _newPos3 = cc.v2(towerInfo.x, towerInfo.y);
+      var _targetNode3 = self.towerNodeDict[_trapLocalIdInBattle];
       if (!_targetNode3) {
-        _targetNode3 = cc.instantiate(self.trapBulletPrefab);
-        self.trapBulletNodeDict[bulletLocalIdInBattle] = _targetNode3;
+        _targetNode3 = cc.instantiate(self.guardTowerPrefab);
+        self.towerNodeDict[_trapLocalIdInBattle] = _targetNode3;
         safelyAddChild(mapNode, _targetNode3);
         _targetNode3.setPosition(_newPos3);
         setLocalZOrder(_targetNode3, 5);
       }
-      var aBulletScriptIns = _targetNode3.getComponent("Bullet");
+    }
+
+    // 更新bullet显示 
+    for (var _k15 in self.trapBulletInfoDict) {
+      var bulletLocalIdInBattle = parseInt(_k15);
+      var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
+      var _newPos4 = cc.v2(bulletInfo.x, bulletInfo.y);
+      var _targetNode4 = self.trapBulletNodeDict[bulletLocalIdInBattle];
+      if (!_targetNode4) {
+        _targetNode4 = cc.instantiate(self.trapBulletPrefab);
+        self.trapBulletNodeDict[bulletLocalIdInBattle] = _targetNode4;
+        safelyAddChild(mapNode, _targetNode4);
+        _targetNode4.setPosition(_newPos4);
+        setLocalZOrder(_targetNode4, 5);
+      }
+      var aBulletScriptIns = _targetNode4.getComponent("Bullet");
       aBulletScriptIns.localIdInBattle = bulletLocalIdInBattle;
       aBulletScriptIns.linearSpeed = bulletInfo.linearSpeed * 1000000000; // The `bullet.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
 
-      var _oldPos = cc.v2(_targetNode3.x, _targetNode3.y);
-      var _toMoveByVec = _newPos3.sub(_oldPos);
+      var _oldPos = cc.v2(_targetNode4.x, _targetNode4.y);
+      var _toMoveByVec = _newPos4.sub(_oldPos);
       var _toMoveByVecMag = _toMoveByVec.mag();
       var _toTeleportDisThreshold = aBulletScriptIns.linearSpeed * dt * 100;
       var _notToMoveDisThreshold = aBulletScriptIns.linearSpeed * dt * 0.5;
@@ -1218,7 +1248,7 @@ cc.Class({
             dy: 0
           };
           // TODO: Use `cc.Action`?
-          _targetNode3.setPosition(_newPos3);
+          _targetNode4.setPosition(_newPos4);
         } else {
           // The common case which is suitable for interpolation.
           var _normalizedDir = {
@@ -1241,24 +1271,24 @@ cc.Class({
     }
 
     //更新南瓜少年的显示
-    for (var _k15 in self.pumpkinInfoDict) {
-      var pumpkinLocalIdInBattle = parseInt(_k15);
+    for (var _k16 in self.pumpkinInfoDict) {
+      var pumpkinLocalIdInBattle = parseInt(_k16);
       var pumpkinInfo = self.pumpkinInfoDict[pumpkinLocalIdInBattle];
-      var _newPos4 = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
-      var _targetNode4 = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
-      if (!_targetNode4) {
-        _targetNode4 = cc.instantiate(self.pumpkinPrefab);
-        self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode4;
-        safelyAddChild(mapNode, _targetNode4);
-        _targetNode4.setPosition(_newPos4);
-        setLocalZOrder(_targetNode4, 5);
+      var _newPos5 = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
+      var _targetNode5 = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
+      if (!_targetNode5) {
+        _targetNode5 = cc.instantiate(self.pumpkinPrefab);
+        self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode5;
+        safelyAddChild(mapNode, _targetNode5);
+        _targetNode5.setPosition(_newPos5);
+        setLocalZOrder(_targetNode5, 5);
       }
-      var aPumpkinScriptIns = _targetNode4.getComponent("Pumpkin");
+      var aPumpkinScriptIns = _targetNode5.getComponent("Pumpkin");
       aPumpkinScriptIns.localIdInBattle = pumpkinLocalIdInBattle;
       aPumpkinScriptIns.linearSpeed = pumpkinInfo.linearSpeed * 1000000000; // The `pumpkin.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
 
-      var _oldPos2 = cc.v2(_targetNode4.x, _targetNode4.y);
-      var _toMoveByVec2 = _newPos4.sub(_oldPos2);
+      var _oldPos2 = cc.v2(_targetNode5.x, _targetNode5.y);
+      var _toMoveByVec2 = _newPos5.sub(_oldPos2);
       var _toMoveByVecMag2 = _toMoveByVec2.mag();
       var _toTeleportDisThreshold2 = aPumpkinScriptIns.linearSpeed * dt * 100;
       var _notToMoveDisThreshold2 = aPumpkinScriptIns.linearSpeed * dt * 0.5;
@@ -1275,7 +1305,7 @@ cc.Class({
             dy: 0
           };
           // TODO: Use `cc.Action`?
-          _targetNode4.setPosition(_newPos4);
+          _targetNode5.setPosition(_newPos5);
         } else {
           // The common case which is suitable for interpolation.
           var _normalizedDir2 = {
@@ -1298,52 +1328,52 @@ cc.Class({
     }
 
     // 更新宝物显示 
-    for (var _k16 in self.treasureInfoDict) {
-      var treasureLocalIdInBattle = parseInt(_k16);
+    for (var _k17 in self.treasureInfoDict) {
+      var treasureLocalIdInBattle = parseInt(_k17);
       var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
-      var _newPos5 = cc.v2(treasureInfo.x, treasureInfo.y);
-      var _targetNode5 = self.treasureNodeDict[treasureLocalIdInBattle];
-      if (!_targetNode5) {
-        _targetNode5 = cc.instantiate(self.treasurePrefab);
-        var treasureNodeScriptIns = _targetNode5.getComponent("Treasure");
+      var _newPos6 = cc.v2(treasureInfo.x, treasureInfo.y);
+      var _targetNode6 = self.treasureNodeDict[treasureLocalIdInBattle];
+      if (!_targetNode6) {
+        _targetNode6 = cc.instantiate(self.treasurePrefab);
+        var treasureNodeScriptIns = _targetNode6.getComponent("Treasure");
         treasureNodeScriptIns.setData(treasureInfo);
-        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode5;
-        safelyAddChild(mapNode, _targetNode5);
-        _targetNode5.setPosition(_newPos5);
-        setLocalZOrder(_targetNode5, 5);
+        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode6;
+        safelyAddChild(mapNode, _targetNode6);
+        _targetNode6.setPosition(_newPos6);
+        setLocalZOrder(_targetNode6, 5);
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
         delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
       }
-      if (0 < _targetNode5.getNumberOfRunningActions()) {
+      if (0 < _targetNode6.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
         continue;
       }
-      var _oldPos3 = cc.v2(_targetNode5.x, _targetNode5.y);
-      var _toMoveByVec3 = _newPos5.sub(_oldPos3);
+      var _oldPos3 = cc.v2(_targetNode6.x, _targetNode6.y);
+      var _toMoveByVec3 = _newPos6.sub(_oldPos3);
       var durationSeconds = dt; // Using `dt` temporarily!
-      _targetNode5.runAction(cc.moveTo(durationSeconds, _newPos5));
+      _targetNode6.runAction(cc.moveTo(durationSeconds, _newPos6));
     }
 
     // Coping with removed players.
-    for (var _k17 in toRemovePlayerNodeDict) {
-      var _playerId = parseInt(_k17);
-      toRemovePlayerNodeDict[_k17].parent.removeChild(toRemovePlayerNodeDict[_k17]);
+    for (var _k18 in toRemovePlayerNodeDict) {
+      var _playerId = parseInt(_k18);
+      toRemovePlayerNodeDict[_k18].parent.removeChild(toRemovePlayerNodeDict[_k18]);
       delete self.otherPlayerNodeDict[_playerId];
     }
 
     // Coping with removed pumpkins.
-    for (var _k18 in toRemovePumpkinNodeDict) {
-      var _pumpkinLocalIdInBattle = parseInt(_k18);
-      toRemovePumpkinNodeDict[_k18].parent.removeChild(toRemovePlayerNodeDict[_k18]);
+    for (var _k19 in toRemovePumpkinNodeDict) {
+      var _pumpkinLocalIdInBattle = parseInt(_k19);
+      toRemovePumpkinNodeDict[_k19].parent.removeChild(toRemovePlayerNodeDict[_k19]);
       delete self.pumpkinNodeDict[_pumpkinLocalIdInBattle];
     }
 
     // Coping with removed treasures.
-    for (var _k19 in toRemoveTreasureNodeDict) {
-      var _treasureLocalIdInBattle = parseInt(_k19);
-      var treasureScriptIns = toRemoveTreasureNodeDict[_k19].getComponent("Treasure");
+    for (var _k20 in toRemoveTreasureNodeDict) {
+      var _treasureLocalIdInBattle = parseInt(_k20);
+      var treasureScriptIns = toRemoveTreasureNodeDict[_k20].getComponent("Treasure");
       treasureScriptIns.playPickedUpAnimAndDestroy();
       if (self.musicEffectManagerScriptIns) {
         if (2 == treasureScriptIns.type) {
@@ -1356,23 +1386,23 @@ cc.Class({
     }
 
     // Coping with removed traps.
-    for (var _k20 in toRemoveTrapNodeDict) {
-      var _trapLocalIdInBattle = parseInt(_k20);
-      toRemoveTrapNodeDict[_k20].parent.removeChild(toRemoveTrapNodeDict[_k20]);
-      delete self.trapNodeDict[_trapLocalIdInBattle];
+    for (var _k21 in toRemoveTrapNodeDict) {
+      var _trapLocalIdInBattle2 = parseInt(_k21);
+      toRemoveTrapNodeDict[_k21].parent.removeChild(toRemoveTrapNodeDict[_k21]);
+      delete self.trapNodeDict[_trapLocalIdInBattle2];
     }
 
     // Coping with removed accelerators.
-    for (var _k21 in toRemoveAcceleratorNodeDict) {
-      var _accLocalIdInBattle = parseInt(_k21);
-      toRemoveAcceleratorNodeDict[_k21].parent.removeChild(toRemoveAcceleratorNodeDict[_k21]);
+    for (var _k22 in toRemoveAcceleratorNodeDict) {
+      var _accLocalIdInBattle = parseInt(_k22);
+      toRemoveAcceleratorNodeDict[_k22].parent.removeChild(toRemoveAcceleratorNodeDict[_k22]);
       delete self.acceleratorNodeDict[_accLocalIdInBattle];
     }
 
     // Coping with removed bullets.
-    for (var _k22 in toRemoveBulletNodeDict) {
-      var _bulletLocalIdInBattle = parseInt(_k22);
-      toRemoveBulletNodeDict[_k22].parent.removeChild(toRemoveBulletNodeDict[_k22]);
+    for (var _k23 in toRemoveBulletNodeDict) {
+      var _bulletLocalIdInBattle = parseInt(_k23);
+      toRemoveBulletNodeDict[_k23].parent.removeChild(toRemoveBulletNodeDict[_k23]);
       delete self.trapBulletNodeDict[_bulletLocalIdInBattle];
       if (self.musicEffectManagerScriptIns) {
         self.musicEffectManagerScriptIns.playCrashedByTrapBullet();

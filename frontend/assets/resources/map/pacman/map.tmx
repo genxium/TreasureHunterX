@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="8" nextobjectid="135">
+<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="138">
  <tileset firstgid="1" source="Tile_W64_H64_S01.tsx"/>
  <layer id="3" name="GroundFloor" width="50" height="50">
   <data encoding="base64" compression="zlib">
    eJztz0ENACAMALGR4F8zNspyjwronZm7xPlcD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPy7bHBg/ldQwR
   </data>
  </layer>
- <objectgroup id="5" name="selfsrc">
-  <object id="40" x="400" y="2830.3">
+ <objectgroup id="8" name="controlled_players_starting_pos_list">
+  <object id="135" x="320" y="2884">
+   <point/>
+  </object>
+  <object id="137" x="2876" y="320">
    <point/>
   </object>
  </objectgroup>

@@ -1089,11 +1089,6 @@
     "meta": 1550808605000,
     "relativePath": "resources/musicEffect/TreasurePicked.mp3"
   },
-  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
-    "asset": 1550807126000,
-    "meta": 1550808611000,
-    "relativePath": "scripts/Treasure.js"
-  },
   "09e1bfed-132e-4ada-a68f-229a870db69e": {
     "asset": 1550807126000,
     "meta": 1550808610000,
@@ -1123,11 +1118,6 @@
     "asset": 1550807126000,
     "meta": 1550808604000,
     "relativePath": "plugin_scripts/jweixin-1.4.0.js"
-  },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1550807126000,
-    "meta": 1550808611000,
-    "relativePath": "scripts/WsSessionMgr.js"
   },
   "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
     "asset": 1550807126000,
@@ -1160,8 +1150,8 @@
     "relativePath": "resources/textures/login/loading&login.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1550807126000,
-    "meta": 1550808609000,
+    "asset": 1552462541000,
+    "meta": 1552462541000,
     "relativePath": "scenes/default_map.fire"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
@@ -1300,7 +1290,7 @@
     "relativePath": "resources/map/tile_1.png"
   },
   "1fe4b981-93b1-4e65-aefb-898c615219e5": {
-    "asset": 1552380024000,
+    "asset": 1552440454000,
     "meta": 1550807126000,
     "relativePath": "resources/map"
   },
@@ -1313,11 +1303,6 @@
     "asset": 1550807126000,
     "meta": 1550808610000,
     "relativePath": "scripts/SelfPlayer.js"
-  },
-  "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
-    "asset": 1550807126000,
-    "meta": 1550808605000,
-    "relativePath": "resources/pbfiles/room_downsync_frame.proto"
   },
   "ea965d25-ec82-478c-bdb2-9ac07981ab0e": {
     "asset": 1550807126000,
@@ -1334,20 +1319,10 @@
     "meta": 1550808605000,
     "relativePath": "resources/textures/81547109546_.pic_hd.jpg"
   },
-  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552356975000,
-    "meta": 1552356975000,
-    "relativePath": "scenes/login.fire"
-  },
   "2fa4ffbb-5654-4c7a-b7f3-a27d1303b019": {
     "asset": 1551422666000,
     "meta": 1551424477000,
     "relativePath": "scripts/BasePlayer.js"
-  },
-  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
-    "asset": 1551438130000,
-    "meta": 1551438132000,
-    "relativePath": "plugin_scripts/conf.js"
   },
   "a7880898-f0eb-4957-892c-d8157c15efe2": {
     "asset": 1551949293000,
@@ -1359,59 +1334,109 @@
     "meta": 1551949444000,
     "relativePath": "resources/map/tile_1.tsx"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1552379995000,
-    "meta": 1552380027000,
-    "relativePath": "scripts/Map.js"
-  },
   "33d33d2f-5ca7-4677-9c82-4ced71aa0f8a": {
-    "asset": 1552380024000,
-    "meta": 1552380024000,
+    "asset": 1552380233000,
+    "meta": 1552380233000,
     "relativePath": "resources/map/pacman"
   },
   "250881b1-2eee-4e42-b5b3-1fc5d1f7e72b": {
     "asset": 1552378998000,
-    "meta": 1552380025000,
+    "meta": 1552380629000,
     "relativePath": "resources/map/pacman.zip"
   },
-  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
-    "asset": 1552379917000,
-    "meta": 1552380027000,
-    "relativePath": "resources/map/pacman/map.tmx"
-  },
   "5e68ce04-f41f-4ab0-a55c-608542e5638a": {
-    "asset": 1552377661000,
-    "meta": 1552380025000,
+    "asset": 1552380233000,
+    "meta": 1552380629000,
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.png"
-  },
-  "59b65107-0da7-47b3-a08d-7de824dd5a39": {
-    "asset": 1552378780000,
-    "meta": 1552380026000,
-    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1552380028000,
+    "meta": 1552443169000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1552380028000,
+    "meta": 1552443169000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1552380028000,
+    "meta": 1552443170000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1552380028000,
+    "meta": 1552443170000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1552380028000,
+    "meta": 1552443170000,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
+    "asset": 1552444598000,
+    "meta": 1552444600000,
+    "relativePath": "resources/map/pacman/map.tmx"
+  },
+  "23407591-ce77-4520-b502-becf5cbe6bc2": {
+    "asset": 1552446824000,
+    "meta": 1552446948000,
+    "relativePath": "resources/textures/treasures/lowScoreTreasure.png"
+  },
+  "264efd9d-4aa9-4f30-b433-53133c80a965": {
+    "asset": 1552446959000,
+    "meta": 1552446959000,
+    "relativePath": "resources/textures/treasures/highScoreTreasure.png"
+  },
+  "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
+    "asset": 1552447638000,
+    "meta": 1552447646000,
+    "relativePath": "scripts/Treasure.js"
+  },
+  "59b65107-0da7-47b3-a08d-7de824dd5a39": {
+    "asset": 1552449065000,
+    "meta": 1552449206000,
+    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
+  },
+  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
+    "asset": 1552459859000,
+    "meta": 1552459955000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "60c5287b-34ed-4f1d-8317-a5f49fcf9e26": {
+    "asset": 1552460275000,
+    "meta": 1552460341000,
+    "relativePath": "resources/textures/ghost.png"
+  },
+  "3cee8bde-8f1d-4960-b591-33208af1f997": {
+    "asset": 1552466829000,
+    "meta": 1552466829000,
+    "relativePath": "resources/prefabs/GuardTower.prefab"
+  },
+  "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
+    "asset": 1552462488000,
+    "meta": 1552462531000,
+    "relativePath": "resources/pbfiles/room_downsync_frame.proto"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1552463557000,
+    "meta": 1552463563000,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "c1c64c28-1985-4923-9aef-37c01a32d8b3": {
+    "asset": 1552466821000,
+    "meta": 1552466821000,
+    "relativePath": "resources/textures/ghost2.png"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1552466873000,
+    "meta": 1552466875000,
+    "relativePath": "scripts/Map.js"
+  },
+  "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
+    "asset": 1552466877000,
+    "meta": 1552466901000,
+    "relativePath": "scenes/login.fire"
   }
 }

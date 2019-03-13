@@ -351,7 +351,22 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos
 			}
 		}
+    /*
 		if "treasures" == objGroup.Name {
+			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
+			for index, obj := range objGroup.Objects {
+				tmp := Vec2D{
+					X: obj.X,
+					Y: obj.Y,
+				}
+				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+				pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
+				pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
+				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
+			}
+		}
+    */
+		if "lowScoreTreasures" == objGroup.Name {
 			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
 				tmp := Vec2D{
