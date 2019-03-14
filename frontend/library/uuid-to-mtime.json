@@ -35,7 +35,7 @@
     "relativePath": "resources"
   },
   "3b59087c-771e-40f1-b126-2f5ec4bcde3d": {
-    "asset": 1552468055000,
+    "asset": 1552554909000,
     "meta": 1550807126000,
     "relativePath": "resources/animation"
   },
@@ -90,7 +90,7 @@
     "relativePath": "resources/textures/flatHeadSister/flatHeadSister.png"
   },
   "6f0263fa-1a06-4133-98dc-34281dea54ce": {
-    "asset": 1552460404000,
+    "asset": 1552555065000,
     "meta": 1550807126000,
     "relativePath": "resources/prefabs"
   },
@@ -925,13 +925,13 @@
     "relativePath": "resources/animation/HeroPandaBlueAttacked/HeroPandaBlueAttacked.plist"
   },
   "eccd9e3b-4874-45e3-924d-470e5d3af29d": {
-    "asset": 1550807126000,
-    "meta": 1550808604000,
+    "asset": 1552553071000,
+    "meta": 1552553071000,
     "relativePath": "resources/animation/HeroPandaBlueAttacked/attackedLeft.anim"
   },
   "279c87ed-cd37-41d2-a0ba-4032c7636db6": {
-    "asset": 1550807126000,
-    "meta": 1550808604000,
+    "asset": 1552553114000,
+    "meta": 1552553114000,
     "relativePath": "resources/animation/HeroPandaBlueAttacked/attackedRight.anim"
   },
   "c6ec9d78-ad63-4f46-8e8e-41acbbcd36e5": {
@@ -1150,8 +1150,8 @@
     "relativePath": "resources/textures/login/loading&login.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1552462541000,
-    "meta": 1552462541000,
+    "asset": 1552555977000,
+    "meta": 1552555977000,
     "relativePath": "scenes/default_map.fire"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
@@ -1374,11 +1374,6 @@
     "meta": 1552449206000,
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
   },
-  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
-    "asset": 1552459859000,
-    "meta": 1552459955000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "60c5287b-34ed-4f1d-8317-a5f49fcf9e26": {
     "asset": 1552460275000,
     "meta": 1552460341000,
@@ -1410,33 +1405,193 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552533847000,
-    "meta": 1552533847000,
+    "asset": 1552556211000,
+    "meta": 1552556211000,
     "relativePath": "scenes/login.fire"
+  },
+  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
+    "asset": 1552544620000,
+    "meta": 1552544621000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "b6a37e66-7f05-469a-9fac-f9541e24a4c7": {
+    "asset": 1552555210000,
+    "meta": 1552554909000,
+    "relativePath": "resources/animation/Pacman"
+  },
+  "97dd75f4-43da-41e1-bdb1-140c232c4ae4": {
+    "asset": 1552556159000,
+    "meta": 1552556159000,
+    "relativePath": "resources/animation/Pacman/attackedLeft.anim"
+  },
+  "059b3546-4eec-4fdc-a04c-b01b0b1f6019": {
+    "asset": 1552555343000,
+    "meta": 1552555343000,
+    "relativePath": "resources/animation/Pacman/Bottom.anim"
+  },
+  "dd420621-0433-42c1-8230-bb787894591c": {
+    "asset": 1552555416000,
+    "meta": 1552555416000,
+    "relativePath": "resources/animation/Pacman/BottomLeft.anim"
+  },
+  "92e3aaaf-4dc6-4c9d-bd79-0f0fb6bda1bf": {
+    "asset": 1552555474000,
+    "meta": 1552555474000,
+    "relativePath": "resources/animation/Pacman/BottomRight.anim"
+  },
+  "bc31df40-0b61-451c-ac0d-07b633f2b909": {
+    "asset": 1552553005000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/Pacman/PacmanYellowTransparent.plist"
+  },
+  "8999681a-23d2-48a3-9698-59c01fabbd35": {
+    "asset": 1552555497000,
+    "meta": 1552555497000,
+    "relativePath": "resources/animation/Pacman/Left.anim"
+  },
+  "8489ef1a-ebee-46ef-b367-5a6e2a870318": {
+    "asset": 1552555522000,
+    "meta": 1552555522000,
+    "relativePath": "resources/animation/Pacman/Right.anim"
+  },
+  "b4873701-4d8e-4980-8c3a-981545ed1a7a": {
+    "asset": 1552555553000,
+    "meta": 1552555553000,
+    "relativePath": "resources/animation/Pacman/Top.anim"
+  },
+  "1a588821-0b41-4001-ba47-f3f9b22e621a": {
+    "asset": 1552555581000,
+    "meta": 1552555581000,
+    "relativePath": "resources/animation/Pacman/TopLeft.anim"
+  },
+  "428f1513-b076-4b23-8916-ab9ff91f4743": {
+    "asset": 1552555605000,
+    "meta": 1552555605000,
+    "relativePath": "resources/animation/Pacman/TopRight.anim"
+  },
+  "63a20a49-11da-4710-b08e-87a247e13174": {
+    "asset": 1552473798000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/Pacman/YellowPacman.plist"
+  },
+  "6644ddc5-3559-4798-8778-eceed6390632": {
+    "asset": 1552548496000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/Pacman/PacmanYellowTransparent.png"
+  },
+  "88b3140e-cec9-442e-a4a9-55d28e4d197b": {
+    "asset": 1552547983000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/Pacman/YellowPacman.png"
+  },
+  "3955474a-729f-481a-9b27-3e3a1eade07a": {
+    "asset": 1552554909000,
+    "meta": 1552554909000,
+    "relativePath": "resources/animation/PacmanGreen"
+  },
+  "c6c33e62-600b-42e7-a75a-9dcac7017fa0": {
+    "asset": 1552552015000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/attackedLeft.anim"
+  },
+  "4813627a-bf4f-4d05-ad22-c60292ce24b8": {
+    "asset": 1552551724000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/Bottom.anim"
+  },
+  "d55346a7-065c-4f84-9bf5-9152502f94a5": {
+    "asset": 1552551822000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/BottomLeft.anim"
+  },
+  "8b8d4474-90e7-4a79-a6fc-65470e083361": {
+    "asset": 1552551832000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/BottomRight.anim"
+  },
+  "56a819c7-c954-4ccc-981d-3518e2967bf3": {
+    "asset": 1552535532000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/GreenPacman.plists.plist"
+  },
+  "bbec5329-2806-43b6-8862-3f2f753c25f0": {
+    "asset": 1552551841000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/Left.anim"
+  },
+  "a980838a-b799-45ef-802e-255bcd8cceac": {
+    "asset": 1552553301000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/PacmanGreenTransparent.plist"
+  },
+  "db326903-6a40-440f-839d-f283bf067c79": {
+    "asset": 1552548540000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/PacmanGreenTransparent.png"
+  },
+  "ca959f1d-e687-425b-9cad-12c20813f8a5": {
+    "asset": 1552535532000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/GreenPacman.plists.png"
+  },
+  "b5fe594f-fa37-491b-94d7-e125b90a9aa7": {
+    "asset": 1552551849000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/Right.anim"
+  },
+  "f873aa73-4b54-4b10-a8d9-05d461f39e41": {
+    "asset": 1552551856000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/Top.anim"
+  },
+  "3443a973-b6c0-4615-b87b-a78a2f2bb880": {
+    "asset": 1552551864000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/TopLeft.anim"
+  },
+  "676a71ff-e861-4e77-bd71-7d820548459e": {
+    "asset": 1552551872000,
+    "meta": 1552554911000,
+    "relativePath": "resources/animation/PacmanGreen/TopRight.anim"
+  },
+  "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
+    "asset": 1552556278000,
+    "meta": 1552556278000,
+    "relativePath": "resources/prefabs/Pacman1.prefab"
+  },
+  "1f479636-9eb8-4612-8f97-371964d6eae3": {
+    "asset": 1552555050000,
+    "meta": 1552555057000,
+    "relativePath": "resources/prefabs/Pacman2.prefab"
+  },
+  "721c9f78-bc36-4493-a687-3941ce3e6074": {
+    "asset": 1552556203000,
+    "meta": 1552556203000,
+    "relativePath": "resources/animation/Pacman/attackedRight.anim"
   },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1552528138000,
+    "meta": 1552555819000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1552528138000,
+    "meta": 1552555819000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1552528138000,
+    "meta": 1552555820000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1552528138000,
+    "meta": 1552555820000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1552528138000,
+    "meta": 1552555820000,
     "relativePath": "SpriteFrameSet.js"
   }
 }

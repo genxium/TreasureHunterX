@@ -7,8 +7,8 @@ cc._RF.push(module, 'a36ffw/0PNL64S7ts5SXAMD', 'conf');
 if (CC_DEBUG) {
   var localAddress = {
     PROTOCOL: 'http',
-    //HOST: '192.168.31.139',
-    HOST: 'localhost',
+    HOST: '192.168.31.139',
+    //HOST: 'localhost',
     PORT: "9992",
     WS_PATH_PREFIX: "/tsrht"
   };

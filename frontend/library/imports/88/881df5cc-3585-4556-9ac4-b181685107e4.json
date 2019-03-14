@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "GreenPacman",
+    "texture": "ca959f1d-e687-425b-9cad-12c20813f8a5",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      1019,
+      1216
+    ],
+    "offset": [
+      -1.5,
+      1
+    ],
+    "originalSize": [
+      1022,
+      1218
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

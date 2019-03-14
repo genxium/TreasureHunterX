@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "PacmanYellowTransparent",
+    "texture": "6644ddc5-3559-4798-8778-eceed6390632",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      1019,
+      1216
+    ],
+    "offset": [
+      -1.5,
+      1
+    ],
+    "originalSize": [
+      1022,
+      1218
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
