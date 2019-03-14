@@ -49,7 +49,7 @@ type Player struct {
 	AckingFrameId       int32         `json:"ackingFrameId"`
 	JoinIndex           int32         `protobuf:"varint,12,opt,name=joinIndex,proto3 " json:"joinIndex"`
 
-	//kobako
+  //kobako: 上一次被守护塔锁定的时间
 	BeLockedAt int64 `json:"-"`
 }
 

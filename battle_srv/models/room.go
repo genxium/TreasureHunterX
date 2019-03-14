@@ -252,17 +252,24 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	return true
 }
 
-func (pR *Room) ReAddPlayerIfPossible(pPlayer *Player) bool {
+func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	if RoomBattleStateIns.PREPARE != pR.State && RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
-		Logger.Warn("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	if _, existent := pR.Players[pPlayer.Id]; !existent {
-		Logger.Warn("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+	if _, existent := pR.Players[pTmpPlayerInstance.Id]; !existent {
+		Logger.Warn("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-	defer pR.onPlayerReAdded(pPlayer.Id)
-	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+  /*
+  * WARNING: The "pTmpPlayerInstance *Player" used here is a temporarily constructed
+  * instance from "<proj-root>/battle_srv/ws/serve.go", which is NOT the same
+  * as "pR.Players[pTmpPlayerInstance.Id]".
+  * -- YFLu
+  */
+	defer pR.onPlayerReAdded(pTmpPlayerInstance.Id)
+  pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
+	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
 	// Note: All previous position and orientation info should just be recovered.
 	return true
 }
@@ -1116,18 +1123,22 @@ func (pR *Room) StartBattle() {
 				 *
 				 * DON'T send any DiffFrame into "DedicatedForwardingChanForPlayer" if the player is disconnected, because it could jam the channel and cause significant delay upon "battle recovery for reconnected player".
 				 */
-				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
-				diffFrame := calculateDiffFrame(currentFrame, lastFrame)
-
-				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-				theBytes, marshalErr := proto.Marshal(diffFrame)
-				if marshalErr != nil {
-					Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-					continue
-				}
-				theStr := string(theBytes)
-				utils.SendStrSafely(theStr, theForwardingChannel)
+        if (player.BattleState == PlayerBattleStateIns.DISCONNECTED || player.BattleState == PlayerBattleStateIns.LOST){
+          continue
+        } else{
+   				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+  				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
+  				diffFrame := calculateDiffFrame(currentFrame, lastFrame)
+  
+  				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+  				theBytes, marshalErr := proto.Marshal(diffFrame)
+  				if marshalErr != nil {
+  					Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+  					continue
+  				}
+  				theStr := string(theBytes)
+  				utils.SendStrSafely(theStr, theForwardingChannel)
+        }
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
 			collisionNowMillis := utils.UnixtimeMilli()

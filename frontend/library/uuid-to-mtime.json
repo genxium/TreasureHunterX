@@ -25,22 +25,22 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1550807842000,
+    "asset": 1552459859000,
     "meta": 1550807126000,
     "relativePath": "plugin_scripts"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1551424505000,
+    "asset": 1552462188000,
     "meta": 1550807126000,
     "relativePath": "resources"
   },
   "3b59087c-771e-40f1-b126-2f5ec4bcde3d": {
-    "asset": 1550807126000,
+    "asset": 1552468055000,
     "meta": 1550807126000,
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1550807126000,
+    "asset": 1552466821000,
     "meta": 1550807126000,
     "relativePath": "resources/textures"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1552379995000,
+    "asset": 1552460793000,
     "meta": 1550807126000,
     "relativePath": "scripts"
   },
@@ -90,7 +90,7 @@
     "relativePath": "resources/textures/flatHeadSister/flatHeadSister.png"
   },
   "6f0263fa-1a06-4133-98dc-34281dea54ce": {
-    "asset": 1550807126000,
+    "asset": 1552460404000,
     "meta": 1550807126000,
     "relativePath": "resources/prefabs"
   },
@@ -180,7 +180,7 @@
     "relativePath": "scripts/SimplePressToGoDialog.js"
   },
   "264f4a39-1602-47b3-a953-9e5f0dd302ce": {
-    "asset": 1550807126000,
+    "asset": 1552446959000,
     "meta": 1550807126000,
     "relativePath": "resources/textures/treasures"
   },
@@ -215,7 +215,7 @@
     "relativePath": "resources/textures/mikado_outline_shadow.png"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
-    "asset": 1550807126000,
+    "asset": 1552463110000,
     "meta": 1550807126000,
     "relativePath": "resources/pbfiles"
   },
@@ -1290,7 +1290,7 @@
     "relativePath": "resources/map/tile_1.png"
   },
   "1fe4b981-93b1-4e65-aefb-898c615219e5": {
-    "asset": 1552440454000,
+    "asset": 1552445428000,
     "meta": 1550807126000,
     "relativePath": "resources/map"
   },
@@ -1335,7 +1335,7 @@
     "relativePath": "resources/map/tile_1.tsx"
   },
   "33d33d2f-5ca7-4677-9c82-4ced71aa0f8a": {
-    "asset": 1552380233000,
+    "asset": 1552460790000,
     "meta": 1552380233000,
     "relativePath": "resources/map/pacman"
   },
@@ -1348,31 +1348,6 @@
     "asset": 1552380233000,
     "meta": 1552380629000,
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.png"
-  },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1542816642000,
-    "meta": 1552443169000,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1542816642000,
-    "meta": 1552443169000,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1542816642000,
-    "meta": 1552443170000,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1542816642000,
-    "meta": 1552443170000,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1542816642000,
-    "meta": 1552443170000,
-    "relativePath": "SpriteFrameSet.js"
   },
   "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
     "asset": 1552444598000,
@@ -1435,8 +1410,33 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552466877000,
-    "meta": 1552466901000,
+    "asset": 1552533847000,
+    "meta": 1552533847000,
     "relativePath": "scenes/login.fire"
+  },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1542816642000,
+    "meta": 1552528138000,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1542816642000,
+    "meta": 1552528138000,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1542816642000,
+    "meta": 1552528138000,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1542816642000,
+    "meta": 1552528138000,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1542816642000,
+    "meta": 1552528138000,
+    "relativePath": "SpriteFrameSet.js"
   }
 }
