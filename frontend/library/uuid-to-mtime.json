@@ -1380,8 +1380,8 @@
     "relativePath": "resources/textures/ghost.png"
   },
   "3cee8bde-8f1d-4960-b591-33208af1f997": {
-    "asset": 1552466829000,
-    "meta": 1552466829000,
+    "asset": 1552561105000,
+    "meta": 1552561105000,
     "relativePath": "resources/prefabs/GuardTower.prefab"
   },
   "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
@@ -1405,8 +1405,8 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552557234000,
-    "meta": 1552557234000,
+    "asset": 1552561107000,
+    "meta": 1552561107000,
     "relativePath": "scenes/login.fire"
   },
   "b6a37e66-7f05-469a-9fac-f9541e24a4c7": {
@@ -1598,5 +1598,15 @@
     "asset": 1552557314000,
     "meta": 1552557315000,
     "relativePath": "plugin_scripts/conf.js"
+  },
+  "2c816b19-bced-4648-a207-3430227aabb8": {
+    "asset": 1552559886000,
+    "meta": 1552559886000,
+    "relativePath": "resources/textures/tower1.png"
+  },
+  "d0c0e51a-bffb-4b13-bbff-5d1e4e48cb57": {
+    "asset": 1552561097000,
+    "meta": 1552561098000,
+    "relativePath": "resources/textures/tower2.png"
   }
 }
