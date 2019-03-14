@@ -3,8 +3,8 @@
   "_name": "Left",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.4375,
-  "sample": 16,
+  "_duration": 0.5833333333333334,
+  "sample": 12,
   "speed": 1,
   "wrapMode": "2",
   "curveData": {
@@ -14,25 +14,25 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "851fa736-faab-456b-8d58-15a20856a39a"
+              "__uuid__": "b3333614-3e82-4615-bf68-383103305a85"
             }
           },
           {
-            "frame": 0.125,
+            "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "32dfd7cf-f389-4670-83d2-6dc4d85f1ee4"
+              "__uuid__": "c2bbbe63-aedd-4fba-95e6-0059892ae94e"
             }
           },
           {
-            "frame": 0.25,
+            "frame": 0.3333333333333333,
             "value": {
-              "__uuid__": "c990049f-b56f-4a05-a34a-1feb43db60a3"
+              "__uuid__": "314d9499-876a-49b8-877f-89537150a3c0"
             }
           },
           {
-            "frame": 0.375,
+            "frame": 0.5,
             "value": {
-              "__uuid__": "32dfd7cf-f389-4670-83d2-6dc4d85f1ee4"
+              "__uuid__": "c2bbbe63-aedd-4fba-95e6-0059892ae94e"
             }
           }
         ]

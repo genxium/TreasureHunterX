@@ -1150,8 +1150,8 @@
     "relativePath": "resources/textures/login/loading&login.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1552555977000,
-    "meta": 1552555977000,
+    "asset": 1552556882000,
+    "meta": 1552556882000,
     "relativePath": "scenes/default_map.fire"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
@@ -1405,14 +1405,9 @@
     "relativePath": "scripts/Map.js"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552556211000,
-    "meta": 1552556211000,
+    "asset": 1552557234000,
+    "meta": 1552557234000,
     "relativePath": "scenes/login.fire"
-  },
-  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
-    "asset": 1552544620000,
-    "meta": 1552544621000,
-    "relativePath": "plugin_scripts/conf.js"
   },
   "b6a37e66-7f05-469a-9fac-f9541e24a4c7": {
     "asset": 1552555210000,
@@ -1490,23 +1485,23 @@
     "relativePath": "resources/animation/PacmanGreen"
   },
   "c6c33e62-600b-42e7-a75a-9dcac7017fa0": {
-    "asset": 1552552015000,
-    "meta": 1552554911000,
+    "asset": 1552556740000,
+    "meta": 1552556740000,
     "relativePath": "resources/animation/PacmanGreen/attackedLeft.anim"
   },
   "4813627a-bf4f-4d05-ad22-c60292ce24b8": {
-    "asset": 1552551724000,
-    "meta": 1552554911000,
+    "asset": 1552557011000,
+    "meta": 1552557011000,
     "relativePath": "resources/animation/PacmanGreen/Bottom.anim"
   },
   "d55346a7-065c-4f84-9bf5-9152502f94a5": {
-    "asset": 1552551822000,
-    "meta": 1552554911000,
+    "asset": 1552557199000,
+    "meta": 1552557199000,
     "relativePath": "resources/animation/PacmanGreen/BottomLeft.anim"
   },
   "8b8d4474-90e7-4a79-a6fc-65470e083361": {
-    "asset": 1552551832000,
-    "meta": 1552554911000,
+    "asset": 1552557035000,
+    "meta": 1552557035000,
     "relativePath": "resources/animation/PacmanGreen/BottomRight.anim"
   },
   "56a819c7-c954-4ccc-981d-3518e2967bf3": {
@@ -1515,8 +1510,8 @@
     "relativePath": "resources/animation/PacmanGreen/GreenPacman.plists.plist"
   },
   "bbec5329-2806-43b6-8862-3f2f753c25f0": {
-    "asset": 1552551841000,
-    "meta": 1552554911000,
+    "asset": 1552556601000,
+    "meta": 1552556601000,
     "relativePath": "resources/animation/PacmanGreen/Left.anim"
   },
   "a980838a-b799-45ef-802e-255bcd8cceac": {
@@ -1535,23 +1530,23 @@
     "relativePath": "resources/animation/PacmanGreen/GreenPacman.plists.png"
   },
   "b5fe594f-fa37-491b-94d7-e125b90a9aa7": {
-    "asset": 1552551849000,
-    "meta": 1552554911000,
+    "asset": 1552556632000,
+    "meta": 1552556632000,
     "relativePath": "resources/animation/PacmanGreen/Right.anim"
   },
   "f873aa73-4b54-4b10-a8d9-05d461f39e41": {
-    "asset": 1552551856000,
-    "meta": 1552554911000,
+    "asset": 1552556652000,
+    "meta": 1552556652000,
     "relativePath": "resources/animation/PacmanGreen/Top.anim"
   },
   "3443a973-b6c0-4615-b87b-a78a2f2bb880": {
-    "asset": 1552551864000,
-    "meta": 1552554911000,
+    "asset": 1552556675000,
+    "meta": 1552556675000,
     "relativePath": "resources/animation/PacmanGreen/TopLeft.anim"
   },
   "676a71ff-e861-4e77-bd71-7d820548459e": {
-    "asset": 1552551872000,
-    "meta": 1552554911000,
+    "asset": 1552556700000,
+    "meta": 1552556700000,
     "relativePath": "resources/animation/PacmanGreen/TopRight.anim"
   },
   "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
@@ -1560,8 +1555,8 @@
     "relativePath": "resources/prefabs/Pacman1.prefab"
   },
   "1f479636-9eb8-4612-8f97-371964d6eae3": {
-    "asset": 1552555050000,
-    "meta": 1552555057000,
+    "asset": 1552557059000,
+    "meta": 1552557059000,
     "relativePath": "resources/prefabs/Pacman2.prefab"
   },
   "721c9f78-bc36-4493-a687-3941ce3e6074": {
@@ -1593,5 +1588,15 @@
     "asset": 1542816642000,
     "meta": 1552555820000,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "eb55b15b-6205-457a-b8ad-54581a1fc8b3": {
+    "asset": 1552556775000,
+    "meta": 1552556775000,
+    "relativePath": "resources/animation/PacmanGreen/attackedRight.anim"
+  },
+  "a36ffc3f-d0f3-4beb-84bb-b6ce525c0303": {
+    "asset": 1552557314000,
+    "meta": 1552557315000,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }

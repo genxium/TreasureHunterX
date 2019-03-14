@@ -3,8 +3,8 @@
   "_name": "Top",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.4375,
-  "sample": 16,
+  "_duration": 0.5833333333333334,
+  "sample": 12,
   "speed": 1,
   "wrapMode": "2",
   "curveData": {
@@ -14,25 +14,25 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "851fa736-faab-456b-8d58-15a20856a39a"
+              "__uuid__": "b3333614-3e82-4615-bf68-383103305a85"
             }
           },
           {
-            "frame": 0.125,
+            "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "21b08133-75fe-482d-b53c-1baafd9e4a53"
+              "__uuid__": "5f8b0590-19c2-4c7f-9c05-a8046a779c95"
             }
           },
           {
-            "frame": 0.25,
+            "frame": 0.3333333333333333,
             "value": {
-              "__uuid__": "660a4ed7-5818-4b41-b2a2-74b9b0ff1926"
+              "__uuid__": "a3f3258a-3a1a-4443-b6d8-a3004bed52b4"
             }
           },
           {
-            "frame": 0.375,
+            "frame": 0.5,
             "value": {
-              "__uuid__": "21b08133-75fe-482d-b53c-1baafd9e4a53"
+              "__uuid__": "5f8b0590-19c2-4c7f-9c05-a8046a779c95"
             }
           }
         ]
