@@ -24,7 +24,12 @@ cc.Class({
     resultCompareNode: {
       type: cc.Node,
       default: null
-    }
+    },
+
+    avatars: {
+      type: [cc.SpriteFrame],
+      default: []
+    },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -47,6 +52,7 @@ cc.Class({
   },
 
   showPlayerInfo(players) {
+    const self = this;
     const resultPanelNode = this.node;
     const winnerNameNode = resultPanelNode.getChildByName("winnerName");
     const loserNameNode = resultPanelNode.getChildByName("loserName");
@@ -85,6 +91,7 @@ cc.Class({
     resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
     resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
     
+    /*
    const plistDir = "textures/StatusBar";
 
    cc.loader.loadRes(plistDir, cc.SpriteAtlas, function (err, altas) {
@@ -93,11 +100,21 @@ cc.Class({
       return;
     }
     //hardecode avatart by joinIndex
-    let winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
-    let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    //let winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    let winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 0 : 1]
+    let loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 0 : 1]
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
     resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
     resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
    });
+   */
+
+   let winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 1 : 0]
+   let loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 1 : 0]
+   //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+   resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
+   resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
 
    this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
   },

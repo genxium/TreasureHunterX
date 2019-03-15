@@ -30,6 +30,11 @@ cc.Class({
     resultCompareNode: {
       type: cc.Node,
       default: null
+    },
+
+    avatars: {
+      type: [cc.SpriteFrame],
+      default: []
     }
   },
 
@@ -50,6 +55,7 @@ cc.Class({
     cc.director.loadScene('login');
   },
   showPlayerInfo: function showPlayerInfo(players) {
+    var self = this;
     var resultPanelNode = this.node;
     var winnerNameNode = resultPanelNode.getChildByName("winnerName");
     var loserNameNode = resultPanelNode.getChildByName("loserName");
@@ -87,19 +93,29 @@ cc.Class({
     resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
     resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
 
-    var plistDir = "textures/StatusBar";
-
+    /*
+    const plistDir = "textures/StatusBar";
     cc.loader.loadRes(plistDir, cc.SpriteAtlas, function (err, altas) {
-      if (err) {
-        cc.warn(err);
-        return;
-      }
-      //hardecode avatart by joinIndex
-      var winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar");
-      var loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar");
-      resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
-      resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
+    if(err){
+      cc.warn(err);
+      return;
+    }
+    //hardecode avatart by joinIndex
+    //let winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    let winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 0 : 1]
+    let loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 0 : 1]
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
+    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
     });
+    */
+
+    var winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 1 : 0];
+    var loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 1 : 0];
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
+    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
 
     this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));
   },

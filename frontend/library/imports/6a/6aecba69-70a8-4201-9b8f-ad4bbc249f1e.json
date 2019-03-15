@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "decorationUp",
+    "texture": "1acfc652-9759-47d3-b857-34f5f5957aa1",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      604,
+      155
+    ],
+    "offset": [
+      -1,
+      0
+    ],
+    "originalSize": [
+      606,
+      155
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

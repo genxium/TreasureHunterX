@@ -131,10 +131,7 @@ type RoomDownsyncFrame struct {
 	Bullets        map[int32]*Bullet    `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SpeedShoes     map[int32]*SpeedShoe `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Pumpkins       map[int32]*Pumpkin   `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	GuardTowers    map[int32]*GuardTower   `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	//RemovedTreasures map[int32]int32       `protobuf:"bytes,12,rep,name=RemovedTreasures,proto3" json:"RemovedTreasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	//RemovedTraps     map[int32]int32       `protobuf:"bytes,13,rep,name=RemovedTraps,proto3" json:"RemovedTraps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	//RemovedBullets   map[int32]int32       `protobuf:"bytes,11,rep,name=RemovedBullets,proto3" json:"RemovedBullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	GuardTowers    map[int32]*GuardTower   `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"guardTowers,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -468,9 +465,9 @@ func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				Y: float64(value.Y),
 			}
 			tower := pR.createGuardTower(pAnchor, int32(key), pTsxIns)
-			fmt.Println("-1-1-1-1-1-1-1-1: ", tower.LocalIdInBattle, pR.GuardTowers)
+			//fmt.Println("-1-1-1-1-1-1-1-1: ", tower.LocalIdInBattle, pR.GuardTowers)
 			pR.GuardTowers[tower.LocalIdInBattle] = tower
-			fmt.Println("000000 InitGuardTower: ", tower.LocalIdInBattle, pR.GuardTowers)
+			//fmt.Println("000000 InitGuardTower: ", tower.LocalIdInBattle, pR.GuardTowers)
 		}
 	}
 	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
@@ -1033,7 +1030,7 @@ func (pR *Room) StartBattle() {
 		var totalElapsedNanos int64 //离游戏开始的时间
 		totalElapsedNanos = 0
 
-		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率一秒
+		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率4秒
 		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
 
 		for {

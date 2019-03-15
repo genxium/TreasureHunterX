@@ -1,6 +1,6 @@
 {
   "__type__": "cc.SpriteAtlas",
-  "_name": "loginUI.plist",
+  "_name": "UI.plist",
   "_objFlags": 0,
   "_native": "",
   "_spriteFrames": {

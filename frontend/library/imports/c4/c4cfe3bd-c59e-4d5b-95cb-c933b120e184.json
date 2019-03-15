@@ -4546,6 +4546,7 @@
     },
     "_enabled": true,
     "onCloseDelegate": null,
+    "onAgainClicked": null,
     "winnerPanel": {
       "__id__": 23
     },
@@ -4555,13 +4556,14 @@
     "resultCompareNode": {
       "__id__": 117
     },
-    "mapScriptIns": null,
-    "winnerPortraitNode": {
-      "__id__": 8
-    },
-    "loserPortraitNode": {
-      "__id__": 11
-    },
+    "avatars": [
+      {
+        "__uuid__": "17ebae1b-31ef-4988-a694-6070bdb91021"
+      },
+      {
+        "__uuid__": "3c853596-d852-4cf6-96aa-7a4c3d0f6481"
+      }
+    ],
     "_id": ""
   },
   {

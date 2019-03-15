@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "decorationDown",
+    "texture": "50584f0b-0ec1-49b9-805d-7b4fc742163f",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      604,
+      155
+    ],
+    "offset": [
+      -1,
+      0
+    ],
+    "originalSize": [
+      606,
+      155
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
