@@ -30,6 +30,11 @@ cc.Class({
       type: [cc.SpriteFrame],
       default: []
     },
+
+    myAvatarNode: {
+      type: cc.Node,
+      default: null,
+    },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -116,7 +121,37 @@ cc.Class({
    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
 
-   this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
+   //this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
+   this.showMyAvatar(players);  
+  },
+
+  showMyAvatar(players){
+    const self = this;
+    //console.warn("!!!!!!!!!!!!!!!!!!!");
+    //Get joinindex
+    const myJoinIndex = (() => {
+      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      console.log(selfPlayerInfo)
+
+      let myInfo = null;
+      for(let id in players){
+        if(selfPlayerInfo.playerId == id){
+          myInfo = players[id];
+          break;
+        }
+      }
+
+      return myInfo.joinIndex;
+    })();
+
+
+    if(myJoinIndex == 2){ //第二加入, 显示蓝色头像
+      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[1];
+    }else if(myJoinIndex == 1){ //第一加入, 显示红色头像
+      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[0];
+    }else{
+      console.error('错误显示自己的头像')
+    }
   },
  
   showRibbon(winnerInfo, ribbonNode) {

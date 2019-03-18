@@ -258,7 +258,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	}
 	pPolyLineMap := make(map[int]*TmxPolyline, 0)
 	for _, tile := range pTsxIns.Tiles {
-		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" { //目前的地图上石头, 人头骨, 箱子都没有type, 所以不会生成碰撞框
+		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" { 
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects { //初始化tsx.BarrierPolyLineList, 这个gid -> polyline的map, 只有对象组属性值为barrier的时候(石头, 人头骨, 箱子)才存到BarrierPolyLineList这个map里面
@@ -326,6 +326,9 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	}
 	// fmt.Printf("%s\n", byteArr)
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
+    fmt.Println("!!!!!!!!!!!!!!!!!")
+    fmt.Println(objGroup.Name)
+
 		if "controlled_players_starting_pos_list" == objGroup.Name {
 			pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
@@ -341,10 +344,15 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 		if "highTreasures" == objGroup.Name {
 			pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
+
+
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
+
+        fmt.Println("A highTreasures");
+
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
 				pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
 				pTmxMapIns.HighTreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE

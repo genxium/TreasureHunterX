@@ -18,7 +18,10 @@ window.i18n.languages['en'] = {
     againBtnLabel: "Again",
     homeBtnLabel: "Home",
   },
-  gameRule: "  游戏以1 v 1形式展开，玩家在1分钟之内获得的分数越高，则最终获胜。分数来自于拾取的宝物，拾取越多的宝物（蘑菇、金块）则分数越高。但要注意躲避蜘蛛射出来的蜘蛛网哦，被击中会被定住5秒的哦。开始游戏吧~",
+  gameRule: {
+    tip: "经典吃豆人玩法，加入了实时对战元素。金豆100分，煎蛋200分，玩家在规定时间内得分高则获胜。要注意躲避防御塔攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    mode: "1v1 模式",
+  },
   login: {
     tips: {
       loginSuccess: "Successfully logged, please wait..."

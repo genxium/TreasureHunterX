@@ -25,5 +25,10 @@
   <properties>
    <property name="type" value="highScoreTreasure"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="7" y="4">
+    <polyline points="0,0 50,0 51,55 1,54"/>
+   </object>
+  </objectgroup>
  </tile>
 </tileset>

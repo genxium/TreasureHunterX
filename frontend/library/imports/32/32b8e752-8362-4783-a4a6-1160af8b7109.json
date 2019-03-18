@@ -118,8 +118,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 536,
-      "height": 788
+      "width": 600,
+      "height": 950
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -128,8 +128,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -46,
-      "y": 259,
+      "x": -57,
+      "y": 263,
       "z": 0
     },
     "_scale": {
@@ -185,8 +185,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 400,
-      "height": 400
+      "width": 380,
+      "height": 550
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -195,8 +195,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 35,
-      "y": 56,
+      "x": 43,
+      "y": -8,
       "z": 0
     },
     "_scale": {
@@ -232,9 +232,9 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "gameRule.tip",
-    "_N$string": "gameRule.tip",
-    "_fontSize": 55,
+    "_string": "经典吃豆人玩法，加入了实时对战元素。金豆100分，煎蛋200分，玩家在规定时间内得分高则获胜。要注意躲避防御塔攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    "_N$string": "经典吃豆人玩法，加入了实时对战元素。金豆100分，煎蛋200分，玩家在规定时间内得分高则获胜。要注意躲避防御塔攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    "_fontSize": 38,
     "_lineHeight": 70,
     "_enableWrapText": true,
     "_N$file": null,
@@ -282,7 +282,7 @@
       "__uuid__": "4114993b-6113-41db-a985-555d99e3dc2f"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -342,8 +342,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 210,
-      "height": 119
+      "width": 280,
+      "height": 130
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -410,7 +410,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 300,
-      "height": 60
+      "height": 150
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -419,8 +419,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 4,
-      "y": 4,
+      "x": -6,
+      "y": 1,
       "z": 0
     },
     "_scale": {
@@ -456,10 +456,10 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "gameRule.mode",
-    "_N$string": "gameRule.mode",
-    "_fontSize": 56,
-    "_lineHeight": 56,
+    "_string": "1v1 模式",
+    "_N$string": "1v1 模式",
+    "_fontSize": 55,
+    "_lineHeight": 50,
     "_enableWrapText": false,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -506,7 +506,7 @@
       "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
     },
     "_type": 1,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
