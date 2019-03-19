@@ -13,6 +13,7 @@ type PlayerLogin struct {
 	CreatedAt    int64      `db:"created_at"`
 	DeletedAt    NullInt64  `db:"deleted_at"`
 	DisplayName  NullString `db:"display_name"`
+	Avatar       string     `db:"avatar"`
 	FromPublicIP NullString `db:"from_public_ip"`
 	ID           int        `db:"id"`
 	IntAuthToken string     `db:"int_auth_token"`
@@ -22,9 +23,9 @@ type PlayerLogin struct {
 
 func (p *PlayerLogin) Insert() error {
 	result, err := insert("player_login", []string{"created_at", "display_name",
-		"from_public_ip", "int_auth_token", "player_id", "updated_at"},
+		"from_public_ip", "int_auth_token", "player_id", "updated_at", "avatar"},
 		[]interface{}{p.CreatedAt, p.DisplayName, p.FromPublicIP, p.IntAuthToken,
-			p.PlayerID, p.UpdatedAt})
+			p.PlayerID, p.UpdatedAt, p.Avatar})
 	if err != nil {
 		return err
 	}

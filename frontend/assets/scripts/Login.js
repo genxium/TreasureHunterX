@@ -74,7 +74,8 @@ cc.Class({
     self.getRetCodeList();
     self.getRegexList();
 
-    const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    const isUsingX5BlinkKernelOrWebkitWeChatKernel = true; 
     if (!CC_DEBUG) {
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
@@ -343,7 +344,8 @@ cc.Class({
         expiresAt: date,
         playerId: res.playerId,
         intAuthToken: res.intAuthToken,
-        displayName: res.displayName
+        displayName: res.displayName,
+        avatar: res.avatar,
       }
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       const qDict = window.getQueryParamDict();
@@ -378,7 +380,8 @@ cc.Class({
         expiresAt: date,
         playerId: res.playerId,
         intAuthToken: res.intAuthToken,
-        displayName: res.displayName
+        avatar: res.avatar,
+        displayName: res.displayName,
       }
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);

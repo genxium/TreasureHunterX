@@ -48,6 +48,7 @@ type Player struct {
 	CollidableBody      *box2d.B2Body `json:"-"`
 	AckingFrameId       int32         `json:"ackingFrameId"`
 	JoinIndex           int32         `protobuf:"varint,12,opt,name=joinIndex,proto3 " json:"joinIndex"`
+	Avatar              string        `protobuf:"varint,13,opt,name=avatar,proto3" json:"avatar,omitempty"`
 
   //kobako: 上一次被守护塔锁定的时间
 	BeLockedAt int64 `json:"-"`
@@ -79,8 +80,8 @@ func getPlayer(cond sq.Eq) (*Player, error) {
 }
 
 func (p *Player) Insert(tx *sqlx.Tx) error {
-	result, err := txInsert(tx, "player", []string{"name", "display_name", "created_at", "updated_at"},
-		[]interface{}{p.Name, p.DisplayName, p.CreatedAt, p.UpdatedAt})
+	result, err := txInsert(tx, "player", []string{"name", "display_name", "created_at", "updated_at", "avatar"},
+		[]interface{}{p.Name, p.DisplayName, p.CreatedAt, p.UpdatedAt, p.Avatar})
 	if err != nil {
 		return err
 	}

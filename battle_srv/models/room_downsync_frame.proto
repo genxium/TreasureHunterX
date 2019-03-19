@@ -19,6 +19,7 @@ message Player {
   int32 score = 10;
   bool removed = 11;
   int32 joinIndex = 12;
+  string avatar = 13;
 }
 
 message Treasure {

@@ -784,11 +784,9 @@ cc.Class({
       self.setupInputControls();
 
       window.handleRoomDownsyncFrame = function (diffFrame) {
-        /*
-        if(diffFrame.id < 50){
+        if (diffFrame.id < 10) {
           console.log(diffFrame);
         }
-        */
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
@@ -1481,6 +1479,8 @@ cc.Class({
     setLocalZOrder(toShowNode, 10);
   },
   matchPlayersFinsihed: function matchPlayersFinsihed(players) {
+    console.log(players);
+
     var self = this;
     var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
     findingPlayerScriptIns.updatePlayersInfo(players);

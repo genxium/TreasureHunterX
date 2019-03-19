@@ -16,6 +16,7 @@ import (
 	"server/models"
 	"server/storage"
 	"strconv"
+  "fmt"
 )
 
 var Player = playerController{}
@@ -240,7 +241,10 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
+
+  //baseInfo ResAccessToken 获取用户授权access_token的返回结果
 	baseInfo, err := utils.WechatIns.GetOauth2Basic(req.Authcode)
+
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
@@ -248,6 +252,10 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	}
 
 	userInfo, err := utils.WechatIns.GetMoreInfo(baseInfo.AccessToken, baseInfo.OpenID)
+
+  //kobako print for test
+  fmt.Println(userInfo);
+
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
@@ -273,6 +281,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		PlayerID:     int(player.Id),
 		DisplayName:  models.NewNullString(player.DisplayName),
 		UpdatedAt:    now,
+    Avatar:       userInfo.HeadImgURL,
 	}
 	err = playerLogin.Insert()
 	api.CErr(c, err)
@@ -287,8 +296,14 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		ExpiresAt   int64             `json:"expiresAt"`
 		PlayerID    int               `json:"playerId"`
 		DisplayName models.NullString `json:"displayName"`
-	}{Constants.RetCode.Ok, token, expiresAt,
-		playerLogin.PlayerID, playerLogin.DisplayName}
+		Avatar      string            `json:"avatar"`
+	}{
+    Constants.RetCode.Ok,
+    token, expiresAt,
+		playerLogin.PlayerID,
+    playerLogin.DisplayName,
+    userInfo.HeadImgURL,
+  }
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -319,10 +334,14 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 		ExpiresAt   int64             `json:"expiresAt"`
 		PlayerID    int               `json:"playerId"`
 		DisplayName models.NullString `json:"displayName"`
+		Avatar      string            `json:"avatar"`
 	}{Constants.RetCode.Ok, token, expiresAt,
-		playerLogin.PlayerID, playerLogin.DisplayName}
+		playerLogin.PlayerID, playerLogin.DisplayName,
+    playerLogin.Avatar,
+  }
 	c.JSON(http.StatusOK, resp)
 }
+
 func (p *playerController) IntAuthTokenLogout(c *gin.Context) {
 	token := p.getIntAuthToken(c)
 	if token == "" {
@@ -454,6 +473,7 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 		CreatedAt:   now,
 		UpdatedAt:   now,
 		DisplayName: userInfo.Nickname,
+    Avatar:      userInfo.HeadImgURL,
 	}
 	return p.createNewPlayer(player, userInfo.OpenID, int(Constants.AuthChannel.Wechat))
 }

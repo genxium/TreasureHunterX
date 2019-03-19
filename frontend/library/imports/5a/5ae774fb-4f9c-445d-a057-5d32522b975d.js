@@ -116,14 +116,59 @@ cc.Class({
     });
     */
 
+    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
+
+    /*
+    for (let i in players) {
+      const playerInfo = players[i];
+      const playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
+       (() => { //远程加载头像
+        let remoteUrl = playerInfo.avatar;
+        if(remoteUrl == ''){
+          console.log('用户'+ i +' 没有头像, 提供临时头像');
+          remoteUrl = 'http://wx.qlogo.cn/mmopen/xzq2UIB49VaicY1Hk3jDLk6e8nISmsQuEcqxicEMuC1jKx75QnwibDLWnRHoEmMZdKOJWjspUd8aSD8DfoUYLEqQJ6rcHibNP5Gib/0';
+        }
+        cc.loader.load({url: remoteUrl, type: 'jpg'}, function (err, texture) {
+          if(err != null){
+            console.error(err);
+          }else{
+            const sf = new cc.SpriteFrame();
+            sf.setTexture(texture);
+            playerInfoNode.getChildByName('avatarMask').getChildByName('avatar').getComponent(cc.Sprite).spriteFrame = sf;
+          }
+        });
+      })();
+    }
+    */
+
     var winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 1 : 0];
     var loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 1 : 0];
-    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
     resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
     resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
 
     //this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
-    this.showMyAvatar(players);
+    //this.showMyAvatar(players);  
+
+    (function () {
+      //远程加载头像
+      var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      var remoteUrl = selfPlayerInfo.avatar;
+      if (remoteUrl == '') {
+        console.log('自己没有没有头像, 提供临时头像');
+        remoteUrl = 'http://wx.qlogo.cn/mmopen/xzq2UIB49VaicY1Hk3jDLk6e8nISmsQuEcqxicEMuC1jKx75QnwibDLWnRHoEmMZdKOJWjspUd8aSD8DfoUYLEqQJ6rcHibNP5Gib/0';
+      }
+      cc.loader.load({ url: remoteUrl, type: 'jpg' }, function (err, texture) {
+        if (err != null) {
+          console.error(err);
+        } else {
+          var sf = new cc.SpriteFrame();
+          sf.setTexture(texture);
+
+          self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
+          //playerInfoNode.getChildByName('avatarMask').getChildByName('avatar').getComponent(cc.Sprite).spriteFrame = sf;
+        }
+      });
+    })();
   },
   showMyAvatar: function showMyAvatar(players) {
     var self = this;

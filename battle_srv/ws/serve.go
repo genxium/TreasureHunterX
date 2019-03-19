@@ -148,6 +148,10 @@ func Serve(c *gin.Context) {
 	conn.SetCloseHandler(onReceivedCloseMessageFromClient)
 
 	pPlayer, err := models.GetPlayerById(playerId)
+
+  fmt.Println("XXXXXXXXXXXXXX");
+  fmt.Println(pPlayer);
+
 	if err != nil || pPlayer == nil {
 		// TODO: Abort with specific message.
 		signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotFound, "")
