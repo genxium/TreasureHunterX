@@ -25,12 +25,12 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1552911034000,
+    "asset": 1552982041000,
     "meta": 1552888009000,
     "relativePath": "plugin_scripts"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1552896925000,
+    "asset": 1552982372000,
     "meta": 1552888009000,
     "relativePath": "resources"
   },
@@ -40,7 +40,7 @@
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1552911034000,
+    "asset": 1552990201000,
     "meta": 1552888009000,
     "relativePath": "resources/textures"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1552911034000,
+    "asset": 1552972061000,
     "meta": 1552888009000,
     "relativePath": "scripts"
   },
@@ -215,7 +215,7 @@
     "relativePath": "resources/textures/mikado_outline_shadow.png"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
-    "asset": 1552911034000,
+    "asset": 1552982395000,
     "meta": 1552888009000,
     "relativePath": "resources/pbfiles"
   },
@@ -1749,31 +1749,6 @@
     "meta": 1552959403000,
     "relativePath": "scripts/WsSessionMgr.js"
   },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1542816642000,
-    "meta": 1552965385000,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1542816642000,
-    "meta": 1552965385000,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1542816642000,
-    "meta": 1552965385000,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1542816642000,
-    "meta": 1552965385000,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1542816642000,
-    "meta": 1552965385000,
-    "relativePath": "SpriteFrameSet.js"
-  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1552981169000,
     "meta": 1552981179000,
@@ -1803,5 +1778,30 @@
     "asset": 1552996326000,
     "meta": 1552996335000,
     "relativePath": "scripts/ResultPanel.js"
+  },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1542816642000,
+    "meta": 1552996758000,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1542816642000,
+    "meta": 1552996758000,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1542816642000,
+    "meta": 1552996758000,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1542816642000,
+    "meta": 1552996758000,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1542816642000,
+    "meta": 1552996758000,
+    "relativePath": "SpriteFrameSet.js"
   }
 }
