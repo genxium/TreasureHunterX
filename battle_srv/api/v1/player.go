@@ -465,6 +465,21 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 			return nil, err
 		}
 		if player != nil {
+      {//更新玩家姓名及头像
+        updateInfo := models.Player{
+          Avatar: userInfo.HeadImgURL,
+          DisplayName: userInfo.Nickname,
+        }
+  	    tx := storage.MySQLManagerIns.MustBegin()
+  	    defer tx.Rollback()
+        ok, err := models.Update(tx, player.Id, &updateInfo)
+        fmt.Println(updateInfo)
+        if(err != nil && ok != true){
+          return nil, err
+        }else{
+          tx.Commit()
+        }
+      }
 			return player, nil
 		}
 	}

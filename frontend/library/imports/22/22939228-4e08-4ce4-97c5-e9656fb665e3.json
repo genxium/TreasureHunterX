@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "copper",
+    "texture": "c6dad247-83ed-4a03-8892-4fcd9b2b0bd7",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      206,
+      42
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      206,
+      42
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -19,25 +19,23 @@ cc.Class({
       type: cc.Object,
       default: null
     },
-    winnerPanel: {
-      type: cc.Node,
-      default: null
-    },
-    loserPanel: {
-      type: cc.Node,
-      default: null
-    },
-    resultCompareNode: {
+
+    myAvatarNode: {
       type: cc.Node,
       default: null
     },
 
-    avatars: {
-      type: [cc.SpriteFrame],
+    myNameNode: {
+      type: cc.Node,
+      default: null
+    },
+
+    rankingNodes: {
+      type: [cc.Node],
       default: []
     },
 
-    myAvatarNode: {
+    myRandNode: {
       type: cc.Node,
       default: null
     }
@@ -60,144 +58,97 @@ cc.Class({
     cc.director.loadScene('login');
   },
   showPlayerInfo: function showPlayerInfo(players) {
+    this.showRanking(players);
+    this.showMyAvatar();
+    this.showMyName();
+  },
+  showMyName: function showMyName() {
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var name = 'No name';
+    if (selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == '') {
+      name = selfPlayerInfo.name;
+    } else {
+      name = selfPlayerInfo.displayName;
+    }
+    this.myNameNode.getComponent(cc.Label).string = name;
+  },
+  showRanking: function showRanking(players) {
     var self = this;
-    var resultPanelNode = this.node;
-    var winnerNameNode = resultPanelNode.getChildByName("winnerName");
-    var loserNameNode = resultPanelNode.getChildByName("loserName");
-    var resultCompareNode = this.resultCompareNode;
-    var compareProgressNode = resultCompareNode.getChildByName("progressbar");
-    var winnerInfo = null;
-    var loserInfo = null;
+    var sortablePlayers = [];
 
     for (var playerId in players) {
-      var playerInfo = players[playerId];
-      if (!winnerInfo) {
-        winnerInfo = playerInfo;
-        continue;
-      }
-      if (playerInfo.score >= winnerInfo.score) {
-        loserInfo = winnerInfo;
-        winnerInfo = playerInfo;
+
+      sortablePlayers.push(players[playerId]);
+    }
+    var sortedPlayers = sortablePlayers.sort(function (a, b) {
+      if (a.score == null) {
+        //为null的必定排后面
+        return 1;
+      } else if (b.score == null) {
+        //为null的必定排后面
+        return -1;
       } else {
-        loserInfo = playerInfo;
-      }
-    }
-    //TODO Hardecode the name
-    winnerNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[winnerInfo.joinIndex];
-    loserNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[loserInfo.joinIndex];
-
-    var progressComp = compareProgressNode.getComponent(cc.ProgressBar);
-    var winnerScore = parseInt(winnerInfo.score);
-    var loserScore = parseInt(loserInfo.score);
-    var ratio = 0.5;
-    if (winnerScore != loserScore) {
-      ratio = loserScore * winnerScore <= 0 ? 1 : Math.abs(winnerScore) / Math.abs(loserScore + winnerScore);
-    }
-    progressComp.progress = ratio;
-
-    resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
-    resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
-
-    /*
-    const plistDir = "textures/StatusBar";
-    cc.loader.loadRes(plistDir, cc.SpriteAtlas, function (err, altas) {
-    if(err){
-      cc.warn(err);
-      return;
-    }
-    //hardecode avatart by joinIndex
-    //let winnerAvatar = altas.getSpriteFrame(winnerInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
-    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
-    let winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 0 : 1]
-    let loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 0 : 1]
-    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
-    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
-    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
-    });
-    */
-
-    //let loserAvatar = altas.getSpriteFrame(loserInfo.joinIndex == 2 ? "BlueAvatar" : "RedAvatar")
-
-    /*
-    for (let i in players) {
-      const playerInfo = players[i];
-      const playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
-       (() => { //远程加载头像
-        let remoteUrl = playerInfo.avatar;
-        if(remoteUrl == ''){
-          console.log('用户'+ i +' 没有头像, 提供临时头像');
-          remoteUrl = 'http://wx.qlogo.cn/mmopen/xzq2UIB49VaicY1Hk3jDLk6e8nISmsQuEcqxicEMuC1jKx75QnwibDLWnRHoEmMZdKOJWjspUd8aSD8DfoUYLEqQJ6rcHibNP5Gib/0';
+        if (a.score < b.score) {
+          //分数大的排前面
+          return 1;
+        } else {
+          return -1;
         }
-        cc.loader.load({url: remoteUrl, type: 'jpg'}, function (err, texture) {
-          if(err != null){
-            console.error(err);
-          }else{
-            const sf = new cc.SpriteFrame();
-            sf.setTexture(texture);
-            playerInfoNode.getChildByName('avatarMask').getChildByName('avatar').getComponent(cc.Sprite).spriteFrame = sf;
-          }
-        });
-      })();
-    }
-    */
+      }
+    });
 
-    var winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 1 : 0];
-    var loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 1 : 0];
-    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
-    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    sortedPlayers.forEach(function (p, id) {
+      var nameToDisplay = function () {
+        function isEmptyString(str) {
+          return str == null || str == '';
+        }
+        if (!isEmptyString(p.displayName)) {
+          return p.displayName;
+        } else if (!isEmptyString(p.name)) {
+          return p.name;
+        } else {
+          return "No name";
+        }
+      }();
 
-    //this.showRibbon(winnerInfo, resultPanelNode.getChildByName("ribbon"));  
-    //this.showMyAvatar(players);  
+      if (selfPlayerInfo.playerId == p.id) {
+        //显示我的排名
+        var rank = id + 1;
+        //self.myRandNode.getComponent(cc.Label).string = "No." + rank;
+        if (rank != 1) {
+          self.myRandNode.active = false;
+        }
+      }
 
+      self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      //self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
+    });
+  },
+  showMyAvatar: function showMyAvatar() {
+    var self = this;
     (function () {
-      //远程加载头像
+      //加载自己的头像
       var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       var remoteUrl = selfPlayerInfo.avatar;
-      if (remoteUrl == '') {
-        console.log('自己没有没有头像, 提供临时头像');
-        remoteUrl = 'http://wx.qlogo.cn/mmopen/xzq2UIB49VaicY1Hk3jDLk6e8nISmsQuEcqxicEMuC1jKx75QnwibDLWnRHoEmMZdKOJWjspUd8aSD8DfoUYLEqQJ6rcHibNP5Gib/0';
+      if (remoteUrl == null || remoteUrl == '') {
+        cc.log("No avatar to show for myself, check storage.");
+        return;
+      } else {
+        cc.loader.load({
+          url: remoteUrl,
+          type: 'jpg'
+        }, function (err, texture) {
+          if (err != null || texture == null) {
+            console.log(err);
+          } else {
+            var sf = new cc.SpriteFrame();
+            sf.setTexture(texture);
+            self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
+          }
+        });
       }
-      cc.loader.load({ url: remoteUrl, type: 'jpg' }, function (err, texture) {
-        if (err != null) {
-          console.error(err);
-        } else {
-          var sf = new cc.SpriteFrame();
-          sf.setTexture(texture);
-
-          self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
-          //playerInfoNode.getChildByName('avatarMask').getChildByName('avatar').getComponent(cc.Sprite).spriteFrame = sf;
-        }
-      });
     })();
-  },
-  showMyAvatar: function showMyAvatar(players) {
-    var self = this;
-    //console.warn("!!!!!!!!!!!!!!!!!!!");
-    //Get joinindex
-    var myJoinIndex = function () {
-      var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      console.log(selfPlayerInfo);
-
-      var myInfo = null;
-      for (var id in players) {
-        if (selfPlayerInfo.playerId == id) {
-          myInfo = players[id];
-          break;
-        }
-      }
-
-      return myInfo.joinIndex;
-    }();
-
-    if (myJoinIndex == 2) {
-      //第二加入, 显示蓝色头像
-      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[1];
-    } else if (myJoinIndex == 1) {
-      //第一加入, 显示红色头像
-      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[0];
-    } else {
-      console.error('错误显示自己的头像');
-    }
   },
   showRibbon: function showRibbon(winnerInfo, ribbonNode) {
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);

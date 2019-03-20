@@ -812,13 +812,13 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 		GuardTowers:    make(map[int32]*GuardTower, 0),
 	}
 
-	for k, last := range lastFrame.Treasures {//对于玩家已知帧的每一个宝物
-		if last.Removed { //如果之前已经标记删除, 就放到diffFrame
+	for k, last := range lastFrame.Treasures {
+		if last.Removed {
 			diffFrame.Treasures[k] = last
 			continue
 		}
 		curr, ok := currentFrame.Treasures[k]
-		if !ok {//说明之前没有被删除, 而现在刚刚被删除
+		if !ok {
 			diffFrame.Treasures[k] = &Treasure{Removed: true}
 			Logger.Info("A treasure is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("treasure.LocalIdInBattle", curr.LocalIdInBattle))
 			continue
@@ -830,11 +830,14 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 
 	for k, last := range lastFrame.Bullets {
 		curr, ok := currentFrame.Bullets[k]
-		if !ok {
-			diffFrame.Bullets[k] = &Bullet{Removed: true}
-			Logger.Info("A bullet is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("bullet.LocalIdInBattle", curr.LocalIdInBattle))
-			continue
-		}
+    /*
+    * The use of 'bullet.RemovedAtFrameId' implies that you SHOULDN'T create a record '&Bullet{Removed: true}' here after it's already deleted from 'room.Bullets'.   
+    *
+    * -- YFLu
+    */
+    if false == ok {
+      continue
+    }
 		if ok, v := diffBullet(last, curr); ok {
 			diffFrame.Bullets[k] = v
 		}

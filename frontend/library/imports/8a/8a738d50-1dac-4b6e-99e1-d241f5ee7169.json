@@ -499,38 +499,38 @@
     },
     "_enabled": true,
     "_defaultClip": {
-      "__uuid__": "059b3546-4eec-4fdc-a04c-b01b0b1f6019"
+      "__uuid__": "28194c48-ae3b-4197-8263-0d474ae8b9bc"
     },
     "_clips": [
       {
-        "__uuid__": "059b3546-4eec-4fdc-a04c-b01b0b1f6019"
+        "__uuid__": "28194c48-ae3b-4197-8263-0d474ae8b9bc"
       },
       {
-        "__uuid__": "dd420621-0433-42c1-8230-bb787894591c"
+        "__uuid__": "e1c45a36-2022-4b18-a2db-b5e2e0a120ed"
       },
       {
-        "__uuid__": "92e3aaaf-4dc6-4c9d-bd79-0f0fb6bda1bf"
+        "__uuid__": "126dff26-0ace-439d-89b5-b888aa52d159"
       },
       {
-        "__uuid__": "8999681a-23d2-48a3-9698-59c01fabbd35"
+        "__uuid__": "95c2d541-8f99-446a-a7e0-094130ce6d41"
       },
       {
-        "__uuid__": "8489ef1a-ebee-46ef-b367-5a6e2a870318"
+        "__uuid__": "380f5fa0-f77f-434a-8f39-d545ee6823c5"
       },
       {
-        "__uuid__": "b4873701-4d8e-4980-8c3a-981545ed1a7a"
+        "__uuid__": "a306c6de-ccd8-492b-bfec-c6be0a4cbde2"
       },
       {
-        "__uuid__": "1a588821-0b41-4001-ba47-f3f9b22e621a"
+        "__uuid__": "f496072b-51fd-4406-abbd-9885ac23f7a9"
       },
       {
-        "__uuid__": "428f1513-b076-4b23-8916-ab9ff91f4743"
+        "__uuid__": "6405ad8b-3084-4b67-8c2e-9b4d34fa3d09"
       },
       {
-        "__uuid__": "97dd75f4-43da-41e1-bdb1-140c232c4ae4"
+        "__uuid__": "af16cdcb-6e82-4be6-806d-9fc52ae99fff"
       },
       {
-        "__uuid__": "721c9f78-bc36-4493-a687-3941ce3e6074"
+        "__uuid__": "02eba566-4d22-4fa7-99d7-f032f5845421"
       }
     ],
     "playOnLoad": true,

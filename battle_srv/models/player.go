@@ -5,6 +5,7 @@ import (
 	"github.com/ByteArena/box2d"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
+	"fmt"
 )
 
 type PlayerBattleState struct {
@@ -92,6 +93,31 @@ func (p *Player) Insert(tx *sqlx.Tx) error {
 	p.Id = int32(id)
 	return nil
 }
+
+func Update(tx *sqlx.Tx, id int32,  p *Player) (bool, error) {
+	query, args, err := sq.Update("player").
+		Set("display_name", p.DisplayName).
+		Set("avatar", p.Avatar).
+		Where(sq.Eq{"id": id}).ToSql()
+
+  fmt.Println(query)
+
+	if err != nil {
+		return false, err
+	}
+	result, err := tx.Exec(query, args...)
+	if err != nil {
+    fmt.Println("ERRRRRRR:  ")
+    fmt.Println(err)
+		return false, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return rowsAffected >= 1, nil
+}
+
 func UpdatePlayerTutorialStage(tx *sqlx.Tx, id int) (bool, error) {
 	query, args, err := sq.Update("player").
 		Set("tutorial_stage", 1).

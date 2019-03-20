@@ -5,9 +5,18 @@ cc._RF.push(module, 'f65d8i/kD5O7YAcqRGJYpdx', 'conf');
 "use strict";
 
 if (CC_DEBUG) {
+  /*
   var backendAddress = {
     PROTOCOL: 'http',
     HOST: 'localhost',
+    PORT: "9992",
+    WS_PATH_PREFIX: "/tsrht",
+  };
+  */
+
+  var backendAddress = {
+    PROTOCOL: 'http',
+    HOST: '192.168.31.139',
     PORT: "9992",
     WS_PATH_PREFIX: "/tsrht"
   };

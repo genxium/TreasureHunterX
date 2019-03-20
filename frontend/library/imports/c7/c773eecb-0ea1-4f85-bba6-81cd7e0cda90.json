@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "RedPacman",
+    "texture": "070728ab-cf1a-4593-8353-398db6bc00f1",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      374,
+      510
+    ],
+    "offset": [
+      -1,
+      1
+    ],
+    "originalSize": [
+      376,
+      512
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

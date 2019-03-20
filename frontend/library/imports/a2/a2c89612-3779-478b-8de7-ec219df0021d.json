@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "transparentRed",
+    "texture": "8477382d-7c99-4db6-a222-2cd2fef6c2b1",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      374,
+      510
+    ],
+    "offset": [
+      -1,
+      1
+    ],
+    "originalSize": [
+      376,
+      512
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -54,8 +54,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 430,
+      "x": 2,
+      "y": 513,
       "z": 0
     },
     "_scale": {
@@ -788,8 +788,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 101.72,
-      "height": 30
+      "width": 0,
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -835,8 +835,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Merdan",
-    "_N$string": "Merdan",
+    "_string": "\n",
+    "_N$string": "\n",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -1485,8 +1485,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 101.72,
-      "height": 30
+      "width": 0,
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1532,8 +1532,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Monroe",
-    "_N$string": "Monroe",
+    "_string": "\n",
+    "_N$string": "\n",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,

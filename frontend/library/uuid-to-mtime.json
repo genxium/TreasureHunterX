@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1552972061000,
+    "asset": 1552997653000,
     "meta": 1552888009000,
     "relativePath": "scripts"
   },
@@ -954,11 +954,6 @@
     "meta": 1552888225000,
     "relativePath": "resources/textures/arrowTip.png"
   },
-  "846cee45-4ca9-4383-8a74-c6a8f3c35617": {
-    "asset": 1552888009000,
-    "meta": 1552888231000,
-    "relativePath": "scripts/PlayersInfo.js"
-  },
   "6a3d663a-2a2d-418a-a015-48a211770465": {
     "asset": 1552888009000,
     "meta": 1552888230000,
@@ -1239,11 +1234,6 @@
     "meta": 1552888009000,
     "relativePath": "resources/map/pacman"
   },
-  "f65d88bf-903e-4eed-801c-a91189629771": {
-    "asset": 1552888009000,
-    "meta": 1552959397000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "eccd9e3b-4874-45e3-924d-470e5d3af29d": {
     "asset": 1552911034000,
     "meta": 1552959397000,
@@ -1290,8 +1280,8 @@
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1552994730000,
-    "meta": 1552994730000,
+    "asset": 1553048285000,
+    "meta": 1553048286000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
@@ -1305,23 +1295,23 @@
     "relativePath": "resources/prefabs/GuardTower.prefab"
   },
   "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
-    "asset": 1552995084000,
-    "meta": 1552995084000,
+    "asset": 1553073141000,
+    "meta": 1553073141000,
     "relativePath": "resources/prefabs/Pacman1.prefab"
   },
   "1f479636-9eb8-4612-8f97-371964d6eae3": {
-    "asset": 1552966107000,
-    "meta": 1552966107000,
+    "asset": 1553072110000,
+    "meta": 1553072110000,
     "relativePath": "resources/prefabs/Pacman2.prefab"
   },
   "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
-    "asset": 1552911034000,
-    "meta": 1552959398000,
+    "asset": 1553075014000,
+    "meta": 1553075014000,
     "relativePath": "resources/prefabs/PlayersInfo.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1552995895000,
-    "meta": 1552995895000,
+    "asset": 1553065063000,
+    "meta": 1553065063000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "60c5287b-34ed-4f1d-8317-a5f49fcf9e26": {
@@ -1730,13 +1720,13 @@
     "relativePath": "resources/textures/treasures/highScoreTreasure.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1552911034000,
-    "meta": 1552959401000,
+    "asset": 1553066870000,
+    "meta": 1553066870000,
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1552996050000,
-    "meta": 1552996050000,
+    "asset": 1553080638000,
+    "meta": 1553080639000,
     "relativePath": "scenes/login.fire"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
@@ -1748,11 +1738,6 @@
     "asset": 1552911034000,
     "meta": 1552959403000,
     "relativePath": "scripts/WsSessionMgr.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1552981169000,
-    "meta": 1552981179000,
-    "relativePath": "scripts/Map.js"
   },
   "72a5a96c-5d0e-40a0-87b9-ff5274d971d5": {
     "asset": 1552982388000,
@@ -1769,39 +1754,274 @@
     "meta": 1552990201000,
     "relativePath": "resources/textures/ooook.jpeg"
   },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1552996039000,
-    "meta": 1552996049000,
-    "relativePath": "scripts/FindingPlayer.js"
-  },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1552996326000,
-    "meta": 1552996335000,
-    "relativePath": "scripts/ResultPanel.js"
-  },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1552996758000,
+    "meta": 1553045388000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1552996758000,
+    "meta": 1553045388000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1552996758000,
+    "meta": 1553045388000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1552996758000,
+    "meta": 1553045388000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1552996758000,
+    "meta": 1553045388000,
     "relativePath": "SpriteFrameSet.js"
+  },
+  "f78fae6e-5f6c-462f-ac4d-98ffe5d5daf3": {
+    "asset": 1553050676000,
+    "meta": 1553050676000,
+    "relativePath": "resources/textures/Theme/ResultPanel"
+  },
+  "800b9e90-efbd-4672-9702-0d7cbebc54cc": {
+    "asset": 1553050690000,
+    "meta": 1553050715000,
+    "relativePath": "resources/textures/Theme/ResultPanel/gold.png"
+  },
+  "328334cf-d438-44e3-81fb-067a51600393": {
+    "asset": 1553050690000,
+    "meta": 1553050769000,
+    "relativePath": "resources/textures/Theme/ResultPanel/iron.png"
+  },
+  "c6dad247-83ed-4a03-8892-4fcd9b2b0bd7": {
+    "asset": 1553050690000,
+    "meta": 1553050747000,
+    "relativePath": "resources/textures/Theme/ResultPanel/copper.png"
+  },
+  "b9d9919c-76bb-43bd-ab46-6e19e0345a3b": {
+    "asset": 1553053931000,
+    "meta": 1553053931000,
+    "relativePath": "resources/textures/Theme/ResultPanel/silver.png"
+  },
+  "350de2d9-322e-49f9-b838-0eb390a1c6c5": {
+    "asset": 1553063975000,
+    "meta": 1553063975000,
+    "relativePath": "resources/prefabs/test_prefab"
+  },
+  "e2631e2a-08fb-4afd-bac7-83729f9a95bb": {
+    "asset": 1553063975000,
+    "meta": 1553063975000,
+    "relativePath": "resources/prefabs/test_prefab/Resultpage_medal1.png"
+  },
+  "055289a4-d838-4c4e-b8af-ee03681ea46f": {
+    "asset": 1553063975000,
+    "meta": 1553063976000,
+    "relativePath": "resources/prefabs/test_prefab/Resultpage_medal2.png"
+  },
+  "29658a0c-a1b9-436e-840c-6af542fe0437": {
+    "asset": 1553063975000,
+    "meta": 1553063976000,
+    "relativePath": "resources/prefabs/test_prefab/resultpage_background_black@2x.png"
+  },
+  "003d080b-9689-43fd-8d64-d0137b6fbf74": {
+    "asset": 1553063975000,
+    "meta": 1553063976000,
+    "relativePath": "resources/prefabs/test_prefab/Resultpage_medal3.png"
+  },
+  "16d3c69d-80cd-4f2d-a2e7-6e030d649762": {
+    "asset": 1553063975000,
+    "meta": 1553063976000,
+    "relativePath": "resources/prefabs/test_prefab/Resultpage.prefab"
+  },
+  "461c2dfc-0ac5-4f8c-ad08-fc8d321de4d7": {
+    "asset": 1553063975000,
+    "meta": 1553063976000,
+    "relativePath": "resources/prefabs/test_prefab/Resultpage_medal4.png"
+  },
+  "6cae33db-b769-4916-b7c7-d11bb27d5e2f": {
+    "asset": 1553076221000,
+    "meta": 1553076221000,
+    "relativePath": "resources/prefabs/Resultpage.prefab"
+  },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1553070034000,
+    "meta": 1553070043000,
+    "relativePath": "scripts/ResultPanel.js"
+  },
+  "3ee945a4-f751-4c6f-9f1e-92e93bbf6b23": {
+    "asset": 1553070322000,
+    "meta": 1553070322000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman"
+  },
+  "47d1ee01-ae60-467d-9d08-e675c44470e4": {
+    "asset": 1553070322000,
+    "meta": 1553070323000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/RedPacman.plist"
+  },
+  "070728ab-cf1a-4593-8353-398db6bc00f1": {
+    "asset": 1553070322000,
+    "meta": 1553070323000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/RedPacman.png"
+  },
+  "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
+    "asset": 1553070718000,
+    "meta": 1553070718000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/Bottom.anim"
+  },
+  "a1bf7c7c-b9f7-4b65-86e3-f86a9e798fb6": {
+    "asset": 1553070820000,
+    "meta": 1553070820000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/BottomLeft.anim"
+  },
+  "d5af527a-9f0c-4398-b2dd-84426be7bd32": {
+    "asset": 1553070959000,
+    "meta": 1553070959000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/BottomRight.anim"
+  },
+  "b60618d7-569d-4f13-bdeb-f20341fbadb6": {
+    "asset": 1553071024000,
+    "meta": 1553071024000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/Left.anim"
+  },
+  "0b3fb38e-9110-4191-9b72-6b64a224d049": {
+    "asset": 1553071070000,
+    "meta": 1553071070000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/Right.anim"
+  },
+  "1bc6de53-800b-4da3-ab8e-4a45e3aa4230": {
+    "asset": 1553071137000,
+    "meta": 1553071137000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/Top.anim"
+  },
+  "ee0d670c-893e-4e4d-96dd-5571db18ee97": {
+    "asset": 1553071197000,
+    "meta": 1553071197000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/TopLeft.anim"
+  },
+  "596df84a-2e4e-4f1d-967c-a82649f564a8": {
+    "asset": 1553071272000,
+    "meta": 1553071272000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/TopRight.anim"
+  },
+  "8477382d-7c99-4db6-a222-2cd2fef6c2b1": {
+    "asset": 1553070605000,
+    "meta": 1553071452000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/transparentRed.png"
+  },
+  "d8a03123-a1f1-4503-b4fa-8b6c3b5bd6a7": {
+    "asset": 1553071548000,
+    "meta": 1553071550000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/transparentRed.plist"
+  },
+  "8acc4e9f-3c47-4b66-9a9d-d012709680f6": {
+    "asset": 1553071903000,
+    "meta": 1553071903000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/attackedLeft.anim"
+  },
+  "c7cda0cd-dbce-4722-abd2-aeca28263a21": {
+    "asset": 1553072090000,
+    "meta": 1553072090000,
+    "relativePath": "resources/textures/Theme/Players/RedPacman/attackedRight.anim"
+  },
+  "f7767f82-3429-484e-9b3e-42d374b2974c": {
+    "asset": 1553072319000,
+    "meta": 1553072319000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman"
+  },
+  "28194c48-ae3b-4197-8263-0d474ae8b9bc": {
+    "asset": 1553072351000,
+    "meta": 1553072391000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/Bottom.anim"
+  },
+  "e1c45a36-2022-4b18-a2db-b5e2e0a120ed": {
+    "asset": 1553075894000,
+    "meta": 1553075894000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/BottomLeft.anim"
+  },
+  "126dff26-0ace-439d-89b5-b888aa52d159": {
+    "asset": 1553075897000,
+    "meta": 1553075897000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/BottomRight.anim"
+  },
+  "95c2d541-8f99-446a-a7e0-094130ce6d41": {
+    "asset": 1553075887000,
+    "meta": 1553075887000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/Left.anim"
+  },
+  "380f5fa0-f77f-434a-8f39-d545ee6823c5": {
+    "asset": 1553075878000,
+    "meta": 1553075878000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/Right.anim"
+  },
+  "a306c6de-ccd8-492b-bfec-c6be0a4cbde2": {
+    "asset": 1553075913000,
+    "meta": 1553075913000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/Top.anim"
+  },
+  "f496072b-51fd-4406-abbd-9885ac23f7a9": {
+    "asset": 1553075917000,
+    "meta": 1553075917000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/TopLeft.anim"
+  },
+  "6405ad8b-3084-4b67-8c2e-9b4d34fa3d09": {
+    "asset": 1553075924000,
+    "meta": 1553075924000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/TopRight.anim"
+  },
+  "643548a5-ef90-44b9-98d2-d0615741793c": {
+    "asset": 1553072319000,
+    "meta": 1553072320000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/YellowPacman.plist"
+  },
+  "214b4fac-e342-4d0d-9489-9a9c199b8048": {
+    "asset": 1553072319000,
+    "meta": 1553072320000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/YellowPacman.fire"
+  },
+  "03060839-e604-414c-b136-d51eb2c159d2": {
+    "asset": 1553072319000,
+    "meta": 1553072320000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/YellowPacman.png"
+  },
+  "04223b77-f61f-4afd-9b04-50940ca2a8d9": {
+    "asset": 1553070586000,
+    "meta": 1553072834000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/transparentYello.png"
+  },
+  "51060593-7c24-49d2-888d-4719c9ba5fa8": {
+    "asset": 1553072864000,
+    "meta": 1553072866000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/transparentYello.plist"
+  },
+  "af16cdcb-6e82-4be6-806d-9fc52ae99fff": {
+    "asset": 1553072973000,
+    "meta": 1553072973000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/attackedLeft.anim"
+  },
+  "02eba566-4d22-4fa7-99d7-f032f5845421": {
+    "asset": 1553073042000,
+    "meta": 1553073042000,
+    "relativePath": "resources/textures/Theme/Players/YelloPacman/attackedRight.anim"
+  },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1553073565000,
+    "meta": 1553073719000,
+    "relativePath": "scripts/FindingPlayer.js"
+  },
+  "f65d88bf-903e-4eed-801c-a91189629771": {
+    "asset": 1553077651000,
+    "meta": 1553077659000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1553078600000,
+    "meta": 1553078697000,
+    "relativePath": "scripts/Map.js"
+  },
+  "846cee45-4ca9-4383-8a74-c6a8f3c35617": {
+    "asset": 1553080632000,
+    "meta": 1553080638000,
+    "relativePath": "scripts/PlayersInfo.js"
   }
 }

@@ -1,0 +1,59 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "transparentYello.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "base": {
+      "__uuid__": "c9f16e56-643b-4008-a49b-37746b0cba3f"
+    },
+    "bottom1": {
+      "__uuid__": "f11670ed-ffbd-4fb9-ad6a-e79e430cdaeb"
+    },
+    "bottom2": {
+      "__uuid__": "ef608c8d-de85-48cb-97a1-3883c8d1b3d4"
+    },
+    "bottomleft1": {
+      "__uuid__": "c888b6b2-7e54-4ee2-baa5-87392c1f51ae"
+    },
+    "bottomleft2": {
+      "__uuid__": "ade959f4-ebc7-4d82-93d2-58a30dbb289e"
+    },
+    "bottomright1": {
+      "__uuid__": "508d57cb-175e-4c25-a30f-d39c211284dd"
+    },
+    "bottomright2": {
+      "__uuid__": "4b94a205-cc36-4cea-983d-a9b0cb3f3816"
+    },
+    "left1": {
+      "__uuid__": "ead58d24-87fd-453a-882c-4e7ccaa1726d"
+    },
+    "left2": {
+      "__uuid__": "aff81e18-b36e-4ced-82a2-4deff2a7dd3f"
+    },
+    "right1": {
+      "__uuid__": "94df4263-3742-438c-a6d8-db245a266a14"
+    },
+    "right2": {
+      "__uuid__": "9434e2ac-ea7e-4aed-b90b-ab1a1847ee17"
+    },
+    "top1": {
+      "__uuid__": "e5a7cce4-f92e-4356-acf2-07d0b6dc82ca"
+    },
+    "top2": {
+      "__uuid__": "e7741eaa-02d5-433f-99fa-f1ebeae70f54"
+    },
+    "topleft1": {
+      "__uuid__": "1c843750-6594-4f94-996f-314411aa7309"
+    },
+    "topleft2": {
+      "__uuid__": "cc11987b-fe85-484e-a432-4266cf8bd5f7"
+    },
+    "topright1": {
+      "__uuid__": "b4b69015-1dbd-49a6-97ca-05600c160478"
+    },
+    "topright2": {
+      "__uuid__": "64b6b9e1-d014-4a6c-b714-03eb76db8249"
+    }
+  }
+}

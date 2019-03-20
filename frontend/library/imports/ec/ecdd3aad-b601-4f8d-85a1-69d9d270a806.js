@@ -33,8 +33,12 @@ cc.Class({
     this.firstPlayerInfoNode.active = false;
     this.secondPlayerInfoNode.active = false;
     this.playersInfoNode = {};
-    Object.assign(this.playersInfoNode, { 1: this.firstPlayerInfoNode });
-    Object.assign(this.playersInfoNode, { 2: this.secondPlayerInfoNode });
+    Object.assign(this.playersInfoNode, {
+      1: this.firstPlayerInfoNode
+    });
+    Object.assign(this.playersInfoNode, {
+      2: this.secondPlayerInfoNode
+    });
 
     window.firstPlayerInfoNode = this.firstPlayerInfoNode;
     this.findingAnimNode.active = true;
@@ -52,8 +56,10 @@ cc.Class({
     for (var i in players) {
       var playerInfo = players[i];
       var playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
-      var nameNode = playerInfoNode.getChildByName("name");
+      /*
+      const nameNode = playerInfoNode.getChildByName("name");
       nameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[playerInfo.joinIndex];
+      */
       playerInfoNode.active = true;
       if (2 == playerInfo.joinIndex) {
         this.findingAnimNode.active = false;
@@ -64,16 +70,21 @@ cc.Class({
 
     var _loop = function _loop(_i) {
       var playerInfo = players[_i];
+      console.log(playerInfo);
       var playerInfoNode = _this.playersInfoNode[playerInfo.joinIndex];
 
       (function () {
         //远程加载头像
         var remoteUrl = playerInfo.avatar;
-        if (remoteUrl == '') {
-          console.log('用户' + _i + ' 没有头像, 提供临时头像');
-          remoteUrl = 'http://wx.qlogo.cn/mmopen/xzq2UIB49VaicY1Hk3jDLk6e8nISmsQuEcqxicEMuC1jKx75QnwibDLWnRHoEmMZdKOJWjspUd8aSD8DfoUYLEqQJ6rcHibNP5Gib/0';
+        if (remoteUrl == null || remoteUrl == '') {
+          cc.log('No avatar to show for :');
+          cc.log(playerInfo);
+          remoteUrl = 'http://wx.qlogo.cn/mmopen/PiajxSqBRaEJUWib5D85KXWHumaxhU4E9XOn9bUpCNKF3F4ibfOj8JYHCiaoosvoXCkTmOQE1r2AKKs8ObMaz76EdA/0';
         }
-        cc.loader.load({ url: remoteUrl, type: 'jpg' }, function (err, texture) {
+        cc.loader.load({
+          url: remoteUrl,
+          type: 'jpg'
+        }, function (err, texture) {
           if (err != null) {
             console.error(err);
           } else {
@@ -84,8 +95,21 @@ cc.Class({
         });
       })();
 
+      function isEmptyString(str) {
+        return str == null || str == '';
+      }
+
       var nameNode = playerInfoNode.getChildByName("name");
-      nameNode.getComponent(cc.Label).string = playerInfo.name;
+      var nameToDisplay = function () {
+        if (!isEmptyString(playerInfo.displayName)) {
+          return playerInfo.displayName;
+        } else if (!isEmptyString(playerInfo.name)) {
+          return playerInfo.name;
+        } else {
+          return "No name";
+        }
+      }();
+      nameNode.getComponent(cc.Label).string = nameToDisplay;
     };
 
     for (var _i in players) {

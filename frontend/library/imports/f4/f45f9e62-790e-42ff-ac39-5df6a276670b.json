@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "YellowPacman",
+    "texture": "03060839-e604-414c-b136-d51eb2c159d2",
+    "atlas": "",
+    "rect": [
+      0,
+      0,
+      502,
+      362
+    ],
+    "offset": [
+      0,
+      1
+    ],
+    "originalSize": [
+      502,
+      364
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

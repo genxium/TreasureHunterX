@@ -13,25 +13,23 @@ cc.Class({
       type: cc.Object,
       default: null
     },
-    winnerPanel: {
-      type: cc.Node,
-      default: null
-    },
-    loserPanel: {
-      type: cc.Node,
-      default: null
-    },
-    resultCompareNode: {
-      type: cc.Node,
-      default: null
-    },
-
-    avatars: {
-      type: [cc.SpriteFrame],
-      default: []
-    },
 
     myAvatarNode: {
+      type: cc.Node,
+      default: null,
+    },
+
+    myNameNode: {
+      type: cc.Node,
+      default: null,
+    },
+
+    rankingNodes: {
+      type: [cc.Node],
+      default: [],
+    },
+
+    myRandNode: {
       type: cc.Node,
       default: null,
     },
@@ -57,99 +55,98 @@ cc.Class({
   },
 
   showPlayerInfo(players) {
-    const self = this;
-    const resultPanelNode = this.node;
-    const winnerNameNode = resultPanelNode.getChildByName("winnerName");
-    const loserNameNode = resultPanelNode.getChildByName("loserName");
-    const resultCompareNode = this.resultCompareNode;
-    const compareProgressNode = resultCompareNode.getChildByName("progressbar");
-    let winnerInfo = null;
-    let loserInfo = null;
+    this.showRanking(players);
+    this.showMyAvatar();
+    this.showMyName();
+  },
 
-    for (let playerId in players) {
-      const playerInfo = players[playerId];
-      if (!winnerInfo) {
-        winnerInfo = playerInfo;
-        continue;
-      }
-      if (playerInfo.score >= winnerInfo.score) {
-        loserInfo = winnerInfo;
-        winnerInfo = playerInfo;
-      } else {
-        loserInfo = playerInfo;
-      }
+
+  showMyName(){
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    let name = 'No name';
+    if(selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == ''){
+      name = selfPlayerInfo.name
+    }else{
+      name = selfPlayerInfo.displayName
     }
-    //TODO Hardecode the name
-    winnerNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[winnerInfo.joinIndex];
-    loserNameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[loserInfo.joinIndex];
+    this.myNameNode.getComponent(cc.Label).string = name;
 
-    const progressComp = compareProgressNode.getComponent(cc.ProgressBar);
-    const winnerScore = parseInt(winnerInfo.score);
-    const loserScore = parseInt(loserInfo.score);
-    let ratio = 0.5;
-    if (winnerScore != loserScore) {
-      ratio = (loserScore * winnerScore <= 0) ? 1
-        : Math.abs(winnerScore) / Math.abs((loserScore + winnerScore));
-    }
-    progressComp.progress = ratio;
-
-    resultCompareNode.getChildByName("winnerScore").getComponent(cc.Label).string = winnerScore;
-    resultCompareNode.getChildByName("loserScore").getComponent(cc.Label).string = loserScore;
-
-    let winnerAvatar = self.avatars[winnerInfo.joinIndex == 2 ? 1 : 0]
-    let loserAvatar = self.avatars[loserInfo.joinIndex == 2 ? 1 : 0]
-    resultPanelNode.getChildByName("winnerPortrait").getComponent(cc.Sprite).spriteFrame = winnerAvatar;
-    resultPanelNode.getChildByName("loserPortrait").getComponent(cc.Sprite).spriteFrame = loserAvatar;
-
-    (() => { //远程加载头像
-      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      let remoteUrl = selfPlayerInfo.avatar;
-      if (remoteUrl == '') {
-        cc.log(`No avatar to show for ${selfPlayer}.`);
-        return;
-      }
-      cc.loader.load({
-        url: remoteUrl,
-        type: 'jpg'
-      }, function(err, texture) {
-        if (err != null) {
-          console.error(err);
-        } else {
-          const sf = new cc.SpriteFrame();
-          sf.setTexture(texture);
-          self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
-        }
-      });
-    })();
 
   },
 
-  showMyAvatar(players) {
+  showRanking(players){
     const self = this;
-    //Get joinindex
-    const myJoinIndex = (() => {
-      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      console.log(selfPlayerInfo)
+    const sortablePlayers = [];
 
-      let myInfo = null;
-      for (let id in players) {
-        if (selfPlayerInfo.playerId == id) {
-          myInfo = players[id];
-          break;
+    for (let playerId in players) {
+      
+      sortablePlayers.push(players[playerId])
+    }
+    const sortedPlayers = sortablePlayers.sort((a, b) => {
+      if(a.score == null){//为null的必定排后面
+        return 1;
+      }else if(b.score == null){//为null的必定排后面
+        return -1;
+      }else{
+        if(a.score < b.score){//分数大的排前面
+          return 1;
+        }else{
+          return -1;
+        }
+      }
+    })
+
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    sortedPlayers.forEach((p, id) => {
+      const nameToDisplay = (() =>{
+        function isEmptyString(str){
+          return str == null || str == ''
+        }
+        if(!isEmptyString(p.displayName)){
+          return p.displayName
+        }else if(!isEmptyString(p.name)){
+          return p.name
+        }else{
+          return "No name"
+        }
+      })();
+
+      if(selfPlayerInfo.playerId == p.id){ //显示我的排名
+        const rank = id + 1;
+        //self.myRandNode.getComponent(cc.Label).string = "No." + rank;
+        if(rank != 1){
+          self.myRandNode.active = false;
         }
       }
 
-      return myInfo.joinIndex;
+      self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      //self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
+    })
+  },
+
+  showMyAvatar() {
+    const self = this;
+    (() => { //加载自己的头像
+      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      let remoteUrl = selfPlayerInfo.avatar;
+      if (remoteUrl == null || remoteUrl == '') {
+        cc.log(`No avatar to show for myself, check storage.`);
+        return;
+      }else{
+        cc.loader.load({
+          url: remoteUrl,
+          type: 'jpg'
+        }, function(err, texture) {
+          if (err != null || texture == null) {
+            console.log(err);
+          } else {
+            const sf = new cc.SpriteFrame();
+            sf.setTexture(texture);
+            self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
+          }
+        });
+      }
     })();
-
-
-    if (myJoinIndex == 2) { //第二加入, 显示蓝色头像
-      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[1];
-    } else if (myJoinIndex == 1) { //第一加入, 显示红色头像
-      this.myAvatarNode.getComponent(cc.Sprite).spriteFrame = self.avatars[0];
-    } else {
-      console.error('错误显示自己的头像')
-    }
   },
 
   showRibbon(winnerInfo, ribbonNode) {

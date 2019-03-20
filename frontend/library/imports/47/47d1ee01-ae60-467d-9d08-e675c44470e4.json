@@ -1,0 +1,59 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "RedPacman.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "base": {
+      "__uuid__": "77b14e56-8531-4801-9cc8-72373f836d61"
+    },
+    "bottom1": {
+      "__uuid__": "fd16f7c3-d892-4dbe-94a8-0fa44ecbe7ea"
+    },
+    "bottom2": {
+      "__uuid__": "c2bde3d1-100c-4044-b965-79c2e4a7349e"
+    },
+    "bottomleft1": {
+      "__uuid__": "7bac61cc-9602-47e1-af08-f02e81b92542"
+    },
+    "bottomleft2": {
+      "__uuid__": "b58c6f37-210a-4437-b158-cb939bdbb34d"
+    },
+    "bottomright1": {
+      "__uuid__": "87f1bef7-2624-43f3-a6cb-1348e20da4b3"
+    },
+    "bottomright2": {
+      "__uuid__": "66806976-4d20-4eb1-a1b0-5a13edd87156"
+    },
+    "left1": {
+      "__uuid__": "a459f469-b3c4-42ad-92a2-529b647e29f6"
+    },
+    "left2": {
+      "__uuid__": "2fbdc3db-9eb3-4958-93d8-22b3fb481cc8"
+    },
+    "right1": {
+      "__uuid__": "2e7eefc7-af73-466c-a668-5d8c88c6e79a"
+    },
+    "right2": {
+      "__uuid__": "98413a6b-7b57-4ab7-9d78-1fcac0b7050b"
+    },
+    "top1": {
+      "__uuid__": "0143558c-eec5-44f1-aa17-9741b6aa4a29"
+    },
+    "top2": {
+      "__uuid__": "9fe55ec3-8523-4593-95ec-3360a253d9f2"
+    },
+    "topleft1": {
+      "__uuid__": "24ffe37b-5d74-45b3-8542-0322f8b599a7"
+    },
+    "topleft2": {
+      "__uuid__": "1bda7de4-5afc-434c-a1be-f115d9fa6634"
+    },
+    "topright1": {
+      "__uuid__": "59282a05-0027-4dec-89cc-904c2cb72964"
+    },
+    "topright2": {
+      "__uuid__": "55a197b2-8da6-4c5f-aeb7-9f77161a2102"
+    }
+  }
+}

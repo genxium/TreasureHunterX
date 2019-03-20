@@ -1031,6 +1031,9 @@ cc.Class({
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopopInCanvas(resultPanelNode);
+
+    //clear player info
+    self.playersInfoNode.getComponent("PlayersInfo").clearInfo();
   },
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;
