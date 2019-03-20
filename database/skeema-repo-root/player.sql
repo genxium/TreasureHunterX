@@ -12,13 +12,14 @@
 CREATE TABLE `player` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
-  `display_name` varchar(32)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `display_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` bigint(20) unsigned NOT NULL,
   `updated_at` bigint(20) unsigned NOT NULL,
   `deleted_at` bigint(20) unsigned DEFAULT NULL,
   `tutorial_stage` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `avatar` varchar(256) DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
