@@ -14,7 +14,6 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
-	//au "github.com/logrusorgru/aurora"
 )
 
 const (
@@ -121,17 +120,17 @@ type RoomDownsyncFrame struct {
 
 	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
 	*/
-	Id             int32                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId     int32                `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players        map[int32]*Player    `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt         int64                `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
-	CountdownNanos int64                `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures      map[int32]*Treasure  `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps          map[int32]*Trap      `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets        map[int32]*Bullet    `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SpeedShoes     map[int32]*SpeedShoe `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Pumpkins       map[int32]*Pumpkin   `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	GuardTowers    map[int32]*GuardTower   `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"guardTowers,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id             int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RefFrameId     int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
+	Players        map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SentAt         int64                 `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
+	CountdownNanos int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
+	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SpeedShoes     map[int32]*SpeedShoe  `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Pumpkins       map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	GuardTowers    map[int32]*GuardTower `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"guardTowers,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -258,14 +257,14 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 		Logger.Warn("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
-  /*
-  * WARNING: The "pTmpPlayerInstance *Player" used here is a temporarily constructed
-  * instance from "<proj-root>/battle_srv/ws/serve.go", which is NOT the same
-  * as "pR.Players[pTmpPlayerInstance.Id]".
-  * -- YFLu
-  */
+	/*
+	 * WARNING: The "pTmpPlayerInstance *Player" used here is a temporarily constructed
+	 * instance from "<proj-root>/battle_srv/ws/serve.go", which is NOT the same
+	 * as "pR.Players[pTmpPlayerInstance.Id]".
+	 * -- YFLu
+	 */
 	defer pR.onPlayerReAdded(pTmpPlayerInstance.Id)
-  pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
+	pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
 	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
 	// Note: All previous position and orientation info should just be recovered.
 	return true
@@ -497,6 +496,12 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
 			theTreasure.Score = value.Score
 			theTreasure.Type = value.Type
+			/*
+				      if (true == theTreasure.Removed) {
+				        // A useless proof of "no memory contamination for consecutive battles in a same room". -- YFLu
+					      Logger.Info("A treasure initiated with .Removed == true:", zap.Any("roomId", pR.Id), zap.Any("localIdInBattle", theTreasure.LocalIdInBattle))
+				      }
+			*/
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
 	}
@@ -509,10 +514,16 @@ func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
 			theTreasure.Score = value.Score
 			theTreasure.Type = value.Type
+			/*
+				      if (true == theTreasure.Removed) {
+				        // A useless proof of "no memory contamination for consecutive battles in a same room". -- YFLu
+					      Logger.Info("A treasure initiated with .Removed == true:", zap.Any("roomId", pR.Id), zap.Any("localIdInBattle", theTreasure.LocalIdInBattle))
+				      }
+			*/
 			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 		}
 	}
-	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("treasures", pR.Treasures))
+	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("# of treasures", len(pR.Treasures)))
 }
 
 func (pR *Room) InitSpeedShoes(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
@@ -830,28 +841,22 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 
 	for k, last := range lastFrame.Bullets {
 		curr, ok := currentFrame.Bullets[k]
-    /*
-    * The use of 'bullet.RemovedAtFrameId' implies that you SHOULDN'T create a record '&Bullet{Removed: true}' here after it's already deleted from 'room.Bullets'.   
-    *
-    * -- YFLu
-    */
-    if false == ok {
-      continue
-    }
+		/*
+		 * The use of 'bullet.RemovedAtFrameId' implies that you SHOULDN'T create a record '&Bullet{Removed: true}' here after it's already deleted from 'room.Bullets'. Same applies for `Traps` and `SpeedShoes`.
+		 *
+		 * -- YFLu
+		 */
+		if false == ok {
+			continue
+		}
 		if ok, v := diffBullet(last, curr); ok {
 			diffFrame.Bullets[k] = v
 		}
 	}
 
 	for k, last := range lastFrame.Traps {
-		if last.Removed {
-			diffFrame.Traps[k] = last
-			continue
-		}
 		curr, ok := currentFrame.Traps[k]
-		if !ok {
-			diffFrame.Traps[k] = &Trap{Removed: true}
-			Logger.Info("A trap is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("trap.LocalIdInBattle", curr.LocalIdInBattle))
+		if false == ok {
 			continue
 		}
 		if ok, v := diffTrap(last, curr); ok {
@@ -860,14 +865,8 @@ func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyn
 	}
 
 	for k, last := range lastFrame.SpeedShoes {
-		if last.Removed {
-			diffFrame.SpeedShoes[k] = last
-			continue
-		}
 		curr, ok := currentFrame.SpeedShoes[k]
-		if !ok {
-			diffFrame.SpeedShoes[k] = &SpeedShoe{Removed: true}
-			Logger.Info("A SpeedShoe is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("speedShoes.LocalIdInBattle", curr.LocalIdInBattle))
+		if false == ok {
 			continue
 		}
 		if ok, v := diffSpeedShoe(last, curr); ok {
@@ -1058,7 +1057,7 @@ func (pR *Room) StartBattle() {
 				Bullets:        pR.Bullets,
 				SpeedShoes:     pR.SpeedShoes,
 				Pumpkins:       pR.Pumpkins,
-        GuardTowers:    pR.GuardTowers,
+				GuardTowers:    pR.GuardTowers,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
@@ -1123,22 +1122,22 @@ func (pR *Room) StartBattle() {
 				 *
 				 * DON'T send any DiffFrame into "DedicatedForwardingChanForPlayer" if the player is disconnected, because it could jam the channel and cause significant delay upon "battle recovery for reconnected player".
 				 */
-        if (player.BattleState == PlayerBattleStateIns.DISCONNECTED || player.BattleState == PlayerBattleStateIns.LOST){
-          continue
-        } else{
-   				theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-  				lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
-  				diffFrame := calculateDiffFrame(currentFrame, lastFrame)
-  
-  				// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-  				theBytes, marshalErr := proto.Marshal(diffFrame)
-  				if marshalErr != nil {
-  					Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-  					continue
-  				}
-  				theStr := string(theBytes)
-  				utils.SendStrSafely(theStr, theForwardingChannel)
-        }
+				if player.BattleState == PlayerBattleStateIns.DISCONNECTED || player.BattleState == PlayerBattleStateIns.LOST {
+					continue
+				} else {
+					theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+					lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
+					diffFrame := calculateDiffFrame(currentFrame, lastFrame)
+
+					// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+					theBytes, marshalErr := proto.Marshal(diffFrame)
+					if marshalErr != nil {
+						Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+						continue
+					}
+					theStr := string(theBytes)
+					utils.SendStrSafely(theStr, theForwardingChannel)
+				}
 			}
 			pR.RoomDownsyncFrameBuffer.Put(currentFrame)
 			collisionNowMillis := utils.UnixtimeMilli()
@@ -1459,7 +1458,6 @@ func (pR *Room) onDismissed() {
 	pR.Players = make(map[int32]*Player)
 	pR.Treasures = make(map[int32]*Treasure)
 	pR.Traps = make(map[int32]*Trap)
-	//fmt.Printf("222222222");
 	pR.GuardTowers = make(map[int32]*GuardTower)
 	pR.Bullets = make(map[int32]*Bullet)
 	pR.SpeedShoes = make(map[int32]*SpeedShoe)
@@ -1468,6 +1466,7 @@ func (pR *Room) onDismissed() {
 		pR.JoinIndexBooleanArr[indice] = false
 	}
 	pR.CmdFromPlayersChan = nil
+	pR.RoomDownsyncFrameBuffer = NewRingBuffer(512)
 	pR.updateScore()
 }
 
@@ -1629,19 +1628,7 @@ func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
 	}
 
 	if pTower != nil && pPlayer != nil {
-		//fmt.Printf("One Player enter the range of guard \n")
-
 		pTower.InRangePlayers.AppendPlayer(pPlayer)
-
-		/*
-		   fmt.Println(au.Red("ININININININ"))
-		   pTower.CurrentAttackingNodePointer.Print()
-		   fmt.Println("Map:")
-		   fmt.Println(pTower.InRangePlayerMap)
-		   fmt.Println(au.Red("ININININININ"))
-		*/
-
-		//fmt.Printf("Tower inrange list add one player, now the lenth: %d \n", len(pTower.InRangePlayerMap))
 	}
 }
 
@@ -1666,18 +1653,7 @@ func (l Listener) EndContact(contact box2d.B2ContactInterface) {
 	}
 
 	if pTower != nil && pPlayer != nil {
-
 		pTower.InRangePlayers.RemovePlayerById(pPlayer.Id)
-
-		/*
-		   fmt.Println(au.Red("OUTOUTOUTOUT"))
-		   pTower.CurrentAttackingNodePointer.Print()
-		   fmt.Println("Map:")
-		   fmt.Println(pTower.InRangePlayerMap)
-		   fmt.Println(au.Red("OUTOUTOUTOUT"))
-		*/
-
-		//fmt.Printf("Remove Player from the inrange_player_list of the tower, now the length %d \n",len(pTower.InRangePlayerMap))
 	}
 }
 

@@ -120,7 +120,6 @@ cc.Class({
   },
 
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
-
     let newFullFrame = {
       id: diffFrame.id,
       treasures: refFullFrame.treasures,

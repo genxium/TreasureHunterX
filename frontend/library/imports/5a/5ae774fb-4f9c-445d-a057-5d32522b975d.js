@@ -19,23 +19,19 @@ cc.Class({
       type: cc.Object,
       default: null
     },
-
     myAvatarNode: {
       type: cc.Node,
       default: null
     },
-
     myNameNode: {
       type: cc.Node,
       default: null
     },
-
     rankingNodes: {
       type: [cc.Node],
       default: []
     },
-
-    myRandNode: {
+    myRankNode: {
       type: cc.Node,
       default: null
     }
@@ -70,14 +66,16 @@ cc.Class({
     } else {
       name = selfPlayerInfo.displayName;
     }
-    this.myNameNode.getComponent(cc.Label).string = name;
+    if (!this.myNameNode) return;
+    var myNameNodeLabel = this.myNameNode.getComponent(cc.Label);
+    if (!myNameNodeLabel) return;
+    myNameNodeLabel.string = name;
   },
   showRanking: function showRanking(players) {
     var self = this;
     var sortablePlayers = [];
 
     for (var playerId in players) {
-
       sortablePlayers.push(players[playerId]);
     }
     var sortedPlayers = sortablePlayers.sort(function (a, b) {
@@ -115,20 +113,17 @@ cc.Class({
       if (selfPlayerInfo.playerId == p.id) {
         //显示我的排名
         var rank = id + 1;
-        //self.myRandNode.getComponent(cc.Label).string = "No." + rank;
-        if (rank != 1) {
-          self.myRandNode.active = false;
+        if (rank != 1 && null != self.myRankNode) {
+          self.myRankNode.active = false;
         }
       }
 
       self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
-      //self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
     });
   },
   showMyAvatar: function showMyAvatar() {
     var self = this;
     (function () {
-      //加载自己的头像
       var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       var remoteUrl = selfPlayerInfo.avatar;
       if (remoteUrl == null || remoteUrl == '') {

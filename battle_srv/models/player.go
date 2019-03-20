@@ -2,10 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/ByteArena/box2d"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 )
 
 type PlayerBattleState struct {
@@ -51,7 +51,7 @@ type Player struct {
 	JoinIndex           int32         `protobuf:"varint,12,opt,name=joinIndex,proto3 " json:"joinIndex"`
 	Avatar              string        `protobuf:"varint,13,opt,name=avatar,proto3" json:"avatar,omitempty"`
 
-  //kobako: 上一次被守护塔锁定的时间
+	//kobako: 上一次被守护塔锁定的时间
 	BeLockedAt int64 `json:"-"`
 }
 
@@ -94,21 +94,21 @@ func (p *Player) Insert(tx *sqlx.Tx) error {
 	return nil
 }
 
-func Update(tx *sqlx.Tx, id int32,  p *Player) (bool, error) {
+func Update(tx *sqlx.Tx, id int32, p *Player) (bool, error) {
 	query, args, err := sq.Update("player").
 		Set("display_name", p.DisplayName).
 		Set("avatar", p.Avatar).
 		Where(sq.Eq{"id": id}).ToSql()
 
-  fmt.Println(query)
+	fmt.Println(query)
 
 	if err != nil {
 		return false, err
 	}
 	result, err := tx.Exec(query, args...)
 	if err != nil {
-    fmt.Println("ERRRRRRR:  ")
-    fmt.Println(err)
+		fmt.Println("ERRRRRRR:  ")
+		fmt.Println(err)
 		return false, err
 	}
 	rowsAffected, err := result.RowsAffected()

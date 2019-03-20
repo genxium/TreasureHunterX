@@ -71,6 +71,7 @@ func Serve(c *gin.Context) {
 	playerId, err := models.GetPlayerIdByToken(token)
 	if err != nil || playerId == 0 {
 		// TODO: Abort with specific message.
+		Logger.Info("PlayerLogin record not found for ws authentication:", zap.Any("intAuthToken", token))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
@@ -149,8 +150,8 @@ func Serve(c *gin.Context) {
 
 	pPlayer, err := models.GetPlayerById(playerId)
 
-  fmt.Println("XXXXXXXXXXXXXX");
-  fmt.Println(pPlayer);
+	fmt.Println("XXXXXXXXXXXXXX")
+	fmt.Println(pPlayer)
 
 	if err != nil || pPlayer == nil {
 		// TODO: Abort with specific message.

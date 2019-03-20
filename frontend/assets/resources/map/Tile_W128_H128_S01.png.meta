@@ -1,11 +1,10 @@
 {
-  "ver": "2.3.0",
+  "ver": "2.2.0",
   "uuid": "67f6b57d-1fe8-4ef8-9dd7-1fe6b88a4b68",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
-  "platformSettings": {},
   "subMetas": {
     "Tile_W128_H128_S01": {
       "ver": "1.0.3",

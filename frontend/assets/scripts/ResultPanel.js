@@ -13,23 +13,19 @@ cc.Class({
       type: cc.Object,
       default: null
     },
-
     myAvatarNode: {
       type: cc.Node,
       default: null,
     },
-
     myNameNode: {
       type: cc.Node,
       default: null,
     },
-
     rankingNodes: {
       type: [cc.Node],
       default: [],
     },
-
-    myRandNode: {
+    myRankNode: {
       type: cc.Node,
       default: null,
     },
@@ -61,36 +57,36 @@ cc.Class({
   },
 
 
-  showMyName(){
+  showMyName() {
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     let name = 'No name';
-    if(selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == ''){
+    if (selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == '') {
       name = selfPlayerInfo.name
-    }else{
+    } else {
       name = selfPlayerInfo.displayName
     }
-    this.myNameNode.getComponent(cc.Label).string = name;
-
-
+    if (!this.myNameNode) return;
+    const myNameNodeLabel = this.myNameNode.getComponent(cc.Label); 
+    if (!myNameNodeLabel) return;
+    myNameNodeLabel.string = name;
   },
 
-  showRanking(players){
+  showRanking(players) {
     const self = this;
     const sortablePlayers = [];
 
     for (let playerId in players) {
-      
       sortablePlayers.push(players[playerId])
     }
     const sortedPlayers = sortablePlayers.sort((a, b) => {
-      if(a.score == null){//为null的必定排后面
+      if (a.score == null) { //为null的必定排后面
         return 1;
-      }else if(b.score == null){//为null的必定排后面
+      } else if (b.score == null) { //为null的必定排后面
         return -1;
-      }else{
-        if(a.score < b.score){//分数大的排前面
+      } else {
+        if (a.score < b.score) { //分数大的排前面
           return 1;
-        }else{
+        } else {
           return -1;
         }
       }
@@ -98,41 +94,39 @@ cc.Class({
 
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     sortedPlayers.forEach((p, id) => {
-      const nameToDisplay = (() =>{
-        function isEmptyString(str){
-          return str == null || str == ''
+      const nameToDisplay = (() => {
+        function isEmptyString(str) {
+          return str == null || str == '';
         }
-        if(!isEmptyString(p.displayName)){
-          return p.displayName
-        }else if(!isEmptyString(p.name)){
-          return p.name
-        }else{
-          return "No name"
+        if (!isEmptyString(p.displayName)) {
+          return p.displayName;
+        } else if (!isEmptyString(p.name)) {
+          return p.name;
+        } else {
+          return "No name";
         }
       })();
 
-      if(selfPlayerInfo.playerId == p.id){ //显示我的排名
+      if (selfPlayerInfo.playerId == p.id) { //显示我的排名
         const rank = id + 1;
-        //self.myRandNode.getComponent(cc.Label).string = "No." + rank;
-        if(rank != 1){
-          self.myRandNode.active = false;
+        if (rank != 1 && null != self.myRankNode) {
+          self.myRankNode.active = false;
         }
       }
 
       self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
-      //self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
     })
   },
 
   showMyAvatar() {
     const self = this;
-    (() => { //加载自己的头像
+    (() => {
       const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
       let remoteUrl = selfPlayerInfo.avatar;
       if (remoteUrl == null || remoteUrl == '') {
         cc.log(`No avatar to show for myself, check storage.`);
         return;
-      }else{
+      } else {
         cc.loader.load({
           url: remoteUrl,
           type: 'jpg'

@@ -85,7 +85,7 @@ func InitRoomHeapManager() {
 	// Init "pseudo class constants".
 	InitRoomBattleStateIns()
 	InitPlayerBattleStateIns()
-	initialCountOfRooms := 5
+	initialCountOfRooms := 1
 	pq := make(RoomHeap, initialCountOfRooms)
 	roomMap := make(RoomMap, initialCountOfRooms)
 
@@ -97,19 +97,17 @@ func InitRoomHeapManager() {
 		}
 		currentRoomBattleState := RoomBattleStateIns.IDLE
 		pq[i] = &Room{
-			Id:                     int32(i + 1),
-			Players:                make(map[int32]*Player),
-			PlayerDownsyncChanDict: make(map[int32]chan string),
-			Capacity:               roomCapacity,
-			Score:                  calRoomScore(0, roomCapacity, currentRoomBattleState),
-			State:                  currentRoomBattleState,
-			CmdFromPlayersChan:     nil,
-			Index:                  i,
-			Tick:                   0,
-			EffectivePlayerCount:   0,
-			BattleDurationNanos:          int64(10 * 1000 * 1000 * 1000),
-			//BattleDurationNanos:          int64(20 * 1000 * 1000 * 1000),
-			//BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
+			Id:                           int32(i + 1),
+			Players:                      make(map[int32]*Player),
+			PlayerDownsyncChanDict:       make(map[int32]chan string),
+			Capacity:                     roomCapacity,
+			Score:                        calRoomScore(0, roomCapacity, currentRoomBattleState),
+			State:                        currentRoomBattleState,
+			CmdFromPlayersChan:           nil,
+			Index:                        i,
+			Tick:                         0,
+			EffectivePlayerCount:         0,
+			BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),
 			Traps:                        make(map[int32]*Trap),

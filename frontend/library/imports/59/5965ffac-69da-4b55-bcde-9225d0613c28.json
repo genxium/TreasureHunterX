@@ -8,8 +8,7 @@
       "__id__": 1
     },
     "optimizationPolicy": 1,
-    "asyncLoadAssets": false,
-    "readonly": false
+    "asyncLoadAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -75,7 +74,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_localZOrder": 31,
     "groupIndex": 0,
     "_id": ""
   },
@@ -138,7 +136,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_localZOrder": 0,
     "groupIndex": 0,
     "_id": ""
   },
@@ -168,7 +165,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": null,
-    "_id": "0d1d9PxUhMQaIqbEeQOMan"
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -207,7 +204,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": null,
-    "_id": "5f+49n5OxKvJyWj5OaPMyR"
+    "_id": ""
   },
   {
     "__type__": "cc.ProgressBar",
@@ -217,14 +214,14 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_N$totalLength": 100,
+    "_N$totalLength": 300,
     "_N$barSprite": {
       "__id__": 3
     },
     "_N$mode": 0,
     "_N$progress": 0.5,
     "_N$reverse": false,
-    "_id": "ce2fPfJxtCm4VSE8G2FiuV"
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",

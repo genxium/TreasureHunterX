@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"go.uber.org/zap"
@@ -16,7 +17,6 @@ import (
 	"server/models"
 	"server/storage"
 	"strconv"
-  "fmt"
 )
 
 var Player = playerController{}
@@ -242,7 +242,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		return
 	}
 
-  //baseInfo ResAccessToken 获取用户授权access_token的返回结果
+	//baseInfo ResAccessToken 获取用户授权access_token的返回结果
 	baseInfo, err := utils.WechatIns.GetOauth2Basic(req.Authcode)
 
 	if err != nil {
@@ -253,8 +253,8 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 
 	userInfo, err := utils.WechatIns.GetMoreInfo(baseInfo.AccessToken, baseInfo.OpenID)
 
-  //kobako print for test
-  fmt.Println(userInfo);
+	//kobako print for test
+	fmt.Println(userInfo)
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
@@ -281,7 +281,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		PlayerID:     int(player.Id),
 		DisplayName:  models.NewNullString(player.DisplayName),
 		UpdatedAt:    now,
-    Avatar:       userInfo.HeadImgURL,
+		Avatar:       userInfo.HeadImgURL,
 	}
 	err = playerLogin.Insert()
 	api.CErr(c, err)
@@ -298,12 +298,12 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 		DisplayName models.NullString `json:"displayName"`
 		Avatar      string            `json:"avatar"`
 	}{
-    Constants.RetCode.Ok,
-    token, expiresAt,
+		Constants.RetCode.Ok,
+		token, expiresAt,
 		playerLogin.PlayerID,
-    playerLogin.DisplayName,
-    userInfo.HeadImgURL,
-  }
+		playerLogin.DisplayName,
+		userInfo.HeadImgURL,
+	}
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -337,8 +337,8 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 		Avatar      string            `json:"avatar"`
 	}{Constants.RetCode.Ok, token, expiresAt,
 		playerLogin.PlayerID, playerLogin.DisplayName,
-    playerLogin.Avatar,
-  }
+		playerLogin.Avatar,
+	}
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -465,21 +465,21 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 			return nil, err
 		}
 		if player != nil {
-      {//更新玩家姓名及头像
-        updateInfo := models.Player{
-          Avatar: userInfo.HeadImgURL,
-          DisplayName: userInfo.Nickname,
-        }
-  	    tx := storage.MySQLManagerIns.MustBegin()
-  	    defer tx.Rollback()
-        ok, err := models.Update(tx, player.Id, &updateInfo)
-        fmt.Println(updateInfo)
-        if(err != nil && ok != true){
-          return nil, err
-        }else{
-          tx.Commit()
-        }
-      }
+			{ //更新玩家姓名及头像
+				updateInfo := models.Player{
+					Avatar:      userInfo.HeadImgURL,
+					DisplayName: userInfo.Nickname,
+				}
+				tx := storage.MySQLManagerIns.MustBegin()
+				defer tx.Rollback()
+				ok, err := models.Update(tx, player.Id, &updateInfo)
+				fmt.Println(updateInfo)
+				if err != nil && ok != true {
+					return nil, err
+				} else {
+					tx.Commit()
+				}
+			}
 			return player, nil
 		}
 	}
@@ -488,7 +488,7 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 		CreatedAt:   now,
 		UpdatedAt:   now,
 		DisplayName: userInfo.Nickname,
-    Avatar:      userInfo.HeadImgURL,
+		Avatar:      userInfo.HeadImgURL,
 	}
 	return p.createNewPlayer(player, userInfo.OpenID, int(Constants.AuthChannel.Wechat))
 }

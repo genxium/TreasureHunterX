@@ -258,7 +258,7 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 	}
 	pPolyLineMap := make(map[int]*TmxPolyline, 0)
 	for _, tile := range pTsxIns.Tiles {
-		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" { 
+		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" {
 			tileObjectGroup := tile.ObjectGroup
 			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
 			for index, obj := range tileObjectGroup.TsxObjects { //初始化tsx.BarrierPolyLineList, 这个gid -> polyline的map, 只有对象组属性值为barrier的时候(石头, 人头骨, 箱子)才存到BarrierPolyLineList这个map里面
@@ -326,8 +326,8 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	}
 	// fmt.Printf("%s\n", byteArr)
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-    fmt.Println("!!!!!!!!!!!!!!!!!")
-    fmt.Println(objGroup.Name)
+		fmt.Println("!!!!!!!!!!!!!!!!!")
+		fmt.Println(objGroup.Name)
 
 		if "controlled_players_starting_pos_list" == objGroup.Name {
 			pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
@@ -345,13 +345,12 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 			pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
 
-
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
 				}
 
-        fmt.Println("A highTreasures");
+				fmt.Println("A highTreasures")
 
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
 				pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
@@ -359,21 +358,21 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos
 			}
 		}
-    /*
-		if "treasures" == objGroup.Name {
-			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
+		/*
+			if "treasures" == objGroup.Name {
+				pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
+				for index, obj := range objGroup.Objects {
+					tmp := Vec2D{
+						X: obj.X,
+						Y: obj.Y,
+					}
+					treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
+					pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
+					pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
+					pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
 				}
-				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
-				pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
-				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
 			}
-		}
-    */
+		*/
 		if "lowScoreTreasures" == objGroup.Name {
 			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
