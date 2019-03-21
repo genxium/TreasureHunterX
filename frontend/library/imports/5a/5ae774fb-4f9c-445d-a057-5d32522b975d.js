@@ -35,6 +35,13 @@ cc.Class({
       type: cc.Node,
       default: null
     }
+
+    /*
+    defaultAvatar: {
+      type: cc.SpriteFrame,
+      default: null,
+    },
+    */
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -123,27 +130,25 @@ cc.Class({
   },
   showMyAvatar: function showMyAvatar() {
     var self = this;
-    (function () {
-      var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      var remoteUrl = selfPlayerInfo.avatar;
-      if (remoteUrl == null || remoteUrl == '') {
-        cc.log("No avatar to show for myself, check storage.");
-        return;
-      } else {
-        cc.loader.load({
-          url: remoteUrl,
-          type: 'jpg'
-        }, function (err, texture) {
-          if (err != null || texture == null) {
-            console.log(err);
-          } else {
-            var sf = new cc.SpriteFrame();
-            sf.setTexture(texture);
-            self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
-          }
-        });
-      }
-    })();
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var remoteUrl = selfPlayerInfo.avatar;
+    if (remoteUrl == null || remoteUrl == '') {
+      cc.log("No avatar to show for myself, check storage.");
+      return;
+    } else {
+      cc.loader.load({
+        url: remoteUrl,
+        type: 'jpg'
+      }, function (err, texture) {
+        if (err != null || texture == null) {
+          console.log(err);
+        } else {
+          var sf = new cc.SpriteFrame();
+          sf.setTexture(texture);
+          self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
+        }
+      });
+    }
   },
   showRibbon: function showRibbon(winnerInfo, ribbonNode) {
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);

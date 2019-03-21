@@ -126,7 +126,6 @@ cc.Class({
   },
 
   _generateNewFullFrame: function _generateNewFullFrame(refFullFrame, diffFrame) {
-
     var newFullFrame = {
       id: diffFrame.id,
       treasures: refFullFrame.treasures,
@@ -504,6 +503,9 @@ cc.Class({
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
+    self.gameRuleNode.width = self.canvasNode.width;
+    self.gameRuleNode.height = self.canvasNode.height;
+
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
 
@@ -516,6 +518,8 @@ cc.Class({
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
+    self.countdownToBeginGameNode.width = self.canvasNode.width;
+    self.countdownToBeginGameNode.height = self.canvasNode.height;
 
     self.playersNode = {};
     var player1Node = cc.instantiate(self.player1Prefab);

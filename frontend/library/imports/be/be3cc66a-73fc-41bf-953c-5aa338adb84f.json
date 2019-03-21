@@ -1,0 +1,74 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "GUIElement_0.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "background_blue": {
+      "__uuid__": "35b63739-bea6-4d69-88e2-9617146d6b84"
+    },
+    "matchpage_VS": {
+      "__uuid__": "d3d2c371-8670-4b70-a3da-fb063c31dac7"
+    },
+    "matchpage_backtohome": {
+      "__uuid__": "271d2a8c-adef-4d4c-8ba0-379837c9ddda"
+    },
+    "matchpage_pacman_light": {
+      "__uuid__": "78f74cdc-bd50-45be-b623-3ee755e35442"
+    },
+    "matchpage_pacman_right": {
+      "__uuid__": "6d8c3743-4847-4aff-a4e5-373c2a2aee97"
+    },
+    "matchpage_playerblue": {
+      "__uuid__": "24aa117a-358a-445b-a29c-af4393f2091b"
+    },
+    "matchpage_playerred": {
+      "__uuid__": "d4360577-bcec-4d33-90d2-0953feb0b91c"
+    },
+    "resultpage_background_black": {
+      "__uuid__": "c0b8a75b-edff-4eb7-9915-65148233cea5"
+    },
+    "resultpage_button_light": {
+      "__uuid__": "1164cd0c-5213-43fa-a1a2-c080af0ee735"
+    },
+    "resultpage_button_right": {
+      "__uuid__": "32d36e49-5945-449f-98d9-75cb6e884eff"
+    },
+    "resultpage_leaderboard": {
+      "__uuid__": "50d51333-3c94-48a9-b85a-80e250af37b2"
+    },
+    "resultpage_medal1": {
+      "__uuid__": "8b371516-a761-4fc2-8651-5bd9c0b4b8bc"
+    },
+    "resultpage_medal2": {
+      "__uuid__": "763b71f9-ca7b-43ff-8cdd-48a1b2cba7e7"
+    },
+    "resultpage_medal3": {
+      "__uuid__": "0a3def0b-cb24-4c56-8e8b-3421ca8cf8b1"
+    },
+    "resultpage_medal4": {
+      "__uuid__": "73ffb8c3-9ab4-4d04-83d8-2d16f2257ae0"
+    },
+    "rulepage_Pacman": {
+      "__uuid__": "76c596c6-147c-4437-8ab3-c563261d4ac6"
+    },
+    "rulepage_bulletinboard": {
+      "__uuid__": "3fd9a348-3c1d-47ba-a93b-8c7f9ad3f4f9"
+    },
+    "rulepage_button": {
+      "__uuid__": "edb1e86b-9be9-4710-8755-6fc1b8c5c349"
+    },
+    "scorepage_playerblue": {
+      "__uuid__": "de6c6c56-228c-4841-b6ac-d4929fcb4268"
+    },
+    "scorepage_playerred": {
+      "__uuid__": "e98df6d2-0d95-4e8b-95ac-b108d136a0c8"
+    },
+    "welcomepage_pacman": {
+      "__uuid__": "77f0e028-0818-487a-a41f-521b24f36eeb"
+    },
+    "welcompage_logo": {
+      "__uuid__": "7b83a0b8-cfdd-4987-af61-5b0e615ef9bb"
+    }
+  }
+}

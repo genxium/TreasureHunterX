@@ -81,6 +81,7 @@ cc.Class({
     self.getRegexList();
 
     var isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
     if (!CC_DEBUG) {
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
@@ -368,7 +369,9 @@ cc.Class({
         playerId: res.playerId,
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
-        displayName: res.displayName
+        displayName: res.displayName,
+        //kobako: 新增
+        name: res.name
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);

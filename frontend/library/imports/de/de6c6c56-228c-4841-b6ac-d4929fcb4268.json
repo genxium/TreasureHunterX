@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "scorepage_playerblue",
+    "texture": "b5f107a7-5079-47f2-b5f6-c95bf59d3357",
+    "atlas": "be3cc66a-73fc-41bf-953c-5aa338adb84f",
+    "rect": [
+      537,
+      119,
+      301,
+      141
+    ],
+    "offset": [
+      1,
+      0
+    ],
+    "originalSize": [
+      303,
+      141
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

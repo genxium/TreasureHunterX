@@ -75,6 +75,7 @@ cc.Class({
     self.getRegexList();
 
     const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
     if (!CC_DEBUG) {
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
@@ -381,6 +382,8 @@ cc.Class({
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
         displayName: res.displayName,
+        //kobako: 新增
+        name: res.name,
       }
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
       cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.selfPlayer}`);
