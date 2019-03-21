@@ -860,6 +860,7 @@ cc.Class({
   },
 
   onBattleStarted() {
+    console.log('On battle started!')
     const self = this;
     if (self.musicEffectManagerScriptIns)
       self.musicEffectManagerScriptIns.playBGM();

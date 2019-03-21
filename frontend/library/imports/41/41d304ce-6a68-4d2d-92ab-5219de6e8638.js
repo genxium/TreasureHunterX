@@ -1012,6 +1012,7 @@ cc.Class({
     this._inputControlEnabled = false;
   },
   onBattleStarted: function onBattleStarted() {
+    console.log('On battle started!');
     var self = this;
     if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.playBGM();
     var canvasNode = self.canvasNode;
