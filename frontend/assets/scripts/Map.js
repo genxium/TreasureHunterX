@@ -283,24 +283,27 @@ cc.Class({
 
   _lazilyTriggerResync() {
     if (true == this.resyncing) return;
+    this.lastResyncingStartedAt = Date.now();
     this.resyncing = true;
+
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
       if (null == this.resyncingHintPopup) {
-        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"));
+        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"), true);
       }
     }
   },
 
   _onResyncCompleted() {
     if (false == this.resyncing) return;
-    cc.log(`_onResyncCompleted`);
     this.resyncing = false;
+    const resyncingDurationMillis = (Date.now() - this.lastResyncingStartedAt);
+    cc.log(`_onResyncCompleted, resyncing took ${resyncingDurationMillis} milliseconds.`);
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
   },
 
-  popupSimplePressToGo(labelString) {
+  popupSimplePressToGo(labelString, hideYesButton) {
     const self = this;
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
@@ -317,6 +320,11 @@ cc.Class({
     simplePressToGoDialogNode.getChildByName("Hint").getComponent(cc.Label).string = labelString;
     yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
+
+    if (true == hideYesButton) {
+      yesButton.active = false; 
+    }
+ 
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
@@ -625,15 +633,13 @@ cc.Class({
 
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
-        if(diffFrame.id < 10){
-          console.log(diffFrame);
-        }
-
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
-        if (-99 == refFrameId) { //显示倒计时
+        if (-99 == refFrameId) { 
+          //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
-        } else if (-98 == refFrameId) { //显示匹配玩家
+        } else if (-98 == refFrameId) { 
+          //显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
           }
@@ -646,13 +652,12 @@ cc.Class({
         }
 
         //根据downFrame显示游戏场景
-
         const frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
-        const isInitiatingFrame = (0 > self.recentFrameCacheCurrentSize || 0 == refFrameId);
+        const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId);
         /*
         if (frameId % 300 == 0) {
           // WARNING: For testing only!
@@ -668,7 +673,7 @@ cc.Class({
           && self.useDiffFrameAlgo
           && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
           && null == cachedFullFrame
-        ) { //重连后重新同步
+        ) { 
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -679,15 +684,13 @@ cc.Class({
           self._onResyncCompleted();
         }
         let countdownNanos = diffFrame.countdownNanos;
-        if (countdownNanos < 0)
+        if (countdownNanos < 0) {
           countdownNanos = 0;
+        }
         const countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
           cc.log(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
         }
-        // if(self.musicEffectManagerScriptIns && 10 == countdownSeconds ) {
-        //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
-        // }
         self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = ( //根据refFrameId和diffFrame计算出新的一帧
         (isInitiatingFrame || !self.useDiffFrameAlgo)
@@ -705,8 +708,6 @@ cc.Class({
         self._dumpToFullFrameCache(roomDownsyncFrame);
         const sentAt = roomDownsyncFrame.sentAt;
 
-
-        //update players Info
         const players = roomDownsyncFrame.players;
         const playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
@@ -716,6 +717,7 @@ cc.Class({
           if (playerId == self.selfPlayerInfo.id) {
             const immediateSelfPlayerInfo = players[k];
             Object.assign(self.selfPlayerInfo, {
+              displayName: (null == immediateSelfPlayerInfo.displayName ? (null == immediateSelfPlayerInfo.name ? "" : immediateSelfPlayerInfo.name) : immediateSelfPlayerInfo.displayName),
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,

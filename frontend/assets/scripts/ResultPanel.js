@@ -67,14 +67,14 @@ cc.Class({
   showMyName() {
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     let name = 'No name';
-    if (selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == '') {
-      name = selfPlayerInfo.name
+    if (null == selfPlayerInfo.displayName || "" == selfPlayerInfo.displayName) {
+      name = selfPlayerInfo.name;
     } else {
-      name = selfPlayerInfo.displayName
+      name = selfPlayerInfo.displayName;
     }
     if (!this.myNameNode) return;
     const myNameNodeLabel = this.myNameNode.getComponent(cc.Label); 
-    if (!myNameNodeLabel) return;
+    if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },
 

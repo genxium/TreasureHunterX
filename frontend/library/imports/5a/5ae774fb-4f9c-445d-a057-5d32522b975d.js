@@ -68,14 +68,14 @@ cc.Class({
   showMyName: function showMyName() {
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
     var name = 'No name';
-    if (selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == '') {
+    if (null == selfPlayerInfo.displayName || "" == selfPlayerInfo.displayName) {
       name = selfPlayerInfo.name;
     } else {
       name = selfPlayerInfo.displayName;
     }
     if (!this.myNameNode) return;
     var myNameNodeLabel = this.myNameNode.getComponent(cc.Label);
-    if (!myNameNodeLabel) return;
+    if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },
   showRanking: function showRanking(players) {

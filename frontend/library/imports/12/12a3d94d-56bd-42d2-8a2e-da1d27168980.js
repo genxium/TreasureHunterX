@@ -80,8 +80,8 @@ cc.Class({
     self.getRetCodeList();
     self.getRegexList();
 
-    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
-    var isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
+    var isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
     if (!CC_DEBUG) {
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
