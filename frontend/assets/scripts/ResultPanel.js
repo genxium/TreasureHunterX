@@ -25,7 +25,7 @@ cc.Class({
       type: [cc.Node],
       default: [],
     },
-    myRankNode: {
+    winNode: {
       type: cc.Node,
       default: null,
     },
@@ -83,7 +83,9 @@ cc.Class({
     const sortablePlayers = [];
 
     for (let playerId in players) {
-      sortablePlayers.push(players[playerId])
+      const p = players[playerId];
+      p.id = playerId; //附带上id
+      sortablePlayers.push(p);
     }
     const sortedPlayers = sortablePlayers.sort((a, b) => {
       if (a.score == null) { //为null的必定排后面
@@ -114,14 +116,15 @@ cc.Class({
         }
       })();
 
-      if (selfPlayerInfo.playerId == p.id) { //显示我的排名
+      if (selfPlayerInfo.playerId == p.id) { //如果不是第一名就不显示WIN字样
         const rank = id + 1;
-        if (rank != 1 && null != self.myRankNode) {
-          self.myRankNode.active = false;
+        if (rank != 1 && null != self.winNode) {
+          self.winNode.active = false;
         }
       }
 
       self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
     })
   },
 

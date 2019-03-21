@@ -794,11 +794,6 @@
     "meta": 1553131663000,
     "relativePath": "resources/animation/HeroPandaBasicBlue/TopRight.anim"
   },
-  "8b400cb3-9119-4269-b86b-0aa2a659b691": {
-    "asset": 1552888009000,
-    "meta": 1553131664000,
-    "relativePath": "resources/prefabs/Player1.prefab"
-  },
   "0a634d7e-2c5d-45db-896f-e3de32ff0ac8": {
     "asset": 1552888009000,
     "meta": 1553131664000,
@@ -833,11 +828,6 @@
     "asset": 1552888009000,
     "meta": 1553131671000,
     "relativePath": "scripts/TreasurePickedUpAnim.js"
-  },
-  "8dc1f61c-b839-4344-80e2-df0eecffe125": {
-    "asset": 1552888009000,
-    "meta": 1553131664000,
-    "relativePath": "resources/prefabs/Player2.prefab"
   },
   "67797815-b28d-4be3-9f75-7c8cb4dd4981": {
     "asset": 1553131640000,
@@ -1280,8 +1270,8 @@
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1553048285000,
-    "meta": 1553131664000,
+    "asset": 1553143144000,
+    "meta": 1553143144000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
@@ -1310,8 +1300,8 @@
     "relativePath": "resources/prefabs/PlayersInfo.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1553138322000,
-    "meta": 1553138322000,
+    "asset": 1553149962000,
+    "meta": 1553149962000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "60c5287b-34ed-4f1d-8317-a5f49fcf9e26": {
@@ -1720,13 +1710,13 @@
     "relativePath": "resources/textures/treasures/highScoreTreasure.png"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1553131640000,
-    "meta": 1553131669000,
+    "asset": 1553149994000,
+    "meta": 1553149994000,
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1553139319000,
-    "meta": 1553139319000,
+    "asset": 1553150016000,
+    "meta": 1553150016000,
     "relativePath": "scenes/login.fire"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
@@ -1982,7 +1972,7 @@
   "7f25a18f-3821-42f0-883b-fa3096f1c5c3": {
     "asset": 1553132650000,
     "meta": 1553132650000,
-    "relativePath": "resources/prefabs/onevsone/background_black01.png"
+    "relativePath": "resources/textures/Theme/InGame/ResultPanel/background_black01.png"
   },
   "b5f107a7-5079-47f2-b5f6-c95bf59d3357": {
     "asset": 1553132650000,
@@ -1997,7 +1987,7 @@
   "f15824e1-ab76-4d97-8c93-f986e472c806": {
     "asset": 1553132650000,
     "meta": 1553132650000,
-    "relativePath": "resources/prefabs/onevsone/resultpage_leaderboard_1v1.png"
+    "relativePath": "resources/textures/Theme/ResultPanel/resultpage_leaderboard_1v1.png"
   },
   "a37f1c6a-9a6b-49fa-8a2d-2fc5a3b93094": {
     "asset": 1553136282000,
@@ -2005,18 +1995,18 @@
     "relativePath": "resources/textures/bullet.png"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1553137654000,
-    "meta": 1553137657000,
+    "asset": 1553142543000,
+    "meta": 1553142556000,
     "relativePath": "scripts/Login.js"
   },
   "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1553138415000,
-    "meta": 1553138463000,
+    "asset": 1553144367000,
+    "meta": 1553144368000,
     "relativePath": "scripts/ResultPanel.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1553139458000,
-    "meta": 1553139807000,
+    "asset": 1553150105000,
+    "meta": 1553150111000,
     "relativePath": "scripts/Map.js"
   }
 }

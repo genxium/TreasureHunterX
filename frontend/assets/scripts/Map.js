@@ -458,6 +458,9 @@ cc.Class({
 
     //Result panel init
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
+    self.resultPanelNode.width = self.canvasNode.width;
+    self.resultPanelNode.height = self.canvasNode.height;
+
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = () => {
