@@ -5,6 +5,22 @@ cc._RF.push(module, '0d28fT1TBNLsIhbaiFgLMOU', 'conf');
 "use strict";
 
 if (CC_DEBUG) {
+  /*
+  var backendAddress = {
+    PROTOCOL: 'https',
+    HOST: 'bgmoba.lokcol.com',
+    PORT: "443",
+    WS_PATH_PREFIX: "/tsrht",
+  };
+   var wechatAddress = {
+    PROTOCOL: "http",
+    HOST: "58.87.122.61",
+    PORT: "8089",
+    PROXY: "",
+    APPID_LITERAL: "appid=wx5432dc1d6164d4e",
+  };
+  */
+
   var backendAddress = {
     PROTOCOL: 'http',
     HOST: 'localhost',
@@ -14,7 +30,7 @@ if (CC_DEBUG) {
 
   var wechatAddress = {
     PROTOCOL: "http",
-    HOST: "119.29.236.44",
+    HOST: "localhost",
     PORT: "8089",
     PROXY: "",
     APPID_LITERAL: "appid=wx5432dc1d6164d4e"

@@ -185,15 +185,17 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		}
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 
-		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
-			//Do nothing
-		} else {
-			pR.Players[contactingPlayer.Id].Speed = 0
-			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-			//被冻住同时加速效果消除
-			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
-		}
+    if contactingPlayer != nil{
+   		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
+  			//Do nothing
+  		} else {
+  			pR.Players[contactingPlayer.Id].Speed = 0
+  			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+  			//被冻住同时加速效果消除
+  			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
+  			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+  		}
+    }
 	}
 }
 
@@ -1037,6 +1039,8 @@ func (pR *Room) StartBattle() {
 		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率4秒
 		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
 
+    BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
+
 		for {
 			if totalElapsedNanos > pR.BattleDurationNanos {
 				pR.StopBattleForSettlement()
@@ -1193,7 +1197,17 @@ func (pR *Room) StartBattle() {
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
+
+        //kobako: 如果超出最大飞行距离, 标记消失
+        if BULLET_MAX_DIST < Distance(bullet.StartAtPoint, &Vec2D{
+          X: bullet.X,
+          Y: bullet.Y,
+        }){
+          pR.onBulletCrashed(nil, bullet, 0, 0)
+        }
 			}
+
+
 			for _, pumpkin := range pR.Pumpkins { //移动南瓜
 				if pumpkin.Removed {
 					continue

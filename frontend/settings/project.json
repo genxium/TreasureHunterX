@@ -1,5 +1,4 @@
 {
-  "assets-sort-type": "name",
   "collision-matrix": [
     [
       false
@@ -46,16 +45,6 @@
     "3D",
     "Mesh"
   ],
-  "facebook": {
-    "appID": "",
-    "audience": {
-      "enable": false
-    },
-    "enable": false,
-    "live": {
-      "enable": false
-    }
-  },
   "fit-height": true,
   "fit-width": false,
   "group-list": [
@@ -65,7 +54,6 @@
     "shelter_z_reducer",
     "shelter"
   ],
-  "last-module-event-record-time": 1553175807171,
   "simulator-orientation": false,
   "simulator-resolution": {
     "height": 640,
@@ -73,5 +61,10 @@
   },
   "start-scene": "current",
   "use-customize-simulator": false,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "cocos-analytics": {
+    "enable": false,
+    "appID": "13798",
+    "appSecret": "959b3ac0037d0f3c2fdce94f8421a9b2"
+  }
 }

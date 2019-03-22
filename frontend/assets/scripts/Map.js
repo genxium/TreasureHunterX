@@ -633,6 +633,13 @@ cc.Class({
 
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
+
+        /*
+        if(diffFrame.id < 30){
+          console.log(diffFrame)
+        }
+        */
+
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) { 
@@ -1106,6 +1113,49 @@ cc.Class({
       let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
       if (!targetNode) {
         targetNode = cc.instantiate(self.trapBulletPrefab);
+
+        //kobako: 创建子弹node的时候设置旋转角度
+        targetNode.angle = (() => {
+          console.log("I need to ajust the direction of the bullet");
+          console.log(bulletInfo);
+          if(null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint){
+            console.error(`Init bullet direction error, startAtPoint:${startAtPoint}, endAtPoint:${endAtPoint}`);
+            return 0;
+          }else{
+            const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
+            const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
+            const radian = (() => {
+              if(dx == 0){
+                return Math.PI / 2;
+              }else{
+                return Math.abs(Math.atan(dy / dx));
+              }
+            })();
+            const angleTemp = radian * 180 / Math.PI;
+            const angle = (() => {
+              if(dx >= 0){
+                if(dy >=0){
+                  //第一象限
+                  return angleTemp;
+                }else{
+                  //第四象限
+                  return -angleTemp;
+                }
+              }else{
+                if(dy >=0){
+                  //第二象限
+                  return 180 - angleTemp;
+                }else{
+                  //第三象限
+                  return 180 + angleTemp;
+                }
+              }
+            })();
+            return angle;
+          }
+        })();
+        //
+
         self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
