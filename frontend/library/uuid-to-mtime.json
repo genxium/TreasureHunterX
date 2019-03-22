@@ -795,8 +795,8 @@
     "relativePath": "scripts/CountdownToBeginGame.js"
   },
   "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f": {
-    "asset": 1553248334000,
-    "meta": 1553248334000,
+    "asset": 1553255298000,
+    "meta": 1553255298000,
     "relativePath": "resources/prefabs/BulletPrefab.prefab"
   },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
@@ -938,16 +938,6 @@
     "asset": 1553217608000,
     "meta": 1553153264000,
     "relativePath": "resources/map/pacman"
-  },
-  "f1bed041-b725-4564-bf0e-d2852015817c": {
-    "asset": 1553153264000,
-    "meta": 1553217819000,
-    "relativePath": "resources/map/pacman/map copy.tmx"
-  },
-  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
-    "asset": 1553153264000,
-    "meta": 1553217819000,
-    "relativePath": "resources/map/pacman/map.tmx"
   },
   "a473b402-851f-4531-997e-5ebb11a77fd0": {
     "asset": 1553153264000,
@@ -1410,8 +1400,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1553244735000,
-    "meta": 1553244735000,
+    "asset": 1553252937000,
+    "meta": 1553252937000,
     "relativePath": "scenes/login.fire"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
@@ -1703,5 +1693,10 @@
     "asset": 1553251179000,
     "meta": 1553251184000,
     "relativePath": "scripts/Map.js"
+  },
+  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
+    "asset": 1553255153000,
+    "meta": 1553255234000,
+    "relativePath": "resources/map/pacman/map.tmx"
   }
 }
