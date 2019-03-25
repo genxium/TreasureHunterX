@@ -1,0 +1,14 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "bullet.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "bullet_00@2x": {
+      "__uuid__": "a1f07062-a441-4a80-a6e6-7294c496be4c"
+    },
+    "bullet_01@2x": {
+      "__uuid__": "ff61aaf9-6961-44f2-a625-df4b892e3097"
+    }
+  }
+}

@@ -106,7 +106,10 @@ window.initPersistentSessionClient = function(onopenCb) {
   }
 
   const currentHistoryState = window.history && window.history.state ? window.history.state : {}; 
-  window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+
+  if (cc.sys.platform != cc.sys.WECHAT_GAME){
+    window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+  }
 
 
   const clientSession = new WebSocket(urlToConnect);

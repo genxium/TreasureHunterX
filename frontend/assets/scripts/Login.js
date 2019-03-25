@@ -71,6 +71,8 @@ cc.Class({
   onLoad() {
 
     //kobako: 腾讯统计代码
+    //WARN: 打包到微信小游戏的时候会导致出错
+    /*
     (function() {
         var mta = document.createElement("script");
         mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
@@ -79,6 +81,7 @@ cc.Class({
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(mta, s);
     })();
+    */
 
     window.atFirstLocationHref = window.location.href.split('#')[0];
     const self = this;

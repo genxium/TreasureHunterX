@@ -2,7 +2,7 @@
 cc._RF.push(module, '12a3dlNVr1C0oou2h0nFomA', 'Login');
 // scripts/Login.js
 
-"use strict";
+'use strict';
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
@@ -77,14 +77,17 @@ cc.Class({
   onLoad: function onLoad() {
 
     //kobako: 腾讯统计代码
-    (function () {
-      var mta = document.createElement("script");
-      mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-      mta.setAttribute("name", "MTAH5");
-      mta.setAttribute("sid", "500674632");
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(mta, s);
+    //WARN: 打包到微信小游戏的时候会导致出错
+    /*
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500674632");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
     })();
+    */
 
     window.atFirstLocationHref = window.location.href.split('#')[0];
     var self = this;
@@ -287,7 +290,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log("Login attempt \"useTokenLogin\" failed, about to execute \"clearBoundRoomIdInBothVolatileAndPersistentStorage\".");
+        cc.log('Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       },
       timeout: function timeout() {
@@ -327,7 +330,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log("Login attempt \"onLoginButtonClicked\" failed, about to execute \"clearBoundRoomIdInBothVolatileAndPersistentStorage\".");
+        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       },
       timeout: function timeout() {
@@ -367,7 +370,7 @@ cc.Class({
   },
   onLoggedIn: function onLoggedIn(res) {
     var self = this;
-    cc.log("OnLoggedIn " + JSON.stringify(res) + ".");
+    cc.log('OnLoggedIn ' + JSON.stringify(res) + '.');
     if (res.ret === self.retCodeDict.OK) {
       if (window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
         window.initWxSdk = self.initWxSdk.bind(self);
@@ -385,7 +388,7 @@ cc.Class({
         name: res.name
       };
       cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      cc.log("cc.sys.localStorage.selfPlayer = " + cc.sys.localStorage.selfPlayer);
+      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
@@ -440,7 +443,7 @@ cc.Class({
         self.onWechatLoggedIn(res);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log("Login attempt \"onLoginButtonClicked\" failed, about to execute \"clearBoundRoomIdInBothVolatileAndPersistentStorage\".");
+        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
