@@ -134,7 +134,7 @@ cc.Class({
       protobuf.parse(textAsset.text, protoRoot);
       window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
       self.checkIntAuthTokenExpire().then(function () {
-        var intAuthToken = JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken;
+        var intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
         self.useTokenLogin(intAuthToken);
       }, function () {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -154,6 +154,18 @@ cc.Class({
         }
       });
     });
+
+    //kobako: 当平台为微信小游戏时, 初始化window.RoomDownsyncFrameForWeapp
+    //NOTE: 必须保证build-template/wechatgame文件夹下有对应的weichatPb文件夹, 还有通过pbjs工具转码room_downsync_frame.proto得到的room_downsync_frame.js文件
+    //详情参考github库: https://github.com/Zhang19910325/protoBufferForWechat
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      /*
+      var protobuf = require('libs/weichatPb/protobuf.js');
+      var roomConfig = require('libs/room_downsync_frame.js');
+      var RoomRoot = protobuf.Root.fromJSON(roomConfig);
+      window.RoomDownsyncFrameForWeapp = RoomRoot.lookupType('models.RoomDownsyncFrame');
+      */
+    }
   },
   getRetCodeList: function getRetCodeList() {
     var self = this;
@@ -232,11 +244,11 @@ cc.Class({
   },
   checkIntAuthTokenExpire: function checkIntAuthTokenExpire() {
     return new Promise(function (resolve, reject) {
-      if (!cc.sys.localStorage.selfPlayer) {
+      if (!cc.sys.localStorage.getItem('selfPlayer')) {
         reject();
         return;
       }
-      var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+      var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       selfPlayer.intAuthToken && new Date().getTime() < selfPlayer.expiresAt ? resolve() : reject();
     });
   },
@@ -350,7 +362,8 @@ cc.Class({
         displayName: res.displayName,
         avatar: res.avatar
       };
-      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
+      cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
+
       var qDict = window.getQueryParamDict();
       var expectedRoomId = qDict["expectedRoomId"];
       if (null != expectedRoomId) {
@@ -387,8 +400,8 @@ cc.Class({
         //kobako: 新增
         name: res.name
       };
-      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
+      cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
+      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.getItem('selfPlayer'));
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
@@ -460,7 +473,7 @@ cc.Class({
     window.location.href = url;
   },
   initWxSdk: function initWxSdk() {
-    var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var origUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     /*
     * The `shareLink` must 
@@ -473,7 +486,7 @@ cc.Class({
       dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
       title: document.title, // 分享标题
       desc: 'Let\'s play together!', // 分享描述
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : "?expectedRoomId=" + cc.sys.localStorage.boundRoomId),
+      link: shareLink + ('' == cc.sys.localStorage.getItem('boundRoomId') ? "" : "?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId')),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function success() {
         // 设置成功
@@ -481,7 +494,7 @@ cc.Class({
     };
     var menuShareTimelineObj = {
       title: document.title, // 分享标题
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : "?expectedRoomId=" + cc.sys.localStorage.boundRoomId),
+      link: shareLink + ('' == cc.sys.localStorage.getItem('boundRoomId') ? "" : "?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId')),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function success() {}
     };

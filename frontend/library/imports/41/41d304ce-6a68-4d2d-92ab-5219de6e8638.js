@@ -491,7 +491,7 @@ cc.Class({
     resultPanelScriptIns.onAgainClicked = function () {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self._resetCurrentMatch();
-      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
         case 1:
@@ -508,7 +508,7 @@ cc.Class({
       } else {
         // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
         cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
-        cc.sys.localStorage.shouldReconnectState = 2;
+        cc.sys.localStorage.setItem('shouldReconnectState', 2);
         window.closeWSConnection();
       }
     };
@@ -768,11 +768,11 @@ cc.Class({
     }
 
     window.handleClientSessionCloseOrError = function () {
-      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
           shouldReconnectState = 1;
-          cc.sys.localStorage.shouldReconnectState = shouldReconnectState;
+          cc.sys.localStorage.setItem('shouldReconnectState', shouldReconnectState);
           cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
           window.initPersistentSessionClient(self.initAfterWSConncted);
           return;
@@ -790,7 +790,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = function () {
-      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
@@ -991,7 +991,7 @@ cc.Class({
       window.initPersistentSessionClient(self.initAfterWSConncted);
       return;
     } else {
-      if (cc.sys.localStorage.boundRoomId) {
+      if (cc.sys.localStorage.getItem('boundRoomId')) {
         self.gameRuleNode.active = false;
         window.initPersistentSessionClient(self.initAfterWSConncted);
         return;
@@ -1489,8 +1489,8 @@ cc.Class({
     };
 
     var self = this;
-    if (null != cc.sys.localStorage.selfPlayer) {
-      var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    if ('' != cc.sys.localStorage.getItem('selfPlayer')) {
+      var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       var requestContent = {
         intAuthToken: selfPlayer.intAuthToken
       };

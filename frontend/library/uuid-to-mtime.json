@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1553237867000,
+    "asset": 1553492324000,
     "meta": 1553153264000,
     "relativePath": "plugin_scripts"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1553217608000,
+    "asset": 1553513514000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -925,7 +925,7 @@
     "relativePath": "scripts/BasePlayer.js"
   },
   "33d33d2f-5ca7-4677-9c82-4ced71aa0f8a": {
-    "asset": 1553255433000,
+    "asset": 1553503655000,
     "meta": 1553153264000,
     "relativePath": "resources/map/pacman"
   },
@@ -1390,8 +1390,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1553513291000,
-    "meta": 1553513291000,
+    "asset": 1553592197000,
+    "meta": 1553592197000,
     "relativePath": "scenes/login.fire"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
@@ -1544,11 +1544,6 @@
     "meta": 1553217817000,
     "relativePath": "resources/textures/Theme/Players/YelloPacman/attackedRight.anim"
   },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1553153265000,
-    "meta": 1553217818000,
-    "relativePath": "scripts/FindingPlayer.js"
-  },
   "7f25a18f-3821-42f0-883b-fa3096f1c5c3": {
     "asset": 1553153265000,
     "meta": 1553217816000,
@@ -1594,11 +1589,6 @@
     "meta": 1553217812000,
     "relativePath": "plugin_scripts/conf.js.template"
   },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1553217608000,
-    "meta": 1553217819000,
-    "relativePath": "scripts/ResultPanel.js"
-  },
   "846cee45-4ca9-4383-8a74-c6a8f3c35617": {
     "asset": 1553217608000,
     "meta": 1553217819000,
@@ -1634,11 +1624,6 @@
     "meta": 1553244483000,
     "relativePath": "resources/pbfiles/room_downsync_frame.proto"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1553251179000,
-    "meta": 1553251184000,
-    "relativePath": "scripts/Map.js"
-  },
   "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
     "asset": 1553255153000,
     "meta": 1553255234000,
@@ -1669,44 +1654,59 @@
     "meta": 1553487043000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
-    "asset": 1542816642000,
-    "meta": 1553489883000,
-    "relativePath": "LanguageData.js"
-  },
-  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
-    "asset": 1542816642000,
-    "meta": 1553489883000,
-    "relativePath": "LocalizedLabel.js"
-  },
-  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
-    "asset": 1542816642000,
-    "meta": 1553489883000,
-    "relativePath": "LocalizedSprite.js"
-  },
-  "e26fdf72-cbae-40e2-adff-264a559c5620": {
-    "asset": 1542816642000,
-    "meta": 1553489883000,
-    "relativePath": "polyglot.min.js"
-  },
-  "9701943c-d23a-44d9-87f3-e336ee09906a": {
-    "asset": 1542816642000,
-    "meta": 1553489883000,
-    "relativePath": "SpriteFrameSet.js"
-  },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1553499122000,
-    "meta": 1553499137000,
-    "relativePath": "scripts/Login.js"
-  },
   "91a92fb7-f06a-4b7e-8438-eb743ee49e4e": {
     "asset": 1553500109000,
     "meta": 1553500155000,
     "relativePath": "scripts/TileCollisionManagerSingleton.js"
   },
+  "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
+    "asset": 1542816642000,
+    "meta": 1553564331000,
+    "relativePath": "LanguageData.js"
+  },
+  "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
+    "asset": 1542816642000,
+    "meta": 1553564331000,
+    "relativePath": "LocalizedLabel.js"
+  },
+  "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
+    "asset": 1542816642000,
+    "meta": 1553564331000,
+    "relativePath": "LocalizedSprite.js"
+  },
+  "e26fdf72-cbae-40e2-adff-264a559c5620": {
+    "asset": 1542816642000,
+    "meta": 1553564331000,
+    "relativePath": "polyglot.min.js"
+  },
+  "9701943c-d23a-44d9-87f3-e336ee09906a": {
+    "asset": 1542816642000,
+    "meta": 1553564331000,
+    "relativePath": "SpriteFrameSet.js"
+  },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1553592272000,
+    "meta": 1553592273000,
+    "relativePath": "scripts/FindingPlayer.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1553597280000,
+    "meta": 1553597283000,
+    "relativePath": "scripts/Login.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1553597718000,
+    "meta": 1553597723000,
+    "relativePath": "scripts/Map.js"
+  },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1553597942000,
+    "meta": 1553597945000,
+    "relativePath": "scripts/ResultPanel.js"
+  },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1553503829000,
-    "meta": 1553503843000,
+    "asset": 1553598102000,
+    "meta": 1553598104000,
     "relativePath": "scripts/WsSessionMgr.js"
   }
 }

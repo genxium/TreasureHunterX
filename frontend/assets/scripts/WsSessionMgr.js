@@ -17,12 +17,12 @@ window.closeWSConnection = function() {
 }
 
 window.getBoundRoomIdFromPersistentStorage = function() {
-  const expiresAt = parseInt(cc.sys.localStorage.expiresAt);
+  const expiresAt = parseInt(cc.sys.localStorage.getItem('expiresAt'));
   if (!expiresAt || Date.now() >= expiresAt) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
-  return cc.sys.localStorage.boundRoomId;
+  return cc.sys.localStorage.getItem('boundRoomId');
 };
 
 window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function() {
@@ -36,8 +36,8 @@ window.handleHbRequirements = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId;
-    cc.sys.localStorage.boundRoomId = window.boundRoomId;
-    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
+    cc.sys.localStorage.setItem('boundRoomId', window.boundRoomId);
+    cc.sys.localStorage.setItem('expiresAt', Date.now() + 10 * 60 * 1000); //TODO: hardcoded, boundRoomId过期时间
   }
 
   window.clientSessionPingInterval = setInterval(() => {
@@ -81,7 +81,7 @@ window.initPersistentSessionClient = function(onopenCb) {
     return;
   }
 
-  const intAuthToken = cc.sys.localStorage.selfPlayer ? JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken : "";
+  const intAuthToken = cc.sys.localStorage.getItem('selfPlayer') ? JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken : "";
 
   let urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
@@ -134,7 +134,14 @@ window.initPersistentSessionClient = function(onopenCb) {
         if (window.handleRoomDownsyncFrame) {
           const typedArray = _base64ToUint8Array(resp.data);
           //console.log(typedArray)
-          const parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
+          const parsedRoomDownsyncFrame = (() => {
+            if(cc.sys.platform == cc.sys.WECHAT_GAME){
+              return window.RoomDownsyncFrameForWeapp.decode(typedArray);
+              //return window.RoomDownsyncFrame.decode(typedArray);
+            }else{
+              return window.RoomDownsyncFrame.decode(typedArray);
+            }
+          })();
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
         break;

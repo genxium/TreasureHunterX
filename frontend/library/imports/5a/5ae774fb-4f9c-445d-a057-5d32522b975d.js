@@ -66,7 +66,7 @@ cc.Class({
     this.showMyName();
   },
   showMyName: function showMyName() {
-    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var name = 'No name';
     if (null == selfPlayerInfo.displayName || "" == selfPlayerInfo.displayName) {
       name = selfPlayerInfo.name;
@@ -104,7 +104,7 @@ cc.Class({
       }
     });
 
-    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     sortedPlayers.forEach(function (p, id) {
       var nameToDisplay = function () {
         function isEmptyString(str) {
@@ -133,7 +133,7 @@ cc.Class({
   },
   showMyAvatar: function showMyAvatar() {
     var self = this;
-    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var remoteUrl = selfPlayerInfo.avatar;
     if (remoteUrl == null || remoteUrl == '') {
       cc.log("No avatar to show for myself, check storage.");
@@ -154,7 +154,7 @@ cc.Class({
     }
   },
   showRibbon: function showRibbon(winnerInfo, ribbonNode) {
-    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var texture = selfPlayerInfo.playerId == winnerInfo.id ? "textures/resultPanel/WinRibbon" : "textures/resultPanel/loseRibbon";
     cc.loader.loadRes(texture, cc.SpriteFrame, function (err, spriteFrame) {
       if (err) {
