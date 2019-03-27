@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1553588918000,
+    "asset": 1553673364000,
     "meta": 1553153264000,
     "relativePath": "plugin_scripts"
   },
@@ -153,16 +153,6 @@
     "asset": 1553153264000,
     "meta": 1553217812000,
     "relativePath": "plugin_scripts/NetworkDoctor.js"
-  },
-  "eb30df05-3917-49f5-a40f-0ddce03121d0": {
-    "asset": 1553153264000,
-    "meta": 1553217812000,
-    "relativePath": "plugin_scripts/protobuf.js"
-  },
-  "7754aaae-2816-4803-b0c9-199ffaeaa433": {
-    "asset": 1553153264000,
-    "meta": 1553217812000,
-    "relativePath": "plugin_scripts/protobuf.js.map"
   },
   "e75377af-4197-4805-9e76-fa0cc6626ba9": {
     "asset": 1553153265000,
@@ -849,20 +839,10 @@
     "meta": 1553217812000,
     "relativePath": "plugin_scripts/constants.js"
   },
-  "c116dddb-470e-47de-af9b-560adb7c78fb": {
-    "asset": 1553153264000,
-    "meta": 1553217812000,
-    "relativePath": "plugin_scripts/NetworkUtils.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1553153265000,
     "meta": 1553217818000,
     "relativePath": "scripts/GameRule.js"
-  },
-  "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
-    "asset": 1553153264000,
-    "meta": 1553217812000,
-    "relativePath": "plugin_scripts/auxiliaries.js"
   },
   "16a1443c-063c-45cc-8231-d26386466b21": {
     "asset": 1553153265000,
@@ -1390,8 +1370,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1553592197000,
-    "meta": 1553592197000,
+    "asset": 1553686828000,
+    "meta": 1553686828000,
     "relativePath": "scenes/login.fire"
   },
   "5eea6ce5-0343-4776-80a4-fccd69bd099b": {
@@ -1649,11 +1629,6 @@
     "meta": 1553486993000,
     "relativePath": "resources/textures/Theme/InGame/Bullets/bulletAnim.anim"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1553487041000,
-    "meta": 1553487043000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "91a92fb7-f06a-4b7e-8438-eb743ee49e4e": {
     "asset": 1553500109000,
     "meta": 1553500155000,
@@ -1669,44 +1644,59 @@
     "meta": 1553597945000,
     "relativePath": "scripts/ResultPanel.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1553598102000,
-    "meta": 1553598104000,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
-    "meta": 1553650701000,
+    "meta": 1553675854000,
     "relativePath": "LanguageData.js"
   },
   "744dcb38-0c27-4da6-b361-1b4c70aba14a": {
     "asset": 1542816642000,
-    "meta": 1553650701000,
+    "meta": 1553675854000,
     "relativePath": "LocalizedLabel.js"
   },
   "f34acd86-1a25-4e05-b1ba-5e57ef8183f8": {
     "asset": 1542816642000,
-    "meta": 1553650701000,
+    "meta": 1553675854000,
     "relativePath": "LocalizedSprite.js"
   },
   "e26fdf72-cbae-40e2-adff-264a559c5620": {
     "asset": 1542816642000,
-    "meta": 1553650701000,
+    "meta": 1553675854000,
     "relativePath": "polyglot.min.js"
   },
   "9701943c-d23a-44d9-87f3-e336ee09906a": {
     "asset": 1542816642000,
-    "meta": 1553650701000,
+    "meta": 1553675854000,
     "relativePath": "SpriteFrameSet.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1553651487000,
-    "meta": 1553651546000,
-    "relativePath": "scripts/Login.js"
+  "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
+    "asset": 1553676495000,
+    "meta": 1553676690000,
+    "relativePath": "plugin_scripts/auxiliaries.js"
+  },
+  "c116dddb-470e-47de-af9b-560adb7c78fb": {
+    "asset": 1553676660000,
+    "meta": 1553676690000,
+    "relativePath": "plugin_scripts/NetworkUtils.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1553651392000,
-    "meta": 1553651546000,
+    "asset": 1553691157000,
+    "meta": 1553691161000,
     "relativePath": "scripts/Map.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1553693120000,
+    "meta": 1553693122000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1553694942000,
+    "meta": 1553695321000,
+    "relativePath": "scripts/Login.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1553694816000,
+    "meta": 1553695321000,
+    "relativePath": "scripts/WsSessionMgr.js"
   }
 }

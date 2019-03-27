@@ -576,7 +576,7 @@ NetworkUtils.dragNode = function (node) {
 };
 
 NetworkUtils.getQueryVariable = function (key) {
-  var query = window.location.search.substring(1),
+  var query = cc.sys.platform == cc.sys.WECHAT_GAME ? '' : window.location.search.substring(1),
       vars = query.split('&');
 
   for (var i = 0, l = vars.length; i < l; i++) {

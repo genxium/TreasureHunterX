@@ -59,13 +59,20 @@ window.handleHbPong = function(resp) {
 };
 
 function _base64ToUint8Array(base64) {
-  var binary_string = window.atob(base64);
-  var len = binary_string.length;
-  var bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
+  var origBytes = null;
+  if (null != window.atob) {
+    var origBinaryStr = window.atob(base64);
+    var origLen = origBinaryStr.length;
+    origBytes = new Uint8Array(origLen);
+    for (var i = 0; i < origLen; i++) {
+      origBytes[i] = origBinaryStr.charCodeAt(i);
+    }
+    return origBytes;
+  } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    return new Buffer(base64, 'base64');
+  } else {
+    return null; 
   }
-  return bytes;
 }
 
 function _base64ToArrayBuffer(base64) {
@@ -95,19 +102,19 @@ window.initPersistentSessionClient = function(onopenCb) {
     }
   }
   if (expectedRoomId) {
-    console.log("initPersistentSessionClient with expectedRoomId == " +  expectedRoomId);
+    console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
     urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
   } else {
     window.boundRoomId = getBoundRoomIdFromPersistentStorage();
     if (null != window.boundRoomId) {
-      console.log("initPersistentSessionClient with boundRoomId == " +  boundRoomId);
+      console.log("initPersistentSessionClient with boundRoomId == " + boundRoomId);
       urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
     }
   }
 
-  const currentHistoryState = window.history && window.history.state ? window.history.state : {}; 
+  const currentHistoryState = window.history && window.history.state ? window.history.state : {};
 
-  if (cc.sys.platform != cc.sys.WECHAT_GAME){
+  if (cc.sys.platform != cc.sys.WECHAT_GAME) {
     window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
   }
 
@@ -133,14 +140,8 @@ window.initPersistentSessionClient = function(onopenCb) {
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
           const typedArray = _base64ToUint8Array(resp.data);
-          //console.log(typedArray)
           const parsedRoomDownsyncFrame = (() => {
-            if(cc.sys.platform == cc.sys.WECHAT_GAME){
-              return window.RoomDownsyncFrameForWeapp.decode(typedArray);
-              //return window.RoomDownsyncFrame.decode(typedArray);
-            }else{
-              return window.RoomDownsyncFrame.decode(typedArray);
-            }
+            return window.RoomDownsyncFrame.decode(typedArray);
           })();
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }

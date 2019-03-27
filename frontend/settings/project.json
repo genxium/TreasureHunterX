@@ -1,4 +1,11 @@
 {
+  "cocos-analytics": {
+    "appID": "13798",
+    "appSecret": "959b3ac0037d0f3c2fdce94f8421a9b2",
+    "channel": "",
+    "enable": false,
+    "version": ""
+  },
   "collision-matrix": [
     [
       false
@@ -33,6 +40,7 @@
   "design-resolution-width": 960,
   "excluded-modules": [
     "Spine Skeleton",
+    "DragonBones",
     "RichText",
     "MotionStreak",
     "PageView",
@@ -59,12 +67,7 @@
     "height": 640,
     "width": 960
   },
-  "start-scene": "current",
   "use-customize-simulator": false,
   "use-project-simulator-setting": false,
-  "cocos-analytics": {
-    "enable": false,
-    "appID": "13798",
-    "appSecret": "959b3ac0037d0f3c2fdce94f8421a9b2"
-  }
+  "start-scene": "current"
 }

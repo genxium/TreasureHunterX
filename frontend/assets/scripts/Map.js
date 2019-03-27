@@ -322,9 +322,9 @@ cc.Class({
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
 
     if (true == hideYesButton) {
-      yesButton.active = false; 
+      yesButton.active = false;
     }
- 
+
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
@@ -634,18 +634,16 @@ cc.Class({
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
 
-        /*
-        if(diffFrame.id < 30){
-          console.log(diffFrame)
+        if(0 < diffFrame.id && diffFrame.id < 10){
+          cc.log(diffFrame)
         }
-        */
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
-        if (-99 == refFrameId) { 
+        if (-99 == refFrameId) {
           //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
-        } else if (-98 == refFrameId) { 
+        } else if (-98 == refFrameId) {
           //显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
@@ -680,7 +678,7 @@ cc.Class({
           && self.useDiffFrameAlgo
           && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
           && null == cachedFullFrame
-        ) { 
+        ) {
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -749,7 +747,7 @@ cc.Class({
           const pumpkinInfo = pumpkin[k];
           self.pumpkinInfoDict[pumpkinLocalIdInBattle] = pumpkinInfo;
         }
-        
+
 
         //update treasureInfoDict
         self.treasureInfoDict = {};
@@ -995,7 +993,7 @@ cc.Class({
       const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
       //const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
       const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 1.0);
-      if (toMoveByVecMag < notToMoveDisThreshold) { 
+      if (toMoveByVecMag < notToMoveDisThreshold) {
         aControlledOtherPlayerScriptIns.activeDirection = { //任意一个值为0都不会改变方向
           dx: 0,
           dy: 0
@@ -1116,36 +1114,34 @@ cc.Class({
 
         //kobako: 创建子弹node的时候设置旋转角度
         targetNode.angle = (() => {
-          console.log("I need to ajust the direction of the bullet");
-          console.log(bulletInfo);
-          if(null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint){
+          if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
             console.error(`Init bullet direction error, startAtPoint:${startAtPoint}, endAtPoint:${endAtPoint}`);
             return 0;
-          }else{
+          } else {
             const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
             const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
             const radian = (() => {
-              if(dx == 0){
+              if (dx == 0) {
                 return Math.PI / 2;
-              }else{
+              } else {
                 return Math.abs(Math.atan(dy / dx));
               }
             })();
             const angleTemp = radian * 180 / Math.PI;
             const angle = (() => {
-              if(dx >= 0){
-                if(dy >=0){
+              if (dx >= 0) {
+                if (dy >= 0) {
                   //第一象限
                   return angleTemp;
-                }else{
+                } else {
                   //第四象限
                   return -angleTemp;
                 }
-              }else{
-                if(dy >=0){
+              } else {
+                if (dy >= 0) {
                   //第二象限
                   return 180 - angleTemp;
-                }else{
+                } else {
                   //第三象限
                   return 180 + angleTemp;
                 }

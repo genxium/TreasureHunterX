@@ -800,11 +800,9 @@ cc.Class({
 
       window.handleRoomDownsyncFrame = function (diffFrame) {
 
-        /*
-        if(diffFrame.id < 30){
-          console.log(diffFrame)
+        if (0 < diffFrame.id && diffFrame.id < 10) {
+          cc.log(diffFrame);
         }
-        */
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
@@ -1242,8 +1240,6 @@ cc.Class({
 
         //kobako: 创建子弹node的时候设置旋转角度
         targetNode.angle = function () {
-          console.log("I need to ajust the direction of the bullet");
-          console.log(bulletInfo);
           if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
             console.error("Init bullet direction error, startAtPoint:" + startAtPoint + ", endAtPoint:" + endAtPoint);
             return 0;

@@ -124,9 +124,12 @@ cc.Class({
         cc.error(err.message || err);
         return;
       }
-      let protoRoot = new protobuf.Root;
-      protobuf.parse(textAsset.text, protoRoot);
-      window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
+      if (false == (cc.sys.platform == cc.sys.WECHAT_GAME)) {
+        // Otherwise, `window.RoomDownsyncFrame` is already assigned.
+        let protoRoot = new protobuf.Root;
+        protobuf.parse(textAsset.text, protoRoot);
+        window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame"); 
+      }
       self.checkIntAuthTokenExpire().then(
         () => {
           const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
@@ -151,19 +154,6 @@ cc.Class({
         }
       );
     });
-
-    //kobako: 当平台为微信小游戏时, 初始化window.RoomDownsyncFrameForWeapp
-    //NOTE: 必须保证build-template/wechatgame文件夹下有对应的weichatPb文件夹, 还有通过pbjs工具转码room_downsync_frame.proto得到的room_downsync_frame.js文件
-    //详情参考github库: https://github.com/Zhang19910325/protoBufferForWechat
-    if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      /*
-      var protobuf = require('libs/weichatPb/protobuf.js');
-      var roomConfig = require('libs/room_downsync_frame.js');
-      var RoomRoot = protobuf.Root.fromJSON(roomConfig);
-      window.RoomDownsyncFrameForWeapp = RoomRoot.lookupType('models.RoomDownsyncFrame');
-      */
-    }
-
   },
 
   getRetCodeList() {
