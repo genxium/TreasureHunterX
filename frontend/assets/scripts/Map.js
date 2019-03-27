@@ -1373,7 +1373,7 @@ cc.Class({
     };
 
     const self = this;
-    if ('' != cc.sys.localStorage.getItem('selfPlayer')) {
+    if (cc.sys.localStorage.getItem('selfPlayer')) {
       const selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       const requestContent = {
         intAuthToken: selfPlayer.intAuthToken

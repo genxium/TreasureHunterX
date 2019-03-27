@@ -1489,7 +1489,7 @@ cc.Class({
     };
 
     var self = this;
-    if ('' != cc.sys.localStorage.getItem('selfPlayer')) {
+    if (cc.sys.localStorage.getItem('selfPlayer')) {
       var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       var requestContent = {
         intAuthToken: selfPlayer.intAuthToken

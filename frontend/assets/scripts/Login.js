@@ -502,7 +502,7 @@ cc.Class({
       dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
       title: document.title, // 分享标题
       desc: 'Let\'s play together!', // 分享描述
-      link: shareLink + ('' == cc.sys.localStorage.getItem('boundRoomId') ? "" : ("?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId'))),
+      link: shareLink + (cc.sys.localStorage.getItem('boundRoomId') ? "" : ("?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId'))),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function() {
         // 设置成功
@@ -510,7 +510,7 @@ cc.Class({
     };
     const menuShareTimelineObj = {
       title: document.title, // 分享标题
-      link: shareLink + ('' == cc.sys.localStorage.getItem('boundRoomId') ? "" : ("?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId'))),
+      link: shareLink + (cc.sys.localStorage.getItem('boundRoomId') ? "" : ("?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId'))),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function() {}
     };
