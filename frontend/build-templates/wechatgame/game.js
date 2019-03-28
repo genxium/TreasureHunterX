@@ -22,7 +22,7 @@ else {
 }
 
 //kobako: Add for decoding protobuf 
-var bundle = require('libs/room_downsync_frame_proto_bundle.js');
+var bundle = require('libs/room_downsync_frame_proto_bundle.forcemsg.js');
 window.RoomDownsyncFrame = bundle.models.RoomDownsyncFrame;
 
 window.boot();

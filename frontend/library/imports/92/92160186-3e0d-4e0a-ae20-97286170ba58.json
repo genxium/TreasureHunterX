@@ -42,9 +42,9 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.10307912064129832,
-      "y": 0.10307912064129832,
-      "z": 0.10307912064129832
+      "x": 0.20052083333333334,
+      "y": 0.20052083333333334,
+      "z": 0.20052083333333334
     },
     "_quat": {
       "__type__": "cc.Quat",
@@ -818,6 +818,7 @@
     "guardTowerPrefab": {
       "__uuid__": "3cee8bde-8f1d-4960-b591-33208af1f997"
     },
+    "forceBigEndianFloatingNumDecoding": true,
     "_id": "d12gkAmppNlIzqcRDELa91"
   },
   {

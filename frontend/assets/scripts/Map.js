@@ -117,6 +117,9 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    forceBigEndianFloatingNumDecoding: {
+      default: false,
+    },
   },
 
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
@@ -454,6 +457,8 @@ cc.Class({
 
   onLoad() {
     const self = this;
+    window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
+
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;

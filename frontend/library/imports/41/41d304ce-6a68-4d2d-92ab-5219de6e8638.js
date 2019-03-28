@@ -122,6 +122,9 @@ cc.Class({
     guardTowerPrefab: {
       type: cc.Prefab,
       default: null
+    },
+    forceBigEndianFloatingNumDecoding: {
+      default: false
     }
   },
 
@@ -471,6 +474,8 @@ cc.Class({
   },
   onLoad: function onLoad() {
     var self = this;
+    window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
+
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;

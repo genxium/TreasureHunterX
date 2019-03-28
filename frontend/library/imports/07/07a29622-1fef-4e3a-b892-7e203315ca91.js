@@ -73,7 +73,7 @@ function _base64ToUint8Array(base64) {
     }
     return origBytes;
   } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-    return new Buffer(base64, 'base64');
+    return Buffer.from(base64, 'base64');
   } else {
     return null;
   }
