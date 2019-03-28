@@ -1,0 +1,29 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "InGame_StatusBar_Red",
+    "texture": "7e95c8ae-8130-48c6-8a83-01697cc5000d",
+    "atlas": "e4e457db-639b-4e68-b1b1-7893fdf2bae7",
+    "rect": [
+      1670,
+      542,
+      306,
+      141
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      306,
+      141
+    ],
+    "rotated": 1,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -5,55 +5,55 @@
   "_native": "",
   "_spriteFrames": {
     "base": {
-      "__uuid__": "c9f16e56-643b-4008-a49b-37746b0cba3f"
+      "__uuid__": "358b3f58-06fc-413c-a258-73248b0b0b85"
     },
     "bottom1": {
-      "__uuid__": "f11670ed-ffbd-4fb9-ad6a-e79e430cdaeb"
+      "__uuid__": "02bcfe1c-c166-4ef5-9375-f13e93e15bb9"
     },
     "bottom2": {
-      "__uuid__": "ef608c8d-de85-48cb-97a1-3883c8d1b3d4"
+      "__uuid__": "5eb79bd8-82c6-443f-ab6b-dedf6fdf43ef"
     },
     "bottomleft1": {
-      "__uuid__": "c888b6b2-7e54-4ee2-baa5-87392c1f51ae"
+      "__uuid__": "92cd57ea-3afd-4c3e-8161-da75dd5eb9ac"
     },
     "bottomleft2": {
-      "__uuid__": "ade959f4-ebc7-4d82-93d2-58a30dbb289e"
+      "__uuid__": "6226e996-323b-4ca4-a808-5414786044f1"
     },
     "bottomright1": {
-      "__uuid__": "508d57cb-175e-4c25-a30f-d39c211284dd"
+      "__uuid__": "d65490a8-a1e5-42db-9607-bb449db77779"
     },
     "bottomright2": {
-      "__uuid__": "4b94a205-cc36-4cea-983d-a9b0cb3f3816"
+      "__uuid__": "ee8ceec9-ee9c-4c12-a099-052d359cefb0"
     },
     "left1": {
-      "__uuid__": "ead58d24-87fd-453a-882c-4e7ccaa1726d"
+      "__uuid__": "750f3b6c-c6b0-4902-af94-fb362fb1605d"
     },
     "left2": {
-      "__uuid__": "aff81e18-b36e-4ced-82a2-4deff2a7dd3f"
+      "__uuid__": "05aab393-8ce3-4bd7-9eff-325077eae8a2"
     },
     "right1": {
-      "__uuid__": "94df4263-3742-438c-a6d8-db245a266a14"
+      "__uuid__": "281422fa-2b81-4f06-9928-bbc7209bf3c8"
     },
     "right2": {
-      "__uuid__": "9434e2ac-ea7e-4aed-b90b-ab1a1847ee17"
+      "__uuid__": "2c63a68f-60b3-4df2-a0be-69c23f5bf25c"
     },
     "top1": {
-      "__uuid__": "e5a7cce4-f92e-4356-acf2-07d0b6dc82ca"
+      "__uuid__": "fec27564-681d-45a5-a13a-9782ebf22f35"
     },
     "top2": {
-      "__uuid__": "e7741eaa-02d5-433f-99fa-f1ebeae70f54"
+      "__uuid__": "bc41ad21-ed69-4acf-8318-257ceb0f9cfe"
     },
     "topleft1": {
-      "__uuid__": "1c843750-6594-4f94-996f-314411aa7309"
+      "__uuid__": "7f2ff9f6-54c0-478c-bbaa-d7476634a9d0"
     },
     "topleft2": {
-      "__uuid__": "cc11987b-fe85-484e-a432-4266cf8bd5f7"
+      "__uuid__": "ff05453a-4154-4ebd-ba8a-8aa4b9ca9325"
     },
     "topright1": {
-      "__uuid__": "b4b69015-1dbd-49a6-97ca-05600c160478"
+      "__uuid__": "5ed2ad89-88aa-42ad-8fd1-9c93e776035d"
     },
     "topright2": {
-      "__uuid__": "64b6b9e1-d014-4a6c-b714-03eb76db8249"
+      "__uuid__": "41e292ea-ee99-47a4-a00a-df5cb5b2bbee"
     }
   }
 }

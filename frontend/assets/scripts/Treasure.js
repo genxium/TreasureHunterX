@@ -2,14 +2,14 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    pickedUpanimPrefab: {
-      type: cc.Prefab,
-      default: null
+    lowScoreSpriteFrame: {
+      type: cc.SpriteFrame,
+      default: null,
     },
-    animNode: {
-      type: cc.Node,
-      default: null
-    },
+    highScoreSpriteFrame: {
+      type: cc.SpriteFrame,
+      default: null,
+    }
   },
 
   setData (treasureInfo) {
@@ -18,12 +18,18 @@ cc.Class({
 
     this.type = treasureInfo.type ? treasureInfo.type : 1;
 
-    const imgName = this.type == 1 ? 'lowScoreTreasure' : 'highScoreTreasure';
 
     this.treasureInfo = treasureInfo;
+
+
+    //const imgName = this.type == 1 ? 'lowScoreTreasure' : 'highScoreTreasure';
     const spriteComponent = this.node.getComponent(cc.Sprite);
+    spriteComponent.spriteFrame = this.type == 1 ? this.lowScoreSpriteFrame : this.highScoreSpriteFrame;
+
+
     //hardcode treasurePNG's path.
     //cc.loader.loadRes("textures/treasures/"+ this.type, cc.SpriteFrame, function (err, frame) {}
+    /*
     console.log("textures/treasures/"+ imgName);
     cc.loader.loadRes("textures/treasures/"+ imgName, cc.SpriteFrame, function (err, frame) {
       if(err){
@@ -32,6 +38,7 @@ cc.Class({
       }
       spriteComponent.spriteFrame = frame; 
     })
+    */
  //   const binglingAnimComp = this.animNode.getComponent(cc.Animation);
 //    binglingAnimComp.play(this.type);
   },

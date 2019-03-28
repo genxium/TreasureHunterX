@@ -1,0 +1,11 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "GuiElements_2.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "InGame_Blackboard": {
+      "__uuid__": "bc77187e-3604-414e-837f-4bed04f78858"
+    }
+  }
+}

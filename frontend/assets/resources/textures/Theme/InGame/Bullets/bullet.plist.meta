@@ -10,7 +10,7 @@
   "subMetas": {
     "bullet_00@2x.png": {
       "ver": "1.0.3",
-      "uuid": "a1f07062-a441-4a80-a6e6-7294c496be4c",
+      "uuid": "2f525bb2-80d1-4508-bdc3-d03c11587ce4",
       "rawTextureUuid": "a37f1c6a-9a6b-49fa-8a2d-2fc5a3b93094",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -32,7 +32,7 @@
     },
     "bullet_01@2x.png": {
       "ver": "1.0.3",
-      "uuid": "ff61aaf9-6961-44f2-a625-df4b892e3097",
+      "uuid": "2c2c7c0c-5e91-4407-aa01-40383450386f",
       "rawTextureUuid": "a37f1c6a-9a6b-49fa-8a2d-2fc5a3b93094",
       "trimType": "auto",
       "trimThreshold": 1,

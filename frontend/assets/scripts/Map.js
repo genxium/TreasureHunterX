@@ -1118,11 +1118,14 @@ cc.Class({
         targetNode = cc.instantiate(self.trapBulletPrefab);
 
         //kobako: 创建子弹node的时候设置旋转角度
-        targetNode.angle = (() => {
+        targetNode.rotation = (() => {
           if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
             console.error(`Init bullet direction error, startAtPoint:${startAtPoint}, endAtPoint:${endAtPoint}`);
             return 0;
           } else {
+
+            //console.log(bulletInfo.startAtPoint, bulletInfo.endAtPoint);
+
             const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
             const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
             const radian = (() => {
@@ -1137,18 +1140,22 @@ cc.Class({
               if (dx >= 0) {
                 if (dy >= 0) {
                   //第一象限
-                  return angleTemp;
+                  return 360 - angleTemp;
+                  //return angleTemp;
                 } else {
                   //第四象限
-                  return -angleTemp;
+                  return angleTemp;
+                  //return -angleTemp;
                 }
               } else {
                 if (dy >= 0) {
                   //第二象限
-                  return 180 - angleTemp;
+                  return 360 - (180 - angleTemp);
+                  //return 180 - angleTemp;
                 } else {
                   //第三象限
-                  return 180 + angleTemp;
+                  return 360 - (180 + angleTemp);
+                  //return 180 + angleTemp;
                 }
               }
             })();
