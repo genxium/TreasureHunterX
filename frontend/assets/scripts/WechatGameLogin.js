@@ -12,55 +12,11 @@ cc.Class({
       default: null,
       type: cc.Node
     },
-    interactiveControls: {
-      default: null,
-      type: cc.Node
-    },
-    phoneLabel: {
-      default: null,
-      type: cc.Node
-    },
-    smsLoginCaptchaLabel: {
-      default: null,
-      type: cc.Node
-    },
-    phoneCountryCodeInput: {
-      default: null,
-      type: cc.Node
-    },
-    phoneNumberInput: {
-      type: cc.Node,
-      default: null
-    },
-    phoneNumberTips: {
-      type: cc.Node,
-      default: null
-    },
-    smsLoginCaptchaInput: {
-      type: cc.Node,
-      default: null
-    },
-    smsLoginCaptchaButton: {
-      type: cc.Node,
-      default: null
-    },
-    captchaTips: {
-      type: cc.Node,
-      default: null
-    },
-    loginButton: {
-      type: cc.Node,
-      default: null
-    },
-    smsWaitCountdownPrefab: {
-      default: null,
-      type: cc.Prefab
-    },
     loadingPrefab: {
       default: null,
       type: cc.Prefab
     },
-    wechatLoginTips: {
+    tipsLabel: {
       default: null,
       type: cc.Label,
     },
@@ -83,77 +39,116 @@ cc.Class({
     })();
     */
 
-    window.atFirstLocationHref = window.location.href.split('#')[0];
+    //window.atFirstLocationHref = window.location.href.split('#')[0];
     const self = this;
     self.getRetCodeList();
     self.getRegexList();
 
-    const isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
-    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
-    if (!CC_DEBUG) {
-      self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-      self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-
-      self.captchaTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-      self.phoneCountryCodeInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-      self.phoneNumberInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-      self.smsLoginCaptchaInput.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-
-      self.phoneLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-      self.smsLoginCaptchaLabel.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-
-      self.loginButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
-    }
-    self.checkPhoneNumber = self.checkPhoneNumber.bind(self);
-    self.checkIntAuthTokenExpire = self.checkIntAuthTokenExpire.bind(self);
-    self.checkCaptcha = self.checkCaptcha.bind(self);
-    self.onSMSCaptchaGetButtonClicked = self.onSMSCaptchaGetButtonClicked.bind(self);
-    self.smsLoginCaptchaButton.on('click', self.onSMSCaptchaGetButtonClicked);
-
-    self.loadingNode = cc.instantiate(this.loadingPrefab);
-    self.smsGetCaptchaNode = self.smsLoginCaptchaButton.getChildByName('smsGetCaptcha');
-    self.smsWaitCountdownNode = cc.instantiate(self.smsWaitCountdownPrefab);
-
-    const qDict = window.getQueryParamDict();
-    if (null != qDict && qDict["expectedRoomId"]) {
-      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-    }
 
     cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */ ) {
       if (err) {
         cc.error(err.message || err);
         return;
       }
-      if (false == (cc.sys.platform == cc.sys.WECHAT_GAME)) {
-        // Otherwise, `window.RoomDownsyncFrame` is already assigned.
-        let protoRoot = new protobuf.Root;
-        protobuf.parse(textAsset.text, protoRoot);
-        window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame"); 
-      }
+
+      self.showTips('登录中...');
+
       self.checkIntAuthTokenExpire().then(
         () => {
           const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
           self.useTokenLogin(intAuthToken);
         },
-        () => {
-          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-          if ( (CC_DEBUG || isUsingX5BlinkKernelOrWebkitWeChatKernel) ) {
-            if (null != qDict && qDict["code"]) {
-              const code = qDict["code"];
-              console.log("Got the wx authcode: " + code);
-              console.log("while at full url: " + window.location.href);
-              self.useWXCodeLogin(code);
-            } else {
-              if (isUsingX5BlinkKernelOrWebkitWeChatKernel) {
-                self.getWechatCode(null);
-              } else {
-                // Deliberately left blank.
-              }
+        () => { //调用wx.login然后请求登录
+
+          wx.authorize({
+            scope: "scope.userInfo",
+            success(){
+
+              wx.login({
+                success(res){
+                  console.log('wx login success, res:');
+                  console.log(res);
+                  const code = res.code;
+
+                  wx.getUserInfo({
+                    success(res){
+                      const userInfo = res.userInfo;
+                      console.log('Get user info ok:');
+                      console.log(userInfo);
+                      self.useWXCodeMiniGameLogin(code, userInfo);
+                    },
+                    fail(){
+                      cc.error('wx.getUserInfo失败');
+                    },
+                  })
+
+    
+                  //self.useWXCodeLogin(res.code);
+                },
+                fail(err){
+                  if (err) {
+                    cc.error('wx.login失败');
+                    cc.error(err.message || err);
+                  }
+                },
+              });
+            },
+            fail(){ //授权失败, 创建授权按钮
+              self.showTips('点击屏幕授权后登录');
+              console.error('授权失败, 创建授权按钮')
+              let sysInfo = wx.getSystemInfoSync();
+              //获取微信界面大小
+              let width = sysInfo.screenWidth;
+              let height = sysInfo.screenHeight;
+              let button = wx.createUserInfoButton({
+                type: 'text',
+                text: '',
+                style: {
+                    left: 0,
+                    top: 0,
+                    width: width,
+                    height: height,
+                    backgroundColor: '#00000000',//最后两位为透明度
+                    color: '#ffffff',
+                    fontSize: 20,
+                    textAlign: "center",
+                    lineHeight: height,
+                },
+              });
+              button.onTap((res) => {
+                console.log(res);
+                if(null != res.userInfo){
+                  const userInfo = res.userInfo;
+
+                  wx.login({
+                    success(res){
+                      console.log('wx.login success, res:');
+                      console.log(res);
+                      const code = res.code;
+                      self.useWXCodeMiniGameLogin(code, userInfo);
+                      //完全登录成功后删除按钮
+                      button.destroy();
+                    },
+                    fail(err){
+                      if (err) {
+                        cc.error('wx.login失败');
+                        cc.error(err.message || err);
+                      }
+                    },
+                  });
+
+                }
+              })
             }
-          }
+          })
         }
       );
     });
+
+  },
+
+  showTips(text){
+    this.tipsLabel.string = text;
   },
 
   getRetCodeList() {
@@ -311,16 +306,7 @@ cc.Class({
   },
 
   enableInteractiveControls(enabled) {
-    this.smsLoginCaptchaButton.getComponent(cc.Button).interactable = enabled;
-    this.loginButton.getComponent(cc.Button).interactable = enabled;
-    this.phoneCountryCodeInput.getComponent(cc.EditBox).enabled = enabled;
-    this.phoneNumberInput.getComponent(cc.EditBox).enabled = enabled;
-    this.smsLoginCaptchaInput.getComponent(cc.EditBox).enabled = enabled;
-    if (enabled) {
-      setVisible(this.interactiveControls);
-    } else {
-      setInvisible(this.interactiveControls);
-    }
+
   },
 
   onLoginButtonClicked(evt) {
@@ -355,6 +341,7 @@ cc.Class({
   onWechatLoggedIn(res) {
     const self = this;
     if (res.ret === self.retCodeDict.OK) {
+      //根据服务器返回信息设置selfPlayer
       self.enableInteractiveControls(false);
       const date = Number(res.expiresAt);
       const selfPlayer = {
@@ -365,22 +352,12 @@ cc.Class({
         avatar: res.avatar,
       }
       cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
-
-      const qDict = window.getQueryParamDict();
-      const expectedRoomId = qDict["expectedRoomId"];
-      if (null != expectedRoomId) {
-        console.log("OnLoggedIn using expectedRoomId == " + expectedRoomId);
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      }
-      // To remove "code=XXX" in "query string".
-      window.history.replaceState(qDict, null, window.location.pathname);
+      
       self.useTokenLogin(res.intAuthToken);
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret;
-      // To remove "code=XXX" in "query string".
-      window.history.replaceState({}, null, window.location.pathname);
+      self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret);
     }
   },
 
@@ -408,12 +385,7 @@ cc.Class({
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
-      const inputControls = self.backgroundNode.getChildByName("InteractiveControls");
-      self.backgroundNode.removeChild(inputControls);
-      safelyAddChild(self.backgroundNode, self.loadingNode);
-      self.loadingNode.getChildByName('loadingSprite').runAction(
-        cc.repeatForever(cc.rotateBy(1.0, 360))
-      );
+
       cc.director.loadScene('default_map');
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
@@ -449,6 +421,7 @@ cc.Class({
       }
     }
   },
+
   useWXCodeLogin(_code) {
     const self = this;
     NetworkUtils.ajax({
@@ -464,14 +437,48 @@ cc.Class({
         cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
+        self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
         window.history.replaceState({}, null, window.location.pathname);
       },
     });
   },
+
+  //对比useWxCodeLogin函数只是请求了不同url
+  useWXCodeMiniGameLogin(_code, _userInfo) {
+    const self = this;
+    NetworkUtils.ajax({
+      url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHATGAME + constants.ROUTE_PATH.LOGIN,
+      type: "POST",
+      data: {
+        code: _code,
+        avatarUrl: _userInfo.avatarUrl,
+        nickName: _userInfo.nickName,
+      },
+      success: function(res) {
+        self.onWechatLoggedIn(res);
+      },
+      error: function(xhr, status, errMsg) {
+
+        //Mock page navigation
+        //self.mockWechatLoggedIn();
+
+        cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
+        cc.sys.localStorage.removeItem("selfPlayer");
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
+        window.history.replaceState({}, null, window.location.pathname);
+      },
+    });
+  },
+
+  mockWechatLoggedIn(){
+    cc.director.loadScene('default_map');
+  },
+
+
   getWechatCode(evt) {
     let self = this;
-    self.wechatLoginTips.string = "";
+    self.showTips('');
     const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");
     const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
     console.log("To visit wechat auth addr: " + url);

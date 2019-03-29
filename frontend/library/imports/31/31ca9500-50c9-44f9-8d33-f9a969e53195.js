@@ -69,6 +69,7 @@ var constants = {
     READ: "/read",
     PROFILE: "/profile",
     WECHAT: "/wechat",
+    WECHATGAME: "/wechatGame",
     FETCH: "/fetch"
   }, _defineProperty(_ROUTE_PATH, "LOGIN", "/login"), _defineProperty(_ROUTE_PATH, "RET_CODE", "/retCode"), _defineProperty(_ROUTE_PATH, "REGEX", "/regex"), _defineProperty(_ROUTE_PATH, "SMS_CAPTCHA", "/SmsCaptcha"), _defineProperty(_ROUTE_PATH, "GET", "/get"), _ROUTE_PATH),
   REQUEST_QUERY: {

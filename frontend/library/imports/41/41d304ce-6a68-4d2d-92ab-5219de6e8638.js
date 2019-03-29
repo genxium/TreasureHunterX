@@ -1493,7 +1493,12 @@ cc.Class({
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
       cc.sys.localStorage.removeItem('selfPlayer');
-      cc.director.loadScene('login');
+
+      if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        cc.director.loadScene('wechatGameLogin');
+      } else {
+        cc.director.loadScene('login');
+      }
     };
 
     var self = this;

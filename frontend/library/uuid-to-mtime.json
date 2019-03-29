@@ -45,12 +45,12 @@
     "relativePath": "resources/textures"
   },
   "8c047451-39ef-4152-8134-b019287bff60": {
-    "asset": 1553217608000,
+    "asset": 1553771581000,
     "meta": 1553153265000,
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1553743973000,
+    "asset": 1553823280000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -439,11 +439,6 @@
     "meta": 1553217819000,
     "relativePath": "scripts/MusicEffectManager.js"
   },
-  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
-    "asset": 1553153264000,
-    "meta": 1553217812000,
-    "relativePath": "plugin_scripts/constants.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1553153265000,
     "meta": 1553217818000,
@@ -699,11 +694,6 @@
     "meta": 1553592273000,
     "relativePath": "scripts/FindingPlayer.js"
   },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1553597942000,
-    "meta": 1553597945000,
-    "relativePath": "scripts/ResultPanel.js"
-  },
   "c119f5bb-720a-4ac8-960f-6f5eeda0c360": {
     "asset": 1553676495000,
     "meta": 1553676690000,
@@ -713,11 +703,6 @@
     "asset": 1553676660000,
     "meta": 1553676690000,
     "relativePath": "plugin_scripts/NetworkUtils.js"
-  },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1553693120000,
-    "meta": 1553693122000,
-    "relativePath": "plugin_scripts/conf.js"
   },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
     "asset": 1553694942000,
@@ -839,11 +824,6 @@
     "meta": 1553757270000,
     "relativePath": "resources/textures/Theme/FindingPlayer/MagnifyinGlassAnimation/MagnifyinGlass.png"
   },
-  "f03d0ba2-7ca9-4b22-a883-041671011135": {
-    "asset": 1553756957000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/GameRule"
-  },
   "225fa2af-f6d5-431b-aee3-a674d2da3856": {
     "asset": 1553757270000,
     "meta": 1553757270000,
@@ -863,16 +843,6 @@
     "asset": 1553756874000,
     "meta": 1553757270000,
     "relativePath": "resources/textures/Theme/InGame/Bullets/bullet.png"
-  },
-  "ff398ba6-be52-4214-a844-b7e1ad0a3d5b": {
-    "asset": 1553756957000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/InGame/ResultPanel"
-  },
-  "a9d73767-51e4-4bcf-ad24-cd62115f8c3b": {
-    "asset": 1553756957000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/InGame/StatusBar"
   },
   "571a111e-331b-4bc6-9385-b4aa1cfbbc77": {
     "asset": 1553757270000,
@@ -910,7 +880,7 @@
     "relativePath": "resources/textures/Theme/Others/3Seconds Countdown.png"
   },
   "a113654b-da98-483e-8c36-053e70f34981": {
-    "asset": 1553757270000,
+    "asset": 1553771167000,
     "meta": 1553757270000,
     "relativePath": "resources/textures/Theme/Players"
   },
@@ -964,19 +934,34 @@
     "meta": 1553757271000,
     "relativePath": "resources/textures/Theme/Players/Pacman2/YellowPacman.png"
   },
-  "f78fae6e-5f6c-462f-ac4d-98ffe5d5daf3": {
-    "asset": 1553756957000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/ResultPanel"
+  "475b849b-44b3-4390-982d-bd0d9e695093": {
+    "asset": 1553847133000,
+    "meta": 1553847133000,
+    "relativePath": "scenes/wechatGameLogin.fire"
+  },
+  "31ca9500-50c9-44f9-8d33-f9a969e53195": {
+    "asset": 1553826246000,
+    "meta": 1553826252000,
+    "relativePath": "plugin_scripts/constants.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1553764512000,
-    "meta": 1553764513000,
+    "asset": 1553844231000,
+    "meta": 1553844261000,
     "relativePath": "scripts/Map.js"
   },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1553844232000,
+    "meta": 1553844261000,
+    "relativePath": "scripts/ResultPanel.js"
+  },
   "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1553694942000,
-    "meta": 1553768838000,
+    "asset": 1553847577000,
+    "meta": 1553847579000,
     "relativePath": "scripts/WechatGameLogin.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1553849908000,
+    "meta": 1553849911000,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }
