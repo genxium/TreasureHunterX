@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "InGame_ResultPanel_AgainButton",
+    "texture": "e8c22004-f2df-41be-9bc3-29e64fa65d65",
+    "atlas": "5ad61f1e-785d-4245-8744-3276b20d841d",
+    "rect": [
+      1179,
+      1955,
+      105,
+      60
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      105,
+      60
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

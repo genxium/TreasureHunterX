@@ -6,9 +6,9 @@
     "atlas": "d8a03123-a1f1-4503-b4fa-8b6c3b5bd6a7",
     "rect": [
       103,
-      105,
+      103,
       100,
-      100
+      98
     ],
     "offset": [
       0,
@@ -16,8 +16,9 @@
     ],
     "originalSize": [
       100,
-      106
+      104
     ],
+    "rotated": 1,
     "capInsets": [
       0,
       0,

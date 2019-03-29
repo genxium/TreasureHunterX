@@ -75,12 +75,27 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {
+
+    //kobako: 腾讯统计代码
+    //WARN: 打包到微信小游戏的时候会导致出错
+    /*
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500674632");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+    */
+
     window.atFirstLocationHref = window.location.href.split('#')[0];
     var self = this;
     self.getRetCodeList();
     self.getRegexList();
 
     var isUsingX5BlinkKernelOrWebkitWeChatKernel = window.isUsingX5BlinkKernelOrWebkitWeChatKernel();
+    //const isUsingX5BlinkKernelOrWebkitWeChatKernel = true;
     if (!CC_DEBUG) {
       self.phoneNumberTips.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
       self.smsLoginCaptchaButton.active = !isUsingX5BlinkKernelOrWebkitWeChatKernel;
@@ -115,11 +130,14 @@ cc.Class({
         cc.error(err.message || err);
         return;
       }
-      var protoRoot = new protobuf.Root();
-      protobuf.parse(textAsset.text, protoRoot);
-      window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
+      if (false == (cc.sys.platform == cc.sys.WECHAT_GAME)) {
+        // Otherwise, `window.RoomDownsyncFrame` is already assigned.
+        var protoRoot = new protobuf.Root();
+        protobuf.parse(textAsset.text, protoRoot);
+        window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
+      }
       self.checkIntAuthTokenExpire().then(function () {
-        var intAuthToken = JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken;
+        var intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
         self.useTokenLogin(intAuthToken);
       }, function () {
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -217,11 +235,11 @@ cc.Class({
   },
   checkIntAuthTokenExpire: function checkIntAuthTokenExpire() {
     return new Promise(function (resolve, reject) {
-      if (!cc.sys.localStorage.selfPlayer) {
+      if (!cc.sys.localStorage.getItem('selfPlayer')) {
         reject();
         return;
       }
-      var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+      var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       selfPlayer.intAuthToken && new Date().getTime() < selfPlayer.expiresAt ? resolve() : reject();
     });
   },
@@ -335,7 +353,8 @@ cc.Class({
         displayName: res.displayName,
         avatar: res.avatar
       };
-      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
+      cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
+
       var qDict = window.getQueryParamDict();
       var expectedRoomId = qDict["expectedRoomId"];
       if (null != expectedRoomId) {
@@ -368,10 +387,12 @@ cc.Class({
         playerId: res.playerId,
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
-        displayName: res.displayName
+        displayName: res.displayName,
+        //kobako: 新增
+        name: res.name
       };
-      cc.sys.localStorage.selfPlayer = JSON.stringify(selfPlayer);
-      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.selfPlayer);
+      cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
+      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.getItem('selfPlayer'));
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
@@ -443,7 +464,7 @@ cc.Class({
     window.location.href = url;
   },
   initWxSdk: function initWxSdk() {
-    var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var origUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     /*
     * The `shareLink` must 
@@ -456,7 +477,7 @@ cc.Class({
       dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
       title: document.title, // 分享标题
       desc: 'Let\'s play together!', // 分享描述
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : "?expectedRoomId=" + cc.sys.localStorage.boundRoomId),
+      link: shareLink + (cc.sys.localStorage.getItem('boundRoomId') ? "" : "?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId')),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function success() {
         // 设置成功
@@ -464,7 +485,7 @@ cc.Class({
     };
     var menuShareTimelineObj = {
       title: document.title, // 分享标题
-      link: shareLink + (null == cc.sys.localStorage.boundRoomId ? "" : "?expectedRoomId=" + cc.sys.localStorage.boundRoomId),
+      link: shareLink + (cc.sys.localStorage.getItem('boundRoomId') ? "" : "?expectedRoomId=" + cc.sys.localStorage.getItem('boundRoomId')),
       imgUrl: origUrl + "/favicon.ico", // 分享图标
       success: function success() {}
     };

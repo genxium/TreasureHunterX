@@ -34,6 +34,7 @@
   "design-resolution-width": 960,
   "excluded-modules": [
     "Spine Skeleton",
+    "DragonBones",
     "RichText",
     "MotionStreak",
     "PageView",
@@ -65,7 +66,7 @@
     "shelter_z_reducer",
     "shelter"
   ],
-  "last-module-event-record-time": 1553083089414,
+  "last-module-event-record-time": 1553746350840,
   "simulator-orientation": false,
   "simulator-resolution": {
     "height": 640,

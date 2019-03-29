@@ -2,7 +2,7 @@
 cc._RF.push(module, '07a29YiH+9OOriSfiAzFcqR', 'WsSessionMgr');
 // scripts/WsSessionMgr.js
 
-"use strict";
+'use strict';
 
 window.sendSafely = function (msgStr) {
   /**
@@ -16,17 +16,17 @@ window.sendSafely = function (msgStr) {
 
 window.closeWSConnection = function () {
   if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) return;
-  cc.log("Closing \"window.clientSession\" from the client-side.");
+  cc.log('Closing "window.clientSession" from the client-side.');
   window.clientSession.close();
 };
 
 window.getBoundRoomIdFromPersistentStorage = function () {
-  var expiresAt = parseInt(cc.sys.localStorage.expiresAt);
+  var expiresAt = parseInt(cc.sys.localStorage.getItem('expiresAt'));
   if (!expiresAt || Date.now() >= expiresAt) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
-  return cc.sys.localStorage.boundRoomId;
+  return cc.sys.localStorage.getItem('boundRoomId');
 };
 
 window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function () {
@@ -40,8 +40,8 @@ window.handleHbRequirements = function (resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId;
-    cc.sys.localStorage.boundRoomId = window.boundRoomId;
-    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
+    cc.sys.localStorage.setItem('boundRoomId', window.boundRoomId);
+    cc.sys.localStorage.setItem('expiresAt', Date.now() + 10 * 60 * 1000); //TODO: hardcoded, boundRoomId过期时间
   }
 
   window.clientSessionPingInterval = setInterval(function () {
@@ -63,13 +63,20 @@ window.handleHbPong = function (resp) {
 };
 
 function _base64ToUint8Array(base64) {
-  var binary_string = window.atob(base64);
-  var len = binary_string.length;
-  var bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
+  var origBytes = null;
+  if (null != window.atob) {
+    var origBinaryStr = window.atob(base64);
+    var origLen = origBinaryStr.length;
+    origBytes = new Uint8Array(origLen);
+    for (var i = 0; i < origLen; i++) {
+      origBytes[i] = origBinaryStr.charCodeAt(i);
+    }
+    return origBytes;
+  } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    return Buffer.from(base64, 'base64');
+  } else {
+    return null;
   }
-  return bytes;
 }
 
 function _base64ToArrayBuffer(base64) {
@@ -84,7 +91,7 @@ window.initPersistentSessionClient = function (onopenCb) {
     return;
   }
 
-  var intAuthToken = cc.sys.localStorage.selfPlayer ? JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken : "";
+  var intAuthToken = cc.sys.localStorage.getItem('selfPlayer') ? JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken : "";
 
   var urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
@@ -109,7 +116,10 @@ window.initPersistentSessionClient = function (onopenCb) {
   }
 
   var currentHistoryState = window.history && window.history.state ? window.history.state : {};
-  window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+
+  if (cc.sys.platform != cc.sys.WECHAT_GAME) {
+    window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+  }
 
   var clientSession = new WebSocket(urlToConnect);
 
@@ -132,8 +142,9 @@ window.initPersistentSessionClient = function (onopenCb) {
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
           var typedArray = _base64ToUint8Array(resp.data);
-          //console.log(typedArray)
-          var parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
+          var parsedRoomDownsyncFrame = function () {
+            return window.RoomDownsyncFrame.decode(typedArray);
+          }();
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
         break;
@@ -145,13 +156,13 @@ window.initPersistentSessionClient = function (onopenCb) {
           break;
         }
       default:
-        cc.log("" + JSON.stringify(resp));
+        cc.log('' + JSON.stringify(resp));
         break;
     }
   };
 
   clientSession.onerror = function (event) {
-    cc.error("Error caught on the WS clientSession:", event);
+    cc.error('Error caught on the WS clientSession:', event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
     }
@@ -161,7 +172,7 @@ window.initPersistentSessionClient = function (onopenCb) {
   };
 
   clientSession.onclose = function (event) {
-    cc.log("The WS clientSession is closed:", event);
+    cc.log('The WS clientSession is closed:', event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
     }

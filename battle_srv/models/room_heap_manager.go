@@ -85,7 +85,7 @@ func InitRoomHeapManager() {
 	// Init "pseudo class constants".
 	InitRoomBattleStateIns()
 	InitPlayerBattleStateIns()
-	initialCountOfRooms := 1
+	initialCountOfRooms := 3
 	pq := make(RoomHeap, initialCountOfRooms)
 	roomMap := make(RoomMap, initialCountOfRooms)
 
@@ -107,6 +107,7 @@ func InitRoomHeapManager() {
 			Index:                        i,
 			Tick:                         0,
 			EffectivePlayerCount:         0,
+			//BattleDurationNanos:          int64(20 * 1000 * 1000 * 1000),
 			BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),

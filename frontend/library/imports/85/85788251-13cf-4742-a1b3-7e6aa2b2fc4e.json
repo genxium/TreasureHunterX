@@ -5,13 +5,13 @@
   "_native": "",
   "_spriteFrames": {
     "BaseBoard": {
-      "__uuid__": "98fbc7d8-f9ec-456e-bfb3-9519400190ca"
+      "__uuid__": "ef8dbd4c-06f8-4bf1-b365-ce19c8a614d1"
     },
     "Clock": {
-      "__uuid__": "1b3def72-c17b-47e4-bbb0-3f40ec0d6cab"
+      "__uuid__": "a6222d8c-fd17-4a59-92e8-dba5470e39d8"
     },
     "WhiteStars": {
-      "__uuid__": "d654202a-80c9-4f00-bc47-ebb486edc486"
+      "__uuid__": "734ba8dd-0512-44a4-b405-2949c35ec4b6"
     }
   }
 }

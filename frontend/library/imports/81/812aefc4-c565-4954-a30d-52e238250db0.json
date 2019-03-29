@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Login_Background",
+    "texture": "7e95c8ae-8130-48c6-8a83-01697cc5000d",
+    "atlas": "e4e457db-639b-4e68-b1b1-7893fdf2bae7",
+    "rect": [
+      1028,
+      542,
+      640,
+      960
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      640,
+      960
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

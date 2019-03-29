@@ -17,12 +17,12 @@ window.closeWSConnection = function() {
 }
 
 window.getBoundRoomIdFromPersistentStorage = function() {
-  const expiresAt = parseInt(cc.sys.localStorage.expiresAt);
+  const expiresAt = parseInt(cc.sys.localStorage.getItem('expiresAt'));
   if (!expiresAt || Date.now() >= expiresAt) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
-  return cc.sys.localStorage.boundRoomId;
+  return cc.sys.localStorage.getItem('boundRoomId');
 };
 
 window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function() {
@@ -36,8 +36,8 @@ window.handleHbRequirements = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId;
-    cc.sys.localStorage.boundRoomId = window.boundRoomId;
-    cc.sys.localStorage.expiresAt = Date.now() + 10 * 60 * 1000; //TODO: hardcoded, boundRoomId过期时间
+    cc.sys.localStorage.setItem('boundRoomId', window.boundRoomId);
+    cc.sys.localStorage.setItem('expiresAt', Date.now() + 10 * 60 * 1000); //TODO: hardcoded, boundRoomId过期时间
   }
 
   window.clientSessionPingInterval = setInterval(() => {
@@ -59,13 +59,20 @@ window.handleHbPong = function(resp) {
 };
 
 function _base64ToUint8Array(base64) {
-  var binary_string = window.atob(base64);
-  var len = binary_string.length;
-  var bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
+  var origBytes = null;
+  if (null != window.atob) {
+    var origBinaryStr = window.atob(base64);
+    var origLen = origBinaryStr.length;
+    origBytes = new Uint8Array(origLen);
+    for (var i = 0; i < origLen; i++) {
+      origBytes[i] = origBinaryStr.charCodeAt(i);
+    }
+    return origBytes;
+  } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    return Buffer.from(base64, 'base64');
+  } else {
+    return null; 
   }
-  return bytes;
 }
 
 function _base64ToArrayBuffer(base64) {
@@ -81,7 +88,7 @@ window.initPersistentSessionClient = function(onopenCb) {
     return;
   }
 
-  const intAuthToken = cc.sys.localStorage.selfPlayer ? JSON.parse(cc.sys.localStorage.selfPlayer).intAuthToken : "";
+  const intAuthToken = cc.sys.localStorage.getItem('selfPlayer') ? JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken : "";
 
   let urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
@@ -95,18 +102,21 @@ window.initPersistentSessionClient = function(onopenCb) {
     }
   }
   if (expectedRoomId) {
-    console.log("initPersistentSessionClient with expectedRoomId == " +  expectedRoomId);
+    console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
     urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
   } else {
     window.boundRoomId = getBoundRoomIdFromPersistentStorage();
     if (null != window.boundRoomId) {
-      console.log("initPersistentSessionClient with boundRoomId == " +  boundRoomId);
+      console.log("initPersistentSessionClient with boundRoomId == " + boundRoomId);
       urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
     }
   }
 
-  const currentHistoryState = window.history && window.history.state ? window.history.state : {}; 
-  window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+  const currentHistoryState = window.history && window.history.state ? window.history.state : {};
+
+  if (cc.sys.platform != cc.sys.WECHAT_GAME) {
+    window.history.replaceState(currentHistoryState, document.title, window.location.pathname);
+  }
 
 
   const clientSession = new WebSocket(urlToConnect);
@@ -130,8 +140,9 @@ window.initPersistentSessionClient = function(onopenCb) {
       case "RoomDownsyncFrame":
         if (window.handleRoomDownsyncFrame) {
           const typedArray = _base64ToUint8Array(resp.data);
-          //console.log(typedArray)
-          const parsedRoomDownsyncFrame = window.RoomDownsyncFrame.decode(typedArray);
+          const parsedRoomDownsyncFrame = (() => {
+            return window.RoomDownsyncFrame.decode(typedArray);
+          })();
           window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
         }
         break;

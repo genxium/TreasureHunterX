@@ -18,7 +18,9 @@ cc.Class({
   updateData: function updateData(playerInfo) {
     var joinIndex = playerInfo.joinIndex;
     var playerNode = this.listNode.getChildByName("player" + joinIndex);
-    if (!playerNode) return;
+    if (!playerNode) {
+      return;
+    }
     var playerNameLabelNode = playerNode.getChildByName("name");
 
     function isEmptyString(str) {

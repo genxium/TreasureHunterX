@@ -10,7 +10,7 @@
   "subMetas": {
     "Verification_code.png": {
       "ver": "1.0.3",
-      "uuid": "1d173158-16cf-413f-939a-c97e5fe6f77b",
+      "uuid": "f657c4cf-c5a1-4075-8994-99650ad4f603",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -32,7 +32,7 @@
     },
     "Verification_code_gray.png": {
       "ver": "1.0.3",
-      "uuid": "e0aceb47-b218-4894-aa02-4148d028d5b1",
+      "uuid": "99f93e98-72af-4b9f-9375-db48b3ad4484",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -54,7 +54,7 @@
     },
     "captcha.png": {
       "ver": "1.0.3",
-      "uuid": "f8a229f0-3479-482f-8972-1e3f8388d150",
+      "uuid": "89cd1f72-6b92-41ba-9193-accabaa026df",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -76,7 +76,7 @@
     },
     "login2.png": {
       "ver": "1.0.3",
-      "uuid": "8fe8a60a-309d-48f1-bd7d-1dc6b8853732",
+      "uuid": "ae324bec-a53e-40fd-9345-e47dca676f51",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -98,7 +98,7 @@
     },
     "loginBG.png": {
       "ver": "1.0.3",
-      "uuid": "b3e9ece7-1511-4776-9199-aadc95dd917a",
+      "uuid": "b28abcaa-7e2b-42cd-a722-aca0d32c9638",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -120,7 +120,7 @@
     },
     "phone.png": {
       "ver": "1.0.3",
-      "uuid": "f70a1ff4-cff8-4c91-b510-ad3267495e6a",
+      "uuid": "490c33e9-0642-4201-aa9f-5565fda91dc2",
       "rawTextureUuid": "14b53ca0-e53f-4c7b-8f56-f7006981d382",
       "trimType": "auto",
       "trimThreshold": 1,

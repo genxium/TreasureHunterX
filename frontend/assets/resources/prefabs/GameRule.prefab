@@ -8,8 +8,7 @@
       "__id__": 1
     },
     "optimizationPolicy": 0,
-    "asyncLoadAssets": false,
-    "readonly": false
+    "asyncLoadAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -70,6 +69,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -79,11 +80,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -138,6 +135,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -147,11 +146,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -205,6 +200,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -214,11 +211,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -229,21 +222,21 @@
       "__id__": 3
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "经典吃豆人玩法，加入了实时对战元素。金豆100分，煎蛋200分，玩家在规定时间内得分高则获胜。要注意躲避防御塔攻击，被击中会被定住5秒的哦。开始游戏吧~",
-    "_N$string": "经典吃豆人玩法，加入了实时对战元素。金豆100分，煎蛋200分，玩家在规定时间内得分高则获胜。要注意躲避防御塔攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    "_string": "gameRule.tip",
+    "_N$string": "gameRule.tip",
     "_fontSize": 38,
     "_lineHeight": 70,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
+    "_batchAsBitmap": false,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 1,
+    "_N$cacheMode": 0,
     "_id": ""
   },
   {
@@ -276,10 +269,8 @@
       "__id__": 2
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "4114993b-6113-41db-a985-555d99e3dc2f"
+      "__uuid__": "f4d8300e-7b7c-4c58-9de5-561a33e54d82"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -293,7 +284,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -362,6 +357,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -371,11 +368,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -429,6 +422,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -438,11 +433,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -453,21 +444,21 @@
       "__id__": 10
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "1v1 模式",
-    "_N$string": "1v1 模式",
+    "_string": "gameRule.mode",
+    "_N$string": "gameRule.mode",
     "_fontSize": 55,
     "_lineHeight": 50,
     "_enableWrapText": false,
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
+    "_batchAsBitmap": false,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 1,
+    "_N$cacheMode": 0,
     "_id": ""
   },
   {
@@ -500,10 +491,8 @@
       "__id__": 9
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
+      "__uuid__": "f3a6be8d-9aa7-41b3-b877-0d9d456fbff3"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -517,7 +506,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -578,23 +571,13 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
+      "__uuid__": "f3a6be8d-9aa7-41b3-b877-0d9d456fbff3"
     },
-    "_N$pressedSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
-    },
-    "pressedSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
-    },
-    "_N$hoverSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
-    },
-    "hoverSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
-    },
-    "_N$disabledSprite": {
-      "__uuid__": "ea6ed917-1cae-402c-84c8-1fe1f394e94d"
-    },
+    "_N$pressedSprite": null,
+    "pressedSprite": null,
+    "_N$hoverSprite": null,
+    "hoverSprite": null,
+    "_N$disabledSprite": null,
     "_N$target": {
       "__id__": 9
     },
@@ -659,6 +642,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -668,8 +653,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
     "_id": ""
   },
@@ -681,10 +664,8 @@
       "__id__": 17
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "cfea2e82-3247-415a-bd28-ddd0e595cf72"
+      "__uuid__": "ccb0a0a3-1209-46e0-a608-cd7768e15200"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -698,7 +679,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -734,10 +719,8 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "6b8f335a-55a5-42c0-9755-460e0de76d60"
+      "__uuid__": "8097004e-edc4-4700-8967-b303684c6083"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -751,7 +734,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {

@@ -8,8 +8,7 @@
       "__id__": 1
     },
     "optimizationPolicy": 0,
-    "asyncLoadAssets": false,
-    "readonly": false
+    "asyncLoadAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -56,8 +55,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
+      "width": 80,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -76,6 +75,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -85,11 +86,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 2,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -140,6 +137,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -149,11 +148,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -164,8 +159,6 @@
       "__id__": 2
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "(0, 0)",
     "_N$string": "(0, 0)",
@@ -175,10 +168,12 @@
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
+    "_batchAsBitmap": false,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": ""
   },
   {
@@ -240,6 +235,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -249,11 +246,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -264,8 +257,6 @@
       "__id__": 5
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 1,
     "_custom": true,
     "_file": {
       "__uuid__": "b2687ac4-099e-403c-a192-ff477686f4f5"
@@ -273,6 +264,9 @@
     "_spriteFrame": {
       "__uuid__": "472df5d3-35e7-4184-9e6c-7f41bee65ee3"
     },
+    "_texture": null,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 1,
     "_stopped": false,
     "playOnLoad": true,
     "autoRemoveOnFinish": false,
@@ -411,6 +405,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -420,8 +416,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
     "_id": ""
   },
@@ -433,10 +427,8 @@
       "__id__": 8
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "d9d40bec-f348-49df-8f30-c0176d41e462"
+      "__uuid__": "ad211aef-5918-41be-b47a-4ec7867aaaa5"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -450,7 +442,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -472,8 +468,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 0,
@@ -488,6 +482,8 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": null,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {

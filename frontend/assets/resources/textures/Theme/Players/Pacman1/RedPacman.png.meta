@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "070728ab-cf1a-4593-8353-398db6bc00f1",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "RedPacman": {
+      "ver": "1.0.3",
+      "uuid": "c773eecb-0ea1-4f85-bba6-81cd7e0cda90",
+      "rawTextureUuid": "070728ab-cf1a-4593-8353-398db6bc00f1",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 1,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 502,
+      "height": 362,
+      "rawWidth": 502,
+      "rawHeight": 364,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

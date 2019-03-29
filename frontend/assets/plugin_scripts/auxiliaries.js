@@ -2,7 +2,7 @@
 
 window.getQueryParamDict = function() {
   // Kindly note that only the first occurrence of duplicated keys will be picked up. 
-  var query = window.location.search.substring(1);
+  var query = cc.sys.platform == cc.sys.WECHAT_GAME ? '' : window.location.search.substring(1);
   var kvPairs = query.split('&');
   var toRet = {};
   for (var i = 0; i < kvPairs.length; ++i) {

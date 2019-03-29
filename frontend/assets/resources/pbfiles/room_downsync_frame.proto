@@ -6,6 +6,11 @@ message Direction {
   double dy = 2;
 }
 
+message Vec2D {
+  double x = 1;
+  double y = 2;
+}
+
 message Player {
   int64 id = 1;
   double x = 2; 
@@ -31,14 +36,14 @@ message Treasure {
   bool removed = 6;
   int32 type = 7;
 }
-
 message Bullet {
   int32 localIdInBattle = 1;
   double linearSpeed = 2;
   double x = 3;
   double y = 4;
   bool removed = 5;
-  // Direction dir = 5;
+  Vec2D startAtPoint = 6;
+  Vec2D endAtPoint = 7;
 }
 
 message Trap {

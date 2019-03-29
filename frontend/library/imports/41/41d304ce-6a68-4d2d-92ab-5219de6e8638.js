@@ -122,11 +122,13 @@ cc.Class({
     guardTowerPrefab: {
       type: cc.Prefab,
       default: null
+    },
+    forceBigEndianFloatingNumDecoding: {
+      default: false
     }
   },
 
   _generateNewFullFrame: function _generateNewFullFrame(refFullFrame, diffFrame) {
-
     var newFullFrame = {
       id: diffFrame.id,
       treasures: refFullFrame.treasures,
@@ -284,22 +286,25 @@ cc.Class({
   },
   _lazilyTriggerResync: function _lazilyTriggerResync() {
     if (true == this.resyncing) return;
+    this.lastResyncingStartedAt = Date.now();
     this.resyncing = true;
+
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
       if (null == this.resyncingHintPopup) {
-        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"));
+        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"), true);
       }
     }
   },
   _onResyncCompleted: function _onResyncCompleted() {
     if (false == this.resyncing) return;
-    cc.log("_onResyncCompleted");
     this.resyncing = false;
+    var resyncingDurationMillis = Date.now() - this.lastResyncingStartedAt;
+    cc.log("_onResyncCompleted, resyncing took " + resyncingDurationMillis + " milliseconds.");
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
   },
-  popupSimplePressToGo: function popupSimplePressToGo(labelString) {
+  popupSimplePressToGo: function popupSimplePressToGo(labelString, hideYesButton) {
     var self = this;
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
@@ -316,6 +321,11 @@ cc.Class({
     simplePressToGoDialogNode.getChildByName("Hint").getComponent(cc.Label).string = labelString;
     yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
+
+    if (true == hideYesButton) {
+      yesButton.active = false;
+    }
+
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
@@ -464,6 +474,8 @@ cc.Class({
   },
   onLoad: function onLoad() {
     var self = this;
+    window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
+
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -476,12 +488,15 @@ cc.Class({
 
     //Result panel init
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
+    self.resultPanelNode.width = self.canvasNode.width;
+    self.resultPanelNode.height = self.canvasNode.height;
+
     var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = function () {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self._resetCurrentMatch();
-      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
         case 1:
@@ -498,12 +513,15 @@ cc.Class({
       } else {
         // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
         cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
-        cc.sys.localStorage.shouldReconnectState = 2;
+        cc.sys.localStorage.setItem('shouldReconnectState', 2);
         window.closeWSConnection();
       }
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
+    self.gameRuleNode.width = self.canvasNode.width;
+    self.gameRuleNode.height = self.canvasNode.height;
+
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
 
@@ -516,6 +534,8 @@ cc.Class({
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
+    self.countdownToBeginGameNode.width = self.canvasNode.width;
+    self.countdownToBeginGameNode.height = self.canvasNode.height;
 
     self.playersNode = {};
     var player1Node = cc.instantiate(self.player1Prefab);
@@ -753,11 +773,11 @@ cc.Class({
     }
 
     window.handleClientSessionCloseOrError = function () {
-      var shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
           shouldReconnectState = 1;
-          cc.sys.localStorage.shouldReconnectState = shouldReconnectState;
+          cc.sys.localStorage.setItem('shouldReconnectState', shouldReconnectState);
           cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
           window.initPersistentSessionClient(self.initAfterWSConncted);
           return;
@@ -775,7 +795,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = function () {
-      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
@@ -784,8 +804,9 @@ cc.Class({
       self.setupInputControls();
 
       window.handleRoomDownsyncFrame = function (diffFrame) {
-        if (diffFrame.id < 10) {
-          console.log(diffFrame);
+
+        if (0 < diffFrame.id && diffFrame.id < 10) {
+          cc.log(diffFrame);
         }
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
@@ -807,13 +828,12 @@ cc.Class({
         }
 
         //根据downFrame显示游戏场景
-
         var frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
-        var isInitiatingFrame = 0 > self.recentFrameCacheCurrentSize || 0 == refFrameId;
+        var isInitiatingFrame = 0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId;
         /*
         if (frameId % 300 == 0) {
           // WARNING: For testing only!
@@ -826,7 +846,6 @@ cc.Class({
         var cachedFullFrame = self.recentFrameCache[refFrameId];
         if (!isInitiatingFrame && self.useDiffFrameAlgo && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
         && null == cachedFullFrame) {
-          //重连后重新同步
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -837,14 +856,13 @@ cc.Class({
           self._onResyncCompleted();
         }
         var countdownNanos = diffFrame.countdownNanos;
-        if (countdownNanos < 0) countdownNanos = 0;
+        if (countdownNanos < 0) {
+          countdownNanos = 0;
+        }
         var countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
           cc.log("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
         }
-        // if(self.musicEffectManagerScriptIns && 10 == countdownSeconds ) {
-        //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
-        // }
         self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
         isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
@@ -856,7 +874,6 @@ cc.Class({
         self._dumpToFullFrameCache(roomDownsyncFrame);
         var sentAt = roomDownsyncFrame.sentAt;
 
-        //update players Info
         var players = roomDownsyncFrame.players;
         var playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
@@ -866,6 +883,7 @@ cc.Class({
           if (playerId == self.selfPlayerInfo.id) {
             var immediateSelfPlayerInfo = players[k];
             Object.assign(self.selfPlayerInfo, {
+              displayName: null == immediateSelfPlayerInfo.displayName ? null == immediateSelfPlayerInfo.name ? "" : immediateSelfPlayerInfo.name : immediateSelfPlayerInfo.displayName,
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
@@ -976,7 +994,7 @@ cc.Class({
       window.initPersistentSessionClient(self.initAfterWSConncted);
       return;
     } else {
-      if (cc.sys.localStorage.boundRoomId) {
+      if (cc.sys.localStorage.getItem('boundRoomId')) {
         self.gameRuleNode.active = false;
         window.initPersistentSessionClient(self.initAfterWSConncted);
         return;
@@ -1005,6 +1023,7 @@ cc.Class({
     this._inputControlEnabled = false;
   },
   onBattleStarted: function onBattleStarted() {
+    console.log('On battle started!');
     var self = this;
     if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.playBGM();
     var canvasNode = self.canvasNode;
@@ -1215,36 +1234,146 @@ cc.Class({
     }
 
     // 更新bullet显示 
-    for (var _k15 in self.trapBulletInfoDict) {
+
+    var _loop = function _loop(_k15) {
       var bulletLocalIdInBattle = parseInt(_k15);
       var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
-      var _newPos4 = cc.v2(bulletInfo.x, bulletInfo.y);
-      var _targetNode4 = self.trapBulletNodeDict[bulletLocalIdInBattle];
-      if (!_targetNode4) {
-        _targetNode4 = cc.instantiate(self.trapBulletPrefab);
-        self.trapBulletNodeDict[bulletLocalIdInBattle] = _targetNode4;
-        safelyAddChild(mapNode, _targetNode4);
-        _targetNode4.setPosition(_newPos4);
-        setLocalZOrder(_targetNode4, 5);
+      var newPos = cc.v2(bulletInfo.x, bulletInfo.y);
+      var targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
+      if (!targetNode) {
+        targetNode = cc.instantiate(self.trapBulletPrefab);
+
+        //kobako: 创建子弹node的时候设置旋转角度
+        targetNode.rotation = function () {
+          if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
+            console.error("Init bullet direction error, startAtPoint:" + startAtPoint + ", endAtPoint:" + endAtPoint);
+            return 0;
+          } else {
+
+            //console.log(bulletInfo.startAtPoint, bulletInfo.endAtPoint);
+
+            var dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
+            var dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
+            var radian = function () {
+              if (dx == 0) {
+                return Math.PI / 2;
+              } else {
+                return Math.abs(Math.atan(dy / dx));
+              }
+            }();
+            var angleTemp = radian * 180 / Math.PI;
+            var angle = function () {
+              if (dx >= 0) {
+                if (dy >= 0) {
+                  //第一象限
+                  return 360 - angleTemp;
+                  //return angleTemp;
+                } else {
+                  //第四象限
+                  return angleTemp;
+                  //return -angleTemp;
+                }
+              } else {
+                if (dy >= 0) {
+                  //第二象限
+                  return 360 - (180 - angleTemp);
+                  //return 180 - angleTemp;
+                } else {
+                  //第三象限
+                  return 360 - (180 + angleTemp);
+                  //return 180 + angleTemp;
+                }
+              }
+            }();
+            return angle;
+          }
+        }();
+        //
+
+        self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
+        safelyAddChild(mapNode, targetNode);
+        targetNode.setPosition(newPos);
+        setLocalZOrder(targetNode, 5);
       }
-      var aBulletScriptIns = _targetNode4.getComponent("Bullet");
+      var aBulletScriptIns = targetNode.getComponent("Bullet");
       aBulletScriptIns.localIdInBattle = bulletLocalIdInBattle;
       aBulletScriptIns.linearSpeed = bulletInfo.linearSpeed * 1000000000; // The `bullet.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
 
-      var _oldPos = cc.v2(_targetNode4.x, _targetNode4.y);
-      var _toMoveByVec = _newPos4.sub(_oldPos);
-      var _toMoveByVecMag = _toMoveByVec.mag();
-      var _toTeleportDisThreshold = aBulletScriptIns.linearSpeed * dt * 100;
-      var _notToMoveDisThreshold = aBulletScriptIns.linearSpeed * dt * 0.5;
-      if (_toMoveByVecMag < _notToMoveDisThreshold) {
+      var oldPos = cc.v2(targetNode.x, targetNode.y);
+      var toMoveByVec = newPos.sub(oldPos);
+      var toMoveByVecMag = toMoveByVec.mag();
+      var toTeleportDisThreshold = aBulletScriptIns.linearSpeed * dt * 100;
+      var notToMoveDisThreshold = aBulletScriptIns.linearSpeed * dt * 0.5;
+      if (toMoveByVecMag < notToMoveDisThreshold) {
         aBulletScriptIns.activeDirection = {
           dx: 0,
           dy: 0
         };
       } else {
-        if (_toMoveByVecMag > _toTeleportDisThreshold) {
-          cc.log("Bullet " + bulletLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + _toMoveByVecMag + ", toTeleportDisThreshold == " + _toTeleportDisThreshold);
+        if (toMoveByVecMag > toTeleportDisThreshold) {
+          cc.log("Bullet " + bulletLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
           aBulletScriptIns.activeDirection = {
+            dx: 0,
+            dy: 0
+          };
+          // TODO: Use `cc.Action`?
+          targetNode.setPosition(newPos);
+        } else {
+          // The common case which is suitable for interpolation.
+          var _normalizedDir2 = {
+            dx: toMoveByVec.x / toMoveByVecMag,
+            dy: toMoveByVec.y / toMoveByVecMag
+          };
+          if (isNaN(_normalizedDir2.dx) || isNaN(_normalizedDir2.dy)) {
+            aBulletScriptIns.activeDirection = {
+              dx: 0,
+              dy: 0
+            };
+          } else {
+            aBulletScriptIns.activeDirection = _normalizedDir2;
+          }
+        }
+      }
+      if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
+        delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
+      }
+    };
+
+    for (var _k15 in self.trapBulletInfoDict) {
+      _loop(_k15);
+    }
+
+    //更新南瓜少年的显示
+    for (var _k16 in self.pumpkinInfoDict) {
+      var pumpkinLocalIdInBattle = parseInt(_k16);
+      var pumpkinInfo = self.pumpkinInfoDict[pumpkinLocalIdInBattle];
+      var _newPos4 = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
+      var _targetNode4 = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
+      if (!_targetNode4) {
+        _targetNode4 = cc.instantiate(self.pumpkinPrefab);
+        self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode4;
+        safelyAddChild(mapNode, _targetNode4);
+        _targetNode4.setPosition(_newPos4);
+        setLocalZOrder(_targetNode4, 5);
+      }
+      var aPumpkinScriptIns = _targetNode4.getComponent("Pumpkin");
+      aPumpkinScriptIns.localIdInBattle = pumpkinLocalIdInBattle;
+      aPumpkinScriptIns.linearSpeed = pumpkinInfo.linearSpeed * 1000000000; // The `pumpkin.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
+
+      var _oldPos = cc.v2(_targetNode4.x, _targetNode4.y);
+      var _toMoveByVec = _newPos4.sub(_oldPos);
+      var _toMoveByVecMag = _toMoveByVec.mag();
+      var _toTeleportDisThreshold = aPumpkinScriptIns.linearSpeed * dt * 100;
+      var _notToMoveDisThreshold = aPumpkinScriptIns.linearSpeed * dt * 0.5;
+      if (_toMoveByVecMag < _notToMoveDisThreshold) {
+        aPumpkinScriptIns.activeDirection = {
+          dx: 0,
+          dy: 0
+        };
+      } else {
+        if (_toMoveByVecMag > _toTeleportDisThreshold) {
+          cc.log("Pumpkin " + pumpkinLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + _toMoveByVecMag + ", toTeleportDisThreshold == " + _toTeleportDisThreshold);
+          aPumpkinScriptIns.activeDirection = {
             dx: 0,
             dy: 0
           };
@@ -1257,69 +1386,12 @@ cc.Class({
             dy: _toMoveByVec.y / _toMoveByVecMag
           };
           if (isNaN(_normalizedDir.dx) || isNaN(_normalizedDir.dy)) {
-            aBulletScriptIns.activeDirection = {
-              dx: 0,
-              dy: 0
-            };
-          } else {
-            aBulletScriptIns.activeDirection = _normalizedDir;
-          }
-        }
-      }
-      if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
-        delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
-      }
-    }
-
-    //更新南瓜少年的显示
-    for (var _k16 in self.pumpkinInfoDict) {
-      var pumpkinLocalIdInBattle = parseInt(_k16);
-      var pumpkinInfo = self.pumpkinInfoDict[pumpkinLocalIdInBattle];
-      var _newPos5 = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
-      var _targetNode5 = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
-      if (!_targetNode5) {
-        _targetNode5 = cc.instantiate(self.pumpkinPrefab);
-        self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode5;
-        safelyAddChild(mapNode, _targetNode5);
-        _targetNode5.setPosition(_newPos5);
-        setLocalZOrder(_targetNode5, 5);
-      }
-      var aPumpkinScriptIns = _targetNode5.getComponent("Pumpkin");
-      aPumpkinScriptIns.localIdInBattle = pumpkinLocalIdInBattle;
-      aPumpkinScriptIns.linearSpeed = pumpkinInfo.linearSpeed * 1000000000; // The `pumpkin.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
-
-      var _oldPos2 = cc.v2(_targetNode5.x, _targetNode5.y);
-      var _toMoveByVec2 = _newPos5.sub(_oldPos2);
-      var _toMoveByVecMag2 = _toMoveByVec2.mag();
-      var _toTeleportDisThreshold2 = aPumpkinScriptIns.linearSpeed * dt * 100;
-      var _notToMoveDisThreshold2 = aPumpkinScriptIns.linearSpeed * dt * 0.5;
-      if (_toMoveByVecMag2 < _notToMoveDisThreshold2) {
-        aPumpkinScriptIns.activeDirection = {
-          dx: 0,
-          dy: 0
-        };
-      } else {
-        if (_toMoveByVecMag2 > _toTeleportDisThreshold2) {
-          cc.log("Pumpkin " + pumpkinLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + _toMoveByVecMag2 + ", toTeleportDisThreshold == " + _toTeleportDisThreshold2);
-          aPumpkinScriptIns.activeDirection = {
-            dx: 0,
-            dy: 0
-          };
-          // TODO: Use `cc.Action`?
-          _targetNode5.setPosition(_newPos5);
-        } else {
-          // The common case which is suitable for interpolation.
-          var _normalizedDir2 = {
-            dx: _toMoveByVec2.x / _toMoveByVecMag2,
-            dy: _toMoveByVec2.y / _toMoveByVecMag2
-          };
-          if (isNaN(_normalizedDir2.dx) || isNaN(_normalizedDir2.dy)) {
             aPumpkinScriptIns.activeDirection = {
               dx: 0,
               dy: 0
             };
           } else {
-            aPumpkinScriptIns.activeDirection = _normalizedDir2;
+            aPumpkinScriptIns.activeDirection = _normalizedDir;
           }
         }
       }
@@ -1332,29 +1404,29 @@ cc.Class({
     for (var _k17 in self.treasureInfoDict) {
       var treasureLocalIdInBattle = parseInt(_k17);
       var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
-      var _newPos6 = cc.v2(treasureInfo.x, treasureInfo.y);
-      var _targetNode6 = self.treasureNodeDict[treasureLocalIdInBattle];
-      if (!_targetNode6) {
-        _targetNode6 = cc.instantiate(self.treasurePrefab);
-        var treasureNodeScriptIns = _targetNode6.getComponent("Treasure");
+      var _newPos5 = cc.v2(treasureInfo.x, treasureInfo.y);
+      var _targetNode5 = self.treasureNodeDict[treasureLocalIdInBattle];
+      if (!_targetNode5) {
+        _targetNode5 = cc.instantiate(self.treasurePrefab);
+        var treasureNodeScriptIns = _targetNode5.getComponent("Treasure");
         treasureNodeScriptIns.setData(treasureInfo);
-        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode6;
-        safelyAddChild(mapNode, _targetNode6);
-        _targetNode6.setPosition(_newPos6);
-        setLocalZOrder(_targetNode6, 5);
+        self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode5;
+        safelyAddChild(mapNode, _targetNode5);
+        _targetNode5.setPosition(_newPos5);
+        setLocalZOrder(_targetNode5, 5);
       }
 
       if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
         delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
       }
-      if (0 < _targetNode6.getNumberOfRunningActions()) {
+      if (0 < _targetNode5.getNumberOfRunningActions()) {
         // A significant trick to smooth the position sync performance!
         continue;
       }
-      var _oldPos3 = cc.v2(_targetNode6.x, _targetNode6.y);
-      var _toMoveByVec3 = _newPos6.sub(_oldPos3);
+      var _oldPos2 = cc.v2(_targetNode5.x, _targetNode5.y);
+      var _toMoveByVec2 = _newPos5.sub(_oldPos2);
       var durationSeconds = dt; // Using `dt` temporarily!
-      _targetNode6.runAction(cc.moveTo(durationSeconds, _newPos6));
+      _targetNode5.runAction(cc.moveTo(durationSeconds, _newPos5));
     }
 
     // Coping with removed players.
@@ -1425,8 +1497,8 @@ cc.Class({
     };
 
     var self = this;
-    if (null != cc.sys.localStorage.selfPlayer) {
-      var selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    if (cc.sys.localStorage.getItem('selfPlayer')) {
+      var selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       var requestContent = {
         intAuthToken: selfPlayer.intAuthToken
       };

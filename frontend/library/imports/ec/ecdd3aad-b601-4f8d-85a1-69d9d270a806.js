@@ -47,7 +47,7 @@ cc.Class({
     window.closeWSConnection();
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     cc.sys.localStorage.removeItem('selfPlayer');
-    cc.director.loadScene('login');
+    //cc.director.loadScene('login');
   },
   updatePlayersInfo: function updatePlayersInfo(players) {
     var _this = this;

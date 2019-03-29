@@ -224,7 +224,8 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		ExpiresAt   int64  `json:"expiresAt"`
 		PlayerID    int    `json:"playerId"`
 		DisplayName string `json:"displayName"`
-	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName}
+    Name        string `json:"name"`
+	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName, player.Name}
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -409,17 +410,27 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 		//新生成一个token
 		token = utils.TokenGenerator(32)
 	}
+
+  //kobako: 从player获取display name等
+	player, err := models.GetPlayerById(playerLogin.PlayerID)
+  if err != nil {
+	  Logger.Error("Get player by id in IntAuthTokenLogin function error: ", zap.Error(err))
+    return
+  }
+
+
 	expiresAt := playerLogin.UpdatedAt + 1000*int64(Constants.Player.IntAuthTokenTTLSeconds)
 	resp := struct {
 		Ret         int               `json:"ret"`
 		Token       string            `json:"intAuthToken"`
 		ExpiresAt   int64             `json:"expiresAt"`
 		PlayerID    int               `json:"playerId"`
-		DisplayName models.NullString `json:"displayName"`
+		DisplayName string            `json:"displayName"`
 		Avatar      string            `json:"avatar"`
+		Name        string            `json:"name"`
 	}{Constants.RetCode.Ok, token, expiresAt,
-		playerLogin.PlayerID, playerLogin.DisplayName,
-		playerLogin.Avatar,
+		playerLogin.PlayerID, player.DisplayName,
+		playerLogin.Avatar, player.Name,
 	}
 	c.JSON(http.StatusOK, resp)
 }

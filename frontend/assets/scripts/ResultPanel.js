@@ -25,10 +25,17 @@ cc.Class({
       type: [cc.Node],
       default: [],
     },
-    myRankNode: {
+    winNode: {
       type: cc.Node,
       default: null,
     },
+
+    /*
+    defaultAvatar: {
+      type: cc.SpriteFrame,
+      default: null,
+    },
+    */
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -58,16 +65,16 @@ cc.Class({
 
 
   showMyName() {
-    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     let name = 'No name';
-    if (selfPlayerInfo.displayName == null || selfPlayerInfo.displayName == '') {
-      name = selfPlayerInfo.name
+    if (null == selfPlayerInfo.displayName || "" == selfPlayerInfo.displayName) {
+      name = selfPlayerInfo.name;
     } else {
-      name = selfPlayerInfo.displayName
+      name = selfPlayerInfo.displayName;
     }
     if (!this.myNameNode) return;
     const myNameNodeLabel = this.myNameNode.getComponent(cc.Label); 
-    if (!myNameNodeLabel) return;
+    if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },
 
@@ -76,7 +83,9 @@ cc.Class({
     const sortablePlayers = [];
 
     for (let playerId in players) {
-      sortablePlayers.push(players[playerId])
+      const p = players[playerId];
+      p.id = playerId; //附带上id
+      sortablePlayers.push(p);
     }
     const sortedPlayers = sortablePlayers.sort((a, b) => {
       if (a.score == null) { //为null的必定排后面
@@ -92,7 +101,7 @@ cc.Class({
       }
     })
 
-    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     sortedPlayers.forEach((p, id) => {
       const nameToDisplay = (() => {
         function isEmptyString(str) {
@@ -107,44 +116,43 @@ cc.Class({
         }
       })();
 
-      if (selfPlayerInfo.playerId == p.id) { //显示我的排名
+      if (selfPlayerInfo.playerId == p.id) { //如果不是第一名就不显示WIN字样
         const rank = id + 1;
-        if (rank != 1 && null != self.myRankNode) {
-          self.myRankNode.active = false;
+        if (rank != 1 && null != self.winNode) {
+          self.winNode.active = false;
         }
       }
 
       self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
     })
   },
 
   showMyAvatar() {
     const self = this;
-    (() => {
-      const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
-      let remoteUrl = selfPlayerInfo.avatar;
-      if (remoteUrl == null || remoteUrl == '') {
-        cc.log(`No avatar to show for myself, check storage.`);
-        return;
-      } else {
-        cc.loader.load({
-          url: remoteUrl,
-          type: 'jpg'
-        }, function(err, texture) {
-          if (err != null || texture == null) {
-            console.log(err);
-          } else {
-            const sf = new cc.SpriteFrame();
-            sf.setTexture(texture);
-            self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
-          }
-        });
-      }
-    })();
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
+    let remoteUrl = selfPlayerInfo.avatar;
+    if (remoteUrl == null || remoteUrl == '') {
+      cc.log(`No avatar to show for myself, check storage.`);
+      return;
+    } else {
+      cc.loader.load({
+        url: remoteUrl,
+        type: 'jpg'
+      }, function(err, texture) {
+        if (err != null || texture == null) {
+          console.log(err);
+        } else {
+          const sf = new cc.SpriteFrame();
+          sf.setTexture(texture);
+          self.myAvatarNode.getComponent(cc.Sprite).spriteFrame = sf;
+        }
+      });
+    }
   },
 
   showRibbon(winnerInfo, ribbonNode) {
-    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+    const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     const texture = (selfPlayerInfo.playerId == winnerInfo.id) ? "textures/resultPanel/WinRibbon" : "textures/resultPanel/loseRibbon";
     cc.loader.loadRes(texture, cc.SpriteFrame, function(err, spriteFrame) {
       if (err) {

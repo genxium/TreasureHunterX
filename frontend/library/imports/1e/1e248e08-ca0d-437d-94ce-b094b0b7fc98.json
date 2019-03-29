@@ -1,7 +1,0 @@
-{
-  "__type__": "cc.TextAsset",
-  "_name": "traps",
-  "_objFlags": 0,
-  "_native": "",
-  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<tileset name=\"traps\" tilewidth=\"256\" tileheight=\"256\" tilecount=\"1\" columns=\"1\">\r\n <image source=\"traps.png\" width=\"256\" height=\"256\"/>\r\n</tileset>\r\n"
-}

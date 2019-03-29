@@ -1,0 +1,29 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "GuiElements_1.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "GameRule_Blackboard": {
+      "__uuid__": "f4d8300e-7b7c-4c58-9de5-561a33e54d82"
+    },
+    "InGame_ResultPanel_Background_Black01": {
+      "__uuid__": "476cfe6e-816a-4c89-a88a-c0d5b49d6cf9"
+    },
+    "InGame_StatusBar_Red": {
+      "__uuid__": "1eb61d03-b629-4039-b3db-25329252b892"
+    },
+    "Login_Background": {
+      "__uuid__": "812aefc4-c565-4954-a30d-52e238250db0"
+    },
+    "Players_Avatar1": {
+      "__uuid__": "dde20e8b-64b0-41aa-b097-c522f0451e1d"
+    },
+    "Players_Avatar2": {
+      "__uuid__": "94f1910a-3b9f-43c7-a8ea-56bfbeccafcc"
+    },
+    "ResultPanel_Bg1v1": {
+      "__uuid__": "d5d4dac6-0005-4148-94cc-5df27e8e6322"
+    }
+  }
+}

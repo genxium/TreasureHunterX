@@ -185,15 +185,17 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		}
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 
-		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
-			//Do nothing
-		} else {
-			pR.Players[contactingPlayer.Id].Speed = 0
-			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-			//被冻住同时加速效果消除
-			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
-		}
+    if contactingPlayer != nil{
+   		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
+  			//Do nothing
+  		} else {
+  			pR.Players[contactingPlayer.Id].Speed = 0
+  			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+  			//被冻住同时加速效果消除
+  			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
+  			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+  		}
+    }
 	}
 }
 
@@ -240,7 +242,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	defer pR.onPlayerAdded(pPlayer.Id)
 	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
-	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, 1024 /* Hardcoded temporarily. */)
+	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. */)
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
 	pPlayer.FrozenAtGmtMillis = -1       // Hardcoded temporarily.
 	pPlayer.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
@@ -250,11 +252,11 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 
 func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	if RoomBattleStateIns.PREPARE != pR.State && RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
-		Logger.Warn("ReAddPlayerIfPossible error, roomState:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("ReAddPlayerIfPossible error due to roomState:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	if _, existent := pR.Players[pTmpPlayerInstance.Id]; !existent {
-		Logger.Warn("ReAddPlayerIfPossible error, nonexistent:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+		Logger.Warn("ReAddPlayerIfPossible error due to player nonexistent for room:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
 	/*
@@ -265,8 +267,10 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	 */
 	defer pR.onPlayerReAdded(pTmpPlayerInstance.Id)
 	pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
+  pEffectiveInRoomPlayerInstance.AckingFrameId = 0
 	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
-	// Note: All previous position and orientation info should just be recovered.
+
+  Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
 	return true
 }
 
@@ -1011,7 +1015,7 @@ func (pR *Room) StartBattle() {
 	//kobako
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
-	pR.CmdFromPlayersChan = make(chan interface{}, 2048 /* Hardcoded temporarily. */)
+	pR.CmdFromPlayersChan = make(chan interface{}, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. Note that a `GolangChannel` whose size is too large would induce "large RAM use of the overall process" and thus cause frequent websocket disconnection in this game. */)
 	nanosPerFrame := 1000000000 / int64(pR.ServerFPS)
 	secondsPerFrame := float64(1) / float64(pR.ServerFPS)
 	velocityIterationsPerFrame := 0
@@ -1034,6 +1038,8 @@ func (pR *Room) StartBattle() {
 
 		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率4秒
 		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
+
+    BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
 
 		for {
 			if totalElapsedNanos > pR.BattleDurationNanos {
@@ -1126,6 +1132,11 @@ func (pR *Room) StartBattle() {
 					continue
 				} else {
 					theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+          /*
+          if 0 == player.AckingFrameId {
+						Logger.Info("Player could be resyncing:", zap.Any("currentFrameId", currentFrame.Id), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+          }
+          */
 					lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
 					diffFrame := calculateDiffFrame(currentFrame, lastFrame)
 
@@ -1143,7 +1154,7 @@ func (pR *Room) StartBattle() {
 			collisionNowMillis := utils.UnixtimeMilli()
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players { //加速鞋相关
+			for _, player := range pR.Players { 
 				if -1 == player.AddSpeedAtGmtMillis {
 					// TODO: Removed the magic number `-1`.
 					continue
@@ -1186,7 +1197,17 @@ func (pR *Room) StartBattle() {
 				MoveDynamicBody(bullet.CollidableBody, &newB2Vec2Pos, 0)
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
+
+        //kobako: 如果超出最大飞行距离, 标记消失
+        if BULLET_MAX_DIST < Distance(bullet.StartAtPoint, &Vec2D{
+          X: bullet.X,
+          Y: bullet.Y,
+        }){
+          pR.onBulletCrashed(nil, bullet, 0, 0)
+        }
 			}
+
+
 			for _, pumpkin := range pR.Pumpkins { //移动南瓜
 				if pumpkin.Removed {
 					continue
@@ -1225,28 +1246,10 @@ func (pR *Room) StartBattle() {
 					pR.createTrapBulletByPos(startPos, endPos)
 
 				}
-
-				/*
-				   //Refer to todo#80, new tower attack pattern
-				   for _, node := range tower.InRangePlayerMap {
-				     player := node.player
-				     if now - player.BeLockedAt > perPlayerSafeTime{
-				       player.BeLockedAt = now
-				       startPos := Vec2D{
-				     		X: tower.CollidableBody.GetPosition().X,
-				     		Y: tower.CollidableBody.GetPosition().Y,
-				     	}
-				       endPos := Vec2D{
-				     		X: player.CollidableBody.GetPosition().X,
-				     		Y: player.CollidableBody.GetPosition().Y,
-				     	}
-				       pR.createTrapBulletByPos(startPos, endPos)
-				     }
-				   }
-				*/
 			}
 
-			for _, player := range pR.Players { //如果玩家碰到以下物品, 触发对应的回调
+			for _, player := range pR.Players { 
+        // 如果玩家碰到以下物品, 触发对应的回调
 				for edge := player.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						switch v := edge.Other.GetUserData().(type) {
@@ -1266,6 +1269,7 @@ func (pR *Room) StartBattle() {
 					}
 				}
 			}
+
 			for _, pumpkin := range pR.Pumpkins { //南瓜撞到墙和玩家产生的回调
 				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
@@ -1277,6 +1281,7 @@ func (pR *Room) StartBattle() {
 					}
 				}
 			}
+
 			now := utils.UnixtimeNano()
 			elapsedInCalculation := now - stCalculation //计算过程中损失的时间, 用于计算睡眠时间
 			totalElapsedNanos = (now - battleMainLoopStartedNanos)
@@ -1310,18 +1315,22 @@ func (pR *Room) StartBattle() {
 				if _, existent := pR.Players[immediatePlayerData.Id]; !existent {
 					break
 				}
+        pEffectiveInRoomPlayerInstance := pR.Players[immediatePlayerData.Id]
+        if pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.DISCONNECTED || pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.LOST {
+          break
+        }
 				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomId", pR.Id))
-				pR.Players[immediatePlayerData.Id].AckingFrameId = immediatePlayerData.AckingFrameId
+				pEffectiveInRoomPlayerInstance.AckingFrameId = immediatePlayerData.AckingFrameId
 
 				// Update immediate player info for broadcasting or unicasting.
-				pR.Players[immediatePlayerData.Id].Dir.Dx = immediatePlayerData.Dir.Dx
-				pR.Players[immediatePlayerData.Id].Dir.Dy = immediatePlayerData.Dir.Dy
+				pEffectiveInRoomPlayerInstance.Dir.Dx = immediatePlayerData.Dir.Dx
+				pEffectiveInRoomPlayerInstance.Dir.Dy = immediatePlayerData.Dir.Dy
 
-				if 0 >= pR.Players[immediatePlayerData.Id].Speed {
+				if 0 >= pEffectiveInRoomPlayerInstance.Speed {
 					break
 				}
-				pR.Players[immediatePlayerData.Id].X = immediatePlayerData.X
-				pR.Players[immediatePlayerData.Id].Y = immediatePlayerData.Y
+				pEffectiveInRoomPlayerInstance.X = immediatePlayerData.X
+				pEffectiveInRoomPlayerInstance.Y = immediatePlayerData.Y
 			default:
 			}
 			// elapsedInCalculation := utils.UnixtimeNano() - stCalculation
@@ -1596,7 +1605,7 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 			break
 		}
 	}
-	Logger.Info("room JoinIndexBooleanArr", zap.Any(":", pR.JoinIndexBooleanArr))
+	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	pR.updateScore()
 }
 

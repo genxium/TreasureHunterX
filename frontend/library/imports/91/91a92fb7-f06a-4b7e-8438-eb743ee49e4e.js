@@ -383,7 +383,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     for (var tileIdx = 0; tileIdx < currentTiles.length; ++tileIdx) {
       var currentTile = currentTiles[tileIdx];
       var parentGID = parseInt(firstGid) + parseInt(currentTile.getAttribute('id') || 0);
-      var childrenOfCurrentTile = currentTile.children;
+      var childrenOfCurrentTile = cc.sys.platform == cc.sys.WECHAT_GAME ? currentTile.childNodes : currentTile.children;
       for (var childIdx = 0; childIdx < childrenOfCurrentTile.length; ++childIdx) {
         var ch = childrenOfCurrentTile[childIdx];
         if (!(ch.nodeName === 'objectgroup')) continue;
@@ -520,7 +520,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
 
   var layerDOMTrees = [];
   var mapDomTree = mapInfo._parser._parseXML(tiledMapIns.tmxAsset.tmxXmlStr).documentElement;
-  var mapDOMAllChildren = mapDomTree.children;
+  var mapDOMAllChildren = cc.sys.platform == cc.sys.WECHAT_GAME ? mapDomTree.childNodes : mapDomTree.children;
   for (var mdtIdx = 0; mdtIdx < mapDOMAllChildren.length; ++mdtIdx) {
     var tmpCh = mapDOMAllChildren[mdtIdx];
     if (mapInfo._shouldIgnoreNode(tmpCh)) {

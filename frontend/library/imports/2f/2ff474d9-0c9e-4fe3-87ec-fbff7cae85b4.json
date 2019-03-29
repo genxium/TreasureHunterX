@@ -42,8 +42,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.20850694974263512,
-      "y": 0.20850694974263512,
+      "x": 0.4010416666666667,
+      "y": 0.4010416666666667,
       "z": 1
     },
     "_quat": {
@@ -86,6 +86,9 @@
       },
       {
         "__id__": 68
+      },
+      {
+        "__id__": 69
       }
     ],
     "_prefab": null,
@@ -809,7 +812,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "f70a1ff4-cff8-4c91-b510-ad3267495e6a"
+      "__uuid__": "490c33e9-0642-4201-aa9f-5565fda91dc2"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -852,14 +855,14 @@
     "__type__": "SpriteFrameSet",
     "language": "zh",
     "spriteFrame": {
-      "__uuid__": "f70a1ff4-cff8-4c91-b510-ad3267495e6a"
+      "__uuid__": "490c33e9-0642-4201-aa9f-5565fda91dc2"
     }
   },
   {
     "__type__": "SpriteFrameSet",
     "language": "en",
     "spriteFrame": {
-      "__uuid__": "f70a1ff4-cff8-4c91-b510-ad3267495e6a"
+      "__uuid__": "490c33e9-0642-4201-aa9f-5565fda91dc2"
     }
   },
   {
@@ -1319,7 +1322,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "f8a229f0-3479-482f-8972-1e3f8388d150"
+      "__uuid__": "89cd1f72-6b92-41ba-9193-accabaa026df"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -1362,14 +1365,14 @@
     "__type__": "SpriteFrameSet",
     "language": "zh",
     "spriteFrame": {
-      "__uuid__": "f8a229f0-3479-482f-8972-1e3f8388d150"
+      "__uuid__": "89cd1f72-6b92-41ba-9193-accabaa026df"
     }
   },
   {
     "__type__": "SpriteFrameSet",
     "language": "en",
     "spriteFrame": {
-      "__uuid__": "f8a229f0-3479-482f-8972-1e3f8388d150"
+      "__uuid__": "89cd1f72-6b92-41ba-9193-accabaa026df"
     }
   },
   {
@@ -1893,7 +1896,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "1d173158-16cf-413f-939a-c97e5fe6f77b"
+      "__uuid__": "f657c4cf-c5a1-4075-8994-99650ad4f603"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -1936,14 +1939,14 @@
     "__type__": "SpriteFrameSet",
     "language": "zh",
     "spriteFrame": {
-      "__uuid__": "1d173158-16cf-413f-939a-c97e5fe6f77b"
+      "__uuid__": "f657c4cf-c5a1-4075-8994-99650ad4f603"
     }
   },
   {
     "__type__": "SpriteFrameSet",
     "language": "en",
     "spriteFrame": {
-      "__uuid__": "1d173158-16cf-413f-939a-c97e5fe6f77b"
+      "__uuid__": "f657c4cf-c5a1-4075-8994-99650ad4f603"
     }
   },
   {
@@ -2033,8 +2036,8 @@
     "target": {
       "__id__": 2
     },
-    "component": "Login",
-    "_componentId": "",
+    "component": "",
+    "_componentId": "12a3dlNVr1C0oou2h0nFomA",
     "handler": "getSMSLoginCaptchaCode",
     "customEventData": ""
   },
@@ -2113,7 +2116,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "8fe8a60a-309d-48f1-bd7d-1dc6b8853732"
+      "__uuid__": "ae324bec-a53e-40fd-9345-e47dca676f51"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -2248,14 +2251,14 @@
     "__type__": "SpriteFrameSet",
     "language": "zh",
     "spriteFrame": {
-      "__uuid__": "8fe8a60a-309d-48f1-bd7d-1dc6b8853732"
+      "__uuid__": "ae324bec-a53e-40fd-9345-e47dca676f51"
     }
   },
   {
     "__type__": "SpriteFrameSet",
     "language": "en",
     "spriteFrame": {
-      "__uuid__": "8fe8a60a-309d-48f1-bd7d-1dc6b8853732"
+      "__uuid__": "ae324bec-a53e-40fd-9345-e47dca676f51"
     }
   },
   {
@@ -2648,7 +2651,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "b99fc7a2-6c70-4f39-8b72-ea29ecb5d082"
+      "__uuid__": "812aefc4-c565-4954-a30d-52e238250db0"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -2662,9 +2665,24 @@
     "_fillRange": 0,
     "_isTrimmedMode": false,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
+    },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_id": "e2yoOcT3ND2YHlCSRJKZ5q"
+  },
+  {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "_defaultClip": null,
+    "_clips": [],
+    "playOnLoad": false,
+    "_id": "6alecFaoZH7KcP4/4bsDru"
   }
 ]

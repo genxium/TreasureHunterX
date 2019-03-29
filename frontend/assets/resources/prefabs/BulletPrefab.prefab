@@ -8,8 +8,7 @@
       "__id__": 1
     },
     "optimizationPolicy": 0,
-    "asyncLoadAssets": false,
-    "readonly": false
+    "asyncLoadAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -25,10 +24,13 @@
       },
       {
         "__id__": 3
+      },
+      {
+        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 5
     },
     "_opacity": 255,
     "_color": {
@@ -41,11 +43,11 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 100,
-      "height": 80
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0.7,
       "y": 0.5
     },
     "_position": {
@@ -60,6 +62,8 @@
       "y": 1,
       "z": 1
     },
+    "_rotationX": 0,
+    "_rotationY": 0,
     "_quat": {
       "__type__": "cc.Quat",
       "x": 0,
@@ -69,11 +73,7 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
-    "_is3DNode": false,
     "groupIndex": 0,
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_id": ""
   },
   {
@@ -84,10 +84,8 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "876d2337-cea7-4b6a-9bc5-c9447e03ba49"
+      "__uuid__": "2f525bb2-80d1-4508-bdc3-d03c11587ce4"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -101,7 +99,11 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "266c6cef-32d6-4545-b3e6-c2b75a895578"
+    },
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -115,6 +117,25 @@
     "localIdInBattle": null,
     "linearSpeed": 0,
     "activeDirection": null,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "_defaultClip": {
+      "__uuid__": "5a5e300e-abf5-4774-8456-e3022509037a"
+    },
+    "_clips": [
+      {
+        "__uuid__": "5a5e300e-abf5-4774-8456-e3022509037a"
+      }
+    ],
+    "playOnLoad": true,
     "_id": ""
   },
   {

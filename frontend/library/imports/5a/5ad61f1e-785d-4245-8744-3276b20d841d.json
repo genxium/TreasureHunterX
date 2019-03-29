@@ -1,0 +1,95 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "GuiElements_0.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "ButtonActive": {
+      "__uuid__": "4a7be75a-6002-4839-8d07-840c8ad48f4c"
+    },
+    "ButtonNegative": {
+      "__uuid__": "6dc3250c-6783-41f8-bd4d-01455e2a4ea0"
+    },
+    "FindingPlayer_DecorationDown": {
+      "__uuid__": "57fe81df-444c-4c21-9ac7-664afb7ce4a9"
+    },
+    "FindingPlayer_DecorationUp": {
+      "__uuid__": "14615bb5-3c55-4b1c-9363-f657bb16af52"
+    },
+    "FindingPlayer_PlayerLeft": {
+      "__uuid__": "838b86bf-b549-4ca1-9bdd-1fc1ad0527ec"
+    },
+    "FindingPlayer_PlayerRight": {
+      "__uuid__": "b1764274-7318-4f89-a707-d2f390693ab4"
+    },
+    "FindingPlayer_vs": {
+      "__uuid__": "1245d423-ca75-4fae-929b-d78d0a227527"
+    },
+    "GameRule_Button": {
+      "__uuid__": "f3a6be8d-9aa7-41b3-b877-0d9d456fbff3"
+    },
+    "GameRule_Decoration": {
+      "__uuid__": "ccb0a0a3-1209-46e0-a608-cd7768e15200"
+    },
+    "InGame_Background": {
+      "__uuid__": "8bdde084-e98f-41dd-b59c-ad2711d266f1"
+    },
+    "InGame_Bullets_bullet2": {
+      "__uuid__": "75e8a6f5-83d9-4dfa-8f41-338c2afa02ba"
+    },
+    "InGame_HighScoreTreasure": {
+      "__uuid__": "78eda75b-df60-4b37-a4a8-8804fa5f7ce0"
+    },
+    "InGame_InfoBG": {
+      "__uuid__": "7b242b7e-80e6-4ffd-b7b9-9b390ec4e809"
+    },
+    "InGame_Joystick": {
+      "__uuid__": "fc6202e3-d8af-400d-a2da-3abfbddbf8ca"
+    },
+    "InGame_LowScoreTreasure": {
+      "__uuid__": "b54c9dfa-5323-4703-ba2d-5503a944e623"
+    },
+    "InGame_ResultPanel_AgainButton": {
+      "__uuid__": "14248179-f903-4646-b119-fefdddca4223"
+    },
+    "InGame_ResultPanel_Background": {
+      "__uuid__": "7d316250-2838-4a98-a478-1d4b78725141"
+    },
+    "InGame_ResultPanel_HomeButton": {
+      "__uuid__": "b9b5f58d-d126-4bee-bf37-77eb3b1b9183"
+    },
+    "InGame_StatusBar_Blue": {
+      "__uuid__": "e0b3fc5e-cd7b-427c-8195-7867955ac7ae"
+    },
+    "InGame_Tower2": {
+      "__uuid__": "e6630f38-274f-4e69-8d68-ed9aba1ea097"
+    },
+    "Players_Baseball": {
+      "__uuid__": "1094d9e7-dbb5-4aa3-b950-0f59472ea219"
+    },
+    "Players_arrowTip": {
+      "__uuid__": "ad211aef-5918-41be-b47a-4ec7867aaaa5"
+    },
+    "PopupBg": {
+      "__uuid__": "fa60d32c-c632-4a3b-91aa-10d07e4ff2cd"
+    },
+    "ResultPanel_Copper": {
+      "__uuid__": "a9f3de9e-5734-4081-8d55-8da354db3666"
+    },
+    "ResultPanel_Gold": {
+      "__uuid__": "40eeac8b-c016-4002-9b71-547547cedaf9"
+    },
+    "ResultPanel_Iron": {
+      "__uuid__": "257fc0e7-3568-4f9c-a348-cfcf68ff72ea"
+    },
+    "ResultPanel_Silver": {
+      "__uuid__": "9ff36c1e-c74b-4a98-9cbe-bfee90aad8da"
+    },
+    "background": {
+      "__uuid__": "8097004e-edc4-4700-8967-b303684c6083"
+    },
+    "exit": {
+      "__uuid__": "2d94741e-c54b-4d35-8c02-84f7e7371dc3"
+    }
+  }
+}

@@ -117,6 +117,9 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
+    forceBigEndianFloatingNumDecoding: {
+      default: false,
+    },
   },
 
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
@@ -283,24 +286,27 @@ cc.Class({
 
   _lazilyTriggerResync() {
     if (true == this.resyncing) return;
+    this.lastResyncingStartedAt = Date.now();
     this.resyncing = true;
+
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
       if (null == this.resyncingHintPopup) {
-        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"));
+        this.resyncingHintPopup = this.popupSimplePressToGo(i18n.t("gameTip.resyncing"), true);
       }
     }
   },
 
   _onResyncCompleted() {
     if (false == this.resyncing) return;
-    cc.log(`_onResyncCompleted`);
     this.resyncing = false;
+    const resyncingDurationMillis = (Date.now() - this.lastResyncingStartedAt);
+    cc.log(`_onResyncCompleted, resyncing took ${resyncingDurationMillis} milliseconds.`);
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
   },
 
-  popupSimplePressToGo(labelString) {
+  popupSimplePressToGo(labelString, hideYesButton) {
     const self = this;
     self.state = ALL_MAP_STATES.SHOWING_MODAL_POPUP;
 
@@ -317,6 +323,11 @@ cc.Class({
     simplePressToGoDialogNode.getChildByName("Hint").getComponent(cc.Label).string = labelString;
     yesButton.once("click", simplePressToGoDialogScriptIns.dismissDialog.bind(simplePressToGoDialogScriptIns, postDismissalByYes));
     yesButton.getChildByName("Label").getComponent(cc.Label).string = "OK";
+
+    if (true == hideYesButton) {
+      yesButton.active = false;
+    }
+
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
     safelyAddChild(self.widgetsAboveAllNode, simplePressToGoDialogNode);
     setLocalZOrder(simplePressToGoDialogNode, 20);
@@ -446,6 +457,8 @@ cc.Class({
 
   onLoad() {
     const self = this;
+    window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
+
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -458,12 +471,15 @@ cc.Class({
 
     //Result panel init
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
+    self.resultPanelNode.width = self.canvasNode.width;
+    self.resultPanelNode.height = self.canvasNode.height;
+
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = () => {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self._resetCurrentMatch();
-      let shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      let shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
         case 1:
@@ -480,12 +496,15 @@ cc.Class({
       } else {
         // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
         cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
-        cc.sys.localStorage.shouldReconnectState = 2;
+        cc.sys.localStorage.setItem('shouldReconnectState', 2);
         window.closeWSConnection();
       }
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
+    self.gameRuleNode.width = self.canvasNode.width;
+    self.gameRuleNode.height = self.canvasNode.height;
+
     self.gameRuleScriptIns = self.gameRuleNode.getComponent("GameRule");
     self.gameRuleScriptIns.mapNode = self.node;
 
@@ -498,6 +517,8 @@ cc.Class({
     self.playersInfoNode = cc.instantiate(self.playersInfoPrefab);
 
     self.countdownToBeginGameNode = cc.instantiate(self.countdownToBeginGamePrefab);
+    self.countdownToBeginGameNode.width = self.canvasNode.width;
+    self.countdownToBeginGameNode.height = self.canvasNode.height;
 
     self.playersNode = {};
     const player1Node = cc.instantiate(self.player1Prefab);
@@ -585,11 +606,11 @@ cc.Class({
     }
 
     window.handleClientSessionCloseOrError = function() {
-      let shouldReconnectState = parseInt(cc.sys.localStorage.shouldReconnectState);
+      let shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
       switch (shouldReconnectState) {
         case 2:
           shouldReconnectState = 1;
-          cc.sys.localStorage.shouldReconnectState = shouldReconnectState;
+          cc.sys.localStorage.setItem('shouldReconnectState', shouldReconnectState);
           cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
           window.initPersistentSessionClient(self.initAfterWSConncted);
           return;
@@ -607,7 +628,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = () => {
-      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.selfPlayer);
+      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
@@ -617,15 +638,18 @@ cc.Class({
 
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
-        if(diffFrame.id < 10){
-          console.log(diffFrame);
+
+        if(0 < diffFrame.id && diffFrame.id < 10){
+          cc.log(diffFrame)
         }
 
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
-        if (-99 == refFrameId) { //显示倒计时
+        if (-99 == refFrameId) {
+          //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
-        } else if (-98 == refFrameId) { //显示匹配玩家
+        } else if (-98 == refFrameId) {
+          //显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
           }
@@ -638,13 +662,12 @@ cc.Class({
         }
 
         //根据downFrame显示游戏场景
-
         const frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
           return;
         }
-        const isInitiatingFrame = (0 > self.recentFrameCacheCurrentSize || 0 == refFrameId);
+        const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId);
         /*
         if (frameId % 300 == 0) {
           // WARNING: For testing only!
@@ -660,7 +683,7 @@ cc.Class({
           && self.useDiffFrameAlgo
           && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
           && null == cachedFullFrame
-        ) { //重连后重新同步
+        ) {
           self._lazilyTriggerResync();
           // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
@@ -671,15 +694,13 @@ cc.Class({
           self._onResyncCompleted();
         }
         let countdownNanos = diffFrame.countdownNanos;
-        if (countdownNanos < 0)
+        if (countdownNanos < 0) {
           countdownNanos = 0;
+        }
         const countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
           cc.log(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
         }
-        // if(self.musicEffectManagerScriptIns && 10 == countdownSeconds ) {
-        //   self.musicEffectManagerScriptIns.playCountDown10SecToEnd();
-        // }
         self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = ( //根据refFrameId和diffFrame计算出新的一帧
         (isInitiatingFrame || !self.useDiffFrameAlgo)
@@ -697,8 +718,6 @@ cc.Class({
         self._dumpToFullFrameCache(roomDownsyncFrame);
         const sentAt = roomDownsyncFrame.sentAt;
 
-
-        //update players Info
         const players = roomDownsyncFrame.players;
         const playerIdStrList = Object.keys(players);
         self.otherPlayerCachedDataDict = {};
@@ -708,6 +727,7 @@ cc.Class({
           if (playerId == self.selfPlayerInfo.id) {
             const immediateSelfPlayerInfo = players[k];
             Object.assign(self.selfPlayerInfo, {
+              displayName: (null == immediateSelfPlayerInfo.displayName ? (null == immediateSelfPlayerInfo.name ? "" : immediateSelfPlayerInfo.name) : immediateSelfPlayerInfo.displayName),
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
@@ -732,7 +752,7 @@ cc.Class({
           const pumpkinInfo = pumpkin[k];
           self.pumpkinInfoDict[pumpkinLocalIdInBattle] = pumpkinInfo;
         }
-        
+
 
         //update treasureInfoDict
         self.treasureInfoDict = {};
@@ -819,7 +839,7 @@ cc.Class({
       window.initPersistentSessionClient(self.initAfterWSConncted);
       return;
     } else {
-      if (cc.sys.localStorage.boundRoomId) {
+      if (cc.sys.localStorage.getItem('boundRoomId')) {
         self.gameRuleNode.active = false;
         window.initPersistentSessionClient(self.initAfterWSConncted);
         return;
@@ -852,6 +872,7 @@ cc.Class({
   },
 
   onBattleStarted() {
+    console.log('On battle started!')
     const self = this;
     if (self.musicEffectManagerScriptIns)
       self.musicEffectManagerScriptIns.playBGM();
@@ -977,7 +998,7 @@ cc.Class({
       const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
       //const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
       const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 1.0);
-      if (toMoveByVecMag < notToMoveDisThreshold) { 
+      if (toMoveByVecMag < notToMoveDisThreshold) {
         aControlledOtherPlayerScriptIns.activeDirection = { //任意一个值为0都不会改变方向
           dx: 0,
           dy: 0
@@ -1095,6 +1116,54 @@ cc.Class({
       let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
       if (!targetNode) {
         targetNode = cc.instantiate(self.trapBulletPrefab);
+
+        //kobako: 创建子弹node的时候设置旋转角度
+        targetNode.rotation = (() => {
+          if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
+            console.error(`Init bullet direction error, startAtPoint:${startAtPoint}, endAtPoint:${endAtPoint}`);
+            return 0;
+          } else {
+
+            //console.log(bulletInfo.startAtPoint, bulletInfo.endAtPoint);
+
+            const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
+            const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
+            const radian = (() => {
+              if (dx == 0) {
+                return Math.PI / 2;
+              } else {
+                return Math.abs(Math.atan(dy / dx));
+              }
+            })();
+            const angleTemp = radian * 180 / Math.PI;
+            const angle = (() => {
+              if (dx >= 0) {
+                if (dy >= 0) {
+                  //第一象限
+                  return 360 - angleTemp;
+                  //return angleTemp;
+                } else {
+                  //第四象限
+                  return angleTemp;
+                  //return -angleTemp;
+                }
+              } else {
+                if (dy >= 0) {
+                  //第二象限
+                  return 360 - (180 - angleTemp);
+                  //return 180 - angleTemp;
+                } else {
+                  //第三象限
+                  return 360 - (180 + angleTemp);
+                  //return 180 + angleTemp;
+                }
+              }
+            })();
+            return angle;
+          }
+        })();
+        //
+
         self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
         safelyAddChild(mapNode, targetNode);
         targetNode.setPosition(newPos);
@@ -1312,8 +1381,8 @@ cc.Class({
     };
 
     const self = this;
-    if (null != cc.sys.localStorage.selfPlayer) {
-      const selfPlayer = JSON.parse(cc.sys.localStorage.selfPlayer);
+    if (cc.sys.localStorage.getItem('selfPlayer')) {
+      const selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       const requestContent = {
         intAuthToken: selfPlayer.intAuthToken
       }

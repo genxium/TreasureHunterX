@@ -32,12 +32,12 @@ window.i18n.languages['en'] = {
     }
   },
   findingPlayer: {
-    exit: "退出",
+    exit: "Exit",
     tip: "我们正在为你匹配另一位玩家，请稍等",
     finding: "等等我，马上到..."
   },
   gameTip: {
-    start: "游戏开始!",
+    start: "Start!",
     resyncing: "Resyncing your battle, please wait..."
   }
 

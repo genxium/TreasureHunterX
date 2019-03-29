@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "bulletAnim",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.3,
+  "sample": 10,
+  "speed": 1,
+  "wrapMode": "2",
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "2f525bb2-80d1-4508-bdc3-d03c11587ce4"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "2c2c7c0c-5e91-4407-aa01-40383450386f"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
