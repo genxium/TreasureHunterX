@@ -24,3 +24,10 @@ var WechatConfigIns = WechatConfig {
 	AppSecret:   "secret1",
 }
 */
+
+var WechatGameConfigIns = WechatConfig{
+	ApiProtocol: "https",
+	ApiGateway:  "api.weixin.qq.com",
+	AppID:       "wxf497c910a2a25edc",
+	AppSecret:   "secret1",
+}

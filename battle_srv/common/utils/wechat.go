@@ -17,14 +17,20 @@ import (
 )
 
 var WechatIns *wechat
+var WechatGameIns *wechat
 
 func InitWechat(conf WechatConfig) {
-	WechatIns = NewWechatIns(&conf)
+	WechatIns = NewWechatIns(&conf, Constants.AuthChannel.Wechat)
 }
 
-func NewWechatIns(conf *WechatConfig) *wechat {
+func InitWechatGame(conf WechatConfig) {
+	WechatGameIns = NewWechatIns(&conf, Constants.AuthChannel.WechatGame)
+}
+
+func NewWechatIns(conf *WechatConfig, channel int) *wechat {
 	newWechat := &wechat{
-		config: conf,
+		config:  conf,
+		channel: channel,
 	}
 	return newWechat
 }
@@ -32,7 +38,8 @@ func NewWechatIns(conf *WechatConfig) *wechat {
 const ()
 
 type wechat struct {
-	config *WechatConfig
+	config  *WechatConfig
+	channel int
 }
 
 // CommonError 微信返回的通用错误json
@@ -99,8 +106,15 @@ func (w *wechat) getTicket() (ticketStr string, err error) {
 }
 
 func (w *wechat) GetOauth2Basic(authcode string) (result resAccessToken, err error) {
-	accessTokenURL := w.config.ApiProtocol + "://" + w.config.ApiGateway + "/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"
+	var accessTokenURL string
+	if w.channel == Constants.AuthChannel.WechatGame {
+		accessTokenURL = w.config.ApiProtocol + "://" + w.config.ApiGateway + "/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+	}
+	if w.channel == Constants.AuthChannel.Wechat {
+		accessTokenURL = w.config.ApiProtocol + "://" + w.config.ApiGateway + "/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"
+	}
 	urlStr := fmt.Sprintf(accessTokenURL, w.config.AppID, w.config.AppSecret, authcode)
+	Logger.Info("urlStr", zap.Any(":", urlStr))
 	response, err := get(urlStr)
 	if err != nil {
 		return

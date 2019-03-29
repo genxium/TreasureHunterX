@@ -307,6 +307,88 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+type wechatGameLogin struct {
+	Authcode  string `form:"code"`
+	AvatarUrl string `form:"avatarUrl"`
+	NickName  string `form:"nickName"`
+}
+
+func (p *playerController) WechatGameLogin(c *gin.Context) {
+	var req wechatGameLogin
+	err := c.ShouldBindWith(&req, binding.FormPost)
+	api.CErr(c, err)
+	if err != nil || req.Authcode == "" || req.AvatarUrl == "" || req.NickName == "" {
+		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+		return
+	}
+
+	//baseInfo ResAccessToken 获取用户授权access_token的返回结果
+	baseInfo, err := utils.WechatGameIns.GetOauth2Basic(req.Authcode)
+
+	if err != nil {
+		Logger.Info("err", zap.Any("", err))
+		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		return
+	}
+
+	Logger.Info("baseInfo", zap.Any(":", baseInfo))
+	//crate new userInfo from client userInfo
+	userInfo := utils.UserInfo{
+		Nickname:   req.NickName,
+		HeadImgURL: req.AvatarUrl,
+	}
+
+	if err != nil {
+		Logger.Info("err", zap.Any("", err))
+		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		return
+	}
+	//fserver不会返回openId
+	userInfo.OpenID = baseInfo.OpenID
+
+	player, err := p.maybeCreatePlayerWechatGameAuthBinding(userInfo)
+	api.CErr(c, err)
+	if err != nil {
+		c.Set(api.RET, Constants.RetCode.MysqlError)
+		return
+	}
+
+	now := utils.UnixtimeMilli()
+	token := utils.TokenGenerator(32)
+	expiresAt := now + 1000*int64(Constants.Player.IntAuthTokenTTLSeconds)
+	playerLogin := models.PlayerLogin{
+		CreatedAt:    now,
+		FromPublicIP: models.NewNullString(c.ClientIP()),
+		IntAuthToken: token,
+		PlayerID:     int(player.Id),
+		DisplayName:  models.NewNullString(player.DisplayName),
+		UpdatedAt:    now,
+		Avatar:       userInfo.HeadImgURL,
+	}
+	err = playerLogin.Insert()
+	api.CErr(c, err)
+	if err != nil {
+		c.Set(api.RET, Constants.RetCode.MysqlError)
+		return
+	}
+
+	resp := struct {
+		Ret         int               `json:"ret"`
+		Token       string            `json:"intAuthToken"`
+		ExpiresAt   int64             `json:"expiresAt"`
+		PlayerID    int               `json:"playerId"`
+		DisplayName models.NullString `json:"displayName"`
+		Avatar      string            `json:"avatar"`
+	}{
+		Constants.RetCode.Ok,
+		token, expiresAt,
+		playerLogin.PlayerID,
+		playerLogin.DisplayName,
+		userInfo.HeadImgURL,
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
 func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 	token := p.getIntAuthToken(c)
 	if token == "" {
@@ -491,6 +573,45 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 		Avatar:      userInfo.HeadImgURL,
 	}
 	return p.createNewPlayer(player, userInfo.OpenID, int(Constants.AuthChannel.Wechat))
+}
+
+func (p *playerController) maybeCreatePlayerWechatGameAuthBinding(userInfo utils.UserInfo) (*models.Player, error) {
+	bind, err := models.GetPlayerAuthBinding(Constants.AuthChannel.WechatGame, userInfo.OpenID)
+	if err != nil {
+		return nil, err
+	}
+	if bind != nil {
+		player, err := models.GetPlayerById(bind.PlayerID)
+		if err != nil {
+			return nil, err
+		}
+		if player != nil {
+			{ //更新玩家姓名及头像
+				updateInfo := models.Player{
+					Avatar:      userInfo.HeadImgURL,
+					DisplayName: userInfo.Nickname,
+				}
+				tx := storage.MySQLManagerIns.MustBegin()
+				defer tx.Rollback()
+				ok, err := models.Update(tx, player.Id, &updateInfo)
+				fmt.Println(updateInfo)
+				if err != nil && ok != true {
+					return nil, err
+				} else {
+					tx.Commit()
+				}
+			}
+			return player, nil
+		}
+	}
+	now := utils.UnixtimeMilli()
+	player := models.Player{
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		DisplayName: userInfo.Nickname,
+		Avatar:      userInfo.HeadImgURL,
+	}
+	return p.createNewPlayer(player, userInfo.OpenID, int(Constants.AuthChannel.WechatGame))
 }
 
 func (p *playerController) createNewPlayer(player models.Player, extAuthID string, channel int) (*models.Player, error) {

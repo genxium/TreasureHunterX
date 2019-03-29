@@ -2,8 +2,9 @@ package common
 
 type constants struct {
 	AuthChannel struct {
-		Sms    int `json:"SMS"`
-		Wechat int `json:"WECHAT"`
+		Sms        int `json:"SMS"`
+		Wechat     int `json:"WECHAT"`
+		WechatGame int `json:"WECHAT_GAME"`
 	} `json:"AUTH_CHANNEL"`
 	Player struct {
 		Diamond                     int `json:"DIAMOND"`

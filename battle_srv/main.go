@@ -31,6 +31,7 @@ func main() {
 	storage.Init()
 	env_tools.LoadPreConf()
 	utils.InitWechat(configs.WechatConfigIns)
+	utils.InitWechatGame(configs.WechatGameConfigIns)
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
 		env_tools.MergeTestPlayerAccounts()
 	}
@@ -95,6 +96,7 @@ func setRouter(router *gin.Engine) {
 		apiRouter.POST("/player/v1/SmsCaptcha/login", v1.Player.SMSCaptchaLogin)
 		apiRouter.POST("/player/v1/wechat/login", v1.Player.WechatLogin)
 		apiRouter.POST("/player/v1/wechat/jsconfig", v1.Player.GetWechatShareConfig)
+		apiRouter.POST("/player/v1/wechatGame/login", v1.Player.WechatGameLogin)
 
 		authRouter := func(method string, url string, handler gin.HandlerFunc) {
 			apiRouter.Handle(method, url, v1.Player.TokenWithPlayerIdAuth, handler)

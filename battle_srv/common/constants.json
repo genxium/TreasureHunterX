@@ -48,7 +48,8 @@
   },
   "AUTH_CHANNEL": {
     "SMS": 0,
-    "WECHAT": 1
+    "WECHAT": 1,
+    "WECHAT_GAME": 2
   },
   "PLAYER": {
     "DIAMOND": 1,
