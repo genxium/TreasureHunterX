@@ -28,7 +28,21 @@ cc.Class({
 
   // LIFE-CYCLE CALLBACKS:
 
-  onLoad: function onLoad() {},
+  onLoad: function onLoad() {
+    //kobako: 初始化小游戏分享
+    //WARN: 不保证在ws连接成功并且拿到boundRoomId后才运行到此处
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      console.warn('kobako: boundRoomId for share: ' + cc.sys.localStorage.getItem('boundRoomId'));
+      wx.showShareMenu();
+      wx.onShareAppMessage(function () {
+        return {
+          title: '夺宝大作战',
+          imageUrl: 'https://www.google.com.hk/imgres?imgurl=http%3A%2F%2Fdingyue.nosdn.127.net%2FuPFIW8M3UDCcGfpQWtoCndz8wCHvDtsXnCYlwlPO7QgZ41524836844397.jpg&imgrefurl=https%3A%2F%2F3g.163.com%2Fdy%2Farticle%2FDGEA4E490511MVC3.html&docid=mTpj85Bl0u-5QM&tbnid=IG3pedebx27Y4M%3A&vet=10ahUKEwjsibe58q3hAhWRvJ4KHRu1AhIQMwhOKBMwEw..i&w=870&h=489&safe=strict&bih=815&biw=1745&q=%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F%20%E5%88%86%E4%BA%AB&ved=0ahUKEwjsibe58q3hAhWRvJ4KHRu1AhIQMwhOKBMwEw&iact=mrc&uact=8', // 图片 URL
+          query: 'expectedRoomId=' + cc.sys.localStorage.getItem('boundRoomId')
+        };
+      });
+    }
+  },
   init: function init() {
     this.firstPlayerInfoNode.active = false;
     this.secondPlayerInfoNode.active = false;

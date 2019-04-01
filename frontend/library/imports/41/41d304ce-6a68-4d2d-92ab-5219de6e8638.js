@@ -981,14 +981,22 @@ cc.Class({
     * The following code snippet is a dirty fix.
     */
     var expectedRoomId = null;
-    var qDict = window.getQueryParamDict();
-    if (qDict) {
-      expectedRoomId = qDict["expectedRoomId"];
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      console.log('initPersistentSessionClient(): ');
+      console.log(wx.getLaunchOptionsSync());
+      var query = wx.getLaunchOptionsSync().query;
+      expectedRoomId = query['expectedRoomId'];
     } else {
-      if (window.history && window.history.state) {
-        expectedRoomId = window.history.state.expectedRoomId;
+      var qDict = window.getQueryParamDict();
+      if (qDict) {
+        expectedRoomId = qDict["expectedRoomId"];
+      } else {
+        if (window.history && window.history.state) {
+          expectedRoomId = window.history.state.expectedRoomId;
+        }
       }
     }
+
     if (expectedRoomId) {
       self.gameRuleNode.active = false;
       window.initPersistentSessionClient(self.initAfterWSConncted);

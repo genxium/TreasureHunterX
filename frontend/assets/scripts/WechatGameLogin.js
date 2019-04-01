@@ -55,6 +55,7 @@ cc.Class({
 
       self.checkIntAuthTokenExpire().then(
         () => {
+          self.showTips('登录状态未过期, 自动登录中...');
           const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
           self.useTokenLogin(intAuthToken);
         },
@@ -63,6 +64,7 @@ cc.Class({
           wx.authorize({
             scope: "scope.userInfo",
             success(){
+              self.showTips('授权成功, 登录中...');
 
               wx.login({
                 success(res){
@@ -119,6 +121,7 @@ cc.Class({
                 console.log(res);
                 if(null != res.userInfo){
                   const userInfo = res.userInfo;
+                  self.showTips('授权成功, 登录中...');
 
                   wx.login({
                     success(res){
@@ -144,7 +147,6 @@ cc.Class({
         }
       );
     });
-
   },
 
   showTips(text){

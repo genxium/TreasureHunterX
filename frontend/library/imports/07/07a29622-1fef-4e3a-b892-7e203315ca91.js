@@ -96,14 +96,23 @@ window.initPersistentSessionClient = function (onopenCb) {
   var urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
   var expectedRoomId = null;
-  var qDict = window.getQueryParamDict();
-  if (qDict) {
-    expectedRoomId = qDict["expectedRoomId"];
+
+  if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    console.log('initPersistentSessionClient(): ');
+    console.log(wx.getLaunchOptionsSync());
+    var query = wx.getLaunchOptionsSync().query;
+    expectedRoomId = query['expectedRoomId'];
   } else {
-    if (window.history && window.history.state) {
-      expectedRoomId = window.history.state.expectedRoomId;
+    var qDict = window.getQueryParamDict();
+    if (qDict) {
+      expectedRoomId = qDict["expectedRoomId"];
+    } else {
+      if (window.history && window.history.state) {
+        expectedRoomId = window.history.state.expectedRoomId;
+      }
     }
   }
+
   if (expectedRoomId) {
     console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
     urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
@@ -134,7 +143,7 @@ window.initPersistentSessionClient = function (onopenCb) {
     var resp = JSON.parse(event.data);
     switch (resp.act) {
       case "HeartbeatRequirements":
-        window.handleHbRequirements(resp);
+        window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
         break;
       case "HeartbeatPong":
         window.handleHbPong(resp);
