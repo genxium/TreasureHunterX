@@ -15,14 +15,16 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
-     var modeBtnClickEventHandler = new cc.Component.EventHandler();
-     modeBtnClickEventHandler.target = this.mapNode; 
-     modeBtnClickEventHandler.component = "Map";
-     modeBtnClickEventHandler.handler = "initWSConnection";
-     modeBtnClickEventHandler.customEventData = () => {
-       this.node.active = false;
-     };
-     this.modeButton.clickEvents.push(modeBtnClickEventHandler);
+    var modeBtnClickEventHandler = new cc.Component.EventHandler();
+    modeBtnClickEventHandler.target = this.mapNode; 
+    modeBtnClickEventHandler.component = "Map";
+    modeBtnClickEventHandler.handler = "initWSConnection";
+    modeBtnClickEventHandler.customEventData = () => {
+      this.node.active = false;
+    };
+    this.modeButton.clickEvents.push(modeBtnClickEventHandler);
+
+    console.warn('kobako: Game rule on load');
   }
   
 });

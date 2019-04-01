@@ -80,7 +80,7 @@ function _base64ToArrayBuffer(base64) {
 }
 
 
-window.initPersistentSessionClient = function(onopenCb) {
+window.initPersistentSessionClient = function(onopenCb, expectedRoomIdFromQuery) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
     if (null != onopenCb) {
       onopenCb();
@@ -94,11 +94,8 @@ window.initPersistentSessionClient = function(onopenCb) {
 
   let expectedRoomId = null;
 
-  if(cc.sys.platform == cc.sys.WECHAT_GAME){
-    console.log('initPersistentSessionClient(): ');
-    console.log(wx.getLaunchOptionsSync());
-    const query = wx.getLaunchOptionsSync().query;
-    expectedRoomId = query['expectedRoomId'];
+  if(expectedRoomIdFromQuery){ // Now mini game only
+    expectedRoomId = expectedRoomIdFromQuery;
   }else{
     const qDict = window.getQueryParamDict();
     if (qDict) {

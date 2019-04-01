@@ -83,7 +83,7 @@ function _base64ToArrayBuffer(base64) {
   return _base64ToUint8Array(base64).buffer;
 }
 
-window.initPersistentSessionClient = function (onopenCb) {
+window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
     if (null != onopenCb) {
       onopenCb();
@@ -97,7 +97,9 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   var expectedRoomId = null;
 
-  if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+  if (expectedRoomIdFromQuery) {
+    expectedRoomId = expectedRoomIdFromQuery;
+  } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
     console.log('initPersistentSessionClient(): ');
     console.log(wx.getLaunchOptionsSync());
     var query = wx.getLaunchOptionsSync().query;

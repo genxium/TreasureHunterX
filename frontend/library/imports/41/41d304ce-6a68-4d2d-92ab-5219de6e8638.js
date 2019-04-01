@@ -977,15 +977,55 @@ cc.Class({
       };
     };
 
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      //第一次进入游戏不会触发onShow(因为是后面挂载的),所以手动调用一次join room
+      var query = wx.getLaunchOptionsSync().query;
+      var expectedRoomId = query['expectedRoomId'];
+      console.warn('By the share link to join room: ', expectedRoomId);
+      self.tryToJoinExpectedRoom(expectedRoomId);
+    } else {
+      //其他登录方式
+      self.tryToJoinExpectedRoom();
+    }
+
+    /*
+     * 小游戏平台onShow生命周期函数, 每次重新打开都判断是否需要加入指定房间
+     * 通过分享链接进入时触发
+     */
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      wx.onShow(function (res) {
+        if (res.query['expectedRoomId']) {
+          console.warn('By the share link to join room: ', res.query['expectedRoomId']);
+          self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
+        }
+      });
+    }
+  },
+
+
+  /*
+   * kobako: 隐藏规则弹窗后加入到指定房间
+   * 调用场景: 1. map.js onLoad()方法 2. 小游戏生命周期onShow函数
+   * @Param expectedRoomIdFromQuery: 通过小游戏链接进入时调用onShow方法, 参数会包含expectedRoomId
+   */
+  tryToJoinExpectedRoom: function tryToJoinExpectedRoom(expectedRoomIdFromQuery) {
+    var self = this;
+
+    //检查是否处于空闲状态
+    if (self.battleState != ALL_BATTLE_STATES.WAITING) {
+      console.warn('tryToJoinExpectedRoom: Not in waiting state');
+      return;
+    }
+
+    console.warn('Try To Join ExpectedRoom');
+
     /*
     * The following code snippet is a dirty fix.
     */
     var expectedRoomId = null;
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      console.log('initPersistentSessionClient(): ');
-      console.log(wx.getLaunchOptionsSync());
-      var query = wx.getLaunchOptionsSync().query;
-      expectedRoomId = query['expectedRoomId'];
+
+    if (expectedRoomIdFromQuery) {
+      expectedRoomId = expectedRoomIdFromQuery;
     } else {
       var qDict = window.getQueryParamDict();
       if (qDict) {
@@ -998,15 +1038,18 @@ cc.Class({
     }
 
     if (expectedRoomId) {
+      console.warn('expectedRoomId: ', expectedRoomId);
+      self.gameRuleNode.active = false;
+      //kobako: 直接传expectedRoomId到初始化session函数
+      window.initPersistentSessionClient(self.initAfterWSConncted, expectedRoomId);
+      return;
+    } else if (cc.sys.localStorage.getItem('boundRoomId')) {
+      console.warn('boundRoomId: ', cc.sys.localStorage.getItem('boundRoomId'));
       self.gameRuleNode.active = false;
       window.initPersistentSessionClient(self.initAfterWSConncted);
       return;
     } else {
-      if (cc.sys.localStorage.getItem('boundRoomId')) {
-        self.gameRuleNode.active = false;
-        window.initPersistentSessionClient(self.initAfterWSConncted);
-        return;
-      }
+      console.warn('Do not have expectedRoomId or boundRoomId, do nothing');
     }
   },
   setupInputControls: function setupInputControls() {

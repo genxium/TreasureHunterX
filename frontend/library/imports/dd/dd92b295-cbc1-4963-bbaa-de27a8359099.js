@@ -31,6 +31,8 @@ cc.Class({
       _this.node.active = false;
     };
     this.modeButton.clickEvents.push(modeBtnClickEventHandler);
+
+    console.warn('kobako: Game rule on load');
   }
 });
 
