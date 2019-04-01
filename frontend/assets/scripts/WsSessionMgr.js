@@ -165,6 +165,13 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomIdFromQuery)
   };
 
   clientSession.onerror = function(event) {
+    if(cc.sys.localStorage.getItem('closeOrErrorHandled')){
+      console.warn('已经触发过了handleClientSessionCloseOrError');
+      return;
+    }else{
+      //kobako: 防止二次调用, 在loginScene置空
+      cc.sys.localStorage.setItem('closeOrErrorHandled', true);
+    }
     cc.error(`Error caught on the WS clientSession:`, event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
@@ -175,6 +182,13 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomIdFromQuery)
   };
 
   clientSession.onclose = function(event) {
+    if(cc.sys.localStorage.getItem('closeOrErrorHandled')){
+      console.warn('已经触发过了handleClientSessionCloseOrError');
+      return;
+    }else{
+      //kobako: 防止二次调用, 在loginScene置空
+      cc.sys.localStorage.setItem('closeOrErrorHandled', true);
+    }
     cc.log(`The WS clientSession is closed:`, event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);

@@ -58,10 +58,8 @@ cc.Class({
     this.findingAnimNode.active = true;
   },
   exitBtnOnClick: function exitBtnOnClick(evt) {
+    cc.sys.localStorage.setItem('manuallyExit', true);
     window.closeWSConnection();
-    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-    cc.sys.localStorage.removeItem('selfPlayer');
-    //cc.director.loadScene('login');
   },
   updatePlayersInfo: function updatePlayersInfo(players) {
     var _this = this;

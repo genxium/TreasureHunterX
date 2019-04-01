@@ -694,11 +694,6 @@
     "meta": 1553676690000,
     "relativePath": "plugin_scripts/NetworkUtils.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1553694942000,
-    "meta": 1553695321000,
-    "relativePath": "scripts/Login.js"
-  },
   "61de0eb6-9f87-49ed-933d-fd776e9a8ce7": {
     "asset": 1542816642000,
     "meta": 1553743766000,
@@ -939,29 +934,34 @@
     "meta": 1554088841000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1554089509000,
-    "meta": 1554089787000,
-    "relativePath": "scripts/FindingPlayer.js"
-  },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554091942000,
-    "meta": 1554091946000,
-    "relativePath": "scripts/WechatGameLogin.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1554104983000,
     "meta": 1554105001000,
     "relativePath": "scripts/GameRule.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1554106381000,
-    "meta": 1554106445000,
-    "relativePath": "scripts/WsSessionMgr.js"
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1554114431000,
+    "meta": 1554114442000,
+    "relativePath": "scripts/FindingPlayer.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554107198000,
-    "meta": 1554107211000,
+    "asset": 1554116027000,
+    "meta": 1554116075000,
     "relativePath": "scripts/Map.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1554118635000,
+    "meta": 1554118639000,
+    "relativePath": "scripts/Login.js"
+  },
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1554118612000,
+    "meta": 1554118639000,
+    "relativePath": "scripts/WechatGameLogin.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1554118511000,
+    "meta": 1554118639000,
+    "relativePath": "scripts/WsSessionMgr.js"
   }
 }

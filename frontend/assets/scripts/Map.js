@@ -621,10 +621,25 @@ cc.Class({
         default:
           break;
       }
-      if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+
+      //手动退出不应该弹窗报错
+      if(cc.sys.localStorage.getItem('manuallyExit')){
+        console.warn('手动退出, 清除房间信息并回到登录页');
+        cc.sys.localStorage.removeItem('manuallyExit');
+        cc.sys.localStorage.removeItem("boundRoomId");
+        if(cc.sys.platform == cc.sys.WECHAT_GAME){
+          cc.director.loadScene('wechatGameLogin');
+        }else{
+          cc.director.loadScene('login');
+        }
+      }else{ //意外断线
+        console.warn('意外断线');
+        if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
+          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+          self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
+        }
       }
+
     };
 
     self.initAfterWSConncted = () => {
@@ -835,15 +850,21 @@ cc.Class({
     }
 
     /*
-     * 小游戏平台onShow生命周期函数, 每次重新打开都判断是否需要加入指定房间
-     * 通过分享链接进入时触发
+     * 小游戏平台生命周期函数
      */
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
+      //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
       wx.onShow((res) => {
         if(res.query['expectedRoomId']){
           console.warn('By the share link to join room: ', res.query['expectedRoomId']);
           self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
         }
+      });
+
+      //onHide断开连接
+      wx.onHide(() => {
+        cc.sys.localStorage.setItem('manuallyExit', true);
+        window.closeWSConnection();
       });
     }
 
