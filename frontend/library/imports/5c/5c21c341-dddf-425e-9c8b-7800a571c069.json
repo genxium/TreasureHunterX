@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "InGame_ResultPanel_AgainButton",
-    "texture": "e8c22004-f2df-41be-9bc3-29e64fa65d65",
-    "atlas": "5ad61f1e-785d-4245-8744-3276b20d841d",
+    "name": "FindingPlayer_PlayerLeft",
+    "texture": "7e95c8ae-8130-48c6-8a83-01697cc5000d",
+    "atlas": "e4e457db-639b-4e68-b1b1-7893fdf2bae7",
     "rect": [
-      1919,
-      1775,
-      105,
-      60
+      1754,
+      1403,
+      344,
+      200
     ],
     "offset": [
       0,
       0
     ],
     "originalSize": [
-      105,
-      60
+      344,
+      200
     ],
     "rotated": 1,
     "capInsets": [

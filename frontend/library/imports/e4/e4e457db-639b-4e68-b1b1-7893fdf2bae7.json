@@ -4,6 +4,9 @@
   "_objFlags": 0,
   "_native": "",
   "_spriteFrames": {
+    "FindingPlayer_PlayerLeft": {
+      "__uuid__": "5c21c341-dddf-425e-9c8b-7800a571c069"
+    },
     "GameRule_Blackboard": {
       "__uuid__": "f4d8300e-7b7c-4c58-9de5-561a33e54d82"
     },
@@ -16,11 +19,17 @@
     "Login_Background": {
       "__uuid__": "812aefc4-c565-4954-a30d-52e238250db0"
     },
+    "Login_Pacman": {
+      "__uuid__": "c75d4450-9897-410e-acef-74a1cabb5b3c"
+    },
     "Players_Avatar1": {
       "__uuid__": "dde20e8b-64b0-41aa-b097-c522f0451e1d"
     },
     "Players_Avatar2": {
       "__uuid__": "94f1910a-3b9f-43c7-a8ea-56bfbeccafcc"
+    },
+    "PopupBg": {
+      "__uuid__": "7b8c715c-de0e-4347-821b-ba73a0b62878"
     },
     "ResultPanel_Bg1v1": {
       "__uuid__": "d5d4dac6-0005-4148-94cc-5df27e8e6322"

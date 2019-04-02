@@ -16,9 +16,6 @@
     "FindingPlayer_DecorationUp": {
       "__uuid__": "14615bb5-3c55-4b1c-9363-f657bb16af52"
     },
-    "FindingPlayer_PlayerLeft": {
-      "__uuid__": "838b86bf-b549-4ca1-9bdd-1fc1ad0527ec"
-    },
     "FindingPlayer_PlayerRight": {
       "__uuid__": "b1764274-7318-4f89-a707-d2f390693ab4"
     },
@@ -64,14 +61,14 @@
     "InGame_Tower2": {
       "__uuid__": "e6630f38-274f-4e69-8d68-ed9aba1ea097"
     },
+    "Login_Logo": {
+      "__uuid__": "6807e566-4ae9-46cb-a4da-8dccacda7800"
+    },
     "Players_Baseball": {
       "__uuid__": "1094d9e7-dbb5-4aa3-b950-0f59472ea219"
     },
     "Players_arrowTip": {
       "__uuid__": "ad211aef-5918-41be-b47a-4ec7867aaaa5"
-    },
-    "PopupBg": {
-      "__uuid__": "fa60d32c-c632-4a3b-91aa-10d07e4ff2cd"
     },
     "ResultPanel_Copper": {
       "__uuid__": "a9f3de9e-5734-4081-8d55-8da354db3666"

@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "exit",
-    "texture": "e8c22004-f2df-41be-9bc3-29e64fa65d65",
-    "atlas": "5ad61f1e-785d-4245-8744-3276b20d841d",
+    "name": "Login_Pacman",
+    "texture": "7e95c8ae-8130-48c6-8a83-01697cc5000d",
+    "atlas": "e4e457db-639b-4e68-b1b1-7893fdf2bae7",
     "rect": [
-      920,
-      1950,
-      64,
-      64
+      1386,
+      1288,
+      366,
+      513
     ],
     "offset": [
       0,
       0
     ],
     "originalSize": [
-      64,
-      64
+      366,
+      513
     ],
     "capInsets": [
       0,

@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1553844185000,
+    "asset": 1554118892000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -105,8 +105,8 @@
     "relativePath": "resources/prefabs/SmsWaitcountdown.prefab"
   },
   "8e8c1a65-623d-42ba-97a7-820ce518ea11": {
-    "asset": 1553760264000,
-    "meta": 1553760264000,
+    "asset": 1554175481000,
+    "meta": 1554175481000,
     "relativePath": "resources/prefabs/ConfirmLogout.prefab"
   },
   "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
@@ -400,8 +400,8 @@
     "relativePath": "resources/prefabs/BulletPrefab.prefab"
   },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
-    "asset": 1553762109000,
-    "meta": 1553762109000,
+    "asset": 1554175517000,
+    "meta": 1554175517000,
     "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
   },
   "0d4a2516-47b9-420b-86c4-fc312599d4aa": {
@@ -490,13 +490,13 @@
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1553761578000,
-    "meta": 1553761578000,
+    "asset": 1554177023000,
+    "meta": 1554177023000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1553761939000,
-    "meta": 1553761939000,
+    "asset": 1554175896000,
+    "meta": 1554175896000,
     "relativePath": "resources/prefabs/GameRule.prefab"
   },
   "3cee8bde-8f1d-4960-b591-33208af1f997": {
@@ -535,8 +535,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1553761646000,
-    "meta": 1553761646000,
+    "asset": 1554174994000,
+    "meta": 1554174994000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -734,36 +734,6 @@
     "meta": 1553747218000,
     "relativePath": "resources/animation/RedPacman"
   },
-  "5c2cf558-35ee-4ac6-963a-5690cd601a3d": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_2.plist"
-  },
-  "5ad61f1e-785d-4245-8744-3276b20d841d": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_0.plist"
-  },
-  "44dd2e7f-c601-41f1-86d6-f8f11296754b": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_2.png"
-  },
-  "e4e457db-639b-4e68-b1b1-7893fdf2bae7": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_1.plist"
-  },
-  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_1.png"
-  },
-  "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
-    "asset": 1553755983000,
-    "meta": 1553755983000,
-    "relativePath": "resources/textures/GuiElements_0.png"
-  },
   "cc316f33-9d42-42ec-a8ca-4fb4d9e2157e": {
     "asset": 1553845839000,
     "meta": 1553756874000,
@@ -915,8 +885,8 @@
     "relativePath": "resources/textures/Theme/Players/Pacman2/YellowPacman.png"
   },
   "475b849b-44b3-4390-982d-bd0d9e695093": {
-    "asset": 1553847133000,
-    "meta": 1553847133000,
+    "asset": 1554174855000,
+    "meta": 1554174855000,
     "relativePath": "scenes/wechatGameLogin.fire"
   },
   "31ca9500-50c9-44f9-8d33-f9a969e53195": {
@@ -928,11 +898,6 @@
     "asset": 1553844232000,
     "meta": 1553844261000,
     "relativePath": "scripts/ResultPanel.js"
-  },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554088810000,
-    "meta": 1554088841000,
-    "relativePath": "plugin_scripts/conf.js"
   },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1554104983000,
@@ -963,5 +928,40 @@
     "asset": 1554118511000,
     "meta": 1554118639000,
     "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "5ad61f1e-785d-4245-8744-3276b20d841d": {
+    "asset": 1554172523000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_0.plist"
+  },
+  "e4e457db-639b-4e68-b1b1-7893fdf2bae7": {
+    "asset": 1554172523000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_1.plist"
+  },
+  "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
+    "asset": 1554172520000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_0.png"
+  },
+  "5c2cf558-35ee-4ac6-963a-5690cd601a3d": {
+    "asset": 1554172523000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_2.plist"
+  },
+  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
+    "asset": 1554172522000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_1.png"
+  },
+  "44dd2e7f-c601-41f1-86d6-f8f11296754b": {
+    "asset": 1554172523000,
+    "meta": 1554174639000,
+    "relativePath": "resources/textures/GuiElements_2.png"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554176848000,
+    "meta": 1554176851000,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }
