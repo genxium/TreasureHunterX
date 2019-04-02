@@ -30,7 +30,8 @@ cc.Class({
       wx.showShareMenu();
       wx.onShareAppMessage(() => ({
         title: '夺宝大作战',
-        imageUrl: 'https://www.google.com.hk/imgres?imgurl=http%3A%2F%2Fdingyue.nosdn.127.net%2FuPFIW8M3UDCcGfpQWtoCndz8wCHvDtsXnCYlwlPO7QgZ41524836844397.jpg&imgrefurl=https%3A%2F%2F3g.163.com%2Fdy%2Farticle%2FDGEA4E490511MVC3.html&docid=mTpj85Bl0u-5QM&tbnid=IG3pedebx27Y4M%3A&vet=10ahUKEwjsibe58q3hAhWRvJ4KHRu1AhIQMwhOKBMwEw..i&w=870&h=489&safe=strict&bih=815&biw=1745&q=%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F%20%E5%88%86%E4%BA%AB&ved=0ahUKEwjsibe58q3hAhWRvJ4KHRu1AhIQMwhOKBMwEw&iact=mrc&uact=8', // 图片 URL
+        imageUrl: 'https://mmocgame.qpic.cn/wechatgame/ibxA6JVNslX1q6ibicey5e4ibvrmGFSlC4xrbKAt5jhQGu8I00iaojEGxlud86OtKAA0T/0' , // 图片 URL
+        imageUrlId: 'RcU9ypycT6alae-GhclK3Q',
         query: 'expectedRoomId=' + cc.sys.localStorage.getItem('boundRoomId'),
       }));
     }
@@ -52,6 +53,8 @@ cc.Class({
 
   },
   exitBtnOnClick(evt) {
+    //TODO: 这时候不应该让Login scene自动通过expectedRoomId进入房间
+
     cc.sys.localStorage.setItem('manuallyExit', true);
     window.closeWSConnection();
   },

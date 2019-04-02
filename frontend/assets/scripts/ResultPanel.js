@@ -48,13 +48,12 @@ cc.Class({
 
   againBtnOnClick(evt) {
     this.onClose();
+    //TODO: Again
     if (!this.onAgainClicked) return;
     this.onAgainClicked();
   },
 
   homeBtnOnClick(evt) {
-    window.closeWSConnection();
-    //cc.director.loadScene('login');
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
       cc.director.loadScene('wechatGameLogin');
     }else{

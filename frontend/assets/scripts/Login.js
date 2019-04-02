@@ -154,11 +154,6 @@ cc.Class({
         }
       );
     });
-
-    //kobako: 重置ws flag
-    console.warn('Login scene reset closeOrErrorHandled flag')
-    cc.sys.localStorage.removeItem('closeOrErrorHandled');
-
   },
 
   getRetCodeList() {

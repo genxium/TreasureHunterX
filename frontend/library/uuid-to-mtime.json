@@ -40,7 +40,7 @@
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1553757265000,
+    "asset": 1554174636000,
     "meta": 1553153264000,
     "relativePath": "resources/textures"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1554118892000,
+    "asset": 1554195150000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -535,8 +535,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1554174994000,
-    "meta": 1554174994000,
+    "asset": 1554180202000,
+    "meta": 1554180202000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -894,40 +894,10 @@
     "meta": 1553826252000,
     "relativePath": "plugin_scripts/constants.js"
   },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1553844232000,
-    "meta": 1553844261000,
-    "relativePath": "scripts/ResultPanel.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1554104983000,
     "meta": 1554105001000,
     "relativePath": "scripts/GameRule.js"
-  },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1554114431000,
-    "meta": 1554114442000,
-    "relativePath": "scripts/FindingPlayer.js"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554116027000,
-    "meta": 1554116075000,
-    "relativePath": "scripts/Map.js"
-  },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1554118635000,
-    "meta": 1554118639000,
-    "relativePath": "scripts/Login.js"
-  },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554118612000,
-    "meta": 1554118639000,
-    "relativePath": "scripts/WechatGameLogin.js"
-  },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1554118511000,
-    "meta": 1554118639000,
-    "relativePath": "scripts/WsSessionMgr.js"
   },
   "5ad61f1e-785d-4245-8744-3276b20d841d": {
     "asset": 1554172523000,
@@ -959,9 +929,39 @@
     "meta": 1554174639000,
     "relativePath": "resources/textures/GuiElements_2.png"
   },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1554190876000,
+    "meta": 1554190885000,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1554190912000,
+    "meta": 1554190921000,
+    "relativePath": "scripts/Login.js"
+  },
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1554190917000,
+    "meta": 1554190921000,
+    "relativePath": "scripts/WechatGameLogin.js"
+  },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1554191754000,
+    "meta": 1554191785000,
+    "relativePath": "scripts/ResultPanel.js"
+  },
   "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554176848000,
-    "meta": 1554176851000,
+    "asset": 1554197414000,
+    "meta": 1554197424000,
     "relativePath": "plugin_scripts/conf.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1554199920000,
+    "meta": 1554199928000,
+    "relativePath": "scripts/Map.js"
+  },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1554200221000,
+    "meta": 1554200230000,
+    "relativePath": "scripts/FindingPlayer.js"
   }
 }

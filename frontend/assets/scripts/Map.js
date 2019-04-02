@@ -838,23 +838,31 @@ cc.Class({
     }
 
 
+    console.warn('map.js onLoad, I should check if need to reconnect to the ws')
+
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      //第一次进入游戏不会触发onShow(因为是后面挂载的),所以手动调用一次join room
-      const query = wx.getLaunchOptionsSync().query;
-      const expectedRoomId = query['expectedRoomId'];
-      console.warn('By the share link to join room: ', expectedRoomId);
-      self.tryToJoinExpectedRoom(expectedRoomId);
+      if(!window.wxLifeCycleListenerSetted){ //生命周期未监听
+        //第一次进入游戏才调用这个方法
+        const query = wx.getLaunchOptionsSync().query;
+        const expectedRoomId = query['expectedRoomId'];
+        console.warn('By the share link to join room: ', expectedRoomId);
+        self.tryToJoinExpectedRoom(expectedRoomId);
+      }else{
+        console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
+      }
     }else{ 
       //其他登录方式
       self.tryToJoinExpectedRoom();
     }
 
     /*
-     * 小游戏平台生命周期函数
+     * 监听小游戏生命周期
      */
-    if(cc.sys.platform == cc.sys.WECHAT_GAME){
+    if(cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerSetted){
       //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
+      //TODO: 判断是否已经在匹配玩家了, 如果是, 就不要再加入
       wx.onShow((res) => {
+        window.wxLifeCycleListenerSetted = true;
         if(res.query['expectedRoomId']){
           console.warn('By the share link to join room: ', res.query['expectedRoomId']);
           self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
@@ -862,9 +870,18 @@ cc.Class({
       });
 
       //onHide断开连接
-      wx.onHide(() => {
-        cc.sys.localStorage.setItem('manuallyExit', true);
-        window.closeWSConnection();
+      wx.onHide((res) => {
+        console.log(res);
+
+        if(res.mode == 'hide'){ //按home键或者分享小程序
+          console.warn('onHide: hide');
+          //Do nothing
+        }else{ //其他情况下断连返回登录页
+          console.warn('onHide: back');
+          cc.sys.localStorage.setItem('manuallyExit', true);
+          window.closeWSConnection();
+        }
+
       });
     }
 
@@ -879,10 +896,12 @@ cc.Class({
     const self = this;
 
     //检查是否处于空闲状态
+    /* 需注释, 因为会妨碍断线重连
     if(self.battleState != ALL_BATTLE_STATES.WAITING){
       console.warn('tryToJoinExpectedRoom: Not in waiting state');
       return;
     }
+    */
 
 
     console.warn('Try To Join ExpectedRoom');
@@ -907,13 +926,17 @@ cc.Class({
 
     if (expectedRoomId) {
       console.warn('expectedRoomId: ', expectedRoomId);
-      self.gameRuleNode.active = false;
+      if(self.gameRuleNode != null && self.gameRuleNode.active != null){
+        self.gameRuleNode.active = false;
+      }
       //kobako: 直接传expectedRoomId到初始化session函数
       window.initPersistentSessionClient(self.initAfterWSConncted, expectedRoomId);
       return;
     } else if (cc.sys.localStorage.getItem('boundRoomId')){
       console.warn('boundRoomId: ', cc.sys.localStorage.getItem('boundRoomId'));
-      self.gameRuleNode.active = false;
+      if(self.gameRuleNode != null && self.gameRuleNode.active != null){
+        self.gameRuleNode.active = false;
+      }
       window.initPersistentSessionClient(self.initAfterWSConncted);
       return;
     }else {

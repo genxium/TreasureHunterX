@@ -5,12 +5,14 @@ cc._RF.push(module, '0d28fT1TBNLsIhbaiFgLMOU', 'conf');
 "use strict";
 
 if (CC_DEBUG) {
+  /*
   var backendAddress = {
     PROTOCOL: 'https',
     HOST: 'bgmoba.lokcol.com',
     PORT: "443",
-    WS_PATH_PREFIX: "/tsrht"
+    WS_PATH_PREFIX: "/tsrht",
   };
+  */
 
   /*
   var wechatAddress = {
@@ -38,6 +40,13 @@ if (CC_DEBUG) {
   //   PROXY: "",
   //   APPID_LITERAL: "appid=wx5432dc1d6164d4e",
   // };
+
+  var backendAddress = {
+    PROTOCOL: 'https',
+    HOST: 'tsrht.lokcol.com',
+    PORT: "443",
+    WS_PATH_PREFIX: "/tsrht"
+  };
 
   var wechatAddress = {
     PROTOCOL: "https",

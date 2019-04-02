@@ -149,13 +149,13 @@ cc.Class({
         });
       });
     });
-
-    //kobako: 重置ws flag
-    console.warn('Login scene reset closeOrErrorHandled flag');
-    cc.sys.localStorage.removeItem('closeOrErrorHandled');
   },
   showTips: function showTips(text) {
-    this.tipsLabel.string = text;
+    if (this.tipsLabel != null) {
+      this.tipsLabel.string = text;
+    } else {
+      console.log('Login scene showTips failed');
+    }
   },
   getRetCodeList: function getRetCodeList() {
     var self = this;
@@ -355,6 +355,7 @@ cc.Class({
     var self = this;
     cc.log('OnLoggedIn ' + JSON.stringify(res) + '.');
     if (res.ret === self.retCodeDict.OK) {
+
       if (window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
         window.initWxSdk = self.initWxSdk.bind(self);
         window.initWxSdk();
@@ -378,6 +379,7 @@ cc.Class({
 
       cc.director.loadScene('default_map');
     } else {
+      console.warn('onLoggedIn failed!');
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
