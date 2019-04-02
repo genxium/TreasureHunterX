@@ -859,10 +859,9 @@ cc.Class({
      * 监听小游戏生命周期
      */
     if(cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerSetted){
+      window.wxLifeCycleListenerSetted = true;
       //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
-      //TODO: 判断是否已经在匹配玩家了, 如果是, 就不要再加入
       wx.onShow((res) => {
-        window.wxLifeCycleListenerSetted = true;
         if(res.query['expectedRoomId']){
           console.warn('By the share link to join room: ', res.query['expectedRoomId']);
           self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
