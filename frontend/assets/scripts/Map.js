@@ -846,9 +846,13 @@ cc.Class({
     }
 
 
+    /**
+     * 小游戏端重连参考: https://shimo.im/docs/OUlOQivl2hIglAOE #3
+     */
 
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      if(!window.wxLifeCycleListenerSetted){ //全局只在一开始调用一次
+      if(!window.wxLifeCycleListenerSetted){ 
+        //第一次进入游戏没有初始化好wx.onShow, 先手动调用一次tryToJoinExpectedRoom
         const query = wx.getLaunchOptionsSync().query;
         const expectedRoomId = query['expectedRoomId'];
         console.warn('By the share link to join room: ', expectedRoomId);
@@ -869,9 +873,8 @@ cc.Class({
      * 监听小游戏生命周期
      */
     if(cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerSetted){
-      window.wxLifeCycleListenerSetted = true;
+      window.wxLifeCycleListenerSetted = true; //这个flag表示已经初始化过生命周期函数了
 
-      //测试用, 手动输入expRoomId进入房间
       window.reconnectGameByExpectedRoomId = (expectedRoomId) => {
         window.mapIns.tryToJoinExpectedRoom(expectedRoomId);
       }
