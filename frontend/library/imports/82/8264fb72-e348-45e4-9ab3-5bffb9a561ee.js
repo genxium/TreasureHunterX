@@ -31,6 +31,7 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {
+    console.warn('+++++++ WechatLogin onLoad()');
 
     //kobako: 腾讯统计代码
     //WARN: 打包到微信小游戏的时候会导致出错
@@ -149,6 +150,9 @@ cc.Class({
         });
       });
     });
+  },
+  onDestroy: function onDestroy() {
+    console.warn('+++++++ wechatLogin onDestroy()');
   },
   showTips: function showTips(text) {
     if (this.tipsLabel != null) {

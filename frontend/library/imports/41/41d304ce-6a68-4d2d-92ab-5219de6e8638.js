@@ -2,7 +2,7 @@
 cc._RF.push(module, '41d30TOamhNLZKrUhneboY4', 'Map');
 // scripts/Map.js
 
-"use strict";
+'use strict';
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
@@ -209,7 +209,7 @@ cc.Class({
       var _k5 = bulletsLocalIdStrList[_i5];
       var bulletLocalIdInBattle = parseInt(_k5);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        cc.log("Bullet with localIdInBattle == " + bulletLocalIdInBattle + " is removed.");
+        cc.log('Bullet with localIdInBattle == ' + bulletLocalIdInBattle + ' is removed.');
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
@@ -270,6 +270,7 @@ cc.Class({
     window.sendSafely(JSON.stringify(wrapped));
   },
   onDestroy: function onDestroy() {
+    console.warn('+++++++ map onDestroy()');
     var self = this;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -299,7 +300,7 @@ cc.Class({
     if (false == this.resyncing) return;
     this.resyncing = false;
     var resyncingDurationMillis = Date.now() - this.lastResyncingStartedAt;
-    cc.log("_onResyncCompleted, resyncing took " + resyncingDurationMillis + " milliseconds.");
+    cc.log('_onResyncCompleted, resyncing took ' + resyncingDurationMillis + ' milliseconds.');
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
@@ -480,7 +481,7 @@ cc.Class({
      * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
      */
     window.mapIns = self;
-    window.mapIns.ready = true;
+    console.warn('+++++++ map onLoad()');
 
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
@@ -816,6 +817,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = function () {
+      var self = window.mapIns;
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
@@ -882,7 +884,7 @@ cc.Class({
         }
         var countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
-          cc.log("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
+          cc.log('countdownSeconds is NaN for countdownNanos == ' + countdownNanos + '.');
         }
         self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
@@ -1000,19 +1002,17 @@ cc.Class({
 
     if (cc.sys.platform == cc.sys.WECHAT_GAME) {
       if (!window.wxLifeCycleListenerSetted) {
-        //全局只调用一次
+        //全局只在一开始调用一次
         var query = wx.getLaunchOptionsSync().query;
         var expectedRoomId = query['expectedRoomId'];
         console.warn('By the share link to join room: ', expectedRoomId);
         self.tryToJoinExpectedRoom(expectedRoomId);
       } else {
-        console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
-        /*
-        if(cc.sys.localStorage.getItem('expectedRoomId')){
-          console.warn('kobako: 小游戏通过expectedRoomId尝试重连游戏');
+        //console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
+        if (cc.sys.localStorage.getItem('expectedRoomId')) {
+          console.warn('++++++: 小游戏通过expectedRoomId尝试重连游戏');
           self.tryToJoinExpectedRoom(cc.sys.localStorage.getItem('expectedRoomId'));
         }
-        */
       }
     } else {
       //其他登录方式: 基本上是通过localStorage.boundRoomId来重连
@@ -1032,21 +1032,21 @@ cc.Class({
 
       //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
       wx.onShow(function (res) {
+        console.warn('+++++++ 微信 onShow');
+        console.log(res);
         if (res.query['expectedRoomId']) {
-          if (window.mapIns.ready) {
-            console.warn('kobako: onShow, mapIns is ready, 尝试重连房间: ', res.query['expectedRoomId']);
-            window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
-          } else {
-            console.warn('kobako: onShow, mapIns is not ready! 此时无法重连游戏, 需要在mapIns.onLoad()再做重连');
-          }
+          console.warn('kobako: join room:  ', res.query['expectedRoomId']);
+          //window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
           //kobako: expectedRoomId唯一在对局结束后才清除, 用于小游戏断线重连
-          //cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
+          cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
+          //self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
         }
       });
 
       //onHide断开连接
       wx.onHide(function (res) {
-        console.log(res);
+        console.warn('+++++++ 微信 onHide');
+        //console.log(res);
 
         if (res.mode == 'hide') {
           //按home键或者分享小程序
@@ -1057,6 +1057,9 @@ cc.Class({
           console.warn('onHide: back');
           cc.sys.localStorage.setItem('manuallyExit', true);
           window.closeWSConnection();
+          cc.sys.localStorage.removeItem('expectedRoomId');
+          //断开连接后, 立刻退回到LoginSdene
+          cc.director.loadScene('wechatGameLogin');
         }
       });
     }
@@ -1119,7 +1122,7 @@ cc.Class({
     }
   },
   setupInputControls: function setupInputControls() {
-    var instance = this;
+    var instance = window.mapIns;
     var mapNode = instance.node;
     var canvasNode = mapNode.parent;
     var joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
@@ -1141,7 +1144,7 @@ cc.Class({
   },
   onBattleStarted: function onBattleStarted() {
     console.log('On battle started!');
-    var self = this;
+    var self = window.mapIns;
     if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.playBGM();
     var canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
@@ -1265,7 +1268,7 @@ cc.Class({
       } else {
         if (toMoveByVecMag > toTeleportDisThreshold) {
           //如果移动过大 打印log但还是会移动
-          cc.log("Player " + cachedPlayerData.id + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
+          cc.log('Player ' + cachedPlayerData.id + ' is teleporting! Having toMoveByVecMag == ' + toMoveByVecMag + ', toTeleportDisThreshold == ' + toTeleportDisThreshold);
           aControlledOtherPlayerScriptIns.activeDirection = {
             dx: 0,
             dy: 0
@@ -1366,7 +1369,7 @@ cc.Class({
         //kobako: 创建子弹node的时候设置旋转角度
         targetNode.rotation = function () {
           if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
-            console.error("Init bullet direction error, startAtPoint:" + startAtPoint + ", endAtPoint:" + endAtPoint);
+            console.error('Init bullet direction error, startAtPoint:' + startAtPoint + ', endAtPoint:' + endAtPoint);
             return 0;
           } else {
 
@@ -1431,7 +1434,7 @@ cc.Class({
         };
       } else {
         if (toMoveByVecMag > toTeleportDisThreshold) {
-          cc.log("Bullet " + bulletLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
+          cc.log('Bullet ' + bulletLocalIdInBattle + ' is teleporting! Having toMoveByVecMag == ' + toMoveByVecMag + ', toTeleportDisThreshold == ' + toTeleportDisThreshold);
           aBulletScriptIns.activeDirection = {
             dx: 0,
             dy: 0
@@ -1492,7 +1495,7 @@ cc.Class({
         };
       } else {
         if (_toMoveByVecMag > _toTeleportDisThreshold) {
-          cc.log("Pumpkin " + pumpkinLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + _toMoveByVecMag + ", toTeleportDisThreshold == " + _toTeleportDisThreshold);
+          cc.log('Pumpkin ' + pumpkinLocalIdInBattle + ' is teleporting! Having toMoveByVecMag == ' + _toMoveByVecMag + ', toTeleportDisThreshold == ' + _toTeleportDisThreshold);
           aPumpkinScriptIns.activeDirection = {
             dx: 0,
             dy: 0
@@ -1634,7 +1637,7 @@ cc.Class({
           data: requestContent,
           success: function success(res) {
             if (res.ret != constants.RET_CODE.OK) {
-              cc.log("Logout failed: " + res + ".");
+              cc.log('Logout failed: ' + res + '.');
             }
             localClearance();
           },

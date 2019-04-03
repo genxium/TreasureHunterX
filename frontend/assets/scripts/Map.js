@@ -269,6 +269,7 @@ cc.Class({
   },
 
   onDestroy() {
+    console.warn('+++++++ map onDestroy()');
     const self = this;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -463,7 +464,7 @@ cc.Class({
      * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
      */
     window.mapIns = self;
-    window.mapIns.ready = true;
+    console.warn('+++++++ map onLoad()');
 
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
@@ -649,6 +650,7 @@ cc.Class({
     };
 
     self.initAfterWSConncted = () => {
+      const self = window.mapIns;
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
@@ -846,19 +848,17 @@ cc.Class({
 
 
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      if(!window.wxLifeCycleListenerSetted){ //全局只调用一次
+      if(!window.wxLifeCycleListenerSetted){ //全局只在一开始调用一次
         const query = wx.getLaunchOptionsSync().query;
         const expectedRoomId = query['expectedRoomId'];
         console.warn('By the share link to join room: ', expectedRoomId);
         self.tryToJoinExpectedRoom(expectedRoomId);
       }else{
-        console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
-        /*
+        //console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
         if(cc.sys.localStorage.getItem('expectedRoomId')){
-          console.warn('kobako: 小游戏通过expectedRoomId尝试重连游戏');
+          console.warn('++++++: 小游戏通过expectedRoomId尝试重连游戏');
           self.tryToJoinExpectedRoom(cc.sys.localStorage.getItem('expectedRoomId'));
         }
-        */
       }
     }else{ 
       //其他登录方式: 基本上是通过localStorage.boundRoomId来重连
@@ -878,21 +878,21 @@ cc.Class({
 
       //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
       wx.onShow((res) => {
+        console.warn('+++++++ 微信 onShow');
+        console.log(res);
         if(res.query['expectedRoomId']){
-          if(window.mapIns.ready){
-            console.warn('kobako: onShow, mapIns is ready, 尝试重连房间: ', res.query['expectedRoomId']);
-            window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
-          }else{
-            console.warn('kobako: onShow, mapIns is not ready! 此时无法重连游戏, 需要在mapIns.onLoad()再做重连');
-          }
+          console.warn('kobako: join room:  ', res.query['expectedRoomId']);
+          //window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
           //kobako: expectedRoomId唯一在对局结束后才清除, 用于小游戏断线重连
-          //cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
+          cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
+          //self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
         }
       });
 
       //onHide断开连接
       wx.onHide((res) => {
-        console.log(res);
+        console.warn('+++++++ 微信 onHide');
+        //console.log(res);
 
         if(res.mode == 'hide'){ //按home键或者分享小程序
           console.warn('onHide: hide');
@@ -901,12 +901,17 @@ cc.Class({
           console.warn('onHide: back');
           cc.sys.localStorage.setItem('manuallyExit', true);
           window.closeWSConnection();
+          cc.sys.localStorage.removeItem('expectedRoomId');
+          //断开连接后, 立刻退回到LoginSdene
+          cc.director.loadScene('wechatGameLogin');
         }
-
       });
     }
 
   },
+
+
+
 
   /*
    * kobako: 隐藏规则弹窗后加入到指定房间
@@ -966,7 +971,7 @@ cc.Class({
   },
 
   setupInputControls() {
-    const instance = this;
+    const instance = window.mapIns;
     const mapNode = instance.node;
     const canvasNode = mapNode.parent;
     const joystickInputControllerScriptIns = canvasNode.getComponent("TouchEventsManager");
@@ -990,8 +995,8 @@ cc.Class({
   },
 
   onBattleStarted() {
-    console.log('On battle started!')
-    const self = this;
+    console.log('On battle started!');
+    const self = window.mapIns;
     if (self.musicEffectManagerScriptIns)
       self.musicEffectManagerScriptIns.playBGM();
     const canvasNode = self.canvasNode;
@@ -1591,4 +1596,5 @@ cc.Class({
       return;
     }, 2000);
   },
+
 });

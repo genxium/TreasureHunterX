@@ -535,8 +535,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1554180202000,
-    "meta": 1554180202000,
+    "asset": 1554283661000,
+    "meta": 1554283661000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -934,11 +934,6 @@
     "meta": 1554190921000,
     "relativePath": "scripts/Login.js"
   },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554190917000,
-    "meta": 1554190921000,
-    "relativePath": "scripts/WechatGameLogin.js"
-  },
   "5ae774fb-4f9c-445d-a057-5d32522b975d": {
     "asset": 1554191754000,
     "meta": 1554191785000,
@@ -959,9 +954,14 @@
     "meta": 1554260616000,
     "relativePath": "plugin_scripts/conf.js"
   },
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1554282558000,
+    "meta": 1554283340000,
+    "relativePath": "scripts/WechatGameLogin.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554277819000,
-    "meta": 1554277828000,
+    "asset": 1554283641000,
+    "meta": 1554283658000,
     "relativePath": "scripts/Map.js"
   }
 }
