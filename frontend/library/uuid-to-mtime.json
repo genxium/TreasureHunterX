@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1554195150000,
+    "asset": 1554203172000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -929,11 +929,6 @@
     "meta": 1554174639000,
     "relativePath": "resources/textures/GuiElements_2.png"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1554190876000,
-    "meta": 1554190885000,
-    "relativePath": "scripts/WsSessionMgr.js"
-  },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
     "asset": 1554190912000,
     "meta": 1554190921000,
@@ -949,19 +944,24 @@
     "meta": 1554191785000,
     "relativePath": "scripts/ResultPanel.js"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554197414000,
-    "meta": 1554197424000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
     "asset": 1554200221000,
     "meta": 1554200230000,
     "relativePath": "scripts/FindingPlayer.js"
   },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1554202459000,
+    "meta": 1554202622000,
+    "relativePath": "scripts/WsSessionMgr.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554260614000,
+    "meta": 1554260616000,
+    "relativePath": "plugin_scripts/conf.js"
+  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554201856000,
-    "meta": 1554201860000,
+    "asset": 1554277819000,
+    "meta": 1554277828000,
     "relativePath": "scripts/Map.js"
   }
 }

@@ -459,6 +459,12 @@ cc.Class({
     const self = this;
     window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
 
+    /*
+     * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
+     */
+    window.mapIns = self;
+    window.mapIns.ready = true;
+
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
@@ -838,20 +844,24 @@ cc.Class({
     }
 
 
-    console.warn('map.js onLoad, I should check if need to reconnect to the ws')
 
     if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      if(!window.wxLifeCycleListenerSetted){ //生命周期未监听
-        //第一次进入游戏才调用这个方法
+      if(!window.wxLifeCycleListenerSetted){ //全局只调用一次
         const query = wx.getLaunchOptionsSync().query;
         const expectedRoomId = query['expectedRoomId'];
         console.warn('By the share link to join room: ', expectedRoomId);
         self.tryToJoinExpectedRoom(expectedRoomId);
       }else{
         console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
+        /*
+        if(cc.sys.localStorage.getItem('expectedRoomId')){
+          console.warn('kobako: 小游戏通过expectedRoomId尝试重连游戏');
+          self.tryToJoinExpectedRoom(cc.sys.localStorage.getItem('expectedRoomId'));
+        }
+        */
       }
     }else{ 
-      //其他登录方式
+      //其他登录方式: 基本上是通过localStorage.boundRoomId来重连
       self.tryToJoinExpectedRoom();
     }
 
@@ -860,11 +870,23 @@ cc.Class({
      */
     if(cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerSetted){
       window.wxLifeCycleListenerSetted = true;
+
+      //测试用, 手动输入expRoomId进入房间
+      window.reconnectGameByExpectedRoomId = (expectedRoomId) => {
+        window.mapIns.tryToJoinExpectedRoom(expectedRoomId);
+      }
+
       //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
       wx.onShow((res) => {
         if(res.query['expectedRoomId']){
-          console.warn('By the share link to join room: ', res.query['expectedRoomId']);
-          self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
+          if(window.mapIns.ready){
+            console.warn('kobako: onShow, mapIns is ready, 尝试重连房间: ', res.query['expectedRoomId']);
+            window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
+          }else{
+            console.warn('kobako: onShow, mapIns is not ready! 此时无法重连游戏, 需要在mapIns.onLoad()再做重连');
+          }
+          //kobako: expectedRoomId唯一在对局结束后才清除, 用于小游戏断线重连
+          //cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
         }
       });
 
@@ -892,7 +914,7 @@ cc.Class({
    * @Param expectedRoomIdFromQuery: 通过小游戏链接进入时调用onShow方法, 参数会包含expectedRoomId
    */
   tryToJoinExpectedRoom(expectedRoomIdFromQuery){
-    const self = this;
+    const self = window.mapIns;
 
     //检查是否处于空闲状态
     /* 需注释, 因为会妨碍断线重连
@@ -1000,6 +1022,9 @@ cc.Class({
 
     //clear player info
     self.playersInfoNode.getComponent("PlayersInfo").clearInfo();
+
+    //kobako: 清除expectedRoomId
+    cc.sys.localStorage.removeItem('expectedRoomId');
   },
 
   spawnSelfPlayer() {

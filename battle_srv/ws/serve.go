@@ -57,6 +57,8 @@ func Serve(c *gin.Context) {
 			return
 		}
 		Logger.Info("Finding PlayerLogin record for ws authentication:", zap.Any("intAuthToken", token), zap.Any("boundRoomId", boundRoomId))
+
+    fmt.Printf("kobako: The player have boundRoomId: %d \n ", boundRoomId)
 	}
 	if expectRoomIdStr, hasExpectRoomId := c.GetQuery("expectedRoomId"); hasExpectRoomId {
 		expectRoomId, err = strconv.Atoi(expectRoomIdStr)
@@ -65,6 +67,8 @@ func Serve(c *gin.Context) {
 			return
 		}
 		Logger.Info("Finding PlayerLogin record for ws authentication:", zap.Any("intAuthToken", token), zap.Any("expectedRoomId", expectRoomId))
+
+    fmt.Printf("kobako: The player have expectRoomId: %d \n ", expectRoomId)
 	}
 
 	// TODO: Wrap the following 2 stmts by sql transaction!
@@ -132,6 +136,8 @@ func Serve(c *gin.Context) {
 	}
 
 	onReceivedCloseMessageFromClient := func(code int, text string) error {
+    fmt.Printf("kobako: %d player 接收到来自客户端的close信息 \n ", playerId)
+
 		Logger.Warn("Triggered `onReceivedCloseMessageFromClient`:", zap.Any("code", code), zap.Any("playerId", playerId), zap.Any("message", text))
 		signalToCloseConnOfThisPlayer(code, text)
 		return nil
@@ -182,8 +188,10 @@ func Serve(c *gin.Context) {
 			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
 			res := pRoom.ReAddPlayerIfPossible(pPlayer)
 			if !res {
+        fmt.Printf("kobako: player %d 通过boundRoomId重连游戏失败 \n", playerId)
 				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
 			} else {
+        fmt.Printf("kobako: player %d 通过boundRoomId重连游戏成功 \n", playerId)
 				playerSuccessfullyAddedToRoom = true
 			}
 		}
@@ -193,16 +201,24 @@ func Serve(c *gin.Context) {
 		if tmpRoom, existent := (*models.RoomMapManagerIns)[int32(expectRoomId)]; existent {
 			pRoom = tmpRoom
 			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
-			res := pRoom.AddPlayerIfPossible(pPlayer)
-			if !res {
-				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
-			} else {
+
+      //kobako: 首先尝试重连到对战中的房间, 如果不成功再尝试加入空闲房间
+      if pRoom.ReAddPlayerIfPossible(pPlayer) {
+        fmt.Printf("kobako: player %d 通过expectRoomId重连游戏成功 \n", playerId)
 				playerSuccessfullyAddedToRoom = true
-			}
+      }else if pRoom.AddPlayerIfPossible(pPlayer) {
+        fmt.Printf("kobako: player %d 通过expectRoomId加入房间成功 \n", playerId)
+				playerSuccessfullyAddedToRoom = true
+      }else {
+        fmt.Printf("kobako: player %d 通过expectRoomId加入房间失败 \n", playerId)
+				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
+				playerSuccessfullyAddedToRoom = false
+      }
+
 		}
 	}
 
-	if false == playerSuccessfullyAddedToRoom {
+	if false == playerSuccessfullyAddedToRoom { //如果没有通过expectedRoomId或者boundRoomId加入到某个房间, 就运行到这里
 		defer func() {
 			if pRoom != nil {
 				heap.Push(models.RoomHeapManagerIns, pRoom)

@@ -174,6 +174,7 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery
      * ws实现里onerror永远比onclose触发要快, 所以设置flag后在onclose重置即可
      */
     cc.sys.localStorage.setItem('errorHandled', true);
+    console.warn('WS onerror called');
 
     cc.error('Error caught on the WS clientSession:', event);
     if (window.clientSessionPingInterval) {
@@ -191,6 +192,7 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery
       cc.sys.localStorage.removeItem('errorHandled');
       return;
     }
+    console.warn('WS onclose called');
 
     cc.log('The WS clientSession is closed:', event);
     if (window.clientSessionPingInterval) {

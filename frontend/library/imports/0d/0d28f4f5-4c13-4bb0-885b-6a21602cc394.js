@@ -5,24 +5,13 @@ cc._RF.push(module, '0d28fT1TBNLsIhbaiFgLMOU', 'conf');
 "use strict";
 
 if (CC_DEBUG) {
-  /*
-  var backendAddress = {
-    PROTOCOL: 'https',
-    HOST: 'bgmoba.lokcol.com',
-    PORT: "443",
-    WS_PATH_PREFIX: "/tsrht",
-  };
-  */
 
-  /*
-  var wechatAddress = {
-    PROTOCOL: "http",
-    HOST: "58.87.122.61",
-    PORT: "8089",
-    PROXY: "",
-    APPID_LITERAL: "appid=wx5432dc1d6164d4e",
+  var backendAddress = {
+    PROTOCOL: 'http',
+    HOST: '192.168.31.139',
+    PORT: "9992",
+    WS_PATH_PREFIX: "/tsrht"
   };
-  */
 
   /*
   var backendAddress = {
@@ -33,20 +22,14 @@ if (CC_DEBUG) {
   };
   */
 
-  // var wechatAddress = {
-  //   PROTOCOL: "http",
-  //   HOST: "localhost",
-  //   PORT: "8089",
-  //   PROXY: "",
-  //   APPID_LITERAL: "appid=wx5432dc1d6164d4e",
-  // };
-
+  /*
   var backendAddress = {
     PROTOCOL: 'https',
     HOST: 'tsrht.lokcol.com',
     PORT: "443",
-    WS_PATH_PREFIX: "/tsrht"
+    WS_PATH_PREFIX: "/tsrht",
   };
+  */
 
   var wechatAddress = {
     PROTOCOL: "https",
