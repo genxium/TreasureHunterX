@@ -71,6 +71,12 @@ cc.Class({
     cc.sys.localStorage.removeItem('expectedRoomId');
     cc.sys.localStorage.removeItem('boundRoomId');
     window.closeWSConnection();
+
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      cc.director.loadScene('wechatGameLogin');
+    } else {
+      cc.director.loadScene('login');
+    }
   },
   updatePlayersInfo: function updatePlayersInfo(players) {
     var _this = this;

@@ -949,19 +949,19 @@
     "meta": 1554368280000,
     "relativePath": "scripts/ResultPanel.js"
   },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1554372925000,
+    "meta": 1554372928000,
+    "relativePath": "scripts/FindingPlayer.js"
+  },
   "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554368233000,
-    "meta": 1554368280000,
+    "asset": 1554374506000,
+    "meta": 1554374897000,
     "relativePath": "scripts/WechatGameLogin.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554369015000,
-    "meta": 1554369017000,
+    "asset": 1554376196000,
+    "meta": 1554376201000,
     "relativePath": "scripts/Map.js"
-  },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1554369147000,
-    "meta": 1554369156000,
-    "relativePath": "scripts/FindingPlayer.js"
   }
 }

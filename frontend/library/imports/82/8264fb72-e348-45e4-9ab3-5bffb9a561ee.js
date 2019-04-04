@@ -37,16 +37,6 @@ cc.Class({
       console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', 0);
     }
 
-    //kobako: 腾讯统计代码
-    if (cc.sys.platform != cc.sys.WECHAT_GAME) {
-      var mta = document.createElement("script");
-      mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-      mta.setAttribute("name", "MTAH5");
-      mta.setAttribute("sid", "500674632");
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(mta, s);
-    }
-
     //window.atFirstLocationHref = window.location.href.split('#')[0];
     var self = this;
     self.getRetCodeList();
@@ -303,6 +293,7 @@ cc.Class({
       error: function error(xhr, status, errMsg) {
         cc.log('Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        cc.director.loadScene('wechatGameLogin');
       },
       timeout: function timeout() {
         self.enableInteractiveControls(true);
@@ -420,6 +411,8 @@ cc.Class({
         default:
           break;
       }
+
+      cc.director.loadScene('wechatGameLogin');
     }
   },
   useWXCodeLogin: function useWXCodeLogin(_code) {
