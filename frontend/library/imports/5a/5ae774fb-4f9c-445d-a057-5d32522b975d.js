@@ -36,12 +36,6 @@ cc.Class({
       default: null
     }
 
-    /*
-    defaultAvatar: {
-      type: cc.SpriteFrame,
-      default: null,
-    },
-    */
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -52,16 +46,26 @@ cc.Class({
     var homeButtonNode = resultPanelNode.getChildByName("homeBtn");
   },
   againBtnOnClick: function againBtnOnClick(evt) {
-    this.onClose();
-    //TODO: Again
-    if (!this.onAgainClicked) return;
-    this.onAgainClicked();
+    if (null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
+      console.warn('服务器端尚未断连, 不响应操作');
+      return;
+    } else {
+      this.onClose();
+      if (!this.onAgainClicked) return;
+      this.onAgainClicked();
+    }
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      cc.director.loadScene('wechatGameLogin');
+    if (null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
+      console.warn('服务器端尚未断连, 不响应操作');
+      return; //如果还没断连, 不响应操作, 直到服务器端主动断连
     } else {
-      cc.director.loadScene('login');
+      //跳回登录页面
+      if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        cc.director.loadScene('wechatGameLogin');
+      } else {
+        cc.director.loadScene('login');
+      }
     }
   },
   showPlayerInfo: function showPlayerInfo(players) {

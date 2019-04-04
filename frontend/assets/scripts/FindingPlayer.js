@@ -18,6 +18,10 @@ cc.Class({
       type: cc.Node,
       default: null
     },
+    exitBtnNode: {
+      type: cc.Node,
+      default: null
+    }
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -52,10 +56,14 @@ cc.Class({
     this.findingAnimNode.active = true;
 
   },
+  hideExitButton(){
+    if(this.exitBtnNode != null){
+      this.exitBtnNode.active = false;
+    }
+  },
   exitBtnOnClick(evt) {
-    //TODO: 这时候不应该让Login scene自动通过expectedRoomId进入房间
-
-    cc.sys.localStorage.setItem('manuallyExit', true);
+    cc.sys.localStorage.removeItem('expectedRoomId');
+    cc.sys.localStorage.removeItem('boundRoomId');
     window.closeWSConnection();
   },
   updatePlayersInfo(players) {

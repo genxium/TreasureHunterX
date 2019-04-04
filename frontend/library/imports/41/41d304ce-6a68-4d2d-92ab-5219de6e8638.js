@@ -270,8 +270,8 @@ cc.Class({
     window.sendSafely(JSON.stringify(wrapped));
   },
   onDestroy: function onDestroy() {
-    console.warn('+++++++ map onDestroy()');
-    var self = this;
+    console.warn('+++++++ map onDestroy(), mapIns.counter:', window.mapIns.counter);
+    var self = window.mapIns;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
@@ -480,8 +480,16 @@ cc.Class({
     /*
      * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
      */
+    self.counter = function () {
+      if (window.mapIns == null || null == window.mapIns.counter) {
+        return 0;
+      } else {
+        return window.mapIns.counter + 1;
+      }
+    }();
     window.mapIns = self;
-    console.warn('+++++++ map onLoad()');
+
+    console.warn('+++++++ map onLoad(), map counter:', window.mapIns.counter);
 
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
@@ -501,27 +509,14 @@ cc.Class({
     var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = function () {
-      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      self._resetCurrentMatch();
-      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
-      switch (shouldReconnectState) {
-        case 2:
-        case 1:
-          // Clicking too fast?
-          return;
-        default:
-          break;
-      }
 
-      if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) {
-        // Already disconnected. 
-        cc.log("Ws session is already closed when `again/replay` button is clicked. Reconnecting now.");
-        window.initPersistentSessionClient(self.initAfterWSConncted);
+      if (null != window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
+        console.warn('服务器端尚未断连, 不响应操作');
+        return; //如果还没断连, 不响应操作, 直到服务器端主动断连
       } else {
-        // Should disconnect first and reconnect within `window.handleClientSessionCloseOrError`. 
-        cc.log("Ws session is not closed yet when `again/replay` button is clicked, closing the ws session now.");
-        cc.sys.localStorage.setItem('shouldReconnectState', 2);
-        window.closeWSConnection();
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self._resetCurrentMatch();
+        window.initPersistentSessionClient(self.initAfterWSConncted);
       }
     };
 
@@ -780,38 +775,18 @@ cc.Class({
     }
 
     window.handleClientSessionCloseOrError = function () {
-      var shouldReconnectState = parseInt(cc.sys.localStorage.getItem('shouldReconnectState'));
-      switch (shouldReconnectState) {
-        case 2:
-          shouldReconnectState = 1;
-          cc.sys.localStorage.setItem('shouldReconnectState', shouldReconnectState);
-          cc.log("Reconnecting because 2 == shouldReconnectState and it's now set to 1.");
-          window.initPersistentSessionClient(self.initAfterWSConncted);
-          return;
-        case 1:
-          cc.log("Neither reconnecting nor alerting because 1 == shouldReconnectState and it's now removed.");
-          cc.sys.localStorage.removeItem("shouldReconnectState");
-          return;
-        default:
-          break;
-      }
+      console.warn('+++++++ handleClientSessionCloseOrError(), mapIns.counter:', window.mapIns.counter);
 
-      //手动退出不应该弹窗报错
-      if (cc.sys.localStorage.getItem('manuallyExit')) {
-        console.warn('手动退出, 清除房间信息并回到登录页');
-        cc.sys.localStorage.removeItem('manuallyExit');
-        cc.sys.localStorage.removeItem("boundRoomId");
+      if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) {
+        //如果是游戏时间结束引起的断连
+        console.warn('游戏结束引起的断连, 不需要回到登录页面');
+      } else {
+        console.warn('断连, 回到登录页面');
+
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
           cc.director.loadScene('wechatGameLogin');
         } else {
           cc.director.loadScene('login');
-        }
-      } else {
-        //意外断线
-        console.warn('意外断线');
-        if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
-          window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-          self.alertForGoingBackToLoginScene("Client session closed unexpectedly!", self, true);
         }
       }
     };
@@ -837,16 +812,19 @@ cc.Class({
         if (-99 == refFrameId) {
           //显示倒计时
           self.matchPlayersFinsihed(diffFrame.players);
+          //隐藏返回按钮
+          var _findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+          _findingPlayerScriptIns.hideExitButton();
         } else if (-98 == refFrameId) {
           //显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
           }
-          var _findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
+          var _findingPlayerScriptIns2 = self.findingPlayerNode.getComponent("FindingPlayer");
           if (!self.findingPlayerNode.parent) {
             self.showPopopInCanvas(self.findingPlayerNode);
           }
-          _findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
+          _findingPlayerScriptIns2.updatePlayersInfo(diffFrame.players);
           return;
         }
 
@@ -1000,125 +978,96 @@ cc.Class({
       };
     };
 
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      if (!window.wxLifeCycleListenerSetted) {
-        //全局只在一开始调用一次
-        var query = wx.getLaunchOptionsSync().query;
-        var expectedRoomId = query['expectedRoomId'];
-        console.warn('By the share link to join room: ', expectedRoomId);
-        self.tryToJoinExpectedRoom(expectedRoomId);
-      } else {
-        //console.log('已监听生命周期函数, 不手动调用tryToJoinExpectedRoom');
-        if (cc.sys.localStorage.getItem('expectedRoomId')) {
-          console.warn('++++++: 小游戏通过expectedRoomId尝试重连游戏');
-          self.tryToJoinExpectedRoom(cc.sys.localStorage.getItem('expectedRoomId'));
-        }
-      }
-    } else {
-      //其他登录方式: 基本上是通过localStorage.boundRoomId来重连
-      self.tryToJoinExpectedRoom();
-    }
-
     /*
-     * 监听小游戏生命周期
+     * 监听小游戏生命周期, 第一次
+     * 第一次进入游戏没有初始化好wx.onShow, 需要调用wx.getLaunchOptionsSync获取请求中的expectedRoomId信息
+     * 小游戏端重连参考: https://shimo.im/docs/OUlOQivl2hIglAOE #3
      */
-    if (cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerSetted) {
-      window.wxLifeCycleListenerSetted = true;
+    if (cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerInitiated) {
+      window.wxLifeCycleListenerInitiated = true; //这个flag表示已经初始化过生命周期函数了
 
-      //测试用, 手动输入expRoomId进入房间
       window.reconnectGameByExpectedRoomId = function (expectedRoomId) {
-        window.mapIns.tryToJoinExpectedRoom(expectedRoomId);
+        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
+        window.mapIns.tryToJoinExpectedRoom();
       };
 
-      //onShow, 每次重新打开都判断是否需要加入指定房间, 通过分享链接进入时会带上expectedRoomId参数
+      /**
+       * WARN: 实验后假设onShow永远发生在map onLoad之前.
+       */
       wx.onShow(function (res) {
-        console.warn('+++++++ 微信 onShow');
-        console.log(res);
+        //通过分享链接返回小游戏的时候, 会带上expectedRoomId
+        console.warn('+++++ wx onShow(), mapIns.counter: ', window.mapIns.counter);
         if (res.query['expectedRoomId']) {
-          console.warn('kobako: join room:  ', res.query['expectedRoomId']);
-          //window.reconnectGameByExpectedRoomId(res.query['expectedRoomId']);
-          //kobako: expectedRoomId唯一在对局结束后才清除, 用于小游戏断线重连
           cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
-          //self.tryToJoinExpectedRoom(res.query['expectedRoomId']);
         }
       });
 
-      //onHide断开连接
       wx.onHide(function (res) {
-        console.warn('+++++++ 微信 onHide');
-        //console.log(res);
+        console.warn('+++++ wx onHide(), mapIns.counter: ', window.mapIns.counter);
+        if (res.mode == 'hide') {//按home键或者分享小程序
 
-        if (res.mode == 'hide') {
-          //按home键或者分享小程序
-          console.warn('onHide: hide');
-          //Do nothing
         } else {
-          //其他情况下断连返回登录页
-          console.warn('onHide: back');
-          cc.sys.localStorage.setItem('manuallyExit', true);
+          //其他情况下(如手动点击胶囊按钮)断开ws连接并返回登录页
           window.closeWSConnection();
-          cc.sys.localStorage.removeItem('expectedRoomId');
-          //断开连接后, 立刻退回到LoginSdene
-          cc.director.loadScene('wechatGameLogin');
         }
       });
+
+      //通过分享链接进入房间
+      var expectedRoomId = function () {
+        var query = wx.getLaunchOptionsSync().query;
+        return query['expectedRoomId'];
+      }();
+      if (null != expectedRoomId) {
+        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
+      }
     }
+
+    self.tryToJoinExpectedRoom();
   },
 
 
   /*
-   * kobako: 隐藏规则弹窗后加入到指定房间
-   * 调用场景: 1. map.js onLoad()方法 2. 小游戏生命周期onShow函数
-   * @Param expectedRoomIdFromQuery: 通过小游戏链接进入时调用onShow方法, 参数会包含expectedRoomId
+   * kobako: 隐藏规则弹窗后尝试通过expectedRoomId或者boundRoomId加入到指定房间
    */
-  tryToJoinExpectedRoom: function tryToJoinExpectedRoom(expectedRoomIdFromQuery) {
+  tryToJoinExpectedRoom: function tryToJoinExpectedRoom() {
+    console.warn('+++++ map tryToJoinExpectedRoom(), mapIns.counter: ', window.mapIns.counter);
     var self = window.mapIns;
-
-    //检查是否处于空闲状态
-    /* 需注释, 因为会妨碍断线重连
-    if(self.battleState != ALL_BATTLE_STATES.WAITING){
-      console.warn('tryToJoinExpectedRoom: Not in waiting state');
-      return;
-    }
-    */
-
-    console.warn('Try To Join ExpectedRoom');
 
     /*
     * The following code snippet is a dirty fix.
     */
-    var expectedRoomId = null;
-
-    if (expectedRoomIdFromQuery) {
-      expectedRoomId = expectedRoomIdFromQuery;
-    } else {
-      var qDict = window.getQueryParamDict();
-      if (qDict) {
-        expectedRoomId = qDict["expectedRoomId"];
+    var expectedRoomId = function () {
+      if (cc.sys.localStorage.getItem('expectedRoomId')) {
+        //Now mini game only
+        return cc.sys.localStorage.getItem('expectedRoomId');
       } else {
-        if (window.history && window.history.state) {
-          expectedRoomId = window.history.state.expectedRoomId;
+        var qDict = window.getQueryParamDict();
+        if (qDict) {
+          return qDict["expectedRoomId"];
+        } else if (window.history && window.history.state) {
+          return window.history.state.expectedRoomId;
+        } else {
+          return null;
         }
       }
-    }
+    }();
 
     if (expectedRoomId) {
-      console.warn('expectedRoomId: ', expectedRoomId);
-      if (self.gameRuleNode != null && self.gameRuleNode.active != null) {
-        self.gameRuleNode.active = false;
-      }
-      //kobako: 直接传expectedRoomId到初始化session函数
-      window.initPersistentSessionClient(self.initAfterWSConncted, expectedRoomId);
-      return;
-    } else if (cc.sys.localStorage.getItem('boundRoomId')) {
-      console.warn('boundRoomId: ', cc.sys.localStorage.getItem('boundRoomId'));
-      if (self.gameRuleNode != null && self.gameRuleNode.active != null) {
-        self.gameRuleNode.active = false;
-      }
+      console.warn('通过expectedRoomId加入房间: ', expectedRoomId);
+      self.hideGameRuleNode();
       window.initPersistentSessionClient(self.initAfterWSConncted);
-      return;
+    } else if (cc.sys.localStorage.getItem('boundRoomId')) {
+      console.warn('通过boundRoomId加入房间: ', boundRoomId);
+      self.hideGameRuleNode();
+      window.initPersistentSessionClient(self.initAfterWSConncted);
     } else {
-      console.warn('Do not have expectedRoomId or boundRoomId, do nothing');
+      console.warn('没有expectedRoomId或者boundRoomId, 什么也不做');
+    }
+  },
+  hideGameRuleNode: function hideGameRuleNode() {
+    var self = window.mapIns;
+    if (self.gameRuleNode != null && self.gameRuleNode.active != null) {
+      self.gameRuleNode.active = false;
     }
   },
   setupInputControls: function setupInputControls() {
@@ -1133,7 +1082,9 @@ cc.Class({
 
     instance.inputControlTimer = setInterval(function () {
       if (false == instance._inputControlEnabled) return;
-      instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;
+      if (instance.selfPlayerScriptIns != null && ctrl != null) {
+        instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;
+      }
     }, inputControlPollerMillis);
   },
   enableInputControls: function enableInputControls() {
@@ -1176,6 +1127,7 @@ cc.Class({
 
     //kobako: 清除expectedRoomId
     cc.sys.localStorage.removeItem('expectedRoomId');
+    cc.sys.localStorage.removeItem('boundRoomId');
   },
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;

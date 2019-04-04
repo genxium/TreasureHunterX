@@ -319,8 +319,8 @@
     ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
-    "_N$transition": 2,
-    "transition": 2,
+    "_N$transition": 3,
+    "transition": 3,
     "_N$normalColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -1896,6 +1896,9 @@
     },
     "myAvatarNode": {
       "__id__": 52
+    },
+    "exitBtnNode": {
+      "__id__": 5
     },
     "_id": ""
   },

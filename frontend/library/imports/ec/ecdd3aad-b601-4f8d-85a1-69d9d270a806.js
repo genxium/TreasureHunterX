@@ -23,6 +23,10 @@ cc.Class({
     myAvatarNode: {
       type: cc.Node,
       default: null
+    },
+    exitBtnNode: {
+      type: cc.Node,
+      default: null
     }
   },
 
@@ -58,10 +62,14 @@ cc.Class({
     window.firstPlayerInfoNode = this.firstPlayerInfoNode;
     this.findingAnimNode.active = true;
   },
+  hideExitButton: function hideExitButton() {
+    if (this.exitBtnNode != null) {
+      this.exitBtnNode.active = false;
+    }
+  },
   exitBtnOnClick: function exitBtnOnClick(evt) {
-    //TODO: 这时候不应该让Login scene自动通过expectedRoomId进入房间
-
-    cc.sys.localStorage.setItem('manuallyExit', true);
+    cc.sys.localStorage.removeItem('expectedRoomId');
+    cc.sys.localStorage.removeItem('boundRoomId');
     window.closeWSConnection();
   },
   updatePlayersInfo: function updatePlayersInfo(players) {

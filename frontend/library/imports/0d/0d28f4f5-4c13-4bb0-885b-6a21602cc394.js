@@ -6,12 +6,14 @@ cc._RF.push(module, '0d28fT1TBNLsIhbaiFgLMOU', 'conf');
 
 if (CC_DEBUG) {
 
+  /*
   var backendAddress = {
     PROTOCOL: 'http',
     HOST: '192.168.31.139',
     PORT: "9992",
-    WS_PATH_PREFIX: "/tsrht"
+    WS_PATH_PREFIX: "/tsrht",
   };
+  */
 
   /*
   var backendAddress = {
@@ -22,14 +24,12 @@ if (CC_DEBUG) {
   };
   */
 
-  /*
   var backendAddress = {
     PROTOCOL: 'https',
     HOST: 'tsrht.lokcol.com',
     PORT: "443",
-    WS_PATH_PREFIX: "/tsrht",
+    WS_PATH_PREFIX: "/tsrht"
   };
-  */
 
   var wechatAddress = {
     PROTOCOL: "https",

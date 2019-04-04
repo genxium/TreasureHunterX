@@ -83,7 +83,7 @@ function _base64ToArrayBuffer(base64) {
   return _base64ToUint8Array(base64).buffer;
 }
 
-window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery) {
+window.initPersistentSessionClient = function (onopenCb) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
     if (null != onopenCb) {
       onopenCb();
@@ -97,9 +97,9 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery
 
   var expectedRoomId = null;
 
-  if (expectedRoomIdFromQuery) {
+  if (cc.sys.localStorage.getItem('expectedRoomId')) {
     // Now mini game only
-    expectedRoomId = expectedRoomIdFromQuery;
+    expectedRoomId = cc.sys.localStorage.getItem('expectedRoomId');
   } else {
     var qDict = window.getQueryParamDict();
     if (qDict) {
@@ -131,6 +131,13 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery
   var clientSession = new WebSocket(urlToConnect);
 
   clientSession.onopen = function (event) {
+
+    if (window.mapIns) {
+      console.warn('+++++++ ws onopen(), mapIns.counter:', window.mapIns.counter);
+    } else {
+      console.warn('+++++++ ws onopen(), mapIns.counter:', 0);
+    }
+
     cc.log("The WS clientSession is opened.");
     window.clientSession = clientSession;
     if (null == onopenCb) return;
@@ -169,6 +176,7 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomIdFromQuery
   };
 
   clientSession.onerror = function (event) {
+
     /*
      * kobako: 为防止二次调用window.handleClientSessionCloseOrError(), 设置flag. 
      * ws实现里onerror永远比onclose触发要快, 所以设置flag后在onclose重置即可

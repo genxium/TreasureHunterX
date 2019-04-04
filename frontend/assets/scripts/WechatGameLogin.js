@@ -25,21 +25,22 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
-    console.warn('+++++++ WechatLogin onLoad()');
+    if(window.mapIns){
+      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', window.mapIns.counter);
+    }else{
+      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', 0);
+    }
 
 
     //kobako: 腾讯统计代码
-    //WARN: 打包到微信小游戏的时候会导致出错
-    /*
-    (function() {
-        var mta = document.createElement("script");
-        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-        mta.setAttribute("name", "MTAH5");
-        mta.setAttribute("sid", "500674632");
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(mta, s);
-    })();
-    */
+    if(cc.sys.platform != cc.sys.WECHAT_GAME){
+      var mta = document.createElement("script");
+      mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+      mta.setAttribute("name", "MTAH5");
+      mta.setAttribute("sid", "500674632");
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(mta, s);
+    }
 
     //window.atFirstLocationHref = window.location.href.split('#')[0];
     const self = this;
@@ -152,7 +153,11 @@ cc.Class({
   },
 
   onDestroy(){
-    console.warn('+++++++ wechatLogin onDestroy()');
+    if(window.mapIns){
+      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', window.mapIns.counter);
+    }else{
+      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', 0);
+    }
   },
 
   showTips(text){
