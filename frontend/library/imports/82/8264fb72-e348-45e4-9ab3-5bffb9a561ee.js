@@ -31,13 +31,20 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {
-    if (window.mapIns) {
-      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', window.mapIns.counter);
-    } else {
-      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', 0);
-    }
 
-    //window.atFirstLocationHref = window.location.href.split('#')[0];
+    wx.onShow(function (res) {
+      cc.log('+++++ wx onShow(), mapIns.counter: ' + window.mapIns.counter);
+    });
+
+    wx.onHide(function (res) {
+      cc.log('+++++ wx onHide(), mapIns.counter: ' + window.mapIns.counter + ', onHide.res: ' + res);
+      if ('close' == res.mode) {
+        window.closeWSConnection();
+      } else {
+        // Deliberately left blank.
+      }
+    });
+
     var self = this;
     self.getRetCodeList();
     self.getRegexList();
@@ -48,20 +55,17 @@ cc.Class({
         return;
       }
 
-      self.showTips('登录中...');
-
+      self.showTips("自动登录中");
       self.checkIntAuthTokenExpire().then(function () {
-        self.showTips('登录状态未过期, 自动登录中...');
+        self.showTips("自动登录中...");
         var intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
         self.useTokenLogin(intAuthToken);
       }, function () {
-        //调用wx.login然后请求登录
-
+        // 调用wx.login然后请求登录。
         wx.authorize({
           scope: "scope.userInfo",
           success: function success() {
-            self.showTips('授权成功, 登录中...');
-
+            self.showTips("授权成功, 登录中...");
             wx.login({
               success: function success(res) {
                 console.log('wx login success, res:');
@@ -144,16 +148,16 @@ cc.Class({
   },
   onDestroy: function onDestroy() {
     if (window.mapIns) {
-      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', window.mapIns.counter);
+      cc.log('+++++++ WechatGameLogin onDestroy(), mapIns.counter: ' + window.mapIns.counter);
     } else {
-      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', 0);
+      cc.log('+++++++ WechatGameLogin onDestroy(), mapIns.counter: 0');
     }
   },
   showTips: function showTips(text) {
     if (this.tipsLabel != null) {
       this.tipsLabel.string = text;
     } else {
-      console.log('Login scene showTips failed');
+      cc.log('Login scene showTips failed');
     }
   },
   getRetCodeList: function getRetCodeList() {
@@ -368,7 +372,6 @@ cc.Class({
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
         displayName: res.displayName,
-        //kobako: 新增
         name: res.name
       };
       cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
@@ -379,7 +382,7 @@ cc.Class({
 
       cc.director.loadScene('default_map');
     } else {
-      console.warn('onLoggedIn failed!');
+      cc.warn('onLoggedIn failed!');
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
@@ -469,7 +472,7 @@ cc.Class({
   },
   getWechatCode: function getWechatCode(evt) {
     var self = this;
-    self.showTips('');
+    self.showTips("");
     var wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + (null != wechatAddress.PORT && "" != wechatAddress.PORT.trim() ? ":" + wechatAddress.PORT : "");
     var url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
     console.log("To visit wechat auth addr: " + url);

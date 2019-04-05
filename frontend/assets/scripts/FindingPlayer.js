@@ -27,16 +27,16 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
-    //kobako: 初始化小游戏分享
-    //WARN: 不保证在ws连接成功并且拿到boundRoomId后才运行到此处
-    if(cc.sys.platform == cc.sys.WECHAT_GAME){
-      console.warn('kobako: boundRoomId for share: ' + cc.sys.localStorage.getItem('boundRoomId'));
+    // WARNING: 不能保证在ws连接成功并且拿到boundRoomId后才运行到此处。
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      const boundRoomId = cc.sys.localStorage.getItem('boundRoomId');
+      console.warn('The boundRoomId for sharing: ' + boundRoomId);
       wx.showShareMenu();
       wx.onShareAppMessage(() => ({
         title: '夺宝大作战',
-        imageUrl: 'https://mmocgame.qpic.cn/wechatgame/ibxA6JVNslX1q6ibicey5e4ibvrmGFSlC4xrbKAt5jhQGu8I00iaojEGxlud86OtKAA0T/0' , // 图片 URL
+        imageUrl: 'https://mmocgame.qpic.cn/wechatgame/ibxA6JVNslX1q6ibicey5e4ibvrmGFSlC4xrbKAt5jhQGu8I00iaojEGxlud86OtKAA0T/0',  // 图片 URL
         imageUrlId: 'RcU9ypycT6alae-GhclK3Q',
-        query: 'expectedRoomId=' + cc.sys.localStorage.getItem('boundRoomId'),
+        query: 'expectedRoomId=' + boundRoomId,
       }));
     }
 
@@ -56,31 +56,27 @@ cc.Class({
     this.findingAnimNode.active = true;
 
   },
-  hideExitButton(){
-    if(this.exitBtnNode != null){
+  hideExitButton() {
+    if (this.exitBtnNode != null) {
       this.exitBtnNode.active = false;
     }
   },
-  exitBtnOnClick(evt) {
-    cc.sys.localStorage.removeItem('expectedRoomId');
-    cc.sys.localStorage.removeItem('boundRoomId');
-    window.closeWSConnection();
 
-    if(cc.sys.platform == cc.sys.WECHAT_GAME){
+  exitBtnOnClick(evt) {
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+    window.closeWSConnection();
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
       cc.director.loadScene('wechatGameLogin');
-    }else{
+    } else {
       cc.director.loadScene('login');
     }
   },
+
   updatePlayersInfo(players) {
     if (!players) return;
     for (let i in players) {
       const playerInfo = players[i];
       const playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
-      /*
-      const nameNode = playerInfoNode.getChildByName("name");
-      nameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[playerInfo.joinIndex];
-      */
       playerInfoNode.active = true;
       if (2 == playerInfo.joinIndex) {
         this.findingAnimNode.active = false;
@@ -114,17 +110,17 @@ cc.Class({
         });
       })();
 
-      function isEmptyString(str){
+      function isEmptyString(str) {
         return str == null || str == ''
       }
 
       const nameNode = playerInfoNode.getChildByName("name");
       const nameToDisplay = (() => {
-        if(!isEmptyString(playerInfo.displayName)){
+        if (!isEmptyString(playerInfo.displayName)) {
           return playerInfo.displayName
-        }else if(!isEmptyString(playerInfo.name)){
+        } else if (!isEmptyString(playerInfo.name)) {
           return playerInfo.name
-        }else{
+        } else {
           return "No name"
         }
       })();

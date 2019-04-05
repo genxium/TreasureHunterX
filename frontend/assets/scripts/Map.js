@@ -268,8 +268,16 @@ cc.Class({
     window.sendSafely(JSON.stringify(wrapped));
   },
 
+  onEnable() {
+    cc.warn(`+++++++ Map onEnable(), mapIns.counter: ${window.mapIns.counter}`);
+  },
+
+  onDisable() {
+    cc.warn(`+++++++ Map onDisable(), mapIns.counter: ${window.mapIns.counter}`);
+  },
+
   onDestroy() {
-    console.warn('+++++++ map onDestroy(), mapIns.counter:', window.mapIns.counter);
+    cc.warn(`+++++++ Map onDestroy(), mapIns.counter: ${window.mapIns.counter}`);
     const self = window.mapIns;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -452,27 +460,24 @@ cc.Class({
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
     }
-    self.showPopopInCanvas(self.gameRuleNode);
+    self.showPopupInCanvas(self.gameRuleNode);
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
   },
 
   onLoad() {
     const self = this;
+    window.mapIns = self;
     window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
 
-    /*
-     * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
-     */
     self.counter = (() => {
-      if(window.mapIns == null || null == window.mapIns.counter){
+      if (window.mapIns == null || null == window.mapIns.counter) {
         return 0;
-      }else{
+      } else {
         return window.mapIns.counter + 1;
       }
     })();
-    window.mapIns = self;
 
-    console.warn('+++++++ map onLoad(), map counter:', window.mapIns.counter);
+    cc.warn('+++++++ Map onLoad(), map counter:', window.mapIns.counter);
 
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
@@ -480,11 +485,11 @@ cc.Class({
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
 
-    /** init requeired prefab started */
+    /** Init required prefab started. */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
 
-    //Result panel init
+    // Initializes Result panel.
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     self.resultPanelNode.width = self.canvasNode.width;
     self.resultPanelNode.height = self.canvasNode.height;
@@ -492,16 +497,9 @@ cc.Class({
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = () => {
-
-      if (null != window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
-        console.warn('服务器端尚未断连, 不响应操作');
-        return;//如果还没断连, 不响应操作, 直到服务器端主动断连
-      }else{
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self._resetCurrentMatch();
-        window.initPersistentSessionClient(self.initAfterWSConncted);
-      }
-
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      self._resetCurrentMatch();
+      window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
@@ -533,7 +531,7 @@ cc.Class({
       2: player2Node
     });
 
-    /** init requeired prefab ended */
+    /** Init required prefab ended. */
 
     self.clientUpsyncFps = 20;
     self._resetCurrentMatch();
@@ -611,37 +609,34 @@ cc.Class({
     window.handleClientSessionCloseOrError = function() {
       console.warn('+++++++ handleClientSessionCloseOrError(), mapIns.counter:', window.mapIns.counter);
 
-      if(ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState){ //如果是游戏时间结束引起的断连
-        console.warn('游戏结束引起的断连, 不需要回到登录页面');
-      }else{
-        console.warn('断连, 回到登录页面');
-
-        if(cc.sys.platform == cc.sys.WECHAT_GAME){
+      if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) { //如果是游戏时间结束引起的断连
+        cc.log('游戏结束引起的断连, 不需要回到登录页面');
+      } else {
+        cc.log('意外断连，即将回到登录页面');
+        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
           cc.director.loadScene('wechatGameLogin');
-        }else{
+        } else {
           cc.director.loadScene('login');
         }
       }
     };
 
-    self.initAfterWSConncted = () => {
+    self.initAfterWSConnected = () => {
       const self = window.mapIns;
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
-      self.transitToState(ALL_MAP_STATES.VISUAL);
+      self.transitToState(ALL_MAP_STATES.WAITING);
       self._inputControlEnabled = false;
       self.setupInputControls();
 
-
       window.handleRoomDownsyncFrame = function(diffFrame) {
-
-        if(0 < diffFrame.id && diffFrame.id < 10){
-          cc.log(diffFrame)
+        if (ALL_BATTLE_STATES.WAITING != self.battleState 
+            && ALL_BATTLE_STATES.IN_BATTLE != self.battleState 
+            && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
+          return;
         }
-
-        if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         const refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
           //显示倒计时
@@ -656,13 +651,12 @@ cc.Class({
           }
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           if (!self.findingPlayerNode.parent) {
-            self.showPopopInCanvas(self.findingPlayerNode);
+            self.showPopupInCanvas(self.findingPlayerNode);
           }
           findingPlayerScriptIns.updatePlayersInfo(diffFrame.players);
           return;
         }
 
-        //根据downFrame显示游戏场景
         const frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -700,7 +694,7 @@ cc.Class({
         }
         const countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
-          cc.log(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
+          cc.warn(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
         }
         self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = ( //根据refFrameId和diffFrame计算出新的一帧
@@ -710,7 +704,6 @@ cc.Class({
           :
           self._generateNewFullFrame(cachedFullFrame, diffFrame)
         );
-
 
         if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
@@ -798,7 +791,7 @@ cc.Class({
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
 
-        //update guardTowerInfoDict
+        // Update `guardTowerInfoDict`.
         self.guardTowerInfoDict = {};
         const guardTowers = roomDownsyncFrame.guardTowers;
         const ids = Object.keys(guardTowers);
@@ -808,7 +801,6 @@ cc.Class({
           const tower = guardTowers[id];
           self.guardTowerInfoDict[localIdInBattle] = tower;
         }
-
 
         if (0 == self.lastRoomDownsyncFrameId) {
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
@@ -822,99 +814,31 @@ cc.Class({
       // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
     }
-
-    /*
-     * 监听小游戏生命周期, 第一次
-     * 第一次进入游戏没有初始化好wx.onShow, 需要调用wx.getLaunchOptionsSync获取请求中的expectedRoomId信息
-     * 小游戏端重连参考: https://shimo.im/docs/OUlOQivl2hIglAOE #3
-     */
-    if(cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerInitiated){
-      window.wxLifeCycleListenerInitiated = true; //这个flag表示已经初始化过生命周期函数了
-
-      window.reconnectGameByExpectedRoomId = (expectedRoomId) => {
-        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
-        window.mapIns.tryToJoinExpectedRoom();
-      }
-
-      /**
-       * WARN: 实验后假设onShow永远发生在map onLoad之前.
-       */
-      wx.onShow((res) => { //通过分享链接返回小游戏的时候, 会带上expectedRoomId
-        console.warn('+++++ wx onShow(), mapIns.counter: ', window.mapIns.counter);
-        if(res.query['expectedRoomId']){
-          cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
-        }
-      });
-
-      wx.onHide((res) => {
-        console.warn('+++++ wx onHide(), mapIns.counter: ', window.mapIns.counter, ' onHide的参数如下:');
-        console.log(res);
-        if(res.mode == 'hide'){ //按home键或者分享小程序
-
-        }else{ //其他情况下(如手动点击胶囊按钮)断开ws连接并返回登录页
-          window.closeWSConnection();
-        }
-      });     
-
-      //通过分享链接进入房间
-      const expectedRoomId = (() => {
-        const query = wx.getLaunchOptionsSync().query;
-        return query['expectedRoomId'];
-      })();
-      if(null != expectedRoomId){
-        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
-      }
-    }
-
-    self.tryToJoinExpectedRoom();
-
-  },
-
-  /*
-   * kobako: 隐藏规则弹窗后尝试通过expectedRoomId或者boundRoomId加入到指定房间
-   */
-  tryToJoinExpectedRoom(){
-    console.warn('+++++ map tryToJoinExpectedRoom(), mapIns.counter: ', window.mapIns.counter);
-    const self = window.mapIns;
-
-    /*
-    * The following code snippet is a dirty fix.
-    */
-    const expectedRoomId = (() => {
-      if(cc.sys.localStorage.getItem('expectedRoomId')){//Now mini game only
-        return cc.sys.localStorage.getItem('expectedRoomId');
-      }else{
-        const qDict = window.getQueryParamDict();
-        if (qDict) {
-          return qDict["expectedRoomId"];
-        }else if(window.history && window.history.state){
-          return window.history.state.expectedRoomId;
-        }else{
-          return null;
-        }
-      }
-    })();
-
-    if (expectedRoomId) {
-      console.warn('通过expectedRoomId加入房间: ', expectedRoomId);
-      self.hideGameRuleNode();
-      window.initPersistentSessionClient(self.initAfterWSConncted);
-    } else if (cc.sys.localStorage.getItem('boundRoomId')){
-      console.warn('通过boundRoomId加入房间: ', boundRoomId);
-      self.hideGameRuleNode();
-      window.initPersistentSessionClient(self.initAfterWSConncted);
-    }else {
-      console.warn('没有expectedRoomId或者boundRoomId, 什么也不做');
+    
+    // The player is now viewing "self.gameRuleNode" with button(s) to start an actual battle. -- YFLu
+    const expectedRoomId = window.getExpectedRoomIdSync(); 
+    if (null != expectedRoomId) {
+      self.disableGameRuleNode();
+      // The player is now viewing "self.gameRuleNode" with no button, and should wait for `self.initAfterWSConnected` to be called. -- YFLu
+      window.initPersistentSessionClient(self.initAfterWSConnected, expectedRoomId);
+    } else {
+      // Deliberately left blank. -- YFLu
     }
   },
 
-  hideGameRuleNode(){
+  disableGameRuleNode() {
     const self = window.mapIns;
-    if(self.gameRuleNode != null && self.gameRuleNode.active != null){
+    if (null != self.gameRuleNode && null != self.gameRuleNode.active && null != self.gameRuleScriptIns) {
+      self.gameRuleScriptIns.modeButton.active = false;
+    }
+  },
+
+  hideGameRuleNode() {
+    const self = window.mapIns;
+    if (null != self.gameRuleNode && null != self.gameRuleNode.active) {
       self.gameRuleNode.active = false;
     }
   },
-
 
   setupInputControls() {
     const instance = window.mapIns;
@@ -928,7 +852,7 @@ cc.Class({
 
     instance.inputControlTimer = setInterval(function() {
       if (false == instance._inputControlEnabled) return;
-      if(instance.selfPlayerScriptIns != null && ctrl != null){
+      if (instance.selfPlayerScriptIns != null && ctrl != null) {
         instance.selfPlayerScriptIns.activeDirection = ctrl.activeDirection;
       }
     }, inputControlPollerMillis);
@@ -943,19 +867,19 @@ cc.Class({
   },
 
   onBattleStarted() {
-    console.log('On battle started!');
+    cc.warn('On battle started!');
     const self = window.mapIns;
-    if (self.musicEffectManagerScriptIns)
+    if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.playBGM();
+    }
     const canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
-    self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
     if (self.countdownToBeginGameNode.parent) {
       self.countdownToBeginGameNode.parent.removeChild(self.countdownToBeginGameNode);
-      self.transitToState(ALL_MAP_STATES.VISUAL);
     }
+    self.transitToState(ALL_MAP_STATES.VISUAL);
   },
 
   onBattleStopped(players) {
@@ -967,18 +891,14 @@ cc.Class({
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); //清除cached boundRoomId
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); 
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-    self.showPopopInCanvas(resultPanelNode);
+    self.showPopupInCanvas(resultPanelNode);
 
-    //clear player info
+    // Clear player info
     self.playersInfoNode.getComponent("PlayersInfo").clearInfo();
-
-    //kobako: 清除expectedRoomId
-    cc.sys.localStorage.removeItem('expectedRoomId');
-    cc.sys.localStorage.removeItem('boundRoomId');
   },
 
   spawnSelfPlayer() {
@@ -1000,7 +920,7 @@ cc.Class({
 
   update(dt) {
 
-    try{
+    try {
       const self = this;
       const mapNode = self.node;
       const canvasNode = mapNode.parent;
@@ -1015,28 +935,28 @@ cc.Class({
           self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
         }
       }
-  
+
       let toRemoveAcceleratorNodeDict = {};
       Object.assign(toRemoveAcceleratorNodeDict, self.acceleratorNodeDict);
-  
+
       let toRemovePlayerNodeDict = {};
       Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
-  
+
       let toRemoveTreasureNodeDict = {};
       Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
-  
+
       let toRemoveTrapNodeDict = {};
       Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
-  
+
       let toRemovePumpkinNodeDict = {};
       Object.assign(toRemovePumpkinNodeDict, self.pumpkinNodeDict);
-  
+
       /*
       * NOTE: At the beginning of each GUI update cycle, mark all `self.trapBulletNode` as `toRemoveBulletNode`, while only those that persist in `self.trapBulletInfoDict` are NOT finally removed. This approach aims to reduce the lines of codes for coping with node removal in the RoomDownsyncFrame algorithm.
       */
       let toRemoveBulletNodeDict = {};
       Object.assign(toRemoveBulletNodeDict, self.trapBulletNodeDict);
-  
+
       for (let k in self.otherPlayerCachedDataDict) {
         const playerId = parseInt(k);
         const cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
@@ -1044,7 +964,7 @@ cc.Class({
           cachedPlayerData.x,
           cachedPlayerData.y
         );
-  
+
         //更新玩家信息展示
         if (null != cachedPlayerData) {
           const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
@@ -1061,14 +981,14 @@ cc.Class({
         }
         const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
         aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
-  
-  
-  
+
+
+
         const oldPos = cc.v2(
           targetNode.x,
           targetNode.y
         );
-  
+
         const toMoveByVec = newPos.sub(oldPos);
         const toMoveByVecMag = toMoveByVec.mag();
         aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
@@ -1097,7 +1017,7 @@ cc.Class({
             };
             aControlledOtherPlayerScriptIns.toMoveByVec = toMoveByVec;
             aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
-  
+
             if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
               aControlledOtherPlayerScriptIns.activeDirection = {
                 dx: 0,
@@ -1108,21 +1028,21 @@ cc.Class({
             }
           }
         }
-  
-  
+
+
         if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
           const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
           //console.log(newScheduledDirection);
           aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
         }
-  
+
         if (null != toRemovePlayerNodeDict[playerId]) {
           delete toRemovePlayerNodeDict[playerId];
         }
-  
-  
+
+
       }
-  
+
       // 更新加速鞋显示 
       for (let k in self.acceleratorInfoDict) {
         const accLocalIdInBattle = parseInt(k);
@@ -1163,7 +1083,7 @@ cc.Class({
           delete toRemoveTrapNodeDict[trapLocalIdInBattle];
         }
       }
-  
+
       // 更新陷阱塔显示 
       for (let k in self.guardTowerInfoDict) {
         const trapLocalIdInBattle = parseInt(k);
@@ -1181,7 +1101,7 @@ cc.Class({
           setLocalZOrder(targetNode, 5);
         }
       }
-  
+
       // 更新bullet显示 
       for (let k in self.trapBulletInfoDict) {
         const bulletLocalIdInBattle = parseInt(k);
@@ -1193,16 +1113,16 @@ cc.Class({
         let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
         if (!targetNode) {
           targetNode = cc.instantiate(self.trapBulletPrefab);
-  
+
           //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = (() => {
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
               console.error(`Init bullet direction error, startAtPoint:${startAtPoint}, endAtPoint:${endAtPoint}`);
               return 0;
             } else {
-  
+
               //console.log(bulletInfo.startAtPoint, bulletInfo.endAtPoint);
-  
+
               const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
               const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
               const radian = (() => {
@@ -1218,21 +1138,21 @@ cc.Class({
                   if (dy >= 0) {
                     //第一象限
                     return 360 - angleTemp;
-                    //return angleTemp;
+                  //return angleTemp;
                   } else {
                     //第四象限
                     return angleTemp;
-                    //return -angleTemp;
+                  //return -angleTemp;
                   }
                 } else {
                   if (dy >= 0) {
                     //第二象限
                     return 360 - (180 - angleTemp);
-                    //return 180 - angleTemp;
+                  //return 180 - angleTemp;
                   } else {
                     //第三象限
                     return 360 - (180 + angleTemp);
-                    //return 180 + angleTemp;
+                  //return 180 + angleTemp;
                   }
                 }
               })();
@@ -1240,7 +1160,7 @@ cc.Class({
             }
           })();
           //
-  
+
           self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
@@ -1249,7 +1169,7 @@ cc.Class({
         const aBulletScriptIns = targetNode.getComponent("Bullet");
         aBulletScriptIns.localIdInBattle = bulletLocalIdInBattle;
         aBulletScriptIns.linearSpeed = bulletInfo.linearSpeed * 1000000000; // The `bullet.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
-  
+
         const oldPos = cc.v2(
           targetNode.x,
           targetNode.y,
@@ -1292,7 +1212,7 @@ cc.Class({
           delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
         }
       }
-  
+
       //更新南瓜少年的显示
       for (let k in self.pumpkinInfoDict) {
         const pumpkinLocalIdInBattle = parseInt(k);
@@ -1309,7 +1229,7 @@ cc.Class({
         const aPumpkinScriptIns = targetNode.getComponent("Pumpkin");
         aPumpkinScriptIns.localIdInBattle = pumpkinLocalIdInBattle;
         aPumpkinScriptIns.linearSpeed = pumpkinInfo.linearSpeed * 1000000000; // The `pumpkin.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
-  
+
         const oldPos = cc.v2(
           targetNode.x,
           targetNode.y,
@@ -1352,7 +1272,7 @@ cc.Class({
           delete toRemovePumpkinNodeDict[pumpkinLocalIdInBattle];
         }
       }
-  
+
       // 更新宝物显示 
       for (let k in self.treasureInfoDict) {
         const treasureLocalIdInBattle = parseInt(k);
@@ -1371,7 +1291,7 @@ cc.Class({
           targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
         }
-  
+
         if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
           delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
         }
@@ -1387,21 +1307,21 @@ cc.Class({
         const durationSeconds = dt; // Using `dt` temporarily!
         targetNode.runAction(cc.moveTo(durationSeconds, newPos));
       }
-  
+
       // Coping with removed players.
       for (let k in toRemovePlayerNodeDict) {
         const playerId = parseInt(k);
         toRemovePlayerNodeDict[k].parent.removeChild(toRemovePlayerNodeDict[k]);
         delete self.otherPlayerNodeDict[playerId];
       }
-  
+
       // Coping with removed pumpkins.
       for (let k in toRemovePumpkinNodeDict) {
         const pumpkinLocalIdInBattle = parseInt(k);
         toRemovePumpkinNodeDict[k].parent.removeChild(toRemovePlayerNodeDict[k]);
         delete self.pumpkinNodeDict[pumpkinLocalIdInBattle];
       }
-  
+
       // Coping with removed treasures.
       for (let k in toRemoveTreasureNodeDict) {
         const treasureLocalIdInBattle = parseInt(k);
@@ -1416,21 +1336,21 @@ cc.Class({
         }
         delete self.treasureNodeDict[treasureLocalIdInBattle];
       }
-  
+
       // Coping with removed traps.
       for (let k in toRemoveTrapNodeDict) {
         const trapLocalIdInBattle = parseInt(k);
         toRemoveTrapNodeDict[k].parent.removeChild(toRemoveTrapNodeDict[k]);
         delete self.trapNodeDict[trapLocalIdInBattle];
       }
-  
+
       // Coping with removed accelerators.
       for (let k in toRemoveAcceleratorNodeDict) {
         const accLocalIdInBattle = parseInt(k);
         toRemoveAcceleratorNodeDict[k].parent.removeChild(toRemoveAcceleratorNodeDict[k]);
         delete self.acceleratorNodeDict[accLocalIdInBattle];
       }
-  
+
       // Coping with removed bullets.
       for (let k in toRemoveBulletNodeDict) {
         const bulletLocalIdInBattle = parseInt(k);
@@ -1440,8 +1360,8 @@ cc.Class({
           self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
         }
       }
-      
-    }catch(e){
+
+    } catch (e) {
       console.warn('map Update()发生了错误, 手动断连并回到登录页面');
       console.error(e);
       window.closeWSConnection();
@@ -1462,9 +1382,9 @@ cc.Class({
       }
       cc.sys.localStorage.removeItem('selfPlayer');
 
-      if(cc.sys.platform == cc.sys.WECHAT_GAME){
+      if (cc.sys.platform == cc.sys.WECHAT_GAME) {
         cc.director.loadScene('wechatGameLogin');
-      }else{
+      } else {
         cc.director.loadScene('login');
       }
     };
@@ -1504,7 +1424,7 @@ cc.Class({
 
   onLogoutClicked(evt) {
     const self = this;
-    self.showPopopInCanvas(self.confirmLogoutNode);
+    self.showPopupInCanvas(self.confirmLogoutNode);
   },
 
   onLogoutConfirmationDismissed() {
@@ -1515,15 +1435,13 @@ cc.Class({
     self.enableInputControls();
   },
 
-  initWSConnection(evt, cb) {
+  onGameRule1v1ModeClicked(evt, cb) {
     const self = this;
-    window.initPersistentSessionClient(self.initAfterWSConncted);
-    if (cb) {
-      cb()
-    }
+    window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
+    self.hideGameRuleNode();
   },
 
-  showPopopInCanvas(toShowNode) {
+  showPopupInCanvas(toShowNode) {
     const self = this;
     self.disableInputControls();
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
@@ -1550,7 +1468,7 @@ cc.Class({
       }
       const countDownScriptIns = self.countdownToBeginGameNode.getComponent("CountdownToBeginGame");
       countDownScriptIns.setData();
-      self.showPopopInCanvas(self.countdownToBeginGameNode);
+      self.showPopupInCanvas(self.countdownToBeginGameNode);
       return;
     }, 2000);
   },

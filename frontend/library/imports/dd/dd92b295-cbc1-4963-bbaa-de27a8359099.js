@@ -19,20 +19,12 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-
   onLoad: function onLoad() {
-    var _this = this;
-
     var modeBtnClickEventHandler = new cc.Component.EventHandler();
     modeBtnClickEventHandler.target = this.mapNode;
     modeBtnClickEventHandler.component = "Map";
-    modeBtnClickEventHandler.handler = "initWSConnection";
-    modeBtnClickEventHandler.customEventData = function () {
-      _this.node.active = false;
-    };
+    modeBtnClickEventHandler.handler = "onGameRule1v1ModeClicked";
     this.modeButton.clickEvents.push(modeBtnClickEventHandler);
-
-    console.warn('kobako: Game rule on load');
   }
 });
 

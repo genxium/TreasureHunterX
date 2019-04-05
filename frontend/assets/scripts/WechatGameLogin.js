@@ -25,17 +25,23 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
-    if(window.mapIns){
-      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', window.mapIns.counter);
-    }else{
-      console.warn('+++++++ WechatLogin onLoad(), mapIns.counter:', 0);
-    }
 
-    //window.atFirstLocationHref = window.location.href.split('#')[0];
+    wx.onShow((res) => { 
+      cc.log(`+++++ wx onShow(), mapIns.counter: ${window.mapIns.counter}`);
+    });
+
+    wx.onHide((res) => {
+      cc.log(`+++++ wx onHide(), mapIns.counter: ${window.mapIns.counter}, onHide.res: ${res}`);
+      if ('close' == res.mode) { 
+        window.closeWSConnection();
+      } else { 
+        // Deliberately left blank.
+      }
+    });
+
     const self = this;
     self.getRetCodeList();
     self.getRegexList();
-
 
     cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */ ) {
       if (err) {
@@ -43,43 +49,41 @@ cc.Class({
         return;
       }
 
-      self.showTips('登录中...');
-
+      self.showTips("自动登录中");
       self.checkIntAuthTokenExpire().then(
         () => {
-          self.showTips('登录状态未过期, 自动登录中...');
+          self.showTips("自动登录中...");
           const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
           self.useTokenLogin(intAuthToken);
         },
-        () => { //调用wx.login然后请求登录
-
+        () => { 
+          // 调用wx.login然后请求登录。
           wx.authorize({
             scope: "scope.userInfo",
-            success(){
-              self.showTips('授权成功, 登录中...');
-
+            success() {
+              self.showTips("授权成功, 登录中...");
               wx.login({
-                success(res){
+                success(res) {
                   console.log('wx login success, res:');
                   console.log(res);
                   const code = res.code;
 
                   wx.getUserInfo({
-                    success(res){
+                    success(res) {
                       const userInfo = res.userInfo;
                       console.log('Get user info ok:');
                       console.log(userInfo);
                       self.useWXCodeMiniGameLogin(code, userInfo);
                     },
-                    fail(){
+                    fail() {
                       cc.error('wx.getUserInfo失败');
                     },
                   })
 
-    
-                  //self.useWXCodeLogin(res.code);
+
+                //self.useWXCodeLogin(res.code);
                 },
-                fail(err){
+                fail(err) {
                   if (err) {
                     cc.error('wx.login失败');
                     cc.error(err.message || err);
@@ -87,7 +91,7 @@ cc.Class({
                 },
               });
             },
-            fail(){ //授权失败, 创建授权按钮
+            fail() { //授权失败, 创建授权按钮
               self.showTips('点击屏幕授权后登录');
               console.error('授权失败, 创建授权按钮')
               let sysInfo = wx.getSystemInfoSync();
@@ -98,25 +102,25 @@ cc.Class({
                 type: 'text',
                 text: '',
                 style: {
-                    left: 0,
-                    top: 0,
-                    width: width,
-                    height: height,
-                    backgroundColor: '#00000000',//最后两位为透明度
-                    color: '#ffffff',
-                    fontSize: 20,
-                    textAlign: "center",
-                    lineHeight: height,
+                  left: 0,
+                  top: 0,
+                  width: width,
+                  height: height,
+                  backgroundColor: '#00000000', //最后两位为透明度
+                  color: '#ffffff',
+                  fontSize: 20,
+                  textAlign: "center",
+                  lineHeight: height,
                 },
               });
               button.onTap((res) => {
                 console.log(res);
-                if(null != res.userInfo){
+                if (null != res.userInfo) {
                   const userInfo = res.userInfo;
                   self.showTips('授权成功, 登录中...');
 
                   wx.login({
-                    success(res){
+                    success(res) {
                       console.log('wx.login success, res:');
                       console.log(res);
                       const code = res.code;
@@ -124,7 +128,7 @@ cc.Class({
                       //完全登录成功后删除按钮
                       button.destroy();
                     },
-                    fail(err){
+                    fail(err) {
                       if (err) {
                         cc.error('wx.login失败');
                         cc.error(err.message || err);
@@ -141,19 +145,19 @@ cc.Class({
     });
   },
 
-  onDestroy(){
-    if(window.mapIns){
-      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', window.mapIns.counter);
-    }else{
-      console.warn('+++++++ WechatLogin onDestroy(), mapIns.counter:', 0);
+  onDestroy() {
+    if (window.mapIns) {
+      cc.log(`+++++++ WechatGameLogin onDestroy(), mapIns.counter: ${window.mapIns.counter}`);
+    } else {
+      cc.log(`+++++++ WechatGameLogin onDestroy(), mapIns.counter: 0`);
     }
   },
 
-  showTips(text){
-    if(this.tipsLabel != null){
+  showTips(text) {
+    if (this.tipsLabel != null) {
       this.tipsLabel.string = text;
-    }else{
-      console.log('Login scene showTips failed')
+    } else {
+      cc.log('Login scene showTips failed')
     }
   },
 
@@ -312,9 +316,7 @@ cc.Class({
     });
   },
 
-  enableInteractiveControls(enabled) {
-
-  },
+  enableInteractiveControls(enabled) {},
 
   onLoginButtonClicked(evt) {
     const self = this;
@@ -359,7 +361,7 @@ cc.Class({
         avatar: res.avatar,
       }
       cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
-      
+
       self.useTokenLogin(res.intAuthToken);
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
@@ -373,7 +375,7 @@ cc.Class({
     cc.log(`OnLoggedIn ${JSON.stringify(res)}.`)
     if (res.ret === self.retCodeDict.OK) {
 
-      if(window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
+      if (window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
         window.initWxSdk = self.initWxSdk.bind(self);
         window.initWxSdk();
       }
@@ -385,7 +387,6 @@ cc.Class({
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
         displayName: res.displayName,
-        //kobako: 新增
         name: res.name,
       }
       cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
@@ -396,7 +397,7 @@ cc.Class({
 
       cc.director.loadScene('default_map');
     } else {
-      console.warn('onLoggedIn failed!')
+      cc.warn('onLoggedIn failed!')
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
@@ -482,14 +483,14 @@ cc.Class({
     });
   },
 
-  mockWechatLoggedIn(){
+  mockWechatLoggedIn() {
     cc.director.loadScene('default_map');
   },
 
 
   getWechatCode(evt) {
     let self = this;
-    self.showTips('');
+    self.showTips("");
     const wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + ((null != wechatAddress.PORT && "" != wechatAddress.PORT.trim()) ? (":" + wechatAddress.PORT) : "");
     const url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
     console.log("To visit wechat auth addr: " + url);
@@ -523,7 +524,7 @@ cc.Class({
       success: function() {}
     };
 
-    const wxConfigUrl = (window.isUsingWebkitWechatKernel() ? window.atFirstLocationHref : window.location.href); 
+    const wxConfigUrl = (window.isUsingWebkitWechatKernel() ? window.atFirstLocationHref : window.location.href);
     //接入微信登录接口
     NetworkUtils.ajax({
       "url": backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.JSCONFIG,

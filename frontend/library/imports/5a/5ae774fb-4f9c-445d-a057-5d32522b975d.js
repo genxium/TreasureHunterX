@@ -2,14 +2,12 @@
 cc._RF.push(module, '5ae77T7T5xEXaBXXTJSK5dd', 'ResultPanel');
 // scripts/ResultPanel.js
 
-"use strict";
+'use strict';
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
 cc.Class({
-
   extends: cc.Component,
-
   properties: {
     onCloseDelegate: {
       type: cc.Object,
@@ -35,37 +33,20 @@ cc.Class({
       type: cc.Node,
       default: null
     }
-
   },
 
   // LIFE-CYCLE CALLBACKS:
-
-  onLoad: function onLoad() {
-    var resultPanelNode = this.node;
-    var againButtonNode = resultPanelNode.getChildByName("againBtn");
-    var homeButtonNode = resultPanelNode.getChildByName("homeBtn");
-  },
+  onLoad: function onLoad() {},
   againBtnOnClick: function againBtnOnClick(evt) {
-    if (null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
-      console.warn('服务器端尚未断连, 不响应操作');
-      return;
-    } else {
-      this.onClose();
-      if (!this.onAgainClicked) return;
-      this.onAgainClicked();
-    }
+    this.onClose();
+    if (!this.onAgainClicked) return;
+    this.onAgainClicked();
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    if (null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
-      console.warn('服务器端尚未断连, 不响应操作');
-      return; //如果还没断连, 不响应操作, 直到服务器端主动断连
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      cc.director.loadScene('wechatGameLogin');
     } else {
-      //跳回登录页面
-      if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-        cc.director.loadScene('wechatGameLogin');
-      } else {
-        cc.director.loadScene('login');
-      }
+      cc.director.loadScene('login');
     }
   },
   showPlayerInfo: function showPlayerInfo(players) {
@@ -144,7 +125,7 @@ cc.Class({
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     var remoteUrl = selfPlayerInfo.avatar;
     if (remoteUrl == null || remoteUrl == '') {
-      cc.log("No avatar to show for myself, check storage.");
+      cc.log('No avatar to show for myself, check storage.');
       return;
     } else {
       cc.loader.load({

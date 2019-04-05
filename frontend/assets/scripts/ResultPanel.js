@@ -1,9 +1,7 @@
 const i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
 cc.Class({
-
   extends: cc.Component,
-
   properties: {
     onCloseDelegate: {
       type: cc.Object,
@@ -29,38 +27,23 @@ cc.Class({
       type: cc.Node,
       default: null,
     },
-
   },
 
   // LIFE-CYCLE CALLBACKS:
-
   onLoad() {
-    const resultPanelNode = this.node;
-    const againButtonNode = resultPanelNode.getChildByName("againBtn");
-    const homeButtonNode = resultPanelNode.getChildByName("homeBtn");
   },
 
   againBtnOnClick(evt) {
-    if(null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
-      console.warn('服务器端尚未断连, 不响应操作');
-      return;
-    }else{
-      this.onClose();
-      if (!this.onAgainClicked) return;
-      this.onAgainClicked();
-    }
+    this.onClose();
+    if (!this.onAgainClicked) return;
+    this.onAgainClicked();
   },
 
   homeBtnOnClick(evt) {
-    if(null != window.clientSession && window.clientSession.readyState != WebSocket.CLOSED) {
-      console.warn('服务器端尚未断连, 不响应操作');
-      return;//如果还没断连, 不响应操作, 直到服务器端主动断连
-    }else{//跳回登录页面
-      if(cc.sys.platform == cc.sys.WECHAT_GAME){
-        cc.director.loadScene('wechatGameLogin');
-      }else{
-        cc.director.loadScene('login');
-      }
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      cc.director.loadScene('wechatGameLogin');
+    } else {
+      cc.director.loadScene('login');
     }
   },
 
@@ -80,7 +63,7 @@ cc.Class({
       name = selfPlayerInfo.displayName;
     }
     if (!this.myNameNode) return;
-    const myNameNodeLabel = this.myNameNode.getComponent(cc.Label); 
+    const myNameNodeLabel = this.myNameNode.getComponent(cc.Label);
     if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },

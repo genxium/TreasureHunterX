@@ -2,7 +2,7 @@
 cc._RF.push(module, '07a29YiH+9OOriSfiAzFcqR', 'WsSessionMgr');
 // scripts/WsSessionMgr.js
 
-'use strict';
+"use strict";
 
 window.sendSafely = function (msgStr) {
   /**
@@ -16,23 +16,23 @@ window.sendSafely = function (msgStr) {
 
 window.closeWSConnection = function () {
   if (null == window.clientSession || window.clientSession.readyState != WebSocket.OPEN) return;
-  cc.log('Closing "window.clientSession" from the client-side.');
+  cc.log("Closing \"window.clientSession\" from the client-side.");
   window.clientSession.close();
 };
 
 window.getBoundRoomIdFromPersistentStorage = function () {
-  var expiresAt = parseInt(cc.sys.localStorage.getItem('expiresAt'));
-  if (!expiresAt || Date.now() >= expiresAt) {
+  var boundRoomIdExpiresAt = parseInt(cc.sys.localStorage.getItem("boundRoomIdExpiresAt"));
+  if (!boundRoomIdExpiresAt || Date.now() >= boundRoomIdExpiresAt) {
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     return null;
   }
-  return cc.sys.localStorage.getItem('boundRoomId');
+  return cc.sys.localStorage.getItem("boundRoomId");
 };
 
 window.clearBoundRoomIdInBothVolatileAndPersistentStorage = function () {
   window.boundRoomId = null;
   cc.sys.localStorage.removeItem("boundRoomId");
-  cc.sys.localStorage.removeItem("expiresAt");
+  cc.sys.localStorage.removeItem("boundRoomIdExpiresAt");
 };
 
 window.boundRoomId = getBoundRoomIdFromPersistentStorage();
@@ -41,7 +41,7 @@ window.handleHbRequirements = function (resp) {
   if (null == window.boundRoomId) {
     window.boundRoomId = resp.data.boundRoomId;
     cc.sys.localStorage.setItem('boundRoomId', window.boundRoomId);
-    cc.sys.localStorage.setItem('expiresAt', Date.now() + 10 * 60 * 1000); //TODO: hardcoded, boundRoomId过期时间
+    cc.sys.localStorage.setItem('boundRoomIdExpiresAt', Date.now() + 10 * 60 * 1000); // Temporarily hardcoded, for `boundRoomId` only.
   }
 
   window.clientSessionPingInterval = setInterval(function () {
@@ -83,7 +83,40 @@ function _base64ToArrayBuffer(base64) {
   return _base64ToUint8Array(base64).buffer;
 }
 
-window.initPersistentSessionClient = function (onopenCb) {
+window.getExpectedRoomIdSync = function () {
+  if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    var launchOpts = wx.getLaunchOptionsSync();
+    if (null == launchOpts) return null;
+    var query = launchOpts.query;
+    if (null == query) return null;
+    return query['expectedRoomId'];
+  } else {
+    var qDict = window.getQueryParamDict();
+    if (qDict) {
+      return qDict["expectedRoomId"];
+    } else {
+      if (window.history && window.history.state) {
+        return window.history.state.expectedRoomId;
+      }
+    }
+  }
+
+  return null;
+};
+
+window.unsetClientSessionCloseOrErrorFlag = function () {
+  cc.sys.localStorage.removeItem("ClientSessionCloseOrErrorFlag");
+  return;
+};
+
+window.setClientSessionCloseOrErrorFlag = function () {
+  var oldVal = cc.sys.localStorage.getItem("ClientSessionCloseOrErrorFlag");
+  if (true == oldVal) return false;
+  cc.sys.localStorage.setItem("ClientSessionCloseOrErrorFlag", true);
+  return true;
+};
+
+window.initPersistentSessionClient = function (onopenCb, expectedRoomId) {
   if (window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
     if (null != onopenCb) {
       onopenCb();
@@ -95,29 +128,13 @@ window.initPersistentSessionClient = function (onopenCb) {
 
   var urlToConnect = backendAddress.PROTOCOL.replace('http', 'ws') + '://' + backendAddress.HOST + ":" + backendAddress.PORT + backendAddress.WS_PATH_PREFIX + "?intAuthToken=" + intAuthToken;
 
-  var expectedRoomId = null;
-
-  if (cc.sys.localStorage.getItem('expectedRoomId')) {
-    // Now mini game only
-    expectedRoomId = cc.sys.localStorage.getItem('expectedRoomId');
-  } else {
-    var qDict = window.getQueryParamDict();
-    if (qDict) {
-      expectedRoomId = qDict["expectedRoomId"];
-    } else {
-      if (window.history && window.history.state) {
-        expectedRoomId = window.history.state.expectedRoomId;
-      }
-    }
-  }
-
   if (expectedRoomId) {
-    console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
+    cc.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
     urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
   } else {
     window.boundRoomId = getBoundRoomIdFromPersistentStorage();
     if (null != window.boundRoomId) {
-      console.log("initPersistentSessionClient with boundRoomId == " + boundRoomId);
+      cc.log("initPersistentSessionClient with boundRoomId == " + boundRoomId);
       urlToConnect = urlToConnect + "&boundRoomId=" + window.boundRoomId;
     }
   }
@@ -131,13 +148,6 @@ window.initPersistentSessionClient = function (onopenCb) {
   var clientSession = new WebSocket(urlToConnect);
 
   clientSession.onopen = function (event) {
-
-    if (window.mapIns) {
-      console.warn('+++++++ ws onopen(), mapIns.counter:', window.mapIns.counter);
-    } else {
-      console.warn('+++++++ ws onopen(), mapIns.counter:', 0);
-    }
-
     cc.log("The WS clientSession is opened.");
     window.clientSession = clientSession;
     if (null == onopenCb) return;
@@ -170,39 +180,30 @@ window.initPersistentSessionClient = function (onopenCb) {
           break;
         }
       default:
-        cc.log('' + JSON.stringify(resp));
+        cc.log("" + JSON.stringify(resp));
         break;
     }
   };
 
   clientSession.onerror = function (event) {
-
-    /*
-     * kobako: 为防止二次调用window.handleClientSessionCloseOrError(), 设置flag. 
-     * ws实现里onerror永远比onclose触发要快, 所以设置flag后在onclose重置即可
-     */
-    cc.sys.localStorage.setItem('errorHandled', true);
-    console.warn('WS onerror called');
-
-    cc.error('Error caught on the WS clientSession:', event);
+    if (!window.setClientSessionCloseOrErrorFlag()) {
+      return;
+    }
+    cc.error("Error caught on the WS clientSession:", event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
     }
     if (window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError();
     }
+    window.unsetClientSessionCloseOrErrorFlag();
   };
 
   clientSession.onclose = function (event) {
-    // kobako: 为防止二次调用window.handleClientSessionCloseOrError(), 设置flag. 
-    if (cc.sys.localStorage.getItem('errorHandled')) {
-      console.warn('已经触发过errorHandled了, 不再调用onclose');
-      cc.sys.localStorage.removeItem('errorHandled');
+    if (!window.setClientSessionCloseOrErrorFlag()) {
       return;
     }
-    console.warn('WS onclose called');
-
-    cc.log('The WS clientSession is closed:', event);
+    cc.warn("The WS clientSession is closed:", event);
     if (window.clientSessionPingInterval) {
       clearInterval(window.clientSessionPingInterval);
     }
@@ -225,6 +226,7 @@ window.initPersistentSessionClient = function (onopenCb) {
         window.handleClientSessionCloseOrError();
       }
     }
+    window.unsetClientSessionCloseOrErrorFlag();
   };
 };
 

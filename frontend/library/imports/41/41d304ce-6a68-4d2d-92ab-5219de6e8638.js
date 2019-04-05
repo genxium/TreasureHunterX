@@ -2,7 +2,7 @@
 cc._RF.push(module, '41d30TOamhNLZKrUhneboY4', 'Map');
 // scripts/Map.js
 
-'use strict';
+"use strict";
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
@@ -209,7 +209,7 @@ cc.Class({
       var _k5 = bulletsLocalIdStrList[_i5];
       var bulletLocalIdInBattle = parseInt(_k5);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        cc.log('Bullet with localIdInBattle == ' + bulletLocalIdInBattle + ' is removed.');
+        cc.log("Bullet with localIdInBattle == " + bulletLocalIdInBattle + " is removed.");
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
@@ -269,8 +269,14 @@ cc.Class({
     };
     window.sendSafely(JSON.stringify(wrapped));
   },
+  onEnable: function onEnable() {
+    cc.warn("+++++++ Map onEnable(), mapIns.counter: " + window.mapIns.counter);
+  },
+  onDisable: function onDisable() {
+    cc.warn("+++++++ Map onDisable(), mapIns.counter: " + window.mapIns.counter);
+  },
   onDestroy: function onDestroy() {
-    console.warn('+++++++ map onDestroy(), mapIns.counter:', window.mapIns.counter);
+    cc.warn("+++++++ Map onDestroy(), mapIns.counter: " + window.mapIns.counter);
     var self = window.mapIns;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
@@ -300,7 +306,7 @@ cc.Class({
     if (false == this.resyncing) return;
     this.resyncing = false;
     var resyncingDurationMillis = Date.now() - this.lastResyncingStartedAt;
-    cc.log('_onResyncCompleted, resyncing took ' + resyncingDurationMillis + ' milliseconds.');
+    cc.log("_onResyncCompleted, resyncing took " + resyncingDurationMillis + " milliseconds.");
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
@@ -470,16 +476,14 @@ cc.Class({
       var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
     }
-    self.showPopopInCanvas(self.gameRuleNode);
+    self.showPopupInCanvas(self.gameRuleNode);
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
   },
   onLoad: function onLoad() {
     var self = this;
+    window.mapIns = self;
     window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
 
-    /*
-     * kobako: 因为小游戏的onShow生命周期函数全局只赋值一次, 所以需要通过window.mapIns变量来操作而不能通过this, 因为map场景重新加载后, this指向过去的map场景
-     */
     self.counter = function () {
       if (window.mapIns == null || null == window.mapIns.counter) {
         return 0;
@@ -487,9 +491,8 @@ cc.Class({
         return window.mapIns.counter + 1;
       }
     }();
-    window.mapIns = self;
 
-    console.warn('+++++++ map onLoad(), map counter:', window.mapIns.counter);
+    cc.warn('+++++++ Map onLoad(), map counter:', window.mapIns.counter);
 
     var mapNode = self.node;
     var canvasNode = mapNode.parent;
@@ -497,11 +500,11 @@ cc.Class({
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
     self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
 
-    /** init requeired prefab started */
+    /** Init required prefab started. */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);
     self.confirmLogoutNode.getComponent("ConfirmLogout").mapNode = self.node;
 
-    //Result panel init
+    // Initializes Result panel.
     self.resultPanelNode = cc.instantiate(self.resultPanelPrefab);
     self.resultPanelNode.width = self.canvasNode.width;
     self.resultPanelNode.height = self.canvasNode.height;
@@ -509,15 +512,9 @@ cc.Class({
     var resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = function () {
-
-      if (null != window.clientSession && window.clientSession.readyState == WebSocket.OPEN) {
-        console.warn('服务器端尚未断连, 不响应操作');
-        return; //如果还没断连, 不响应操作, 直到服务器端主动断连
-      } else {
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self._resetCurrentMatch();
-        window.initPersistentSessionClient(self.initAfterWSConncted);
-      }
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+      self._resetCurrentMatch();
+      window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
@@ -549,7 +546,7 @@ cc.Class({
       2: player2Node
     });
 
-    /** init requeired prefab ended */
+    /** Init required prefab ended. */
 
     self.clientUpsyncFps = 20;
     self._resetCurrentMatch();
@@ -779,10 +776,9 @@ cc.Class({
 
       if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) {
         //如果是游戏时间结束引起的断连
-        console.warn('游戏结束引起的断连, 不需要回到登录页面');
+        cc.log('游戏结束引起的断连, 不需要回到登录页面');
       } else {
-        console.warn('断连, 回到登录页面');
-
+        cc.log('意外断连，即将回到登录页面');
         if (cc.sys.platform == cc.sys.WECHAT_GAME) {
           cc.director.loadScene('wechatGameLogin');
         } else {
@@ -791,23 +787,20 @@ cc.Class({
       }
     };
 
-    self.initAfterWSConncted = function () {
+    self.initAfterWSConnected = function () {
       var self = window.mapIns;
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
       });
-      self.transitToState(ALL_MAP_STATES.VISUAL);
+      self.transitToState(ALL_MAP_STATES.WAITING);
       self._inputControlEnabled = false;
       self.setupInputControls();
 
       window.handleRoomDownsyncFrame = function (diffFrame) {
-
-        if (0 < diffFrame.id && diffFrame.id < 10) {
-          cc.log(diffFrame);
+        if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
+          return;
         }
-
-        if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) return;
         var refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
           //显示倒计时
@@ -822,13 +815,12 @@ cc.Class({
           }
           var _findingPlayerScriptIns2 = self.findingPlayerNode.getComponent("FindingPlayer");
           if (!self.findingPlayerNode.parent) {
-            self.showPopopInCanvas(self.findingPlayerNode);
+            self.showPopupInCanvas(self.findingPlayerNode);
           }
           _findingPlayerScriptIns2.updatePlayersInfo(diffFrame.players);
           return;
         }
 
-        //根据downFrame显示游戏场景
         var frameId = diffFrame.id;
         if (frameId <= self.lastRoomDownsyncFrameId) {
           // Log the obsolete frames?
@@ -862,7 +854,7 @@ cc.Class({
         }
         var countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
-          cc.log('countdownSeconds is NaN for countdownNanos == ' + countdownNanos + '.');
+          cc.warn("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
         }
         self.countdownLabel.string = countdownSeconds;
         var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
@@ -954,7 +946,7 @@ cc.Class({
           self.trapBulletInfoDict[bulletLocalIdInBattle] = bulletInfo;
         }
 
-        //update guardTowerInfoDict
+        // Update `guardTowerInfoDict`.
         self.guardTowerInfoDict = {};
         var guardTowers = roomDownsyncFrame.guardTowers;
         var ids = Object.keys(guardTowers);
@@ -978,96 +970,25 @@ cc.Class({
       };
     };
 
-    /*
-     * 监听小游戏生命周期, 第一次
-     * 第一次进入游戏没有初始化好wx.onShow, 需要调用wx.getLaunchOptionsSync获取请求中的expectedRoomId信息
-     * 小游戏端重连参考: https://shimo.im/docs/OUlOQivl2hIglAOE #3
-     */
-    if (cc.sys.platform == cc.sys.WECHAT_GAME && !window.wxLifeCycleListenerInitiated) {
-      window.wxLifeCycleListenerInitiated = true; //这个flag表示已经初始化过生命周期函数了
-
-      window.reconnectGameByExpectedRoomId = function (expectedRoomId) {
-        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
-        window.mapIns.tryToJoinExpectedRoom();
-      };
-
-      /**
-       * WARN: 实验后假设onShow永远发生在map onLoad之前.
-       */
-      wx.onShow(function (res) {
-        //通过分享链接返回小游戏的时候, 会带上expectedRoomId
-        console.warn('+++++ wx onShow(), mapIns.counter: ', window.mapIns.counter);
-        if (res.query['expectedRoomId']) {
-          cc.sys.localStorage.setItem('expectedRoomId', res.query['expectedRoomId']);
-        }
-      });
-
-      wx.onHide(function (res) {
-        console.warn('+++++ wx onHide(), mapIns.counter: ', window.mapIns.counter, ' onHide的参数如下:');
-        console.log(res);
-        if (res.mode == 'hide') {//按home键或者分享小程序
-
-        } else {
-          //其他情况下(如手动点击胶囊按钮)断开ws连接并返回登录页
-          window.closeWSConnection();
-        }
-      });
-
-      //通过分享链接进入房间
-      var expectedRoomId = function () {
-        var query = wx.getLaunchOptionsSync().query;
-        return query['expectedRoomId'];
-      }();
-      if (null != expectedRoomId) {
-        cc.sys.localStorage.setItem('expectedRoomId', expectedRoomId);
-      }
-    }
-
-    self.tryToJoinExpectedRoom();
-  },
-
-
-  /*
-   * kobako: 隐藏规则弹窗后尝试通过expectedRoomId或者boundRoomId加入到指定房间
-   */
-  tryToJoinExpectedRoom: function tryToJoinExpectedRoom() {
-    console.warn('+++++ map tryToJoinExpectedRoom(), mapIns.counter: ', window.mapIns.counter);
-    var self = window.mapIns;
-
-    /*
-    * The following code snippet is a dirty fix.
-    */
-    var expectedRoomId = function () {
-      if (cc.sys.localStorage.getItem('expectedRoomId')) {
-        //Now mini game only
-        return cc.sys.localStorage.getItem('expectedRoomId');
-      } else {
-        var qDict = window.getQueryParamDict();
-        if (qDict) {
-          return qDict["expectedRoomId"];
-        } else if (window.history && window.history.state) {
-          return window.history.state.expectedRoomId;
-        } else {
-          return null;
-        }
-      }
-    }();
-
-    if (expectedRoomId) {
-      console.warn('通过expectedRoomId加入房间: ', expectedRoomId);
-      self.hideGameRuleNode();
-      window.initPersistentSessionClient(self.initAfterWSConncted);
-    } else if (cc.sys.localStorage.getItem('boundRoomId')) {
-      console.warn('通过boundRoomId加入房间: ', boundRoomId);
-      self.hideGameRuleNode();
-      window.initPersistentSessionClient(self.initAfterWSConncted);
+    // The player is now viewing "self.gameRuleNode" with button(s) to start an actual battle. -- YFLu
+    var expectedRoomId = window.getExpectedRoomIdSync();
+    if (null != expectedRoomId) {
+      self.disableGameRuleNode();
+      // The player is now viewing "self.gameRuleNode" with no button, and should wait for `self.initAfterWSConnected` to be called. -- YFLu
+      window.initPersistentSessionClient(self.initAfterWSConnected, expectedRoomId);
     } else {
-      console.warn('没有expectedRoomId或者boundRoomId, 什么也不做');
+      // Deliberately left blank. -- YFLu
+    }
+  },
+  disableGameRuleNode: function disableGameRuleNode() {
+    var self = window.mapIns;
+    if (null != self.gameRuleNode && null != self.gameRuleNode.active && null != self.gameRuleScriptIns) {
+      self.gameRuleScriptIns.modeButton.active = false;
     }
   },
   hideGameRuleNode: function hideGameRuleNode() {
     var self = window.mapIns;
-    if (self.gameRuleNode != null && self.gameRuleNode.active != null) {
+    if (null != self.gameRuleNode && null != self.gameRuleNode.active) {
       self.gameRuleNode.active = false;
     }
   },
@@ -1095,18 +1016,19 @@ cc.Class({
     this._inputControlEnabled = false;
   },
   onBattleStarted: function onBattleStarted() {
-    console.log('On battle started!');
+    cc.warn('On battle started!');
     var self = window.mapIns;
-    if (self.musicEffectManagerScriptIns) self.musicEffectManagerScriptIns.playBGM();
+    if (self.musicEffectManagerScriptIns) {
+      self.musicEffectManagerScriptIns.playBGM();
+    }
     var canvasNode = self.canvasNode;
     self.spawnSelfPlayer();
     self.upsyncLoopInterval = setInterval(self._onPerUpsyncFrame.bind(self), self.clientUpsyncFps);
-    self.transitToState(ALL_MAP_STATES.VISUAL);
     self.enableInputControls();
     if (self.countdownToBeginGameNode.parent) {
       self.countdownToBeginGameNode.parent.removeChild(self.countdownToBeginGameNode);
-      self.transitToState(ALL_MAP_STATES.VISUAL);
     }
+    self.transitToState(ALL_MAP_STATES.VISUAL);
   },
   onBattleStopped: function onBattleStopped(players) {
     var self = this;
@@ -1117,18 +1039,14 @@ cc.Class({
     var resultPanelNode = self.resultPanelNode;
     var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); //清除cached boundRoomId
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
-    self.showPopopInCanvas(resultPanelNode);
+    self.showPopupInCanvas(resultPanelNode);
 
-    //clear player info
+    // Clear player info
     self.playersInfoNode.getComponent("PlayersInfo").clearInfo();
-
-    //kobako: 清除expectedRoomId
-    cc.sys.localStorage.removeItem('expectedRoomId');
-    cc.sys.localStorage.removeItem('boundRoomId');
   },
   spawnSelfPlayer: function spawnSelfPlayer() {
     var instance = this;
@@ -1223,7 +1141,7 @@ cc.Class({
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
             //如果移动过大 打印log但还是会移动
-            cc.log('Player ' + cachedPlayerData.id + ' is teleporting! Having toMoveByVecMag == ' + toMoveByVecMag + ', toTeleportDisThreshold == ' + toTeleportDisThreshold);
+            cc.log("Player " + cachedPlayerData.id + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1324,7 +1242,7 @@ cc.Class({
           //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = function () {
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
-              console.error('Init bullet direction error, startAtPoint:' + startAtPoint + ', endAtPoint:' + endAtPoint);
+              console.error("Init bullet direction error, startAtPoint:" + startAtPoint + ", endAtPoint:" + endAtPoint);
               return 0;
             } else {
 
@@ -1389,7 +1307,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
-            cc.log('Bullet ' + bulletLocalIdInBattle + ' is teleporting! Having toMoveByVecMag == ' + toMoveByVecMag + ', toTeleportDisThreshold == ' + toTeleportDisThreshold);
+            cc.log("Bullet " + bulletLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + toMoveByVecMag + ", toTeleportDisThreshold == " + toTeleportDisThreshold);
             aBulletScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1450,7 +1368,7 @@ cc.Class({
           };
         } else {
           if (_toMoveByVecMag > _toTeleportDisThreshold) {
-            cc.log('Pumpkin ' + pumpkinLocalIdInBattle + ' is teleporting! Having toMoveByVecMag == ' + _toMoveByVecMag + ', toTeleportDisThreshold == ' + _toTeleportDisThreshold);
+            cc.log("Pumpkin " + pumpkinLocalIdInBattle + " is teleporting! Having toMoveByVecMag == " + _toMoveByVecMag + ", toTeleportDisThreshold == " + _toTeleportDisThreshold);
             aPumpkinScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1597,7 +1515,7 @@ cc.Class({
           data: requestContent,
           success: function success(res) {
             if (res.ret != constants.RET_CODE.OK) {
-              cc.log('Logout failed: ' + res + '.');
+              cc.log("Logout failed: " + res + ".");
             }
             localClearance();
           },
@@ -1618,7 +1536,7 @@ cc.Class({
   },
   onLogoutClicked: function onLogoutClicked(evt) {
     var self = this;
-    self.showPopopInCanvas(self.confirmLogoutNode);
+    self.showPopupInCanvas(self.confirmLogoutNode);
   },
   onLogoutConfirmationDismissed: function onLogoutConfirmationDismissed() {
     var self = this;
@@ -1627,14 +1545,12 @@ cc.Class({
     canvasNode.removeChild(self.confirmLogoutNode);
     self.enableInputControls();
   },
-  initWSConnection: function initWSConnection(evt, cb) {
+  onGameRule1v1ModeClicked: function onGameRule1v1ModeClicked(evt, cb) {
     var self = this;
-    window.initPersistentSessionClient(self.initAfterWSConncted);
-    if (cb) {
-      cb();
-    }
+    window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
+    self.hideGameRuleNode();
   },
-  showPopopInCanvas: function showPopopInCanvas(toShowNode) {
+  showPopupInCanvas: function showPopupInCanvas(toShowNode) {
     var self = this;
     self.disableInputControls();
     self.transitToState(ALL_MAP_STATES.SHOWING_MODAL_POPUP);
@@ -1660,7 +1576,7 @@ cc.Class({
       }
       var countDownScriptIns = self.countdownToBeginGameNode.getComponent("CountdownToBeginGame");
       countDownScriptIns.setData();
-      self.showPopopInCanvas(self.countdownToBeginGameNode);
+      self.showPopupInCanvas(self.countdownToBeginGameNode);
       return;
     }, 2000);
   }
