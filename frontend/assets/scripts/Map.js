@@ -139,7 +139,6 @@ cc.Class({
       const k = playersLocalIdStrList[i];
       const playerId = parseInt(k);
       if (true == diffFrame.players[playerId].removed) {
-        // cc.log(`Player id == ${playerId} is removed.`);
         delete newFullFrame.players[playerId];
       } else {
         newFullFrame.players[playerId] = diffFrame.players[playerId];
@@ -164,7 +163,6 @@ cc.Class({
       const k = treasuresLocalIdStrList[i];
       const treasureLocalIdInBattle = parseInt(k);
       if (true == diffFrame.treasures[treasureLocalIdInBattle].removed) {
-        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
         delete newFullFrame.treasures[treasureLocalIdInBattle];
       } else {
         newFullFrame.treasures[treasureLocalIdInBattle] = diffFrame.treasures[treasureLocalIdInBattle];
@@ -177,7 +175,6 @@ cc.Class({
       const k = speedShoesLocalIdStrList[i];
       const speedShoesLocalIdInBattle = parseInt(k);
       if (true == diffFrame.speedShoes[speedShoesLocalIdInBattle].removed) {
-        // cc.log(`Treasure with localIdInBattle == ${treasureLocalIdInBattle} is removed.`);
         delete newFullFrame.speedShoes[speedShoesLocalIdInBattle];
       } else {
         newFullFrame.speedShoes[speedShoesLocalIdInBattle] = diffFrame.speedShoes[speedShoesLocalIdInBattle];
@@ -190,7 +187,6 @@ cc.Class({
       const k = trapsLocalIdStrList[i];
       const trapLocalIdInBattle = parseInt(k);
       if (true == diffFrame.traps[trapLocalIdInBattle].removed) {
-        // cc.log(`Trap with localIdInBattle == ${trapLocalIdInBattle} is removed.`);
         delete newFullFrame.traps[trapLocalIdInBattle];
       } else {
         newFullFrame.traps[trapLocalIdInBattle] = diffFrame.traps[trapLocalIdInBattle];
@@ -203,7 +199,7 @@ cc.Class({
       const k = bulletsLocalIdStrList[i];
       const bulletLocalIdInBattle = parseInt(k);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        cc.log(`Bullet with localIdInBattle == ${bulletLocalIdInBattle} is removed.`);
+        console.log("Bullet with localIdInBattle == ", bulletLocalIdInBattle, "is removed.");
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
@@ -229,7 +225,6 @@ cc.Class({
     while (self.recentFrameCacheCurrentSize >= self.recentFrameCacheMaxCount) {
       // Trick here: never evict the "Zero-th Frame" for resyncing!
       const toDelFrameId = Object.keys(self.recentFrameCache)[1];
-      // cc.log("toDelFrameId is " + toDelFrameId + ".");
       delete self.recentFrameCache[toDelFrameId];
       --self.recentFrameCacheCurrentSize;
     }
@@ -285,11 +280,14 @@ cc.Class({
     if (null != window.handleRoomDownsyncFrame) {
       window.handleRoomDownsyncFrame = null;
     }
+    if (null != window.handleClientSessionCloseOrError) {
+      window.handleClientSessionCloseOrError = null; 
+    }
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
     }
     if (self.inputControlTimer) {
-      clearInterval(self.inputControlTimer)
+      clearInterval(self.inputControlTimer);
     }
   },
 
@@ -297,6 +295,8 @@ cc.Class({
     if (true == this.resyncing) return;
     this.lastResyncingStartedAt = Date.now();
     this.resyncing = true;
+
+    console.warn("_lazilyTriggerResync, resyncing");
 
     if (ALL_MAP_STATES.SHOWING_MODAL_POPUP != this.state) {
       if (null == this.resyncingHintPopup) {
@@ -309,7 +309,7 @@ cc.Class({
     if (false == this.resyncing) return;
     this.resyncing = false;
     const resyncingDurationMillis = (Date.now() - this.lastResyncingStartedAt);
-    cc.log(`_onResyncCompleted, resyncing took ${resyncingDurationMillis} milliseconds.`);
+    console.warn("_onResyncCompleted, resyncing took ", resyncingDurationMillis, " milliseconds.");
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
     }
@@ -464,6 +464,36 @@ cc.Class({
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
   },
 
+  clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+    const self = this;
+    if (self.musicEffectManagerScriptIns) {
+      self.musicEffectManagerScriptIns.stopAllMusic();
+    }
+    /**
+     * Here I deliberately removed the callback in the "common `handleClientSessionCloseOrError` callback"
+     * within which another invocation to `clearLocalStorageAndBackToLoginScene` will be made.
+     *
+     * It'll be re-assigned to the common one upon reentrance of `Map.onLoad`.
+     *
+     * -- YFLu 2019-04-06
+     */
+    window.handleClientSessionCloseOrError = () => {
+      console.warn('+++++++ Special handleClientSessionCloseOrError() assigned within `clearLocalStorageAndBackToLoginScene`, mapIns.counter:', window.mapIns.counter);
+      // TBD.
+      window.handleClientSessionCloseOrError = null; // To ensure that it's called at most once. 
+    };
+    window.closeWSConnection();
+    window.clearSelfPlayer();
+    if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+    }
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      cc.director.loadScene('wechatGameLogin');
+    } else {
+      cc.director.loadScene('login');
+    }
+  },
+
   onLoad() {
     const self = this;
     window.mapIns = self;
@@ -478,6 +508,16 @@ cc.Class({
     })();
 
     cc.warn('+++++++ Map onLoad(), map counter:', window.mapIns.counter);
+    window.handleClientSessionCloseOrError = function() {
+      console.warn('+++++++ Common handleClientSessionCloseOrError(), mapIns.counter:', window.mapIns.counter);
+
+      if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) { //如果是游戏时间结束引起的断连
+        console.log("游戏结束引起的断连, 不需要回到登录页面");
+      } else {
+        console.warn("意外断连，即将回到登录页面");
+        self.clearLocalStorageAndBackToLoginScene(true);
+      }
+    };
 
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
@@ -606,21 +646,6 @@ cc.Class({
       self.node.addChild(newShelter);
     }
 
-    window.handleClientSessionCloseOrError = function() {
-      console.warn('+++++++ handleClientSessionCloseOrError(), mapIns.counter:', window.mapIns.counter);
-
-      if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) { //如果是游戏时间结束引起的断连
-        cc.log('游戏结束引起的断连, 不需要回到登录页面');
-      } else {
-        cc.log('意外断连，即将回到登录页面');
-        if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-          cc.director.loadScene('wechatGameLogin');
-        } else {
-          cc.director.loadScene('login');
-        }
-      }
-    };
-
     self.initAfterWSConnected = () => {
       const self = window.mapIns;
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
@@ -640,7 +665,7 @@ cc.Class({
         const refFrameId = diffFrame.refFrameId;
         if (-99 == refFrameId) {
           //显示倒计时
-          self.matchPlayersFinsihed(diffFrame.players);
+          self.playersMatched(diffFrame.players);
           //隐藏返回按钮
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           findingPlayerScriptIns.hideExitButton();
@@ -669,7 +694,7 @@ cc.Class({
           if (0 < frameId) {
             self._lazilyTriggerResync(); 
           }
-          cc.log(`${JSON.stringify(diffFrame)}`);
+          console.log(JSON.stringify(diffFrame));
         }
         */
         const cachedFullFrame = self.recentFrameCache[refFrameId];
@@ -817,6 +842,7 @@ cc.Class({
     
     // The player is now viewing "self.gameRuleNode" with button(s) to start an actual battle. -- YFLu
     const expectedRoomId = window.getExpectedRoomIdSync(); 
+    console.warn("expectedRoomId: ", expectedRoomId);
     if (null != expectedRoomId) {
       self.disableGameRuleNode();
       // The player is now viewing "self.gameRuleNode" with no button, and should wait for `self.initAfterWSConnected` to be called. -- YFLu
@@ -1002,7 +1028,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) { //如果移动过大 打印log但还是会移动
-            cc.log(`Player ${cachedPlayerData.id} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
+            console.log("Player ", cachedPlayerData.id, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1032,7 +1058,6 @@ cc.Class({
 
         if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
           const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
-          //console.log(newScheduledDirection);
           aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
         }
 
@@ -1121,8 +1146,6 @@ cc.Class({
               return 0;
             } else {
 
-              //console.log(bulletInfo.startAtPoint, bulletInfo.endAtPoint);
-
               const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
               const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
               const radian = (() => {
@@ -1185,7 +1208,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
-            cc.log(`Bullet ${bulletLocalIdInBattle} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
+            console.log("Bullet ", bulletLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
             aBulletScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1245,7 +1268,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
-            cc.log(`Pumpkin ${pumpkinLocalIdInBattle} is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ${toTeleportDisThreshold}`);
+            console.log("Pumpkin ", pumpkinLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
             aPumpkinScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1361,10 +1384,9 @@ cc.Class({
         }
       }
 
-    } catch (e) {
-      console.warn('map Update()发生了错误, 手动断连并回到登录页面');
-      console.error(e);
-      window.closeWSConnection();
+    } catch (err) {
+      console.warn("Map.update(dt)内发生了错误, 即将清空localStorage并回到登录页面", err);
+      self.clearLocalStorageAndBackToLoginScene(true);
     }
 
   },
@@ -1375,26 +1397,17 @@ cc.Class({
   },
 
   logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/ , shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-    const localClearance = function() {
-      window.closeWSConnection();
-      if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      }
-      cc.sys.localStorage.removeItem('selfPlayer');
-
-      if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-        cc.director.loadScene('wechatGameLogin');
-      } else {
-        cc.director.loadScene('login');
-      }
-    };
-
     const self = this;
-    if (cc.sys.localStorage.getItem('selfPlayer')) {
-      const selfPlayer = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
+    const localClearance = () => {
+      self.clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
+    }
+
+    const selfPlayerStr = cc.sys.localStorage.getItem("selfPlayer"); 
+    if (null != selfPlayerStr) {
+      const selfPlayer = JSON.parse(selfPlayerStr);
       const requestContent = {
         intAuthToken: selfPlayer.intAuthToken
-      }
+      };
       try {
         NetworkUtils.ajax({
           url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.INT_AUTH_TOKEN + constants.ROUTE_PATH.LOGOUT,
@@ -1402,7 +1415,7 @@ cc.Class({
           data: requestContent,
           success: function(res) {
             if (res.ret != constants.RET_CODE.OK) {
-              cc.log(`Logout failed: ${res}.`);
+              console.log("Logout failed: ", res);
             }
             localClearance();
           },
@@ -1449,8 +1462,8 @@ cc.Class({
     setLocalZOrder(toShowNode, 10);
   },
 
-  matchPlayersFinsihed(players) {
-    console.log(players);
+  playersMatched(players) {
+    console.log("Calling `playersMatched`", players);
 
     const self = this;
     const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");

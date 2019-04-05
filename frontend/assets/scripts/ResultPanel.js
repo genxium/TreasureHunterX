@@ -31,6 +31,7 @@ cc.Class({
 
   // LIFE-CYCLE CALLBACKS:
   onLoad() {
+    this.mapScriptIns = null;
   },
 
   againBtnOnClick(evt) {
@@ -40,11 +41,8 @@ cc.Class({
   },
 
   homeBtnOnClick(evt) {
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      cc.director.loadScene('wechatGameLogin');
-    } else {
-      cc.director.loadScene('login');
-    }
+    if (null == this.mapScriptIns) return;    
+    this.mapScriptIns.clearLocalStorageAndBackToLoginScene();
   },
 
   showPlayerInfo(players) {
@@ -52,7 +50,6 @@ cc.Class({
     this.showMyAvatar();
     this.showMyName();
   },
-
 
   showMyName() {
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));

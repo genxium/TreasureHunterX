@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/ByteArena/box2d"
 	"github.com/golang/protobuf/proto"
 	"go.uber.org/zap"
@@ -332,9 +331,6 @@ func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsx
 		LastAttackTick: utils.UnixtimeNano(),
 	}
 
-	//fmt.Println("+++++++++++++++++++")
-	//pInRangePlayers.Print()
-
 	return &theGuardTower
 }
 
@@ -468,9 +464,7 @@ func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
 				Y: float64(value.Y),
 			}
 			tower := pR.createGuardTower(pAnchor, int32(key), pTsxIns)
-			//fmt.Println("-1-1-1-1-1-1-1-1: ", tower.LocalIdInBattle, pR.GuardTowers)
 			pR.GuardTowers[tower.LocalIdInBattle] = tower
-			//fmt.Println("000000 InitGuardTower: ", tower.LocalIdInBattle, pR.GuardTowers)
 		}
 	}
 	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
@@ -946,7 +940,6 @@ func (pR *Room) StartBattle() {
 		return
 	}
 
-	//relativePath := "../frontend/assets/resources/map/treasurehunter.tmx"
 	relativePath := "../frontend/assets/resources/map/pacman/map.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
@@ -954,12 +947,11 @@ func (pR *Room) StartBattle() {
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-	fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
+	Logger.Info("StartBattle filepaths", zap.Any("execPath", execPath), zap.Any("pwd", pwd))
 
 	tmxMapIns := TmxMap{}
 	pTmxMapIns := &tmxMapIns
 	fp := filepath.Join(pwd, relativePath)
-	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
 		panic("Tmx filepath must be absolute!")
 	}
@@ -976,20 +968,11 @@ func (pR *Room) StartBattle() {
 		player.Score = 0
 	}
 
-	execPath, err = os.Executable()
-	ErrFatal(err)
-
-	pwd, err = os.Getwd()
-	ErrFatal(err)
-
-	fmt.Printf("execPath = %v, pwd = %s, returning...\n", execPath, pwd)
-
 	tsxIns := Tsx{}
 	pTsxIns := &tsxIns
 	//relativePath = "../frontend/assets/resources/map/tile_1.tsx"
 	relativePath = "../frontend/assets/resources/map/pacman/Tile_W64_H64_S01.tsx"
 	fp = filepath.Join(pwd, relativePath)
-	fmt.Printf("fp == %v\n", fp)
 	if !filepath.IsAbs(fp) {
 		panic("Filepath must be absolute!")
 	}

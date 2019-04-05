@@ -33,17 +33,17 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {
-    //kobako: 初始化小游戏分享
-    //WARN: 不保证在ws连接成功并且拿到boundRoomId后才运行到此处
+    // WARNING: 不能保证在ws连接成功并且拿到boundRoomId后才运行到此处。
     if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      console.warn('kobako: boundRoomId for share: ' + cc.sys.localStorage.getItem('boundRoomId'));
+      var boundRoomId = cc.sys.localStorage.getItem('boundRoomId');
+      console.warn('The boundRoomId for sharing: ' + boundRoomId);
       wx.showShareMenu();
       wx.onShareAppMessage(function () {
         return {
           title: '夺宝大作战',
           imageUrl: 'https://mmocgame.qpic.cn/wechatgame/ibxA6JVNslX1q6ibicey5e4ibvrmGFSlC4xrbKAt5jhQGu8I00iaojEGxlud86OtKAA0T/0', // 图片 URL
           imageUrlId: 'RcU9ypycT6alae-GhclK3Q',
-          query: 'expectedRoomId=' + cc.sys.localStorage.getItem('boundRoomId')
+          query: 'expectedRoomId=' + boundRoomId
         };
       });
     }
@@ -68,10 +68,8 @@ cc.Class({
     }
   },
   exitBtnOnClick: function exitBtnOnClick(evt) {
-    cc.sys.localStorage.removeItem('expectedRoomId');
-    cc.sys.localStorage.removeItem('boundRoomId');
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     window.closeWSConnection();
-
     if (cc.sys.platform == cc.sys.WECHAT_GAME) {
       cc.director.loadScene('wechatGameLogin');
     } else {
@@ -85,10 +83,6 @@ cc.Class({
     for (var i in players) {
       var playerInfo = players[i];
       var playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
-      /*
-      const nameNode = playerInfoNode.getChildByName("name");
-      nameNode.getComponent(cc.Label).string = constants.PLAYER_NAME[playerInfo.joinIndex];
-      */
       playerInfoNode.active = true;
       if (2 == playerInfo.joinIndex) {
         this.findingAnimNode.active = false;

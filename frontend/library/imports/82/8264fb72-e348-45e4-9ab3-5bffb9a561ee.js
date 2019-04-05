@@ -2,7 +2,7 @@
 cc._RF.push(module, '8264fty40hF5JqzW/+5pWHu', 'WechatGameLogin');
 // scripts/WechatGameLogin.js
 
-'use strict';
+"use strict";
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
@@ -33,13 +33,16 @@ cc.Class({
   onLoad: function onLoad() {
 
     wx.onShow(function (res) {
-      cc.log('+++++ wx onShow(), mapIns.counter: ' + window.mapIns.counter);
+      console.log("+++++ wx onShow(), mapIns.counter: ", window.mapIns.counter);
     });
 
     wx.onHide(function (res) {
-      cc.log('+++++ wx onHide(), mapIns.counter: ' + window.mapIns.counter + ', onHide.res: ' + res);
-      if ('close' == res.mode) {
-        window.closeWSConnection();
+      // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
+      console.log("+++++ wx onHide(), mapIns.counter: ", window.mapIns.counter, "onHide.res: ", res);
+      if ("close" == res.mode) {
+        if (window.mapIns) {
+          window.mapIns.clearLocalStorageAndBackToLoginScene();
+        }
       } else {
         // Deliberately left blank.
       }
@@ -51,13 +54,13 @@ cc.Class({
 
     cc.loader.loadRes("pbfiles/room_downsync_frame", function (err, textAsset /* cc.TextAsset */) {
       if (err) {
-        cc.error(err.message || err);
+        console.error(err);
         return;
       }
 
       self.showTips("自动登录中");
       self.checkIntAuthTokenExpire().then(function () {
-        self.showTips("自动登录中...");
+        self.showTips("   自动登录中...");
         var intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
         self.useTokenLogin(intAuthToken);
       }, function () {
@@ -68,28 +71,23 @@ cc.Class({
             self.showTips("授权成功, 登录中...");
             wx.login({
               success: function success(res) {
-                console.log('wx login success, res:');
-                console.log(res);
+                console.log("wx login success, res: ", res);
                 var code = res.code;
 
                 wx.getUserInfo({
                   success: function success(res) {
                     var userInfo = res.userInfo;
-                    console.log('Get user info ok:');
-                    console.log(userInfo);
-                    self.useWXCodeMiniGameLogin(code, userInfo);
+                    console.log("Get user info ok: ", userInfo);
+                    self.useWxCodeMiniGameLogin(code, userInfo);
                   },
-                  fail: function fail() {
-                    cc.error('wx.getUserInfo失败');
+                  fail: function fail(err) {
+                    console.error("wx.getUserInfo失败: ", err);
                   }
                 });
-
-                //self.useWXCodeLogin(res.code);
               },
               fail: function fail(err) {
                 if (err) {
-                  cc.error('wx.login失败');
-                  cc.error(err.message || err);
+                  console.error("wx.login失败: ", err);
                 }
               }
             });
@@ -128,14 +126,13 @@ cc.Class({
                     console.log('wx.login success, res:');
                     console.log(res);
                     var code = res.code;
-                    self.useWXCodeMiniGameLogin(code, userInfo);
+                    self.useWxCodeMiniGameLogin(code, userInfo);
                     //完全登录成功后删除按钮
                     button.destroy();
                   },
                   fail: function fail(err) {
                     if (err) {
-                      cc.error('wx.login失败');
-                      cc.error(err.message || err);
+                      console.error("wx.login失败: ", err);
                     }
                   }
                 });
@@ -148,16 +145,16 @@ cc.Class({
   },
   onDestroy: function onDestroy() {
     if (window.mapIns) {
-      cc.log('+++++++ WechatGameLogin onDestroy(), mapIns.counter: ' + window.mapIns.counter);
+      console.log("+++++++ WechatGameLogin onDestroy(), mapIns.counter: " + window.mapIns.counter);
     } else {
-      cc.log('+++++++ WechatGameLogin onDestroy(), mapIns.counter: 0');
+      console.log("+++++++ WechatGameLogin onDestroy(), mapIns.counter: 0");
     }
   },
   showTips: function showTips(text) {
     if (this.tipsLabel != null) {
       this.tipsLabel.string = text;
     } else {
-      cc.log('Login scene showTips failed');
+      console.log('Login scene showTips failed');
     }
   },
   getRetCodeList: function getRetCodeList() {
@@ -237,7 +234,7 @@ cc.Class({
   },
   checkIntAuthTokenExpire: function checkIntAuthTokenExpire() {
     return new Promise(function (resolve, reject) {
-      if (!cc.sys.localStorage.getItem('selfPlayer')) {
+      if (!cc.sys.localStorage.getItem("selfPlayer")) {
         reject();
         return;
       }
@@ -295,7 +292,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log('Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        console.log("Login attempt `useTokenLogin` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         cc.director.loadScene('wechatGameLogin');
       },
@@ -325,7 +322,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       },
       timeout: function timeout() {
@@ -357,9 +354,8 @@ cc.Class({
   },
   onLoggedIn: function onLoggedIn(res) {
     var self = this;
-    cc.log('OnLoggedIn ' + JSON.stringify(res) + '.');
+    console.log("OnLoggedIn: ", res);
     if (res.ret === self.retCodeDict.OK) {
-
       if (window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
         window.initWxSdk = self.initWxSdk.bind(self);
         window.initWxSdk();
@@ -374,15 +370,15 @@ cc.Class({
         displayName: res.displayName,
         name: res.name
       };
-      cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
-      cc.log('cc.sys.localStorage.selfPlayer = ' + cc.sys.localStorage.getItem('selfPlayer'));
+      cc.sys.localStorage.setItem("selfPlayer", JSON.stringify(selfPlayer));
+      console.log("cc.sys.localStorage.selfPlayer = ", cc.sys.localStorage.getItem("selfPlayer"));
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
 
       cc.director.loadScene('default_map');
     } else {
-      cc.warn('onLoggedIn failed!');
+      console.warn('onLoggedIn failed!');
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
@@ -430,18 +426,17 @@ cc.Class({
         self.onWechatLoggedIn(res);
       },
       error: function error(xhr, status, errMsg) {
-        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
-        window.history.replaceState({}, null, window.location.pathname);
       }
     });
   },
 
 
   //对比useWxCodeLogin函数只是请求了不同url
-  useWXCodeMiniGameLogin: function useWXCodeMiniGameLogin(_code, _userInfo) {
+  useWxCodeMiniGameLogin: function useWxCodeMiniGameLogin(_code, _userInfo) {
     var self = this;
     NetworkUtils.ajax({
       url: backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHATGAME + constants.ROUTE_PATH.LOGIN,
@@ -455,27 +450,19 @@ cc.Class({
         self.onWechatLoggedIn(res);
       },
       error: function error(xhr, status, errMsg) {
-
-        //Mock page navigation
-        //self.mockWechatLoggedIn();
-
-        cc.log('Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".');
+        console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
-        window.history.replaceState({}, null, window.location.pathname);
       }
     });
-  },
-  mockWechatLoggedIn: function mockWechatLoggedIn() {
-    cc.director.loadScene('default_map');
   },
   getWechatCode: function getWechatCode(evt) {
     var self = this;
     self.showTips("");
     var wechatServerEndpoint = wechatAddress.PROTOCOL + "://" + wechatAddress.HOST + (null != wechatAddress.PORT && "" != wechatAddress.PORT.trim() ? ":" + wechatAddress.PORT : "");
     var url = wechatServerEndpoint + constants.WECHAT.AUTHORIZE_PATH + "?" + wechatAddress.APPID_LITERAL + "&" + constants.WECHAT.REDIRECT_RUI_KEY + NetworkUtils.encode(window.location.href) + "&" + constants.WECHAT.RESPONSE_TYPE + "&" + constants.WECHAT.SCOPE + constants.WECHAT.FIN;
-    console.log("To visit wechat auth addr: " + url);
+    console.log("To visit wechat auth addr: ", url);
     window.location.href = url;
   },
   initWxSdk: function initWxSdk() {
@@ -506,6 +493,7 @@ cc.Class({
     };
 
     var wxConfigUrl = window.isUsingWebkitWechatKernel() ? window.atFirstLocationHref : window.location.href;
+
     //接入微信登录接口
     NetworkUtils.ajax({
       "url": backendAddress.PROTOCOL + '://' + backendAddress.HOST + ':' + backendAddress.PORT + constants.ROUTE_PATH.API + constants.ROUTE_PATH.PLAYER + constants.ROUTE_PATH.VERSION + constants.ROUTE_PATH.WECHAT + constants.ROUTE_PATH.JSCONFIG,
@@ -516,11 +504,10 @@ cc.Class({
       },
       success: function success(res) {
         if (constants.RET_CODE.OK != res.ret) {
-          console.log("cannot get the wsConfig. retCode == " + res.ret);
+          console.warn("Failed to get `wsConfig`: ", res);
           return;
         }
         var jsConfig = res.jsConfig;
-        console.log(updateAppMsgShareDataObj);
         var configData = {
           debug: CC_DEBUG, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
           appId: jsConfig.app_id, // 必填，公众号的唯一标识
@@ -529,22 +516,21 @@ cc.Class({
           jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'],
           signature: jsConfig.signature // 必填，签名
         };
-        console.log("config url: " + wxConfigUrl);
-        console.log("wx.config: ");
-        console.log(configData);
+        console.log("config url: ", wxConfigUrl);
+        console.log("wx.config: ", configData);
         wx.config(configData);
-        console.log("Current window.location.href: " + window.location.href);
+        console.log("Current window.location.href: ", window.location.href);
         wx.ready(function () {
           console.log("Here is wx.ready.");
           wx.onMenuShareAppMessage(updateAppMsgShareDataObj);
           wx.onMenuShareTimeline(menuShareTimelineObj);
         });
         wx.error(function (res) {
-          console.error("wx config fails and error is " + JSON.stringify(res));
+          console.error("wx config fails and error is ", JSON.stringify(res));
         });
       },
       error: function error(xhr, status, errMsg) {
-        console.log("cannot get the wsConfig. errMsg == " + errMsg);
+        console.error("Failed to get `wsConfig`: ", errMsg);
       }
     });
   }

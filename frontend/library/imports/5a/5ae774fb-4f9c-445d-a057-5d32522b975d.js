@@ -36,18 +36,17 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-  onLoad: function onLoad() {},
+  onLoad: function onLoad() {
+    this.mapScriptIns = null;
+  },
   againBtnOnClick: function againBtnOnClick(evt) {
     this.onClose();
     if (!this.onAgainClicked) return;
     this.onAgainClicked();
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      cc.director.loadScene('wechatGameLogin');
-    } else {
-      cc.director.loadScene('login');
-    }
+    if (null == this.mapScriptIns) return;
+    this.mapScriptIns.clearLocalStorageAndBackToLoginScene();
   },
   showPlayerInfo: function showPlayerInfo(players) {
     this.showRanking(players);

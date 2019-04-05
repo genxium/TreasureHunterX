@@ -530,8 +530,8 @@
     "relativePath": "resources\\animation\\findingPlayer.anim"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1553771347164,
-    "meta": 1554454501112,
+    "asset": 1554475821226,
+    "meta": 1554475821250,
     "relativePath": "scenes\\default_map.fire"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
@@ -885,8 +885,8 @@
     "relativePath": "resources\\textures\\Theme\\Players\\Pacman2\\YellowPacman.png"
   },
   "475b849b-44b3-4390-982d-bd0d9e695093": {
-    "asset": 1554458519938,
-    "meta": 1554458519956,
+    "asset": 1554476052697,
+    "meta": 1554476052706,
     "relativePath": "scenes\\wechatGameLogin.fire"
   },
   "31ca9500-50c9-44f9-8d33-f9a969e53195": {
@@ -929,39 +929,39 @@
     "meta": 1554454501923,
     "relativePath": "scripts\\Login.js"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1553675462488,
-    "meta": 1554454500421,
-    "relativePath": "plugin_scripts\\conf.js"
-  },
-  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
-    "asset": 1554377904147,
-    "meta": 1554454501402,
-    "relativePath": "scripts\\FindingPlayer.js"
-  },
   "dd92b295-cbc1-4963-bbaa-de27a8359099": {
     "asset": 1554456803148,
     "meta": 1554457951315,
     "relativePath": "scripts\\GameRule.js"
   },
+  "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
+    "asset": 1554459691704,
+    "meta": 1554459874943,
+    "relativePath": "scripts\\FindingPlayer.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554468022485,
+    "meta": 1554468025856,
+    "relativePath": "plugin_scripts\\conf.js"
+  },
   "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1554457919834,
-    "meta": 1554457951408,
+    "asset": 1554471502644,
+    "meta": 1554472469890,
     "relativePath": "scripts\\ResultPanel.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1554457942618,
-    "meta": 1554457951409,
-    "relativePath": "scripts\\WsSessionMgr.js"
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1554477742236,
+    "meta": 1554477747657,
+    "relativePath": "scripts\\WechatGameLogin.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554459098834,
-    "meta": 1554459214337,
+    "asset": 1554478611108,
+    "meta": 1554479131670,
     "relativePath": "scripts\\Map.js"
   },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554459308110,
-    "meta": 1554459310247,
-    "relativePath": "scripts\\WechatGameLogin.js"
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1554478631068,
+    "meta": 1554479131670,
+    "relativePath": "scripts\\WsSessionMgr.js"
   }
 }
