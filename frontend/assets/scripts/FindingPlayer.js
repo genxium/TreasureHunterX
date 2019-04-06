@@ -29,18 +29,19 @@ cc.Class({
   onLoad() {
     // WARNING: 不能保证在ws连接成功并且拿到boundRoomId后才运行到此处。
     if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      const boundRoomId = cc.sys.localStorage.getItem('boundRoomId');
-      console.warn('The boundRoomId for sharing: ' + boundRoomId);
-      wx.showShareMenu();
-      wx.onShareAppMessage(() => ({
+      const boundRoomId = window.getBoundRoomIdFromPersistentStorage();
+      const wxToShareMessage = {
         title: '夺宝大作战',
         imageUrl: 'https://mmocgame.qpic.cn/wechatgame/ibxA6JVNslX1q6ibicey5e4ibvrmGFSlC4xrbKAt5jhQGu8I00iaojEGxlud86OtKAA0T/0',  // 图片 URL
         imageUrlId: 'RcU9ypycT6alae-GhclK3Q',
         query: 'expectedRoomId=' + boundRoomId,
-      }));
+      };
+      console.warn("The boundRoomId for sharing: ", boundRoomId, " wxToShareMessage ", wxToShareMessage);
+      wx.showShareMenu();
+      wx.onShareAppMessage(() => (wxToShareMessage));
     }
-
   },
+
   init() {
     this.firstPlayerInfoNode.active = false;
     this.secondPlayerInfoNode.active = false;

@@ -31,7 +31,6 @@ cc.Class({
 
   // LIFE-CYCLE CALLBACKS:
   onLoad() {
-    this.mapScriptIns = null;
   },
 
   againBtnOnClick(evt) {
@@ -41,8 +40,8 @@ cc.Class({
   },
 
   homeBtnOnClick(evt) {
-    if (null == this.mapScriptIns) return;    
-    this.mapScriptIns.clearLocalStorageAndBackToLoginScene();
+    if (null == window.mapIns) return;    
+    window.mapIns.clearLocalStorageAndBackToLoginScene();
   },
 
   showPlayerInfo(players) {

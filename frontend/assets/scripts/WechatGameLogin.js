@@ -26,10 +26,6 @@ cc.Class({
 
   onLoad() {
 
-    wx.onShow((res) => { 
-      console.log("+++++ wx onShow(), mapIns.counter: ", window.mapIns.counter);
-    });
-
     wx.onHide((res) => {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
       console.log("+++++ wx onHide(), mapIns.counter: ", window.mapIns.counter, "onHide.res: ", res);

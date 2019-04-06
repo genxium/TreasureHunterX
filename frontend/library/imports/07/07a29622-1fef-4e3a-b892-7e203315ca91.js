@@ -89,11 +89,7 @@ function _base64ToArrayBuffer(base64) {
 
 window.getExpectedRoomIdSync = function () {
   if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-    var launchOpts = wx.getLaunchOptionsSync();
-    if (null == launchOpts) return null;
-    var query = launchOpts.query;
-    if (null == query) return null;
-    return query['expectedRoomId'];
+    return window.expectedRoomId;
   } else {
     var qDict = window.getQueryParamDict();
     if (qDict) {
@@ -135,6 +131,10 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomId) {
   if (null != expectedRoomId) {
     console.log("initPersistentSessionClient with expectedRoomId == " + expectedRoomId);
     urlToConnect = urlToConnect + "&expectedRoomId=" + expectedRoomId;
+    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+      // This is a dirty hack. -- YFLu
+      window.expectedRoomId = null;
+    }
   } else {
     window.boundRoomId = getBoundRoomIdFromPersistentStorage();
     if (null != window.boundRoomId) {

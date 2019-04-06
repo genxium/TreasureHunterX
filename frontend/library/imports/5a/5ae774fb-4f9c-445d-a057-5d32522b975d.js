@@ -36,17 +36,15 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-  onLoad: function onLoad() {
-    this.mapScriptIns = null;
-  },
+  onLoad: function onLoad() {},
   againBtnOnClick: function againBtnOnClick(evt) {
     this.onClose();
     if (!this.onAgainClicked) return;
     this.onAgainClicked();
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    if (null == this.mapScriptIns) return;
-    this.mapScriptIns.clearLocalStorageAndBackToLoginScene();
+    if (null == window.mapIns) return;
+    window.mapIns.clearLocalStorageAndBackToLoginScene();
   },
   showPlayerInfo: function showPlayerInfo(players) {
     this.showRanking(players);

@@ -272,8 +272,8 @@ cc.Class({
   },
 
   onDestroy() {
+    const self = this;
     cc.warn(`+++++++ Map onDestroy(), mapIns.counter: ${window.mapIns.counter}`);
-    const self = window.mapIns;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
@@ -648,6 +648,7 @@ cc.Class({
 
     self.initAfterWSConnected = () => {
       const self = window.mapIns;
+      self.hideGameRuleNode();
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId

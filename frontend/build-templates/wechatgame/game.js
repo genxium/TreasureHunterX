@@ -25,4 +25,9 @@ else {
 var bundle = require('libs/room_downsync_frame_proto_bundle.forcemsg.js');
 window.RoomDownsyncFrame = bundle.models.RoomDownsyncFrame;
 
+window.expectedRoomId = null;
+wx.onShow((res) => {
+  console.log("+++++ wx onShow(), onShow.res ", res);
+  window.expectedRoomId = res.query.expectedRoomId;
+});
 window.boot();

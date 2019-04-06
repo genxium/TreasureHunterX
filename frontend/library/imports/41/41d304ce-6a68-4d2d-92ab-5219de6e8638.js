@@ -271,8 +271,8 @@ cc.Class({
     cc.warn("+++++++ Map onDisable(), mapIns.counter: " + window.mapIns.counter);
   },
   onDestroy: function onDestroy() {
+    var self = this;
     cc.warn("+++++++ Map onDestroy(), mapIns.counter: " + window.mapIns.counter);
-    var self = window.mapIns;
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
@@ -813,6 +813,7 @@ cc.Class({
 
     self.initAfterWSConnected = function () {
       var self = window.mapIns;
+      self.hideGameRuleNode();
       self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
       Object.assign(self.selfPlayerInfo, {
         id: self.selfPlayerInfo.playerId
