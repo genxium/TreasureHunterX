@@ -55,11 +55,11 @@ func InitRoomBattleStateIns() {
 	RoomBattleStateIns = RoomBattleState{
 		IDLE:                           0,
 		WAITING:                        -1,
-		PREPARE:                        -2,
-		IN_BATTLE:                      10000000,
-		STOPPING_BATTLE_FOR_SETTLEMENT: 10000001,
-		IN_SETTLEMENT:                  10000002,
-		IN_DISMISSAL:                   10000003,
+		PREPARE:                        10000000,
+		IN_BATTLE:                      10000001,
+		STOPPING_BATTLE_FOR_SETTLEMENT: 10000002,
+		IN_SETTLEMENT:                  10000003,
+		IN_DISMISSAL:                   10000004,
 	}
 }
 
@@ -1373,7 +1373,7 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 		return
 	}
 	pR.State = RoomBattleStateIns.PREPARE
-	Logger.Info("The `battleMainLoop` is prepare started for:", zap.Any("roomId", pR.Id))
+	Logger.Info("Battle state transitted to RoomBattleStateIns.PREPARE for:", zap.Any("roomId", pR.Id))
 	playerJoinIndexFrame := &RoomDownsyncFrame{
 		Id:         pR.Tick,
 		Players:    pR.Players,
@@ -1555,7 +1555,6 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			break
 		}
 	}
-	pR.updateScore()
 	playerJoinIndexFrame := &RoomDownsyncFrame{
 		Id:         pR.Tick,
 		Players:    pR.Players,
@@ -1574,10 +1573,12 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 
-	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 	if pR.Capacity == len(pR.Players) {
 		pR.StartBattle()
 	}
+
+  pR.updateScore()
+	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 }
 
 func (pR *Room) onPlayerReAdded(playerId int32) {

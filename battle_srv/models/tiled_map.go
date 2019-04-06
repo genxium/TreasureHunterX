@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"math"
@@ -268,10 +267,8 @@ func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
 					Y: obj.Y,
 				}
 				//初始化Points
-				// fmt.Printf("%s\n",obj.Polyline.Points)
 				singleValueArray := strings.Split(obj.Polyline.Points, " ")
 				pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
-				// fmt.Printf("%v\n",singleValueArray)
 				for key, value := range singleValueArray {
 					for k, v := range strings.Split(value, ",") {
 						n, err := strconv.ParseFloat(v, 64)
@@ -324,11 +321,7 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 	if err != nil {
 		return err
 	}
-	// fmt.Printf("%s\n", byteArr)
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-		fmt.Println("!!!!!!!!!!!!!!!!!")
-		fmt.Println(objGroup.Name)
-
 		if "controlled_players_starting_pos_list" == objGroup.Name {
 			pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
@@ -349,8 +342,6 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 					X: obj.X,
 					Y: obj.Y,
 				}
-
-				fmt.Println("A highTreasures")
 
 				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
 				pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
@@ -402,7 +393,6 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 		if "guardTower" == objGroup.Name {
 			pTmxMapIns.GuardTowersInitPosList = make([]Vec2D, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
-				fmt.Printf("Init a guardTower")
 				tmp := Vec2D{
 					X: obj.X,
 					Y: obj.Y,
@@ -424,7 +414,6 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 				pTmxMapIns.Pumpkins[index] = &pos
 			}
 		}
-		Logger.Info("pumpkinInfo", zap.Any("p:", pTmxMapIns.Pumpkins))
 		if "speed_shoes" == objGroup.Name {
 			pTmxMapIns.SpeedShoesList = make([]SpeedShoesInfo, len(objGroup.Objects))
 			for index, obj := range objGroup.Objects {
@@ -457,7 +446,6 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
 	tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
 	tileSizeUnifiedLength := math.Sqrt(tileRectilinearSize.Width*tileRectilinearSize.Width*0.25 + tileRectilinearSize.Height*tileRectilinearSize.Height*0.25)
 	isometricObjectLayerPointOffsetScaleFactor := (tileSizeUnifiedLength / tileRectilinearSize.Height)
-	// fmt.Printf("tileWidth = %d,tileHeight = %d\n", pTmxMapIns.TileWidth, pTmxMapIns.TileHeight)
 	cosineThetaRadian := (tileRectilinearSize.Width * 0.5) / tileSizeUnifiedLength
 	sineThetaRadian := (tileRectilinearSize.Height * 0.5) / tileSizeUnifiedLength
 

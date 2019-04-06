@@ -939,11 +939,6 @@
     "meta": 1554459874943,
     "relativePath": "scripts\\FindingPlayer.js"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554468022485,
-    "meta": 1554468025856,
-    "relativePath": "plugin_scripts\\conf.js"
-  },
   "5ae774fb-4f9c-445d-a057-5d32522b975d": {
     "asset": 1554471502644,
     "meta": 1554472469890,
@@ -963,5 +958,10 @@
     "asset": 1554478631068,
     "meta": 1554479131670,
     "relativePath": "scripts\\WsSessionMgr.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554520547147,
+    "meta": 1554520550894,
+    "relativePath": "plugin_scripts\\conf.js"
   }
 }

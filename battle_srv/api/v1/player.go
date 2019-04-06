@@ -69,68 +69,42 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
+  // Composite a key to access against Redis-server.
 	redisKey := req.redisKey()
 	ttl, err := storage.RedisManagerIns.TTL(redisKey).Result()
-	Logger.Debug("redis ttl", zap.String("key", redisKey), zap.Duration("ttl", ttl))
+  Logger.Info("There's an existing SmsCaptcha record in Redis-server: ", zap.String("key", redisKey), zap.Duration("ttl", ttl))
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.UnknownError)
 		return
 	}
-	// redis剩余时长校验
+	// Redis剩余时长校验
 	if ttl >= ConstVals.Player.CaptchaMaxTTL {
 		c.Set(api.RET, Constants.RetCode.SmsCaptchaRequestedTooFrequently)
 		return
 	}
-	//Logger.Debug(ttl, Vals.Player.CaptchaMaxTTL)
-	var pass bool
+  pass := false
 	var succRet int
-	// 测试环境，优先从数据库校验，校验不通过，走手机号校验
-	exist, err := models.ExistPlayerByName(req.Num)
-	if err != nil {
-		c.Set(api.RET, Constants.RetCode.MysqlError)
-		return
-	}
-	player, err := models.GetPlayerByName(req.Num)
-	if err != nil {
-		c.Set(api.RET, Constants.RetCode.MysqlError)
-		return
-	}
-	if player != nil {
-		tokenExist, err := models.EnsuredPlayerLoginById(int(player.Id))
-		if err != nil {
-			c.Set(api.RET, Constants.RetCode.MysqlError)
-			return
-		}
-		if tokenExist {
-			playerLogin, err := models.GetPlayerLoginByPlayerId(int(player.Id))
-			if err != nil {
-				c.Set(api.RET, Constants.RetCode.MysqlError)
-				return
-			}
-			err = models.DelPlayerLoginByToken(playerLogin.IntAuthToken)
-			if err != nil {
-				c.Set(api.RET, Constants.RetCode.MysqlError)
-				return
-			}
-		}
-	}
-	if Conf.General.ServerEnv == SERVER_ENV_TEST && exist {
-		succRet = Constants.RetCode.IsTestAcc
-		pass = true
+	if Conf.General.ServerEnv == SERVER_ENV_TEST {
+    // 测试环境，优先从数据库校验`player.name`，校验不通过再走手机号校验
+    player, err := models.GetPlayerByName(req.Num)
+    if nil == err && nil != player {
+      pass = true
+      succRet = Constants.RetCode.IsTestAcc
+    }
 	}
 	if !pass {
 		if RE_PHONE_NUM.MatchString(req.Num) {
 			succRet = Constants.RetCode.Ok
 			pass = true
 		}
-		//hardecode 只验证国内手机号格式
+		// Hardecoded 只验证国内手机号格式
 		if req.CountryCode == "86" {
 			if RE_CHINA_PHONE_NUM.MatchString(req.Num) {
 				succRet = Constants.RetCode.Ok
 				pass = true
 			} else {
-				succRet = Constants.RetCode.Ok
+				succRet = Constants.RetCode.InvalidRequestParam
 				pass = false
 			}
 		}
@@ -146,31 +120,31 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	}{Ret: succRet}
 	var captcha string
 	if ttl >= 0 {
-		// 续验证码时长，重置剩余时长
+		// 已有未过期的旧验证码记录，续验证码有效期。
 		storage.RedisManagerIns.Expire(redisKey, ConstVals.Player.CaptchaExpire)
 		captcha = storage.RedisManagerIns.Get(redisKey).Val()
 		if ttl >= ConstVals.Player.CaptchaExpire/4 {
 			if succRet == Constants.RetCode.Ok {
-				getSmsCaptchaRespErrorCode := sendMessage(req.Num, req.CountryCode, captcha)
+				getSmsCaptchaRespErrorCode := sendSMSViaVendor(req.Num, req.CountryCode, captcha)
 				if getSmsCaptchaRespErrorCode != 0 {
 					resp.Ret = Constants.RetCode.GetSmsCaptchaRespErrorCode
 					resp.GetSmsCaptchaRespErrorCode = getSmsCaptchaRespErrorCode
 				}
 			}
 		}
-		Logger.Debug("redis captcha", zap.String("key", redisKey), zap.String("captcha", captcha))
+    Logger.Info("Extended ttl of existing SMSCaptcha record in Redis:", zap.String("key", redisKey), zap.String("captcha", captcha))
 	} else {
 		// 校验通过，进行验证码生成处理
 		captcha = strconv.Itoa(utils.Rand.Number(1000, 9999))
 		if succRet == Constants.RetCode.Ok {
-			getSmsCaptchaRespErrorCode := sendMessage(req.Num, req.CountryCode, captcha)
+			getSmsCaptchaRespErrorCode := sendSMSViaVendor(req.Num, req.CountryCode, captcha)
 			if getSmsCaptchaRespErrorCode != 0 {
 				resp.Ret = Constants.RetCode.GetSmsCaptchaRespErrorCode
 				resp.GetSmsCaptchaRespErrorCode = getSmsCaptchaRespErrorCode
 			}
 		}
 		storage.RedisManagerIns.Set(redisKey, captcha, ConstVals.Player.CaptchaExpire)
-		Logger.Debug("gen new captcha", zap.String("key", redisKey), zap.String("captcha", captcha))
+		Logger.Info("Generated new captcha", zap.String("key", redisKey), zap.String("captcha", captcha))
 	}
 	if succRet == Constants.RetCode.IsTestAcc {
 		resp.Captcha = captcha
@@ -188,7 +162,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	}
 	redisKey := req.redisKey()
 	captcha := storage.RedisManagerIns.Get(redisKey).Val()
-	Logger.Debug("compare captcha", zap.String("redis", captcha), zap.String("req", req.Captcha))
+	Logger.Info("Comparing captchas", zap.String("key", redisKey), zap.String("whats-in-redis", captcha), zap.String("whats-from-req", req.Captcha))
 	if captcha != req.Captcha {
 		c.Set(api.RET, Constants.RetCode.SmsCaptchaNotMatch)
 		return
@@ -689,7 +663,7 @@ type captchaReq struct {
 	Tpl_id int        `json:"tpl_id"`
 }
 
-func sendMessage(mobile string, nationcode string, captchaCode string) int {
+func sendSMSViaVendor(mobile string, nationcode string, captchaCode string) int {
 	tel := &tel{
 		Mobile:     mobile,
 		Nationcode: nationcode,
@@ -703,7 +677,7 @@ func sendMessage(mobile string, nationcode string, captchaCode string) int {
 		captchaExpireMin = strconv.Itoa(int(ConstVals.Player.CaptchaExpire) / 60000000000)
 	}
 	params := [2]string{captchaCode, captchaExpireMin}
-	appkey := "41a5142feff0b38ade02ea12deee9741"
+  appkey := "41a5142feff0b38ade02ea12deee9741" // TODO: Should read from config file!
 	rand := strconv.Itoa(utils.Rand.Number(1000, 9999))
 	now := utils.UnixtimeSec()
 
