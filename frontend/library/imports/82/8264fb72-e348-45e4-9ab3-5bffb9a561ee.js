@@ -77,66 +77,78 @@ cc.Class({
                     self.useWxCodeMiniGameLogin(code, userInfo);
                   },
                   fail: function fail(err) {
-                    console.error("wx.getUserInfo失败: ", err);
+                    console.error("wx.getUserInfo失败, 已获取权限, 可能由于网络原因获取失败: ", err);
+                    self.showTips('点击屏幕授权后登录');
+                    self.createAuthorizeThenLoginButton();
                   }
                 });
               },
               fail: function fail(err) {
                 if (err) {
-                  console.error("wx.login失败: ", err);
+                  console.error("wx.login失败, 已获取权限, 可能由于网络原因获取失败: ", err);
+                  self.showTips('点击屏幕授权后登录');
+                  self.createAuthorizeThenLoginButton();
                 }
               }
             });
           },
           fail: function fail() {
             //授权失败, 创建授权按钮
+            console.warn('授权失败, 创建授权按钮');
             self.showTips('点击屏幕授权后登录');
-            console.error('授权失败, 创建授权按钮');
-            var sysInfo = wx.getSystemInfoSync();
-            //获取微信界面大小
-            var width = sysInfo.screenWidth;
-            var height = sysInfo.screenHeight;
-            var button = wx.createUserInfoButton({
-              type: 'text',
-              text: '',
-              style: {
-                left: 0,
-                top: 0,
-                width: width,
-                height: height,
-                backgroundColor: '#00000000', //最后两位为透明度
-                color: '#ffffff',
-                fontSize: 20,
-                textAlign: "center",
-                lineHeight: height
-              }
-            });
-            button.onTap(function (res) {
-              console.log(res);
-              if (null != res.userInfo) {
-                var userInfo = res.userInfo;
-                self.showTips('授权成功, 登录中...');
-
-                wx.login({
-                  success: function success(res) {
-                    console.log('wx.login success, res:');
-                    console.log(res);
-                    var code = res.code;
-                    self.useWxCodeMiniGameLogin(code, userInfo);
-                    //完全登录成功后删除按钮
-                    button.destroy();
-                  },
-                  fail: function fail(err) {
-                    if (err) {
-                      console.error("wx.login失败: ", err);
-                    }
-                  }
-                });
-              }
-            });
+            self.createAuthorizeThenLoginButton();
           }
         });
       });
+    });
+  },
+  createAuthorizeThenLoginButton: function createAuthorizeThenLoginButton(tips) {
+    var self = this;
+
+    var sysInfo = wx.getSystemInfoSync();
+    //获取微信界面大小
+    var width = sysInfo.screenWidth;
+    var height = sysInfo.screenHeight;
+
+    var button = wx.createUserInfoButton({
+      type: 'text',
+      text: '',
+      style: {
+        left: 0,
+        top: 0,
+        width: width,
+        height: height,
+        backgroundColor: '#00000000', //最后两位为透明度
+        color: '#ffffff',
+        fontSize: 20,
+        textAlign: "center",
+        lineHeight: height
+      }
+    });
+    button.onTap(function (res) {
+      console.log(res);
+      if (null != res.userInfo) {
+        var userInfo = res.userInfo;
+        self.showTips('授权成功, 登录中...');
+
+        wx.login({
+          success: function success(res) {
+            console.log('wx.login success, res:');
+            console.log(res);
+            var code = res.code;
+            self.useWxCodeMiniGameLogin(code, userInfo);
+            //完全登录成功后删除按钮
+            button.destroy();
+          },
+          fail: function fail(err) {
+            if (err) {
+              self.showTips('微信登录失败, 点击屏幕重试');
+            }
+          }
+        });
+      } else {
+        self.showTips('请先授权');
+      }
     });
   },
   onDestroy: function onDestroy() {
@@ -290,7 +302,9 @@ cc.Class({
       error: function error(xhr, status, errMsg) {
         console.log("Login attempt `useTokenLogin` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        cc.director.loadScene('wechatGameLogin');
+
+        self.showTips('使用token登录失败, 点击屏幕重试');
+        self.createAuthorizeThenLoginButton();
       },
       timeout: function timeout() {
         self.enableInteractiveControls(true);
@@ -346,6 +360,9 @@ cc.Class({
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret);
+
+      self.showTips('登录失败, 请点击屏幕重试');
+      self.createAuthorizeThenLoginButton();
     }
   },
   onLoggedIn: function onLoggedIn(res) {
@@ -407,7 +424,8 @@ cc.Class({
           break;
       }
 
-      cc.director.loadScene('wechatGameLogin');
+      self.showTips('登录失败, 点击屏幕重试');
+      self.createAuthorizeThenLoginButton();
     }
   },
   useWXCodeLogin: function useWXCodeLogin(_code) {
@@ -450,6 +468,9 @@ cc.Class({
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
+
+        self.showTips('登录失败, 点击屏幕重试');
+        self.createAuthorizeThenLoginButton();
       }
     });
   },
