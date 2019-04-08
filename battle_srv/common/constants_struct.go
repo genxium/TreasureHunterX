@@ -29,6 +29,7 @@ type constants struct {
 		InvalidRequestParam                              int    `json:"INVALID_REQUEST_PARAM"`
 		InvalidToken                                     int    `json:"INVALID_TOKEN"`
 		IsTestAcc                                        int    `json:"IS_TEST_ACC"`
+		IsBotAcc                                         int    `json:"IS_BOT_ACC"`
 		LackOfDiamond                                    int    `json:"LACK_OF_DIAMOND"`
 		LackOfEnergy                                     int    `json:"LACK_OF_ENERGY"`
 		LackOfGold                                       int    `json:"LACK_OF_GOLD"`

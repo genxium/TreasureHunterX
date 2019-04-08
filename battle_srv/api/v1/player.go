@@ -92,7 +92,15 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
       pass = true
       succRet = Constants.RetCode.IsTestAcc
     }
-	}
+	}else{
+    //新增机器人账号验证 --kobako
+    player, err := models.GetPlayerByName(req.Num)
+    if nil == err && nil != player {
+      pass = true
+      succRet = Constants.RetCode.IsBotAcc
+    }
+  }
+
 	if !pass {
 		if RE_PHONE_NUM.MatchString(req.Num) {
 			succRet = Constants.RetCode.Ok
@@ -149,6 +157,12 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	if succRet == Constants.RetCode.IsTestAcc {
 		resp.Captcha = captcha
 	}
+  //机器人账号 --kobako
+	if succRet == Constants.RetCode.IsBotAcc {
+		resp.Captcha = captcha
+    fmt.Println("kobako: 11111111, captcha", captcha)
+    fmt.Println(resp)
+	}
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -160,6 +174,10 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
+
+  fmt.Println("kobako:")
+  fmt.Println(req)
+
 	redisKey := req.redisKey()
 	captcha := storage.RedisManagerIns.Get(redisKey).Val()
 	Logger.Info("Comparing captchas", zap.String("key", redisKey), zap.String("whats-in-redis", captcha), zap.String("whats-from-req", req.Captcha))

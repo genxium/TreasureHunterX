@@ -15,11 +15,14 @@ func LoadPreConf() {
 	db, err := sqlx.Connect("sqlite3", Conf.General.PreConfSQLitePath)
 	ErrFatal(err)
 	defer db.Close()
+
 	loadPreConfToMysql(db)
+
+  // --kobako
+	MaybeCreateNewPlayer(db, "bot_player")
 }
 
 func loadPreConfToMysql(db *sqlx.DB) {
-	// TODO
 	tbs := []string{}
 	loadSqlite(db, tbs)
 }

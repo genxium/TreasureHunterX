@@ -15,21 +15,21 @@ if (CC_DEBUG) {
   };
   */
 
-  /*
   var backendAddress = {
     PROTOCOL: 'http',
     HOST: 'localhost',
     PORT: "9992",
-    WS_PATH_PREFIX: "/tsrht",
+    WS_PATH_PREFIX: "/tsrht"
   };
-  */
 
+  /*
   var backendAddress = {
     PROTOCOL: 'https',
     HOST: 'tsrht.lokcol.com',
     PORT: "443",
-    WS_PATH_PREFIX: "/tsrht"
+    WS_PATH_PREFIX: "/tsrht",
   };
+  */
 
   var wechatAddress = {
     PROTOCOL: "https",

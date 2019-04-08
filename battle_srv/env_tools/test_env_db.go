@@ -17,7 +17,7 @@ func MergeTestPlayerAccounts() {
 	db, err := sqlx.Connect("sqlite3", fp)
 	ErrFatal(err)
 	defer db.Close()
-	maybeCreateNewPlayer(db)
+	MaybeCreateNewPlayer(db, "test_player")
 }
 
 type dbTestPlayer struct {
@@ -26,9 +26,10 @@ type dbTestPlayer struct {
 	MagicPhoneNum         string `db:"magic_phone_num"`
 }
 
-func maybeCreateNewPlayer(db *sqlx.DB) {
+//加上tableName参数, 用于pre_conf_data.sqlite里bot_player表的复用 --kobako
+func MaybeCreateNewPlayer(db *sqlx.DB, tableName string) {
 	var ls []*dbTestPlayer
-	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num FROM test_player")
+	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num FROM " + tableName)
 	ErrFatal(err)
 	names := make([]string, len(ls), len(ls))
 	for i, v := range ls {
@@ -54,10 +55,10 @@ func maybeCreateNewPlayer(db *sqlx.DB) {
 		}
 		if !flag {
 			// 找不到，新增
-			Logger.Debug("create", zap.Any("testPlayer", testPlayer))
+			Logger.Debug("create", zap.Any(tableName, testPlayer))
 			err := createNewPlayer(testPlayer)
 			if err != nil {
-				Logger.Warn("createNewPlayer from test player", zap.NamedError("createNewPlayerErr", err))
+				Logger.Warn("createNewPlayer from" + tableName, zap.NamedError("createNewPlayerErr", err))
 			}
 		}
 	}
