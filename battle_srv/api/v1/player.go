@@ -517,7 +517,18 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 			Logger.Info("Got a test env player:", zap.Any("phonenum", req.Num), zap.Any("playerId", player.Id))
 			return player, nil
 		}
-	}
+	}else{ //正式环境检查是否为bot用户
+    botPlayer, err := models.GetPlayerByName(req.Num)
+		if err != nil {
+			Logger.Error("Seeking bot player error:", zap.Error(err))
+			return nil, err
+		}
+		if botPlayer != nil {
+			Logger.Info("Got a bot player:", zap.Any("phonenum", req.Num), zap.Any("playerId", botPlayer.Id))
+			return botPlayer, nil
+		}
+  }
+
 	bind, err := models.GetPlayerAuthBinding(Constants.AuthChannel.Sms, extAuthID)
 	if err != nil {
 		return nil, err
@@ -537,6 +548,7 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 		UpdatedAt: now,
 	}
 	return p.createNewPlayer(player, extAuthID, int(Constants.AuthChannel.Sms))
+
 }
 
 func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.UserInfo) (*models.Player, error) {
