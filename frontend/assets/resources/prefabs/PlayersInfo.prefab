@@ -182,8 +182,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 350,
-      "height": 150
+      "width": 357,
+      "height": 141
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -225,10 +225,10 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "1eb61d03-b629-4039-b3db-25329252b892"
+      "__uuid__": "8fe09523-0b5b-43ea-8c4b-5f60b1c12b67"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -240,7 +240,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
+      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -591,8 +591,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -136,
-      "y": -3,
+      "x": -149,
+      "y": -1,
       "z": 0
     },
     "_scale": {
@@ -680,7 +680,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 60
+      "height": 30
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -722,8 +722,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "\n",
-    "_N$string": "\n",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -869,8 +869,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 350,
-      "height": 150
+      "width": 359,
+      "height": 141
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -915,7 +915,7 @@
       "__uuid__": "e0b3fc5e-cd7b-427c-8195-7867955ac7ae"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -1269,7 +1269,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 60
+      "height": 30
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1311,8 +1311,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "\n",
-    "_N$string": "\n",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -1376,8 +1376,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 123,
-      "y": 1,
+      "x": 138,
+      "y": -1,
       "z": 0
     },
     "_scale": {

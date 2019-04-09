@@ -3,14 +3,14 @@
   "uuid": "5c2cf558-35ee-4ac6-963a-5690cd601a3d",
   "rawTextureUuid": "44dd2e7f-c601-41f1-86d6-f8f11296754b",
   "size": {
-    "width": 1026,
-    "height": 1922
+    "width": 752,
+    "height": 1626
   },
   "type": "Texture Packer",
   "subMetas": {
-    "InGame_Blackboard.png": {
+    "background.png": {
       "ver": "1.0.3",
-      "uuid": "bc77187e-3604-414e-837f-4bed04f78858",
+      "uuid": "d2883f28-7a3b-4a34-9fb5-0010f84932d5",
       "rawTextureUuid": "44dd2e7f-c601-41f1-86d6-f8f11296754b",
       "trimType": "auto",
       "trimThreshold": 1,
@@ -19,10 +19,10 @@
       "offsetY": 0,
       "trimX": 1,
       "trimY": 1,
-      "width": 1024,
-      "height": 1920,
-      "rawWidth": 1024,
-      "rawHeight": 1920,
+      "width": 750,
+      "height": 1624,
+      "rawWidth": 750,
+      "rawHeight": 1624,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

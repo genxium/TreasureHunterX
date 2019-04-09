@@ -42,8 +42,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.28753790129484,
-      "y": 0.28753790129484,
+      "x": 0.4010416666666667,
+      "y": 0.4010416666666667,
       "z": 1
     },
     "_quat": {
@@ -292,9 +292,7 @@
       "__id__": 5
     },
     "_enabled": true,
-    "_spriteFrame": {
-      "__uuid__": "c75d4450-9897-410e-acef-74a1cabb5b3c"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 1,
     "_fillType": 0,
@@ -307,9 +305,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": {
-      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
-    },
+    "_atlas": null,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_id": "8bU8h3xUdHb5Riq06ZSu7B"
@@ -322,7 +318,7 @@
       "__id__": 2
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_level": 2,
     "_components": [
       {
@@ -2837,7 +2833,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "8097004e-edc4-4700-8967-b303684c6083"
+      "__uuid__": "812aefc4-c565-4954-a30d-52e238250db0"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -2852,7 +2848,7 @@
     "_isTrimmedMode": false,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -2865,7 +2861,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true,
+    "_enabled": false,
     "_defaultClip": null,
     "_clips": [],
     "playOnLoad": false,

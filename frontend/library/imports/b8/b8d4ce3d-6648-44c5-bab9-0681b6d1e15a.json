@@ -1,0 +1,56 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "_name": "bulldozer-red-transparent.plist",
+  "_objFlags": 0,
+  "_native": "",
+  "_spriteFrames": {
+    "RedEyePacman-Bottom-01": {
+      "__uuid__": "d5291a19-3cf9-4736-8e06-a6cec12db1a2"
+    },
+    "RedEyePacman-Bottom-02": {
+      "__uuid__": "342f1b55-6695-41e3-8560-cb44faabe3a2"
+    },
+    "RedEyePacman-BottomLeft-01": {
+      "__uuid__": "e4ded4e0-0c35-470e-832c-016b26b1ec14"
+    },
+    "RedEyePacman-BottomLeft-02": {
+      "__uuid__": "2f220c2d-3fab-4541-814b-fda4ef4b068b"
+    },
+    "RedEyePacman-BottomRight-01": {
+      "__uuid__": "4604873c-537a-4e3b-bb85-72793c563e83"
+    },
+    "RedEyePacman-BottomRight-02": {
+      "__uuid__": "7c5d0c24-0150-4ec7-a136-271ad9b2d94c"
+    },
+    "RedEyePacman-Left-01": {
+      "__uuid__": "987c7dc0-e81f-4891-979d-0998794e6889"
+    },
+    "RedEyePacman-Left-02": {
+      "__uuid__": "9205c378-c50c-4303-af32-dbf9422375cf"
+    },
+    "RedEyePacman-Right-01": {
+      "__uuid__": "8f3cf81e-1251-4013-b684-13f2830c7425"
+    },
+    "RedEyePacman-Right-02": {
+      "__uuid__": "69f1bd37-6628-4fd1-b0f2-08073d1edb29"
+    },
+    "RedEyePacman-Top-01": {
+      "__uuid__": "0aa4ac87-8a86-4b64-956f-51fe0f3da1c8"
+    },
+    "RedEyePacman-Top-02": {
+      "__uuid__": "ffebf0b4-cad8-4a5d-963a-28fc09bd72e3"
+    },
+    "RedEyePacman-TopLeft-01": {
+      "__uuid__": "a95c7e00-8c98-42c4-a0b1-1c64cc08234f"
+    },
+    "RedEyePacman-TopLeft-02": {
+      "__uuid__": "c468547a-7a79-46b6-8c49-e21608e09f21"
+    },
+    "RedEyePacman-TopRight-01": {
+      "__uuid__": "de77fb04-1be6-4b45-a45d-c00003a27541"
+    },
+    "RedEyePacman-TopRight-02": {
+      "__uuid__": "360b2e8a-80e3-44b1-aeb2-276daea77f7f"
+    }
+  }
+}

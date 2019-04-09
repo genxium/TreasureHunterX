@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="8" nextobjectid="152">
+<map version="1.2" tiledversion="1.2.2" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="165">
  <tileset firstgid="1" source="Tile_W64_H64_S01.tsx"/>
  <layer id="1" name="GroundFloor" width="50" height="50" locked="1">
   <data encoding="base64" compression="zlib">
@@ -20,25 +20,46 @@
   </data>
  </layer>
  <objectgroup id="7" name="highTreasures">
-  <object id="145" x="606.061" y="1666.67">
-   <point/>
-  </object>
-  <object id="146" x="1687.88" y="609.091">
-   <point/>
-  </object>
   <object id="147" x="742.424" y="2924.24">
    <point/>
   </object>
-  <object id="148" x="2645.45" y="548.485">
+  <object id="148" x="2527.27" y="684.849">
    <point/>
   </object>
-  <object id="149" x="575.758" y="2472.73">
+  <object id="149" x="654.546" y="2539.4">
    <point/>
   </object>
-  <object id="150" x="2209.09" y="2396.97">
+  <object id="150" x="2427.27" y="2627.27">
    <point/>
   </object>
-  <object id="151" x="2433.33" y="2190.91">
+  <object id="151" x="2648.48" y="2412.12">
+   <point/>
+  </object>
+  <object id="152" x="2836.36" y="2842.42">
+   <point/>
+  </object>
+  <object id="153" x="3036.36" y="2872.73">
+   <point/>
+  </object>
+  <object id="154" x="2890.91" y="3042.42">
+   <point/>
+  </object>
+  <object id="156" x="1678.79" y="1672.73">
+   <point/>
+  </object>
+  <object id="159" x="1278.79" y="1278.79">
+   <point/>
+  </object>
+  <object id="161" x="306.061" y="293.939">
+   <point/>
+  </object>
+  <object id="162" x="624.242" y="254.545">
+   <point/>
+  </object>
+  <object id="163" x="248.485" y="636.364">
+   <point/>
+  </object>
+  <object id="164" x="606.061" y="600">
    <point/>
   </object>
  </objectgroup>
@@ -305,7 +326,7 @@
    <polyline points="0,0 -78.7879,-1.27898e-13 -66.6667,3121.21 1.13687e-13,3121.21"/>
   </object>
  </objectgroup>
- <objectgroup id="5" name="lowScoreTreasures">
+ <objectgroup id="5" name="lowScoreTreasures" visible="0">
   <object id="62" x="600" y="2648">
    <point/>
   </object>

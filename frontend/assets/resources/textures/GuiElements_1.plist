@@ -15,9 +15,9 @@
                 <key>spriteSourceSize</key>
                 <string>{344,200}</string>
                 <key>textureRect</key>
-                <string>{{1754,1403},{344,200}}</string>
+                <string>{{647,1669},{344,200}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>GameRule_Blackboard.png</key>
             <dict>
@@ -26,43 +26,43 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{643,793}</string>
+                <string>{644,793}</string>
                 <key>spriteSourceSize</key>
-                <string>{643,793}</string>
+                <string>{644,793}</string>
                 <key>textureRect</key>
-                <string>{{1028,643},{643,793}}</string>
-                <key>textureRotated</key>
-                <true/>
-            </dict>
-            <key>InGame_ResultPanel_Background_Black01.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{1025,1921}</string>
-                <key>spriteSourceSize</key>
-                <string>{1025,1921}</string>
-                <key>textureRect</key>
-                <string>{{1,1},{1025,1921}}</string>
+                <string>{{1,1027},{644,793}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>InGame_StatusBar_Red.png</key>
+            <key>InGame_Blackboard.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{306,141}</string>
+                <string>{1024,1920}</string>
                 <key>spriteSourceSize</key>
-                <string>{306,141}</string>
+                <string>{1024,1920}</string>
                 <key>textureRect</key>
-                <string>{{1823,953},{306,141}}</string>
+                <string>{{1,1},{1024,1920}}</string>
                 <key>textureRotated</key>
                 <true/>
+            </dict>
+            <key>InGame_ResultPanel_Background.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{287,272}</string>
+                <key>spriteSourceSize</key>
+                <string>{287,272}</string>
+                <key>textureRect</key>
+                <string>{{1609,1602},{287,272}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>Login_Background.png</key>
             <dict>
@@ -75,67 +75,7 @@
                 <key>spriteSourceSize</key>
                 <string>{640,960}</string>
                 <key>textureRect</key>
-                <string>{{1028,1},{640,960}}</string>
-                <key>textureRotated</key>
-                <true/>
-            </dict>
-            <key>Login_Pacman.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{366,513}</string>
-                <key>spriteSourceSize</key>
-                <string>{366,513}</string>
-                <key>textureRect</key>
-                <string>{{1386,1288},{366,513}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>Players_Avatar1.jpg</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{140,140}</string>
-                <key>spriteSourceSize</key>
-                <string>{140,140}</string>
-                <key>textureRect</key>
-                <string>{{1823,1261},{140,140}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>Players_Avatar2.jpg</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{140,140}</string>
-                <key>spriteSourceSize</key>
-                <string>{140,140}</string>
-                <key>textureRect</key>
-                <string>{{1754,1749},{140,140}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>PopupBg.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{308,153}</string>
-                <key>spriteSourceSize</key>
-                <string>{308,153}</string>
-                <key>textureRect</key>
-                <string>{{1823,643},{308,153}}</string>
+                <string>{{647,1027},{640,960}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -150,7 +90,7 @@
                 <key>spriteSourceSize</key>
                 <string>{573,356}</string>
                 <key>textureRect</key>
-                <string>{{1028,1288},{573,356}}</string>
+                <string>{{1609,1027},{573,356}}</string>
                 <key>textureRotated</key>
                 <true/>
             </dict>
@@ -166,9 +106,9 @@
             <key>realTextureFileName</key>
             <string>GuiElements_1.png</string>
             <key>size</key>
-            <string>{1989,1923}</string>
+            <string>{1966,1875}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:6a8fcd13007286f177aeb90f69b3f3d8:dd468d4c804de2bb9c1f7949a3f85387:c414829fdba7464f4f1ffc7cf387c5fc$</string>
+            <string>$TexturePacker:SmartUpdate:9357aa0724c16ee5410aaa3cfb792032:db6f9da3951835bfec427bcef3d23166:c414829fdba7464f4f1ffc7cf387c5fc$</string>
             <key>textureFileName</key>
             <string>GuiElements_1.png</string>
         </dict>

@@ -49,8 +49,8 @@
     "InGame_ResultPanel_AgainButton": {
       "__uuid__": "14248179-f903-4646-b119-fefdddca4223"
     },
-    "InGame_ResultPanel_Background": {
-      "__uuid__": "7d316250-2838-4a98-a478-1d4b78725141"
+    "InGame_ResultPanel_Background_Black01": {
+      "__uuid__": "78c88eee-3216-4129-9708-5e87ace5c5d3"
     },
     "InGame_ResultPanel_HomeButton": {
       "__uuid__": "b9b5f58d-d126-4bee-bf37-77eb3b1b9183"
@@ -58,17 +58,32 @@
     "InGame_StatusBar_Blue": {
       "__uuid__": "e0b3fc5e-cd7b-427c-8195-7867955ac7ae"
     },
+    "InGame_StatusBar_Red": {
+      "__uuid__": "8fe09523-0b5b-43ea-8c4b-5f60b1c12b67"
+    },
     "InGame_Tower2": {
       "__uuid__": "e6630f38-274f-4e69-8d68-ed9aba1ea097"
     },
     "Login_Logo": {
       "__uuid__": "6807e566-4ae9-46cb-a4da-8dccacda7800"
     },
+    "Login_Pacman": {
+      "__uuid__": "a348eadb-5606-4449-b9db-634b23147c83"
+    },
+    "Players_Avatar1": {
+      "__uuid__": "a30e1bbe-fab1-4a8a-8fdb-65b6be5f58f3"
+    },
+    "Players_Avatar2": {
+      "__uuid__": "0640fac2-bdb4-41c9-aecd-d64c0499c4bc"
+    },
     "Players_Baseball": {
       "__uuid__": "1094d9e7-dbb5-4aa3-b950-0f59472ea219"
     },
     "Players_arrowTip": {
       "__uuid__": "ad211aef-5918-41be-b47a-4ec7867aaaa5"
+    },
+    "PopupBg": {
+      "__uuid__": "88b1f536-650d-43f1-a6e7-5c368d65b03e"
     },
     "ResultPanel_Copper": {
       "__uuid__": "a9f3de9e-5734-4081-8d55-8da354db3666"
@@ -81,9 +96,6 @@
     },
     "ResultPanel_Silver": {
       "__uuid__": "9ff36c1e-c74b-4a98-9cbe-bfee90aad8da"
-    },
-    "background": {
-      "__uuid__": "8097004e-edc4-4700-8967-b303684c6083"
     },
     "exit": {
       "__uuid__": "2d94741e-c54b-4d35-8c02-84f7e7371dc3"

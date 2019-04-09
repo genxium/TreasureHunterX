@@ -3,7 +3,7 @@
   "_name": "BottomLeft",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.5833333333333334,
+  "_duration": 0.25,
   "sample": 12,
   "speed": 1,
   "wrapMode": "2",
@@ -14,25 +14,13 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "c894fa0e-b4fe-411e-9884-616ba1340d09"
+              "__uuid__": "07b6d385-3f51-48c1-8165-38756b3d84fa"
             }
           },
           {
             "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "7c20547c-5655-46c6-95fa-b93ca356e595"
-            }
-          },
-          {
-            "frame": 0.3333333333333333,
-            "value": {
-              "__uuid__": "4d44433a-27e4-4b27-b196-d91a851c3e30"
-            }
-          },
-          {
-            "frame": 0.5,
-            "value": {
-              "__uuid__": "7c20547c-5655-46c6-95fa-b93ca356e595"
+              "__uuid__": "c627bf3b-0e97-4423-aeea-54c7511894d6"
             }
           }
         ]

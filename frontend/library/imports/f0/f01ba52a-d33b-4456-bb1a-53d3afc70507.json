@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bulldozer-blue",
+    "texture": "ed1dbabe-cadf-460f-8a22-6c05654cd81d",
+    "atlas": "",
+    "rect": [
+      0,
+      92,
+      2008,
+      1916
+    ],
+    "offset": [
+      0,
+      -46
+    ],
+    "originalSize": [
+      2008,
+      2008
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

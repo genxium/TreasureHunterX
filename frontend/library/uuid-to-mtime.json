@@ -40,7 +40,7 @@
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1554174636000,
+    "asset": 1554802041000,
     "meta": 1553153264000,
     "relativePath": "resources/textures"
   },
@@ -105,8 +105,8 @@
     "relativePath": "resources/prefabs/SmsWaitcountdown.prefab"
   },
   "8e8c1a65-623d-42ba-97a7-820ce518ea11": {
-    "asset": 1554175481000,
-    "meta": 1554175481000,
+    "asset": 1554802357000,
+    "meta": 1554802357000,
     "relativePath": "resources/prefabs/ConfirmLogout.prefab"
   },
   "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
@@ -375,8 +375,8 @@
     "relativePath": "scripts/NPCPlayer.js"
   },
   "230eeb1f-e0f9-4a41-ab6c-05b3771cbf3e": {
-    "asset": 1553761812000,
-    "meta": 1553761812000,
+    "asset": 1554802510000,
+    "meta": 1554802510000,
     "relativePath": "resources/prefabs/CountdownToBeginGame.prefab"
   },
   "8ac0809b-f98d-4cff-a66c-3bd9e218ecd6": {
@@ -400,8 +400,8 @@
     "relativePath": "resources/prefabs/BulletPrefab.prefab"
   },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
-    "asset": 1554175517000,
-    "meta": 1554175517000,
+    "asset": 1554802850000,
+    "meta": 1554802850000,
     "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
   },
   "0d4a2516-47b9-420b-86c4-fc312599d4aa": {
@@ -479,24 +479,14 @@
     "meta": 1553746216000,
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01 copy.png"
   },
-  "5e68ce04-f41f-4ab0-a55c-608542e5638a": {
-    "asset": 1553153264000,
-    "meta": 1553746216000,
-    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.png"
-  },
-  "59b65107-0da7-47b3-a08d-7de824dd5a39": {
-    "asset": 1553153264000,
-    "meta": 1553217813000,
-    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
-  },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1554369126000,
-    "meta": 1554369126000,
+    "asset": 1554802825000,
+    "meta": 1554802825000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1554175896000,
-    "meta": 1554175896000,
+    "asset": 1554803673000,
+    "meta": 1554803673000,
     "relativePath": "resources/prefabs/GameRule.prefab"
   },
   "3cee8bde-8f1d-4960-b591-33208af1f997": {
@@ -505,23 +495,23 @@
     "relativePath": "resources/prefabs/GuardTower.prefab"
   },
   "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
-    "asset": 1553759604000,
-    "meta": 1553759604000,
+    "asset": 1554808344000,
+    "meta": 1554808344000,
     "relativePath": "resources/prefabs/Pacman1.prefab"
   },
   "1f479636-9eb8-4612-8f97-371964d6eae3": {
-    "asset": 1553760436000,
-    "meta": 1553760436000,
+    "asset": 1554808360000,
+    "meta": 1554808360000,
     "relativePath": "resources/prefabs/Pacman2.prefab"
   },
   "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
-    "asset": 1553762063000,
-    "meta": 1553762063000,
+    "asset": 1554802668000,
+    "meta": 1554802669000,
     "relativePath": "resources/prefabs/PlayersInfo.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1553762614000,
-    "meta": 1553762614000,
+    "asset": 1554802742000,
+    "meta": 1554802742000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "2062218a-c5d4-4cbb-959e-77e8e5a96344": {
@@ -530,108 +520,108 @@
     "relativePath": "resources/animation/findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1554369024000,
-    "meta": 1554369024000,
+    "asset": 1554806648000,
+    "meta": 1554806648000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
-    "asset": 1553760641000,
-    "meta": 1553760641000,
+    "asset": 1554807106000,
+    "meta": 1554807106000,
     "relativePath": "resources/animation/BluePacman/Bottom.anim"
   },
   "a1bf7c7c-b9f7-4b65-86e3-f86a9e798fb6": {
-    "asset": 1553760905000,
-    "meta": 1553760905000,
+    "asset": 1554807095000,
+    "meta": 1554807095000,
     "relativePath": "resources/animation/BluePacman/BottomLeft.anim"
   },
   "d5af527a-9f0c-4398-b2dd-84426be7bd32": {
-    "asset": 1553760845000,
-    "meta": 1553760845000,
+    "asset": 1554807127000,
+    "meta": 1554807127000,
     "relativePath": "resources/animation/BluePacman/BottomRight.anim"
   },
   "b60618d7-569d-4f13-bdeb-f20341fbadb6": {
-    "asset": 1553760663000,
-    "meta": 1553760663000,
+    "asset": 1554807146000,
+    "meta": 1554807146000,
     "relativePath": "resources/animation/BluePacman/Left.anim"
   },
   "0b3fb38e-9110-4191-9b72-6b64a224d049": {
-    "asset": 1553760623000,
-    "meta": 1553760623000,
+    "asset": 1554807161000,
+    "meta": 1554807161000,
     "relativePath": "resources/animation/BluePacman/Right.anim"
   },
   "1bc6de53-800b-4da3-ab8e-4a45e3aa4230": {
-    "asset": 1553760604000,
-    "meta": 1553760604000,
+    "asset": 1554807172000,
+    "meta": 1554807172000,
     "relativePath": "resources/animation/BluePacman/Top.anim"
   },
   "ee0d670c-893e-4e4d-96dd-5571db18ee97": {
-    "asset": 1553760927000,
-    "meta": 1553760927000,
+    "asset": 1554807184000,
+    "meta": 1554807184000,
     "relativePath": "resources/animation/BluePacman/TopLeft.anim"
   },
   "596df84a-2e4e-4f1d-967c-a82649f564a8": {
-    "asset": 1553760691000,
-    "meta": 1553760691000,
+    "asset": 1554807195000,
+    "meta": 1554807195000,
     "relativePath": "resources/animation/BluePacman/TopRight.anim"
   },
   "8acc4e9f-3c47-4b66-9a9d-d012709680f6": {
-    "asset": 1553760970000,
-    "meta": 1553760970000,
+    "asset": 1554807434000,
+    "meta": 1554807434000,
     "relativePath": "resources/animation/BluePacman/attackedLeft.anim"
   },
   "c7cda0cd-dbce-4722-abd2-aeca28263a21": {
-    "asset": 1553761000000,
-    "meta": 1553761000000,
+    "asset": 1554807458000,
+    "meta": 1554807458000,
     "relativePath": "resources/animation/BluePacman/attackedRight.anim"
   },
   "28194c48-ae3b-4197-8263-0d474ae8b9bc": {
-    "asset": 1553759377000,
-    "meta": 1553759377000,
+    "asset": 1554806910000,
+    "meta": 1554806910000,
     "relativePath": "resources/animation/RedPacman/Bottom.anim"
   },
   "e1c45a36-2022-4b18-a2db-b5e2e0a120ed": {
-    "asset": 1553759508000,
-    "meta": 1553759508000,
+    "asset": 1554806905000,
+    "meta": 1554806905000,
     "relativePath": "resources/animation/RedPacman/BottomLeft.anim"
   },
   "126dff26-0ace-439d-89b5-b888aa52d159": {
-    "asset": 1553759489000,
-    "meta": 1553759489000,
+    "asset": 1554806930000,
+    "meta": 1554806930000,
     "relativePath": "resources/animation/RedPacman/BottomRight.anim"
   },
   "95c2d541-8f99-446a-a7e0-094130ce6d41": {
-    "asset": 1553759400000,
-    "meta": 1553759400000,
+    "asset": 1554806992000,
+    "meta": 1554806992000,
     "relativePath": "resources/animation/RedPacman/Left.anim"
   },
   "380f5fa0-f77f-434a-8f39-d545ee6823c5": {
-    "asset": 1553759435000,
-    "meta": 1553759435000,
+    "asset": 1554806999000,
+    "meta": 1554806999000,
     "relativePath": "resources/animation/RedPacman/Right.anim"
   },
   "a306c6de-ccd8-492b-bfec-c6be0a4cbde2": {
-    "asset": 1553759418000,
-    "meta": 1553759419000,
+    "asset": 1554807009000,
+    "meta": 1554807009000,
     "relativePath": "resources/animation/RedPacman/Top.anim"
   },
   "f496072b-51fd-4406-abbd-9885ac23f7a9": {
-    "asset": 1553759455000,
-    "meta": 1553759455000,
+    "asset": 1554807020000,
+    "meta": 1554807020000,
     "relativePath": "resources/animation/RedPacman/TopLeft.anim"
   },
   "6405ad8b-3084-4b67-8c2e-9b4d34fa3d09": {
-    "asset": 1553759472000,
-    "meta": 1553759472000,
+    "asset": 1554807033000,
+    "meta": 1554807033000,
     "relativePath": "resources/animation/RedPacman/TopRight.anim"
   },
   "af16cdcb-6e82-4be6-806d-9fc52ae99fff": {
-    "asset": 1553759549000,
-    "meta": 1553759549000,
+    "asset": 1554807508000,
+    "meta": 1554807508000,
     "relativePath": "resources/animation/RedPacman/attackedLeft.anim"
   },
   "02eba566-4d22-4fa7-99d7-f032f5845421": {
-    "asset": 1553759581000,
-    "meta": 1553759581000,
+    "asset": 1554807532000,
+    "meta": 1554807532000,
     "relativePath": "resources/animation/RedPacman/attackedRight.anim"
   },
   "1712c9ec-6940-4356-a87d-37887608f224": {
@@ -663,11 +653,6 @@
     "asset": 1553244481000,
     "meta": 1553244483000,
     "relativePath": "resources/pbfiles/room_downsync_frame.proto"
-  },
-  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
-    "asset": 1553255153000,
-    "meta": 1553255234000,
-    "relativePath": "resources/map/pacman/map.tmx"
   },
   "5a5e300e-abf5-4774-8456-e3022509037a": {
     "asset": 1553759983000,
@@ -884,36 +869,6 @@
     "meta": 1553826252000,
     "relativePath": "plugin_scripts/constants.js"
   },
-  "5ad61f1e-785d-4245-8744-3276b20d841d": {
-    "asset": 1554172523000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_0.plist"
-  },
-  "e4e457db-639b-4e68-b1b1-7893fdf2bae7": {
-    "asset": 1554172523000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_1.plist"
-  },
-  "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
-    "asset": 1554172520000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_0.png"
-  },
-  "5c2cf558-35ee-4ac6-963a-5690cd601a3d": {
-    "asset": 1554172523000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_2.plist"
-  },
-  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
-    "asset": 1554172522000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_1.png"
-  },
-  "44dd2e7f-c601-41f1-86d6-f8f11296754b": {
-    "asset": 1554172523000,
-    "meta": 1554174639000,
-    "relativePath": "resources/textures/GuiElements_2.png"
-  },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
     "asset": 1554190912000,
     "meta": 1554190921000,
@@ -925,8 +880,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "475b849b-44b3-4390-982d-bd0d9e695093": {
-    "asset": 1554687776000,
-    "meta": 1554690454000,
+    "asset": 1554802212000,
+    "meta": 1554802212000,
     "relativePath": "scenes/wechatGameLogin.fire"
   },
   "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
@@ -963,5 +918,95 @@
     "asset": 1554717494000,
     "meta": 1554717496000,
     "relativePath": "plugin_scripts/conf.js"
+  },
+  "5ad61f1e-785d-4245-8744-3276b20d841d": {
+    "asset": 1554801199000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_0.plist"
+  },
+  "e4e457db-639b-4e68-b1b1-7893fdf2bae7": {
+    "asset": 1554801199000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_1.plist"
+  },
+  "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
+    "asset": 1554801198000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_0.png"
+  },
+  "5c2cf558-35ee-4ac6-963a-5690cd601a3d": {
+    "asset": 1554801199000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_2.plist"
+  },
+  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
+    "asset": 1554801199000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_1.png"
+  },
+  "44dd2e7f-c601-41f1-86d6-f8f11296754b": {
+    "asset": 1554801199000,
+    "meta": 1554802045000,
+    "relativePath": "resources/textures/GuiElements_2.png"
+  },
+  "1d1c5bde-eda9-495f-9fc9-bea74e96b93a": {
+    "asset": 1554803461000,
+    "meta": 1554803483000,
+    "relativePath": "resources/textures/Theme.zip"
+  },
+  "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
+    "asset": 1554797554000,
+    "meta": 1554804023000,
+    "relativePath": "resources/map/pacman/map.tmx"
+  },
+  "59b65107-0da7-47b3-a08d-7de824dd5a39": {
+    "asset": 1553746924000,
+    "meta": 1554804023000,
+    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.tsx"
+  },
+  "5e68ce04-f41f-4ab0-a55c-608542e5638a": {
+    "asset": 1554797407000,
+    "meta": 1554804023000,
+    "relativePath": "resources/map/pacman/Tile_W64_H64_S01.png"
+  },
+  "23fb8ada-95d1-4be0-8396-7f065d164dd3": {
+    "asset": 1554807987000,
+    "meta": 1554807989000,
+    "relativePath": "resources/textures/bulldozer-blue.plist"
+  },
+  "2c488eae-3a87-45d5-841e-e50780f91023": {
+    "asset": 1554807987000,
+    "meta": 1554807989000,
+    "relativePath": "resources/textures/bulldozer-red.plist"
+  },
+  "ed1dbabe-cadf-460f-8a22-6c05654cd81d": {
+    "asset": 1554807987000,
+    "meta": 1554807989000,
+    "relativePath": "resources/textures/bulldozer-blue.png"
+  },
+  "69e8c316-dbc5-4e11-a720-bc86db323a70": {
+    "asset": 1554807987000,
+    "meta": 1554807989000,
+    "relativePath": "resources/textures/bulldozer-red.png"
+  },
+  "96b5268e-af3d-4670-bf30-6dc5da52745a": {
+    "asset": 1554808205000,
+    "meta": 1554808206000,
+    "relativePath": "resources/textures/bulldozer-blue-transparent.plist"
+  },
+  "b8d4ce3d-6648-44c5-bab9-0681b6d1e15a": {
+    "asset": 1554808205000,
+    "meta": 1554808206000,
+    "relativePath": "resources/textures/bulldozer-red-transparent.plist"
+  },
+  "0e2f98ed-755a-4e34-8aa7-f94b8c15cb9a": {
+    "asset": 1554808205000,
+    "meta": 1554808206000,
+    "relativePath": "resources/textures/bulldozer-red-transparent.png"
+  },
+  "71ac3711-4cb2-4980-b108-d2f8f9a7f431": {
+    "asset": 1554808205000,
+    "meta": 1554808206000,
+    "relativePath": "resources/textures/bulldozer-blue-transparent.png"
   }
 }

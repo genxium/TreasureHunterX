@@ -4,8 +4,8 @@
   "_objFlags": 0,
   "_native": "",
   "_spriteFrames": {
-    "InGame_Blackboard": {
-      "__uuid__": "bc77187e-3604-414e-837f-4bed04f78858"
+    "background": {
+      "__uuid__": "d2883f28-7a3b-4a34-9fb5-0010f84932d5"
     }
   }
 }

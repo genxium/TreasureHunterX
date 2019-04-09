@@ -4,18 +4,18 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>InGame_Blackboard.png</key>
+            <key>background.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{1024,1920}</string>
+                <string>{750,1624}</string>
                 <key>spriteSourceSize</key>
-                <string>{1024,1920}</string>
+                <string>{750,1624}</string>
                 <key>textureRect</key>
-                <string>{{1,1},{1024,1920}}</string>
+                <string>{{1,1},{750,1624}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -31,9 +31,9 @@
             <key>realTextureFileName</key>
             <string>GuiElements_2.png</string>
             <key>size</key>
-            <string>{1026,1922}</string>
+            <string>{752,1626}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:6a8fcd13007286f177aeb90f69b3f3d8:dd468d4c804de2bb9c1f7949a3f85387:c414829fdba7464f4f1ffc7cf387c5fc$</string>
+            <string>$TexturePacker:SmartUpdate:9357aa0724c16ee5410aaa3cfb792032:db6f9da3951835bfec427bcef3d23166:c414829fdba7464f4f1ffc7cf387c5fc$</string>
             <key>textureFileName</key>
             <string>GuiElements_2.png</string>
         </dict>

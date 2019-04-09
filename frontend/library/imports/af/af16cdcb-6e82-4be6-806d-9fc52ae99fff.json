@@ -3,7 +3,7 @@
   "_name": "attackedLeft",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.5833333333333334,
+  "_duration": 0.3333333333333333,
   "sample": 12,
   "speed": 1,
   "wrapMode": "2",
@@ -14,43 +14,25 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "c894fa0e-b4fe-411e-9884-616ba1340d09"
+              "__uuid__": "c9528117-c878-41aa-ad5d-641fefcaa89f"
             }
           },
           {
             "frame": 0.08333333333333333,
             "value": {
-              "__uuid__": "750f3b6c-c6b0-4902-af94-fb362fb1605d"
+              "__uuid__": "987c7dc0-e81f-4891-979d-0998794e6889"
             }
           },
           {
             "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "b2fc59df-350a-445b-926c-2d6035692430"
+              "__uuid__": "c0e5d042-8bc1-449b-9a2d-7844129c5188"
             }
           },
           {
             "frame": 0.25,
             "value": {
-              "__uuid__": "05aab393-8ce3-4bd7-9eff-325077eae8a2"
-            }
-          },
-          {
-            "frame": 0.3333333333333333,
-            "value": {
-              "__uuid__": "efebb5a3-ec65-4fde-a00f-ad1d18cd1f0c"
-            }
-          },
-          {
-            "frame": 0.4166666666666667,
-            "value": {
-              "__uuid__": "750f3b6c-c6b0-4902-af94-fb362fb1605d"
-            }
-          },
-          {
-            "frame": 0.5,
-            "value": {
-              "__uuid__": "b2fc59df-350a-445b-926c-2d6035692430"
+              "__uuid__": "9205c378-c50c-4303-af32-dbf9422375cf"
             }
           }
         ]

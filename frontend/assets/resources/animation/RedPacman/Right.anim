@@ -3,7 +3,7 @@
   "_name": "Right",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.5833333333333334,
+  "_duration": 0.25,
   "sample": 12,
   "speed": 1,
   "wrapMode": "2",
@@ -14,25 +14,13 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "c894fa0e-b4fe-411e-9884-616ba1340d09"
+              "__uuid__": "1054cf4c-69a5-4834-8966-03bc613d4483"
             }
           },
           {
             "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "fcdd1709-889c-4832-b55e-b92e1b7d67df"
-            }
-          },
-          {
-            "frame": 0.3333333333333333,
-            "value": {
-              "__uuid__": "84aa7b15-1956-4d0d-b300-a1b0dc02d419"
-            }
-          },
-          {
-            "frame": 0.5,
-            "value": {
-              "__uuid__": "fcdd1709-889c-4832-b55e-b92e1b7d67df"
+              "__uuid__": "b88522bd-8b6b-44a1-9c84-5518ae7f5c2c"
             }
           }
         ]

@@ -3,7 +3,7 @@
   "_name": "TopRight",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.5833333333333334,
+  "_duration": 0.25,
   "sample": 12,
   "speed": 1,
   "wrapMode": "2",
@@ -14,25 +14,13 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "c894fa0e-b4fe-411e-9884-616ba1340d09"
+              "__uuid__": "3d84f335-85c4-4dd0-a5d3-38f4da1e1611"
             }
           },
           {
             "frame": 0.16666666666666666,
             "value": {
-              "__uuid__": "351a161e-158c-4ff9-9982-ed3ced1e27c4"
-            }
-          },
-          {
-            "frame": 0.3333333333333333,
-            "value": {
-              "__uuid__": "e0a8df77-6394-478c-b1db-e634054ce01a"
-            }
-          },
-          {
-            "frame": 0.5,
-            "value": {
-              "__uuid__": "351a161e-158c-4ff9-9982-ed3ced1e27c4"
+              "__uuid__": "6d36877f-dc27-4ebc-9407-14fbcf2314df"
             }
           }
         ]
