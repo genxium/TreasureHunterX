@@ -13,6 +13,8 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
+  "net/http"
+  "fmt"
 )
 
 const (
@@ -1546,6 +1548,17 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
 	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
+    //启动timer十秒后发起http请求唤起机器人加入房间, refer to https://shimo.im/docs/4WLFqyAtAioMJLc9 #119.4  --kobako
+    go func(pR *Room){
+      fmt.Println("进入等待状态, 启动Timer")
+      <-time.After(10 * time.Second)
+      fmt.Println("等待了十秒, 唤起bot玩家加入房间" + fmt.Sprintf("http://%s:%d/spawnBot?expectedRoomId=%d","localhost", 15351, pR.Id))
+      if(pR.State == RoomBattleStateIns.WAITING){
+        //发送http请求
+        //TODO: 错误处理. 如果请求失败(如已经没有空闲机器人了)怎么处理? 
+        http.Get(fmt.Sprintf("http://%s:%d/spawnBot?expectedRoomId=%d","localhost", 15351, pR.Id))
+      }
+    }(pR)
 	}
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	for index, value := range pR.JoinIndexBooleanArr {

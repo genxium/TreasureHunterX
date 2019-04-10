@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1553844185000,
+    "asset": 1554810024000,
     "meta": 1553153264000,
     "relativePath": "plugin_scripts"
   },
@@ -40,7 +40,7 @@
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1554802041000,
+    "asset": 1554809318000,
     "meta": 1553153264000,
     "relativePath": "resources/textures"
   },
@@ -70,7 +70,7 @@
     "relativePath": "scripts/Type2NPCPlayer.js"
   },
   "9c88608b-f02d-4bcc-b0e3-f486509e7fe1": {
-    "asset": 1553153264000,
+    "asset": 1554809130000,
     "meta": 1553153264000,
     "relativePath": "resources/i18n"
   },
@@ -440,7 +440,7 @@
     "relativePath": "scripts/MusicEffectManager.js"
   },
   "1fe4b981-93b1-4e65-aefb-898c615219e5": {
-    "asset": 1553254920000,
+    "asset": 1554865163000,
     "meta": 1553153264000,
     "relativePath": "resources/map"
   },
@@ -470,7 +470,7 @@
     "relativePath": "scripts/BasePlayer.js"
   },
   "33d33d2f-5ca7-4677-9c82-4ced71aa0f8a": {
-    "asset": 1553503655000,
+    "asset": 1554804020000,
     "meta": 1553153264000,
     "relativePath": "resources/map/pacman"
   },
@@ -909,11 +909,6 @@
     "meta": 1554690874000,
     "relativePath": "scripts/WechatGameLogin.js"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554717494000,
-    "meta": 1554717496000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "5ad61f1e-785d-4245-8744-3276b20d841d": {
     "asset": 1554801199000,
     "meta": 1554802045000,
@@ -1013,5 +1008,10 @@
     "asset": 1554809316000,
     "meta": 1554809318000,
     "relativePath": "resources/textures/newJoystickBG.png"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554882694000,
+    "meta": 1554882696000,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }
