@@ -15,6 +15,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
+  "log"
 )
 
 const (
@@ -1385,6 +1386,7 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	if marshalErr != nil {
 		Logger.Error("Error marshalling playerJoinIndexFrame in onBattlePrepare:", zap.Any("the error", marshalErr))
 	}
+  log.Println("Sending out frame for RoomBattleState.PREPARE bytes:", theBytes)
 	theStr := string(theBytes)
 	for _, player := range pR.Players {
 		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
