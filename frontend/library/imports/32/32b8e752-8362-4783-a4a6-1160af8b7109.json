@@ -115,8 +115,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 800,
-      "height": 1200
+      "width": 644,
+      "height": 793
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -125,8 +125,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -57,
-      "y": 263,
+      "x": 0,
+      "y": 257,
       "z": 0
     },
     "_scale": {
@@ -223,8 +223,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "gameRule.tip",
-    "_N$string": "gameRule.tip",
+    "_string": "玩家在规定时间内得分高则获胜。要注意躲避防御塔的攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    "_N$string": "玩家在规定时间内得分高则获胜。要注意躲避防御塔的攻击，被击中会被定住5秒的哦。开始游戏吧~",
     "_fontSize": 38,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -273,7 +273,7 @@
       "__uuid__": "f4d8300e-7b7c-4c58-9de5-561a33e54d82"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -347,7 +347,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -8,
+      "x": 0,
       "y": -564,
       "z": 0
     },
@@ -412,7 +412,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -6,
+      "x": 0,
       "y": 1,
       "z": 0
     },
@@ -445,8 +445,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "gameRule.mode",
-    "_N$string": "gameRule.mode",
+    "_string": "1v1 模式",
+    "_N$string": "1v1 模式",
     "_fontSize": 55,
     "_lineHeight": 50,
     "_enableWrapText": false,
@@ -623,7 +623,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 543,
-      "height": 169
+      "height": 117
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -632,8 +632,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": -359,
+      "x": 0,
+      "y": -312,
       "z": 0
     },
     "_scale": {

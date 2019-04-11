@@ -861,14 +861,6 @@ cc.Class({
           console.log(JSON.stringify(diffFrame));
         }
         */
-
-        //For test --kobako
-        if (isInitiatingFrame) {
-          console.warn('---------------InitiatingFrame');
-          console.log(diffFrame);
-          console.warn('---------------InitiatingFrame');
-        }
-
         var cachedFullFrame = self.recentFrameCache[refFrameId];
         if (!isInitiatingFrame && self.useDiffFrameAlgo && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
         && null == cachedFullFrame) {

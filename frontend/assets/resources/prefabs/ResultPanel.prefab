@@ -114,8 +114,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 600,
-      "height": 380
+      "width": 573,
+      "height": 356
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -130,8 +130,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 1.53,
-      "y": 1.53,
+      "x": 1.5,
+      "y": 1.5,
       "z": 1.53
     },
     "_rotationX": 0,
@@ -157,10 +157,10 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "8694e039-8a88-4a06-b390-5c47304a8132"
+      "__uuid__": "d5d4dac6-0005-4148-94cc-5df27e8e6322"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -1595,8 +1595,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 209,
-      "height": 119
+      "width": 200,
+      "height": 120
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1605,8 +1605,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -184,
-      "y": -220,
+      "x": -232,
+      "y": -266,
       "z": 0
     },
     "_scale": {
@@ -1660,7 +1660,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 700.52,
+      "width": 240,
       "height": 70
     },
     "_anchorPoint": {
@@ -1703,8 +1703,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "resultPanel.againBtnLabel",
-    "_N$string": "resultPanel.againBtnLabel",
+    "_string": "再来一局",
+    "_N$string": "再来一局",
     "_fontSize": 60,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -1899,8 +1899,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 209,
-      "height": 119
+      "width": 200,
+      "height": 120
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1909,8 +1909,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 161,
-      "y": -220,
+      "x": 204,
+      "y": -266,
       "z": 0
     },
     "_scale": {
@@ -1964,7 +1964,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 703.8,
+      "width": 240,
       "height": 70
     },
     "_anchorPoint": {
@@ -2007,8 +2007,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "resultPanel.homeBtnLabel",
-    "_N$string": "resultPanel.homeBtnLabel",
+    "_string": "回到首页",
+    "_N$string": "回到首页",
     "_fontSize": 60,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -2289,8 +2289,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -272,
-      "y": 413,
+      "x": -254,
+      "y": 402,
       "z": 0
     },
     "_scale": {
@@ -2480,8 +2480,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -133,
-      "y": 396,
+      "x": -136,
+      "y": 328,
       "z": 0
     },
     "_scale": {
@@ -2578,8 +2578,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -150,
-      "y": 472,
+      "x": -139,
+      "y": 429,
       "z": 0
     },
     "_scale": {

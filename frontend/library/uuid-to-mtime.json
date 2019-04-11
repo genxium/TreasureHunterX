@@ -480,13 +480,13 @@
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01 copy.png"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1554802825000,
-    "meta": 1554949638000,
+    "asset": 1554974125000,
+    "meta": 1554974125000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1554803673000,
-    "meta": 1554949638000,
+    "asset": 1554973891000,
+    "meta": 1554973891000,
     "relativePath": "resources/prefabs/GameRule.prefab"
   },
   "3cee8bde-8f1d-4960-b591-33208af1f997": {
@@ -495,13 +495,13 @@
     "relativePath": "resources/prefabs/GuardTower.prefab"
   },
   "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
-    "asset": 1554808344000,
-    "meta": 1554949638000,
+    "asset": 1554967262000,
+    "meta": 1554967262000,
     "relativePath": "resources/prefabs/Pacman1.prefab"
   },
   "1f479636-9eb8-4612-8f97-371964d6eae3": {
-    "asset": 1554808360000,
-    "meta": 1554949638000,
+    "asset": 1554967272000,
+    "meta": 1554967272000,
     "relativePath": "resources/prefabs/Pacman2.prefab"
   },
   "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
@@ -510,8 +510,8 @@
     "relativePath": "resources/prefabs/PlayersInfo.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1554802742000,
-    "meta": 1554949638000,
+    "asset": 1554974678000,
+    "meta": 1554974678000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "2062218a-c5d4-4cbb-959e-77e8e5a96344": {
@@ -520,8 +520,8 @@
     "relativePath": "resources/animation/findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1554806648000,
-    "meta": 1554949639000,
+    "asset": 1554975567000,
+    "meta": 1554975567000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -875,8 +875,8 @@
     "relativePath": "scenes/default_map.fire"
   },
   "475b849b-44b3-4390-982d-bd0d9e695093": {
-    "asset": 1554802212000,
-    "meta": 1554949639000,
+    "asset": 1554975713000,
+    "meta": 1554975713000,
     "relativePath": "scenes/wechatGameLogin.fire"
   },
   "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
@@ -999,19 +999,19 @@
     "meta": 1554949638000,
     "relativePath": "resources/textures/newJoystickBG.png"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554882694000,
-    "meta": 1554949637000,
-    "relativePath": "plugin_scripts/conf.js"
-  },
   "6e8b1c3a-050f-49b9-bd27-4c478d290aa2": {
     "asset": 1554803461000,
     "meta": 1554949638000,
     "relativePath": "resources/textures/Theme.zip"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554953569000,
-    "meta": 1554953578000,
+    "asset": 1554963772000,
+    "meta": 1554967240000,
     "relativePath": "scripts/Map.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1554970924000,
+    "meta": 1554970925000,
+    "relativePath": "plugin_scripts/conf.js"
   }
 }

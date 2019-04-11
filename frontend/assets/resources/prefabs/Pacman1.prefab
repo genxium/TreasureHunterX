@@ -61,7 +61,7 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 0.2
+      "y": 0.5
     },
     "_position": {
       "__type__": "cc.Vec3",
