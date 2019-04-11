@@ -28,7 +28,7 @@ type dbTestPlayer struct {
 
 func maybeCreateNewPlayer(db *sqlx.DB, tableName string) {
 	var ls []*dbTestPlayer
-	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num FROM " + tableName)
+	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num FROM "+tableName)
 	ErrFatal(err)
 	names := make([]string, len(ls), len(ls))
 	for i, v := range ls {
@@ -57,7 +57,7 @@ func maybeCreateNewPlayer(db *sqlx.DB, tableName string) {
 			Logger.Debug("create", zap.Any(tableName, testPlayer))
 			err := createNewPlayer(testPlayer)
 			if err != nil {
-				Logger.Warn("createNewPlayer from" + tableName, zap.NamedError("createNewPlayerErr", err))
+				Logger.Warn("createNewPlayer from"+tableName, zap.NamedError("createNewPlayerErr", err))
 			}
 		}
 	}

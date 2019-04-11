@@ -2,8 +2,8 @@ package models
 
 import (
 	"fmt"
-	"math"
 	"github.com/ByteArena/box2d"
+	"math"
 )
 
 // Use type `float64` for json unmarshalling of numbers.
@@ -105,9 +105,8 @@ func PrettyPrintBody(body *box2d.B2Body) {
 	fmt.Printf("}\n")
 }
 
-
-func Distance(pt1 *Vec2D, pt2 *Vec2D) float64{
-  dx := pt1.X - pt2.X;
-  dy := pt1.Y - pt2.Y;
-  return math.Sqrt(dx * dx + dy * dy);
+func Distance(pt1 *Vec2D, pt2 *Vec2D) float64 {
+	dx := pt1.X - pt2.X
+	dy := pt1.Y - pt2.Y
+	return math.Sqrt(dx*dx + dy*dy)
 }

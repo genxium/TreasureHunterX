@@ -1091,59 +1091,58 @@ cc.Class({
     instance.selfPlayerNode = newPlayerNode;
   },
   update: function update(dt) {
-
+    var self = this;
     try {
-      var _self = this;
-      var mapNode = _self.node;
+      var mapNode = self.node;
       var canvasNode = mapNode.parent;
       var canvasParentNode = canvasNode.parent;
       if (null != window.boundRoomId) {
-        _self.boundRoomIdLabel.string = window.boundRoomId;
+        self.boundRoomIdLabel.string = window.boundRoomId;
       }
-      if (null != _self.selfPlayerInfo) {
-        var playersScriptIns = _self.playersInfoNode.getComponent("PlayersInfo");
-        playersScriptIns.updateData(_self.selfPlayerInfo);
-        if (null != _self.selfPlayerScriptIns) {
-          _self.selfPlayerScriptIns.updateSpeed(_self.selfPlayerInfo.speed);
+      if (null != self.selfPlayerInfo) {
+        var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+        playersScriptIns.updateData(self.selfPlayerInfo);
+        if (null != self.selfPlayerScriptIns) {
+          self.selfPlayerScriptIns.updateSpeed(self.selfPlayerInfo.speed);
         }
       }
 
       var toRemoveAcceleratorNodeDict = {};
-      Object.assign(toRemoveAcceleratorNodeDict, _self.acceleratorNodeDict);
+      Object.assign(toRemoveAcceleratorNodeDict, self.acceleratorNodeDict);
 
       var toRemovePlayerNodeDict = {};
-      Object.assign(toRemovePlayerNodeDict, _self.otherPlayerNodeDict);
+      Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
 
       var toRemoveTreasureNodeDict = {};
-      Object.assign(toRemoveTreasureNodeDict, _self.treasureNodeDict);
+      Object.assign(toRemoveTreasureNodeDict, self.treasureNodeDict);
 
       var toRemoveTrapNodeDict = {};
-      Object.assign(toRemoveTrapNodeDict, _self.trapNodeDict);
+      Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
 
       var toRemovePumpkinNodeDict = {};
-      Object.assign(toRemovePumpkinNodeDict, _self.pumpkinNodeDict);
+      Object.assign(toRemovePumpkinNodeDict, self.pumpkinNodeDict);
 
       /*
       * NOTE: At the beginning of each GUI update cycle, mark all `self.trapBulletNode` as `toRemoveBulletNode`, while only those that persist in `self.trapBulletInfoDict` are NOT finally removed. This approach aims to reduce the lines of codes for coping with node removal in the RoomDownsyncFrame algorithm.
       */
       var toRemoveBulletNodeDict = {};
-      Object.assign(toRemoveBulletNodeDict, _self.trapBulletNodeDict);
+      Object.assign(toRemoveBulletNodeDict, self.trapBulletNodeDict);
 
-      for (var k in _self.otherPlayerCachedDataDict) {
+      for (var k in self.otherPlayerCachedDataDict) {
         var playerId = parseInt(k);
-        var cachedPlayerData = _self.otherPlayerCachedDataDict[playerId];
+        var cachedPlayerData = self.otherPlayerCachedDataDict[playerId];
         var newPos = cc.v2(cachedPlayerData.x, cachedPlayerData.y);
 
         //更新玩家信息展示
         if (null != cachedPlayerData) {
-          var _playersScriptIns = _self.playersInfoNode.getComponent("PlayersInfo");
+          var _playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
           _playersScriptIns.updateData(cachedPlayerData);
         }
-        var targetNode = _self.otherPlayerNodeDict[playerId];
+        var targetNode = self.otherPlayerNodeDict[playerId];
         if (!targetNode) {
-          targetNode = _self.playersNode[cachedPlayerData.joinIndex];
+          targetNode = self.playersNode[cachedPlayerData.joinIndex];
           targetNode.getComponent("SelfPlayer").mapNode = mapNode;
-          _self.otherPlayerNodeDict[playerId] = targetNode;
+          self.otherPlayerNodeDict[playerId] = targetNode;
           safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
@@ -1195,7 +1194,7 @@ cc.Class({
         }
 
         if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
-          var newScheduledDirection = _self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, _self.ctrl.joyStickEps);
+          var newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
           aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */);
         }
 
@@ -1205,14 +1204,14 @@ cc.Class({
       }
 
       // 更新加速鞋显示 
-      for (var _k12 in _self.acceleratorInfoDict) {
+      for (var _k12 in self.acceleratorInfoDict) {
         var accLocalIdInBattle = parseInt(_k12);
-        var acceleratorInfo = _self.acceleratorInfoDict[accLocalIdInBattle];
+        var acceleratorInfo = self.acceleratorInfoDict[accLocalIdInBattle];
         var _newPos = cc.v2(acceleratorInfo.x, acceleratorInfo.y);
-        var _targetNode = _self.acceleratorNodeDict[accLocalIdInBattle];
+        var _targetNode = self.acceleratorNodeDict[accLocalIdInBattle];
         if (!_targetNode) {
-          _targetNode = cc.instantiate(_self.acceleratorPrefab);
-          _self.acceleratorNodeDict[accLocalIdInBattle] = _targetNode;
+          _targetNode = cc.instantiate(self.acceleratorPrefab);
+          self.acceleratorNodeDict[accLocalIdInBattle] = _targetNode;
           safelyAddChild(mapNode, _targetNode);
           _targetNode.setPosition(_newPos);
           setLocalZOrder(_targetNode, 5);
@@ -1222,14 +1221,14 @@ cc.Class({
         }
       }
       // 更新陷阱显示 
-      for (var _k13 in _self.trapInfoDict) {
+      for (var _k13 in self.trapInfoDict) {
         var trapLocalIdInBattle = parseInt(_k13);
-        var trapInfo = _self.trapInfoDict[trapLocalIdInBattle];
+        var trapInfo = self.trapInfoDict[trapLocalIdInBattle];
         var _newPos2 = cc.v2(trapInfo.x, trapInfo.y);
-        var _targetNode2 = _self.trapNodeDict[trapLocalIdInBattle];
+        var _targetNode2 = self.trapNodeDict[trapLocalIdInBattle];
         if (!_targetNode2) {
-          _targetNode2 = cc.instantiate(_self.trapPrefab);
-          _self.trapNodeDict[trapLocalIdInBattle] = _targetNode2;
+          _targetNode2 = cc.instantiate(self.trapPrefab);
+          self.trapNodeDict[trapLocalIdInBattle] = _targetNode2;
           safelyAddChild(mapNode, _targetNode2);
           _targetNode2.setPosition(_newPos2);
           setLocalZOrder(_targetNode2, 5);
@@ -1240,14 +1239,14 @@ cc.Class({
       }
 
       // 更新陷阱塔显示 
-      for (var _k14 in _self.guardTowerInfoDict) {
+      for (var _k14 in self.guardTowerInfoDict) {
         var _trapLocalIdInBattle = parseInt(_k14);
-        var towerInfo = _self.guardTowerInfoDict[_trapLocalIdInBattle];
+        var towerInfo = self.guardTowerInfoDict[_trapLocalIdInBattle];
         var _newPos3 = cc.v2(towerInfo.x, towerInfo.y);
-        var _targetNode3 = _self.towerNodeDict[_trapLocalIdInBattle];
+        var _targetNode3 = self.towerNodeDict[_trapLocalIdInBattle];
         if (!_targetNode3) {
-          _targetNode3 = cc.instantiate(_self.guardTowerPrefab);
-          _self.towerNodeDict[_trapLocalIdInBattle] = _targetNode3;
+          _targetNode3 = cc.instantiate(self.guardTowerPrefab);
+          self.towerNodeDict[_trapLocalIdInBattle] = _targetNode3;
           safelyAddChild(mapNode, _targetNode3);
           _targetNode3.setPosition(_newPos3);
           setLocalZOrder(_targetNode3, 5);
@@ -1258,11 +1257,11 @@ cc.Class({
 
       var _loop = function _loop(_k15) {
         var bulletLocalIdInBattle = parseInt(_k15);
-        var bulletInfo = _self.trapBulletInfoDict[bulletLocalIdInBattle];
+        var bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
         var newPos = cc.v2(bulletInfo.x, bulletInfo.y);
-        var targetNode = _self.trapBulletNodeDict[bulletLocalIdInBattle];
+        var targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
         if (!targetNode) {
-          targetNode = cc.instantiate(_self.trapBulletPrefab);
+          targetNode = cc.instantiate(self.trapBulletPrefab);
 
           //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = function () {
@@ -1309,7 +1308,7 @@ cc.Class({
           }();
           //
 
-          _self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
+          self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
@@ -1358,19 +1357,19 @@ cc.Class({
         }
       };
 
-      for (var _k15 in _self.trapBulletInfoDict) {
+      for (var _k15 in self.trapBulletInfoDict) {
         _loop(_k15);
       }
 
       //更新南瓜少年的显示
-      for (var _k16 in _self.pumpkinInfoDict) {
+      for (var _k16 in self.pumpkinInfoDict) {
         var pumpkinLocalIdInBattle = parseInt(_k16);
-        var pumpkinInfo = _self.pumpkinInfoDict[pumpkinLocalIdInBattle];
+        var pumpkinInfo = self.pumpkinInfoDict[pumpkinLocalIdInBattle];
         var _newPos4 = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
-        var _targetNode4 = _self.pumpkinNodeDict[pumpkinLocalIdInBattle];
+        var _targetNode4 = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
         if (!_targetNode4) {
-          _targetNode4 = cc.instantiate(_self.pumpkinPrefab);
-          _self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode4;
+          _targetNode4 = cc.instantiate(self.pumpkinPrefab);
+          self.pumpkinNodeDict[pumpkinLocalIdInBattle] = _targetNode4;
           safelyAddChild(mapNode, _targetNode4);
           _targetNode4.setPosition(_newPos4);
           setLocalZOrder(_targetNode4, 5);
@@ -1420,16 +1419,16 @@ cc.Class({
       }
 
       // 更新宝物显示 
-      for (var _k17 in _self.treasureInfoDict) {
+      for (var _k17 in self.treasureInfoDict) {
         var treasureLocalIdInBattle = parseInt(_k17);
-        var treasureInfo = _self.treasureInfoDict[treasureLocalIdInBattle];
+        var treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
         var _newPos5 = cc.v2(treasureInfo.x, treasureInfo.y);
-        var _targetNode5 = _self.treasureNodeDict[treasureLocalIdInBattle];
+        var _targetNode5 = self.treasureNodeDict[treasureLocalIdInBattle];
         if (!_targetNode5) {
-          _targetNode5 = cc.instantiate(_self.treasurePrefab);
+          _targetNode5 = cc.instantiate(self.treasurePrefab);
           var treasureNodeScriptIns = _targetNode5.getComponent("Treasure");
           treasureNodeScriptIns.setData(treasureInfo);
-          _self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode5;
+          self.treasureNodeDict[treasureLocalIdInBattle] = _targetNode5;
           safelyAddChild(mapNode, _targetNode5);
           _targetNode5.setPosition(_newPos5);
           setLocalZOrder(_targetNode5, 5);
@@ -1452,14 +1451,14 @@ cc.Class({
       for (var _k18 in toRemovePlayerNodeDict) {
         var _playerId = parseInt(_k18);
         toRemovePlayerNodeDict[_k18].parent.removeChild(toRemovePlayerNodeDict[_k18]);
-        delete _self.otherPlayerNodeDict[_playerId];
+        delete self.otherPlayerNodeDict[_playerId];
       }
 
       // Coping with removed pumpkins.
       for (var _k19 in toRemovePumpkinNodeDict) {
         var _pumpkinLocalIdInBattle = parseInt(_k19);
         toRemovePumpkinNodeDict[_k19].parent.removeChild(toRemovePlayerNodeDict[_k19]);
-        delete _self.pumpkinNodeDict[_pumpkinLocalIdInBattle];
+        delete self.pumpkinNodeDict[_pumpkinLocalIdInBattle];
       }
 
       // Coping with removed treasures.
@@ -1467,37 +1466,37 @@ cc.Class({
         var _treasureLocalIdInBattle = parseInt(_k20);
         var treasureScriptIns = toRemoveTreasureNodeDict[_k20].getComponent("Treasure");
         treasureScriptIns.playPickedUpAnimAndDestroy();
-        if (_self.musicEffectManagerScriptIns) {
+        if (self.musicEffectManagerScriptIns) {
           if (2 == treasureScriptIns.type) {
-            _self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
+            self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
           } else {
-            _self.musicEffectManagerScriptIns.playTreasurePicked();
+            self.musicEffectManagerScriptIns.playTreasurePicked();
           }
         }
-        delete _self.treasureNodeDict[_treasureLocalIdInBattle];
+        delete self.treasureNodeDict[_treasureLocalIdInBattle];
       }
 
       // Coping with removed traps.
       for (var _k21 in toRemoveTrapNodeDict) {
         var _trapLocalIdInBattle2 = parseInt(_k21);
         toRemoveTrapNodeDict[_k21].parent.removeChild(toRemoveTrapNodeDict[_k21]);
-        delete _self.trapNodeDict[_trapLocalIdInBattle2];
+        delete self.trapNodeDict[_trapLocalIdInBattle2];
       }
 
       // Coping with removed accelerators.
       for (var _k22 in toRemoveAcceleratorNodeDict) {
         var _accLocalIdInBattle = parseInt(_k22);
         toRemoveAcceleratorNodeDict[_k22].parent.removeChild(toRemoveAcceleratorNodeDict[_k22]);
-        delete _self.acceleratorNodeDict[_accLocalIdInBattle];
+        delete self.acceleratorNodeDict[_accLocalIdInBattle];
       }
 
       // Coping with removed bullets.
       for (var _k23 in toRemoveBulletNodeDict) {
         var _bulletLocalIdInBattle = parseInt(_k23);
         toRemoveBulletNodeDict[_k23].parent.removeChild(toRemoveBulletNodeDict[_k23]);
-        delete _self.trapBulletNodeDict[_bulletLocalIdInBattle];
-        if (_self.musicEffectManagerScriptIns) {
-          _self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
+        delete self.trapBulletNodeDict[_bulletLocalIdInBattle];
+        if (self.musicEffectManagerScriptIns) {
+          self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
         }
       }
     } catch (err) {

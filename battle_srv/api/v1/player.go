@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"go.uber.org/zap"
@@ -69,10 +68,9 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
-  // Composite a key to access against Redis-server.
+	// Composite a key to access against Redis-server.
 	redisKey := req.redisKey()
 	ttl, err := storage.RedisManagerIns.TTL(redisKey).Result()
-  Logger.Info("There's an existing SmsCaptcha record in Redis-server: ", zap.String("key", redisKey), zap.Duration("ttl", ttl))
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.UnknownError)
@@ -80,26 +78,30 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	}
 	// Redis剩余时长校验
 	if ttl >= ConstVals.Player.CaptchaMaxTTL {
+		Logger.Info("There's an existing SmsCaptcha record in Redis-server: ", zap.String("key", redisKey), zap.Duration("ttl", ttl))
 		c.Set(api.RET, Constants.RetCode.SmsCaptchaRequestedTooFrequently)
 		return
 	}
-  pass := false
+	Logger.Info("A new SmsCaptcha record is needed for: ", zap.String("key", redisKey))
+	pass := false
 	var succRet int
 	if Conf.General.ServerEnv == SERVER_ENV_TEST {
-    // 测试环境，优先从数据库校验`player.name`，校验不通过再走手机号校验
-    player, err := models.GetPlayerByName(req.Num)
-    if nil == err && nil != player {
-      pass = true
-      succRet = Constants.RetCode.IsTestAcc
-    }
-	}else{
-    //新增机器人账号验证 --kobako
-    player, err := models.GetPlayerByName(req.Num)
-    if nil == err && nil != player {
-      pass = true
-      succRet = Constants.RetCode.IsBotAcc
-    }
-  }
+		// 测试环境，优先从数据库校验`player.name`，不通过再走机器人magic name校验
+		player, err := models.GetPlayerByName(req.Num)
+		if nil == err && nil != player {
+			pass = true
+			succRet = Constants.RetCode.IsTestAcc
+		}
+	}
+
+	if !pass {
+		// 机器人magic name校验，不通过再走手机号校验
+		player, err := models.GetPlayerByName(req.Num)
+		if nil == err && nil != player {
+			pass = true
+			succRet = Constants.RetCode.IsBotAcc
+		}
+	}
 
 	if !pass {
 		if RE_PHONE_NUM.MatchString(req.Num) {
@@ -140,7 +142,7 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 				}
 			}
 		}
-    Logger.Info("Extended ttl of existing SMSCaptcha record in Redis:", zap.String("key", redisKey), zap.String("captcha", captcha))
+		Logger.Info("Extended ttl of existing SMSCaptcha record in Redis:", zap.String("key", redisKey), zap.String("captcha", captcha))
 	} else {
 		// 校验通过，进行验证码生成处理
 		captcha = strconv.Itoa(utils.Rand.Number(1000, 9999))
@@ -157,11 +159,8 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	if succRet == Constants.RetCode.IsTestAcc {
 		resp.Captcha = captcha
 	}
-  //机器人账号 --kobako
 	if succRet == Constants.RetCode.IsBotAcc {
 		resp.Captcha = captcha
-    fmt.Println("kobako: 11111111, captcha", captcha)
-    fmt.Println(resp)
 	}
 	c.JSON(http.StatusOK, resp)
 }
@@ -174,9 +173,6 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
-
-  fmt.Println("kobako:")
-  fmt.Println(req)
 
 	redisKey := req.redisKey()
 	captcha := storage.RedisManagerIns.Get(redisKey).Val()
@@ -216,7 +212,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 		ExpiresAt   int64  `json:"expiresAt"`
 		PlayerID    int    `json:"playerId"`
 		DisplayName string `json:"displayName"`
-    Name        string `json:"name"`
+		Name        string `json:"name"`
 	}{Constants.RetCode.Ok, token, expiresAt, int(player.Id), player.DisplayName, player.Name}
 
 	c.JSON(http.StatusOK, resp)
@@ -245,9 +241,6 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	}
 
 	userInfo, err := utils.WechatIns.GetMoreInfo(baseInfo.AccessToken, baseInfo.OpenID)
-
-	//kobako print for test
-	fmt.Println(userInfo)
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
@@ -403,23 +396,22 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 		token = utils.TokenGenerator(32)
 	}
 
-  //kobako: 从player获取display name等
+	//kobako: 从player获取display name等
 	player, err := models.GetPlayerById(playerLogin.PlayerID)
-  if err != nil {
-	  Logger.Error("Get player by id in IntAuthTokenLogin function error: ", zap.Error(err))
-    return
-  }
-
+	if err != nil {
+		Logger.Error("Get player by id in IntAuthTokenLogin function error: ", zap.Error(err))
+		return
+	}
 
 	expiresAt := playerLogin.UpdatedAt + 1000*int64(Constants.Player.IntAuthTokenTTLSeconds)
 	resp := struct {
-		Ret         int               `json:"ret"`
-		Token       string            `json:"intAuthToken"`
-		ExpiresAt   int64             `json:"expiresAt"`
-		PlayerID    int               `json:"playerId"`
-		DisplayName string            `json:"displayName"`
-		Avatar      string            `json:"avatar"`
-		Name        string            `json:"name"`
+		Ret         int    `json:"ret"`
+		Token       string `json:"intAuthToken"`
+		ExpiresAt   int64  `json:"expiresAt"`
+		PlayerID    int    `json:"playerId"`
+		DisplayName string `json:"displayName"`
+		Avatar      string `json:"avatar"`
+		Name        string `json:"name"`
 	}{Constants.RetCode.Ok, token, expiresAt,
 		playerLogin.PlayerID, player.DisplayName,
 		playerLogin.Avatar, player.Name,
@@ -517,8 +509,8 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 			Logger.Info("Got a test env player:", zap.Any("phonenum", req.Num), zap.Any("playerId", player.Id))
 			return player, nil
 		}
-	}else{ //正式环境检查是否为bot用户
-    botPlayer, err := models.GetPlayerByName(req.Num)
+	} else { //正式环境检查是否为bot用户
+		botPlayer, err := models.GetPlayerByName(req.Num)
 		if err != nil {
 			Logger.Error("Seeking bot player error:", zap.Error(err))
 			return nil, err
@@ -527,7 +519,7 @@ func (p *playerController) maybeCreateNewPlayer(req smsCaptchReq) (*models.Playe
 			Logger.Info("Got a bot player:", zap.Any("phonenum", req.Num), zap.Any("playerId", botPlayer.Id))
 			return botPlayer, nil
 		}
-  }
+	}
 
 	bind, err := models.GetPlayerAuthBinding(Constants.AuthChannel.Sms, extAuthID)
 	if err != nil {
@@ -570,7 +562,6 @@ func (p *playerController) maybeCreatePlayerWechatAuthBinding(userInfo utils.Use
 				tx := storage.MySQLManagerIns.MustBegin()
 				defer tx.Rollback()
 				ok, err := models.Update(tx, player.Id, &updateInfo)
-				fmt.Println(updateInfo)
 				if err != nil && ok != true {
 					return nil, err
 				} else {
@@ -609,7 +600,6 @@ func (p *playerController) maybeCreatePlayerWechatGameAuthBinding(userInfo utils
 				tx := storage.MySQLManagerIns.MustBegin()
 				defer tx.Rollback()
 				ok, err := models.Update(tx, player.Id, &updateInfo)
-				fmt.Println(updateInfo)
 				if err != nil && ok != true {
 					return nil, err
 				} else {
@@ -707,7 +697,7 @@ func sendSMSViaVendor(mobile string, nationcode string, captchaCode string) int 
 		captchaExpireMin = strconv.Itoa(int(ConstVals.Player.CaptchaExpire) / 60000000000)
 	}
 	params := [2]string{captchaCode, captchaExpireMin}
-  appkey := "41a5142feff0b38ade02ea12deee9741" // TODO: Should read from config file!
+	appkey := "41a5142feff0b38ade02ea12deee9741" // TODO: Should read from config file!
 	rand := strconv.Itoa(utils.Rand.Number(1000, 9999))
 	now := utils.UnixtimeSec()
 

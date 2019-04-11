@@ -946,9 +946,8 @@ cc.Class({
   },
 
   update(dt) {
-
+    const self = this;
     try {
-      const self = this;
       const mapNode = self.node;
       const canvasNode = mapNode.parent;
       const canvasParentNode = canvasNode.parent;
@@ -1384,12 +1383,10 @@ cc.Class({
           self.musicEffectManagerScriptIns.playCrashedByTrapBullet();
         }
       }
-
     } catch (err) {
       console.warn("Map.update(dt)内发生了错误, 即将清空localStorage并回到登录页面", err);
       self.clearLocalStorageAndBackToLoginScene(true);
     }
-
   },
 
   transitToState(s) {

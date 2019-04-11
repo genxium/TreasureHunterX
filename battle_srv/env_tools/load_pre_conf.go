@@ -6,8 +6,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 	. "server/common"
-  "server/models"
 	"server/common/utils"
+	"server/models"
 	"server/storage"
 )
 
@@ -20,7 +20,7 @@ func LoadPreConf() {
 
 	loadPreConfToMysql(db)
 
-  // --kobako
+	// --kobako
 	maybeCreateNewPlayerFromBotTable(db, "bot_player")
 }
 
@@ -28,7 +28,7 @@ type dbBotPlayer struct {
 	Name                  string `db:"name"`
 	MagicPhoneCountryCode string `db:"magic_phone_country_code"`
 	MagicPhoneNum         string `db:"magic_phone_num"`
-  DisplayName           string `db:"display_name"`
+	DisplayName           string `db:"display_name"`
 }
 
 func loadPreConfToMysql(db *sqlx.DB) {
@@ -66,11 +66,10 @@ func createMysqlData(rows *sqlx.Rows, v string) {
 	}
 }
 
-
 //加上tableName参数, 用于pre_conf_data.sqlite里bot_player表的复用 --kobako
 func maybeCreateNewPlayerFromBotTable(db *sqlx.DB, tableName string) {
 	var ls []*dbBotPlayer
-	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num, display_name FROM " + tableName)
+	err := db.Select(&ls, "SELECT name, magic_phone_country_code, magic_phone_num, display_name FROM "+tableName)
 	ErrFatal(err)
 	names := make([]string, len(ls), len(ls))
 	for i, v := range ls {
@@ -99,7 +98,7 @@ func maybeCreateNewPlayerFromBotTable(db *sqlx.DB, tableName string) {
 			Logger.Debug("create", zap.Any(tableName, botPlayer))
 			err := createNewBotPlayer(botPlayer)
 			if err != nil {
-				Logger.Warn("createNewPlayer from" + tableName, zap.NamedError("createNewPlayerErr", err))
+				Logger.Warn("createNewPlayer from"+tableName, zap.NamedError("createNewPlayerErr", err))
 			}
 		}
 	}
@@ -110,10 +109,10 @@ func createNewBotPlayer(p *dbBotPlayer) error {
 	defer tx.Rollback()
 	now := utils.UnixtimeMilli()
 	player := models.Player{
-		CreatedAt: now,
-		UpdatedAt: now,
-		Name:      p.Name,
-    DisplayName: p.DisplayName,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		Name:        p.Name,
+		DisplayName: p.DisplayName,
 	}
 	err := player.Insert(tx)
 	if err != nil {

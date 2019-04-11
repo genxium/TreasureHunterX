@@ -191,14 +191,14 @@ func Serve(c *gin.Context) {
 			pRoom = tmpRoom
 			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
 
-      if pRoom.ReAddPlayerIfPossible(pPlayer) {
+			if pRoom.ReAddPlayerIfPossible(pPlayer) {
 				playerSuccessfullyAddedToRoom = true
-      }else if pRoom.AddPlayerIfPossible(pPlayer) {
+			} else if pRoom.AddPlayerIfPossible(pPlayer) {
 				playerSuccessfullyAddedToRoom = true
-      }else {
+			} else {
 				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
 				playerSuccessfullyAddedToRoom = false
-      }
+			}
 
 		}
 	}

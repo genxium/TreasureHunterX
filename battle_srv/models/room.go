@@ -1,20 +1,20 @@
 package models
 
 import (
+	"fmt"
 	"github.com/ByteArena/box2d"
 	"github.com/golang/protobuf/proto"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"math"
 	"math/rand"
+	"net/http"
 	"os"
 	"path/filepath"
 	. "server/common"
 	"server/common/utils"
 	"sync"
 	"time"
-  "net/http"
-  "fmt"
 )
 
 const (
@@ -186,17 +186,17 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 		}
 		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 
-    if contactingPlayer != nil{
-   		if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
-  			//Do nothing
-  		} else {
-  			pR.Players[contactingPlayer.Id].Speed = 0
-  			pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-  			//被冻住同时加速效果消除
-  			pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
-  			//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
-  		}
-    }
+		if contactingPlayer != nil {
+			if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
+				//Do nothing
+			} else {
+				pR.Players[contactingPlayer.Id].Speed = 0
+				pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
+				//被冻住同时加速效果消除
+				pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
+				//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
+			}
+		}
 	}
 }
 
@@ -268,10 +268,10 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	 */
 	defer pR.onPlayerReAdded(pTmpPlayerInstance.Id)
 	pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
-  pEffectiveInRoomPlayerInstance.AckingFrameId = 0
+	pEffectiveInRoomPlayerInstance.AckingFrameId = 0
 	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
 
-  Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
+	Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
 	return true
 }
 
@@ -1024,7 +1024,7 @@ func (pR *Room) StartBattle() {
 		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率4秒
 		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
 
-    BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
+		BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
 
 		for {
 			if totalElapsedNanos > pR.BattleDurationNanos {
@@ -1117,11 +1117,11 @@ func (pR *Room) StartBattle() {
 					continue
 				} else {
 					theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-          /*
-          if 0 == player.AckingFrameId {
-						Logger.Info("Player could be resyncing:", zap.Any("currentFrameId", currentFrame.Id), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
-          }
-          */
+					/*
+						          if 0 == player.AckingFrameId {
+												Logger.Info("Player could be resyncing:", zap.Any("currentFrameId", currentFrame.Id), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+						          }
+					*/
 					lastFrame := pR.RoomDownsyncFrameBuffer.Get(player.AckingFrameId)
 					diffFrame := calculateDiffFrame(currentFrame, lastFrame)
 
@@ -1139,7 +1139,7 @@ func (pR *Room) StartBattle() {
 			collisionNowMillis := utils.UnixtimeMilli()
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players { 
+			for _, player := range pR.Players {
 				if -1 == player.AddSpeedAtGmtMillis {
 					// TODO: Removed the magic number `-1`.
 					continue
@@ -1183,15 +1183,14 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 
-        //kobako: 如果超出最大飞行距离, 标记消失
-        if BULLET_MAX_DIST < Distance(bullet.StartAtPoint, &Vec2D{
-          X: bullet.X,
-          Y: bullet.Y,
-        }){
-          pR.onBulletCrashed(nil, bullet, 0, 0)
-        }
+				//kobako: 如果超出最大飞行距离, 标记消失
+				if BULLET_MAX_DIST < Distance(bullet.StartAtPoint, &Vec2D{
+					X: bullet.X,
+					Y: bullet.Y,
+				}) {
+					pR.onBulletCrashed(nil, bullet, 0, 0)
+				}
 			}
-
 
 			for _, pumpkin := range pR.Pumpkins { //移动南瓜
 				if pumpkin.Removed {
@@ -1233,8 +1232,8 @@ func (pR *Room) StartBattle() {
 				}
 			}
 
-			for _, player := range pR.Players { 
-        // 如果玩家碰到以下物品, 触发对应的回调
+			for _, player := range pR.Players {
+				// 如果玩家碰到以下物品, 触发对应的回调
 				for edge := player.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						switch v := edge.Other.GetUserData().(type) {
@@ -1300,10 +1299,10 @@ func (pR *Room) StartBattle() {
 				if _, existent := pR.Players[immediatePlayerData.Id]; !existent {
 					break
 				}
-        pEffectiveInRoomPlayerInstance := pR.Players[immediatePlayerData.Id]
-        if pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.DISCONNECTED || pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.LOST {
-          break
-        }
+				pEffectiveInRoomPlayerInstance := pR.Players[immediatePlayerData.Id]
+				if pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.DISCONNECTED || pEffectiveInRoomPlayerInstance.BattleState == PlayerBattleStateIns.LOST {
+					break
+				}
 				// Logger.Info("Room received `immediatePlayerData`:", zap.Any("immediatePlayerData", immediatePlayerData), zap.Any("roomId", pR.Id))
 				pEffectiveInRoomPlayerInstance.AckingFrameId = immediatePlayerData.AckingFrameId
 
@@ -1548,17 +1547,17 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
 	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
-    //启动timer十秒后发起http请求唤起机器人加入房间, refer to https://shimo.im/docs/4WLFqyAtAioMJLc9 #119.4  --kobako
-    go func(pR *Room){
-      fmt.Println("进入等待状态, 启动Timer")
-      <-time.After(10 * time.Second)
-      fmt.Println("等待了十秒, 唤起bot玩家加入房间" + fmt.Sprintf("http://%s:%d/spawnBot?expectedRoomId=%d","localhost", 15351, pR.Id))
-      if(pR.State == RoomBattleStateIns.WAITING){
-        //发送http请求
-        //TODO: 错误处理. 如果请求失败(如已经没有空闲机器人了)怎么处理? 
-        http.Get(fmt.Sprintf("http://%s:%d/spawnBot?expectedRoomId=%d","localhost", 15351, pR.Id))
-      }
-    }(pR)
+		go func(pR *Room) {
+			<-time.After(time.Duration(Conf.BotServer.SecondsBeforeSummoning) * time.Second)
+			botServerEndpoint := fmt.Sprintf("%s://%s:%d/spawnBot?expectedRoomId=%d&symmetricKey=%s", Conf.BotServer.Protocol, Conf.BotServer.Host, Conf.BotServer.Port, pR.Id, Conf.BotServer.SymmetricKey)
+			if pR.State != RoomBattleStateIns.WAITING {
+				return
+			}
+			botServerResp, botServerRespErr := http.Get(botServerEndpoint)
+			if nil != botServerRespErr {
+				Logger.Warn("Request to the BotServer has got an error:", zap.Any("botServerResp", botServerResp), zap.Any("botServerRespErr", botServerRespErr))
+			}
+		}(pR)
 	}
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	for index, value := range pR.JoinIndexBooleanArr {
@@ -1590,7 +1589,7 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		pR.StartBattle()
 	}
 
-  pR.updateScore()
+	pR.updateScore()
 	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 }
 

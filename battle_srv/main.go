@@ -40,16 +40,15 @@ func main() {
 	router := gin.Default()
 	setRouter(router)
 
-	Logger.Info("Listening and serving HTTP on", zap.Int("Conf.Sio.Port", Conf.Sio.Port))
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", Conf.Sio.Port),
 		Handler: router,
 	}
 	go func() {
-		// service connections
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			Logger.Fatal("Listening: %s\n", zap.Error(err))
+			Logger.Fatal("Error launching the service:", zap.Error(err))
 		}
+		Logger.Info("Listening and serving HTTP on", zap.Int("Conf.Sio.Port", Conf.Sio.Port))
 	}()
 	var gracefulStop = make(chan os.Signal)
 	signal.Notify(gracefulStop, syscall.SIGTERM)

@@ -40,6 +40,14 @@ type sioConf struct {
 	Port int `json:"port"`
 }
 
+type botServerConf struct {
+	SecondsBeforeSummoning int    `json:"secondsBeforeSummoning"`
+	Protocol               string `json:"protocol"`
+	Host                   string `json:"host"`
+	Port                   int    `json:"port"`
+	SymmetricKey           string `json:"symmetricKey"`
+}
+
 type redisConf struct {
 	Dbname   int    `json:"dbname"`
 	Host     string `json:"host"`
@@ -48,18 +56,20 @@ type redisConf struct {
 }
 
 type config struct {
-	General *generalConf
-	MySQL   *mysqlConf
-	Sio     *sioConf
-	Redis   *redisConf
+	General   *generalConf
+	MySQL     *mysqlConf
+	Sio       *sioConf
+	Redis     *redisConf
+	BotServer *botServerConf
 }
 
 func MustParseConfig() {
 	Conf = &config{
-		General: new(generalConf),
-		MySQL:   new(mysqlConf),
-		Sio:     new(sioConf),
-		Redis:   new(redisConf),
+		General:   new(generalConf),
+		MySQL:     new(mysqlConf),
+		Sio:       new(sioConf),
+		Redis:     new(redisConf),
+		BotServer: new(botServerConf),
 	}
 	execPath, err := os.Executable()
 	ErrFatal(err)
@@ -104,6 +114,7 @@ func MustParseConfig() {
 	setMySQLDSNURL(Conf.MySQL)
 	loadJSON("sio.json", Conf.Sio)
 	loadJSON("redis.json", Conf.Redis)
+	loadJSON("bot_server.json", Conf.BotServer)
 }
 
 func setMySQLDSNURL(c *mysqlConf) {
