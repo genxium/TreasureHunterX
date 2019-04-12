@@ -30,17 +30,17 @@
     "relativePath": "plugin_scripts"
   },
   "0bcc8702-42bd-4b5f-b576-6a95eabfe996": {
-    "asset": 1553244454000,
+    "asset": 1555038255000,
     "meta": 1553153264000,
     "relativePath": "resources"
   },
   "3b59087c-771e-40f1-b126-2f5ec4bcde3d": {
-    "asset": 1553747260000,
+    "asset": 1555038153000,
     "meta": 1553153264000,
     "relativePath": "resources/animation"
   },
   "6f2b53ec-565c-4a83-9a8c-27e5ae02d46f": {
-    "asset": 1554975111000,
+    "asset": 1555038525000,
     "meta": 1553153264000,
     "relativePath": "resources/textures"
   },
@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1554963772000,
+    "asset": 1555033122000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -100,13 +100,13 @@
     "relativePath": "resources/prefabs/Loading.prefab"
   },
   "2c0101b8-c15a-4501-9fce-cd5a014af8bf": {
-    "asset": 1553762230000,
-    "meta": 1554949638000,
+    "asset": 1555040155000,
+    "meta": 1555040155000,
     "relativePath": "resources/prefabs/SmsWaitcountdown.prefab"
   },
   "8e8c1a65-623d-42ba-97a7-820ce518ea11": {
-    "asset": 1554802357000,
-    "meta": 1554949638000,
+    "asset": 1555039510000,
+    "meta": 1555039510000,
     "relativePath": "resources/prefabs/ConfirmLogout.prefab"
   },
   "477c07c3-0d50-4d55-96f0-6eaf9f25e2da": {
@@ -125,13 +125,13 @@
     "relativePath": "scripts/SimplePressToGoDialog.js"
   },
   "e108b9e7-e8b0-465d-8bf1-a850560c3b0f": {
-    "asset": 1553762308000,
-    "meta": 1554949638000,
+    "asset": 1555040214000,
+    "meta": 1555040214000,
     "relativePath": "resources/prefabs/TreasurePrefab.prefab"
   },
   "9f340a31-ddfa-46c2-94c7-d11615aedcb1": {
-    "asset": 1553762661000,
-    "meta": 1554949638000,
+    "asset": 1555040191000,
+    "meta": 1555040191000,
     "relativePath": "resources/prefabs/TrapPrefab.prefab"
   },
   "05f549db-f831-460c-a0ed-3f29c497c8b9": {
@@ -375,8 +375,8 @@
     "relativePath": "scripts/NPCPlayer.js"
   },
   "230eeb1f-e0f9-4a41-ab6c-05b3771cbf3e": {
-    "asset": 1554802510000,
-    "meta": 1554949638000,
+    "asset": 1555039611000,
+    "meta": 1555039611000,
     "relativePath": "resources/prefabs/CountdownToBeginGame.prefab"
   },
   "8ac0809b-f98d-4cff-a66c-3bd9e218ecd6": {
@@ -400,8 +400,8 @@
     "relativePath": "resources/prefabs/BulletPrefab.prefab"
   },
   "670b477e-61a1-4778-879b-35913f7c79d2": {
-    "asset": 1554802850000,
-    "meta": 1554949638000,
+    "asset": 1555040130000,
+    "meta": 1555040130000,
     "relativePath": "resources/prefabs/SimplePressToGoDialog.prefab"
   },
   "0d4a2516-47b9-420b-86c4-fc312599d4aa": {
@@ -445,8 +445,8 @@
     "relativePath": "resources/map"
   },
   "0e13eee2-1abe-40bf-8714-064feec158c7": {
-    "asset": 1553762335000,
-    "meta": 1554949638000,
+    "asset": 1555039985000,
+    "meta": 1555039985000,
     "relativePath": "resources/prefabs/Pumpkin.prefab"
   },
   "b74b0e58-0ea6-4546-8e0e-919445657f24": {
@@ -480,38 +480,38 @@
     "relativePath": "resources/map/pacman/Tile_W64_H64_S01 copy.png"
   },
   "3ed4c7bc-79d0-4075-a563-d5a58ae798f9": {
-    "asset": 1554974125000,
-    "meta": 1554974125000,
+    "asset": 1555039761000,
+    "meta": 1555039761000,
     "relativePath": "resources/prefabs/FindingPlayer.prefab"
   },
   "32b8e752-8362-4783-a4a6-1160af8b7109": {
-    "asset": 1554973891000,
-    "meta": 1554973891000,
+    "asset": 1555039834000,
+    "meta": 1555039834000,
     "relativePath": "resources/prefabs/GameRule.prefab"
   },
   "3cee8bde-8f1d-4960-b591-33208af1f997": {
-    "asset": 1553761983000,
-    "meta": 1554949638000,
+    "asset": 1555039846000,
+    "meta": 1555039846000,
     "relativePath": "resources/prefabs/GuardTower.prefab"
   },
   "8a738d50-1dac-4b6e-99e1-d241f5ee7169": {
-    "asset": 1554967262000,
-    "meta": 1554967262000,
+    "asset": 1555039894000,
+    "meta": 1555039894000,
     "relativePath": "resources/prefabs/Pacman1.prefab"
   },
   "1f479636-9eb8-4612-8f97-371964d6eae3": {
-    "asset": 1554967272000,
-    "meta": 1554967272000,
+    "asset": 1555039913000,
+    "meta": 1555039913000,
     "relativePath": "resources/prefabs/Pacman2.prefab"
   },
   "b4e519f4-e698-4403-9ff2-47b8dacb077e": {
-    "asset": 1554802668000,
-    "meta": 1554949638000,
+    "asset": 1555039958000,
+    "meta": 1555039958000,
     "relativePath": "resources/prefabs/PlayersInfo.prefab"
   },
   "c4cfe3bd-c59e-4d5b-95cb-c933b120e184": {
-    "asset": 1555033091000,
-    "meta": 1555033091000,
+    "asset": 1555040093000,
+    "meta": 1555040093000,
     "relativePath": "resources/prefabs/ResultPanel.prefab"
   },
   "2062218a-c5d4-4cbb-959e-77e8e5a96344": {
@@ -520,8 +520,8 @@
     "relativePath": "resources/animation/findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1554975567000,
-    "meta": 1554975567000,
+    "asset": 1555041148000,
+    "meta": 1555041148000,
     "relativePath": "scenes/login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -635,8 +635,8 @@
     "relativePath": "scripts/PlayersInfo.js"
   },
   "1c02b0a0-859a-4467-86b3-ca39c30d1e19": {
-    "asset": 1553762270000,
-    "meta": 1554949638000,
+    "asset": 1555040176000,
+    "meta": 1555040176000,
     "relativePath": "resources/prefabs/TiledAnim.prefab"
   },
   "225415b8-1a4c-4fd9-bb42-68b60c50bd7e": {
@@ -709,155 +709,45 @@
     "meta": 1553747218000,
     "relativePath": "resources/animation/RedPacman"
   },
-  "cc316f33-9d42-42ec-a8ca-4fb4d9e2157e": {
-    "asset": 1553845839000,
-    "meta": 1553756874000,
-    "relativePath": "resources/textures/Theme"
-  },
-  "b9f62dae-b851-4eb1-bd18-2a3a8eb692ca": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Common"
-  },
   "a564b3db-b8cb-48b4-952e-25bb56949116": {
     "asset": 1553153265000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Common/mikado_outline_shadow.fnt"
+    "relativePath": "resources/font/mikado_outline_shadow.fnt"
   },
   "71a46ef1-d7bc-4b93-b56d-1c0d1cd7bfee": {
     "asset": 1553756874000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme/Common/mikado_outline_shadow.png"
-  },
-  "fc345c73-6eeb-4655-ad79-aefd7fa4f404": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/FindingPlayer"
+    "relativePath": "resources/font/mikado_outline_shadow.png"
   },
   "a91e9bf4-f213-47a9-989c-aa147bde9067": {
     "asset": 1553757270000,
     "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/FindingPlayer/MagnifyinGlassAnimation"
+    "relativePath": "resources/animation/FrameAnimTextures/MagnifyinGlassAnimation"
   },
   "06710517-f4f7-46d9-873f-c7599242f7be": {
     "asset": 1553153264000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/FindingPlayer/MagnifyinGlassAnimation/MagnifyinGlass.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/MagnifyinGlassAnimation/MagnifyinGlass.plist"
   },
   "b6746e1a-5020-430f-90f8-e710eb2bd516": {
     "asset": 1553756874000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme/FindingPlayer/MagnifyinGlassAnimation/MagnifyinGlass.png"
-  },
-  "225fa2af-f6d5-431b-aee3-a674d2da3856": {
-    "asset": 1553845854000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/InGame"
+    "relativePath": "resources/animation/FrameAnimTextures/MagnifyinGlassAnimation/MagnifyinGlass.png"
   },
   "4f910135-713c-4263-8ae8-7ca4800bf003": {
     "asset": 1553757270000,
     "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/InGame/Bullets"
+    "relativePath": "resources/animation/FrameAnimTextures/Bullets"
   },
   "266c6cef-32d6-4545-b3e6-c2b75a895578": {
     "asset": 1553486821000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/InGame/Bullets/bullet.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/Bullets/bullet.plist"
   },
   "a37f1c6a-9a6b-49fa-8a2d-2fc5a3b93094": {
     "asset": 1553756874000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme/InGame/Bullets/bullet.png"
-  },
-  "571a111e-331b-4bc6-9385-b4aa1cfbbc77": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Login"
-  },
-  "3fd7dcec-b5b3-4141-93f7-517e19e650f9": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Login/LoginUI"
-  },
-  "4a1b7c17-af65-470b-810c-4bad46d74948": {
-    "asset": 1553153265000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Login/LoginUI/UI.plist"
-  },
-  "14b53ca0-e53f-4c7b-8f56-f7006981d382": {
-    "asset": 1553756874000,
-    "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme/Login/LoginUI/loginUI.png"
-  },
-  "04894d7f-8319-423e-ae8c-db2b1a08a97f": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Others"
-  },
-  "85788251-13cf-4742-a1b3-7e6aa2b2fc4e": {
-    "asset": 1553153264000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Others/3Seconds Countdown.plist"
-  },
-  "1a541b3f-20c8-4b7b-8814-608ea8a3785f": {
-    "asset": 1553756874000,
-    "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme/Others/3Seconds Countdown.png"
-  },
-  "a113654b-da98-483e-8c36-053e70f34981": {
-    "asset": 1553771167000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Players"
-  },
-  "3ee945a4-f751-4c6f-9f1e-92e93bbf6b23": {
-    "asset": 1553758746000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Players/Pacman1"
-  },
-  "47d1ee01-ae60-467d-9d08-e675c44470e4": {
-    "asset": 1553159487000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Players/Pacman1/RedPacman.plist"
-  },
-  "070728ab-cf1a-4593-8353-398db6bc00f1": {
-    "asset": 1553756874000,
-    "meta": 1554949639000,
-    "relativePath": "resources/textures/Theme/Players/Pacman1/RedPacman.png"
-  },
-  "d8a03123-a1f1-4503-b4fa-8b6c3b5bd6a7": {
-    "asset": 1553161068000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Players/Pacman1/transparentRed.plist"
-  },
-  "f7767f82-3429-484e-9b3e-42d374b2974c": {
-    "asset": 1553757270000,
-    "meta": 1553757270000,
-    "relativePath": "resources/textures/Theme/Players/Pacman2"
-  },
-  "51060593-7c24-49d2-888d-4719c9ba5fa8": {
-    "asset": 1553153265000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Players/Pacman2/transparentYello.plist"
-  },
-  "8477382d-7c99-4db6-a222-2cd2fef6c2b1": {
-    "asset": 1553756874000,
-    "meta": 1554949639000,
-    "relativePath": "resources/textures/Theme/Players/Pacman1/transparentRed.png"
-  },
-  "04223b77-f61f-4afd-9b04-50940ca2a8d9": {
-    "asset": 1553756874000,
-    "meta": 1554949639000,
-    "relativePath": "resources/textures/Theme/Players/Pacman2/transparentYello.png"
-  },
-  "643548a5-ef90-44b9-98d2-d0615741793c": {
-    "asset": 1553153265000,
-    "meta": 1554949641000,
-    "relativePath": "resources/textures/Theme/Players/Pacman2/YellowPacman.plist"
-  },
-  "03060839-e604-414c-b136-d51eb2c159d2": {
-    "asset": 1553756874000,
-    "meta": 1554949639000,
-    "relativePath": "resources/textures/Theme/Players/Pacman2/YellowPacman.png"
+    "relativePath": "resources/animation/FrameAnimTextures/Bullets/bullet.png"
   },
   "31ca9500-50c9-44f9-8d33-f9a969e53195": {
     "asset": 1553826246000,
@@ -870,13 +760,13 @@
     "relativePath": "scripts/Login.js"
   },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
-    "asset": 1554809355000,
-    "meta": 1554949639000,
+    "asset": 1555040339000,
+    "meta": 1555040339000,
     "relativePath": "scenes/default_map.fire"
   },
   "475b849b-44b3-4390-982d-bd0d9e695093": {
-    "asset": 1554975713000,
-    "meta": 1554975713000,
+    "asset": 1555038644000,
+    "meta": 1555038644000,
     "relativePath": "scenes/wechatGameLogin.fire"
   },
   "ecdd3aad-b601-4f8d-85a1-69d9d270a806": {
@@ -922,96 +812,86 @@
   "23fb8ada-95d1-4be0-8396-7f065d164dd3": {
     "asset": 1554807987000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/bulldozer-blue.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-blue.plist"
   },
   "2c488eae-3a87-45d5-841e-e50780f91023": {
     "asset": 1554807987000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/bulldozer-red.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-red.plist"
   },
   "ed1dbabe-cadf-460f-8a22-6c05654cd81d": {
     "asset": 1554807987000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/bulldozer-blue.png"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-blue.png"
   },
   "69e8c316-dbc5-4e11-a720-bc86db323a70": {
     "asset": 1554807987000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/bulldozer-red.png"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-red.png"
   },
   "96b5268e-af3d-4670-bf30-6dc5da52745a": {
     "asset": 1554808205000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/bulldozer-blue-transparent.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-blue-transparent.plist"
   },
   "b8d4ce3d-6648-44c5-bab9-0681b6d1e15a": {
     "asset": 1554808205000,
     "meta": 1554949641000,
-    "relativePath": "resources/textures/bulldozer-red-transparent.plist"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-red-transparent.plist"
   },
   "0e2f98ed-755a-4e34-8aa7-f94b8c15cb9a": {
     "asset": 1554808205000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/bulldozer-red-transparent.png"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-red-transparent.png"
   },
   "71ac3711-4cb2-4980-b108-d2f8f9a7f431": {
     "asset": 1554808205000,
     "meta": 1554949638000,
-    "relativePath": "resources/textures/bulldozer-blue-transparent.png"
+    "relativePath": "resources/animation/FrameAnimTextures/bulldozer-blue-transparent.png"
   },
   "09bff2b7-f9a2-4eac-b561-f02ff8e28abe": {
     "asset": 1554809129000,
     "meta": 1554949637000,
     "relativePath": "resources/i18n/zh.js"
   },
-  "d3a90878-d21a-4558-8446-1051a12c71f1": {
-    "asset": 1554809316000,
-    "meta": 1554949638000,
-    "relativePath": "resources/textures/newJoystickBG.png"
-  },
   "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
     "asset": 1554970924000,
     "meta": 1554970925000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "5ad61f1e-785d-4245-8744-3276b20d841d": {
-    "asset": 1554804233000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_0.plist"
-  },
-  "e4e457db-639b-4e68-b1b1-7893fdf2bae7": {
-    "asset": 1554804233000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_1.plist"
-  },
-  "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
-    "asset": 1554804232000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_0.png"
-  },
-  "5c2cf558-35ee-4ac6-963a-5690cd601a3d": {
-    "asset": 1554804233000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_2.plist"
-  },
-  "44dd2e7f-c601-41f1-86d6-f8f11296754b": {
-    "asset": 1554804233000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_2.png"
-  },
-  "6e8b1c3a-050f-49b9-bd27-4c478d290aa2": {
-    "asset": 1554803461000,
-    "meta": 1555033155000,
-    "relativePath": "resources/textures/Theme.zip"
-  },
-  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
-    "asset": 1554804232000,
-    "meta": 1555033156000,
-    "relativePath": "resources/textures/GuiElements_1.png"
-  },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1555033122000,
     "meta": 1555033156000,
     "relativePath": "scripts/Map.js"
+  },
+  "02291e64-1c6c-4d1e-a7df-5c618395cb42": {
+    "asset": 1555038193000,
+    "meta": 1555038004000,
+    "relativePath": "resources/animation/FrameAnimTextures"
+  },
+  "4e96044d-39b2-4388-8c2f-89264ffee38b": {
+    "asset": 1555038267000,
+    "meta": 1555038253000,
+    "relativePath": "resources/font"
+  },
+  "030d9286-e8a2-40cf-98f8-baf713f0b8c4": {
+    "asset": 1555038445000,
+    "meta": 1555038526000,
+    "relativePath": "resources/textures/GUIElements_0.plist"
+  },
+  "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a": {
+    "asset": 1555038445000,
+    "meta": 1555038525000,
+    "relativePath": "resources/textures/GUIElements_0.png"
+  },
+  "825df908-a4cb-449d-9731-8ef53f3fd44f": {
+    "asset": 1555035491000,
+    "meta": 1555038525000,
+    "relativePath": "resources/textures/MiniGame_Background.png"
+  },
+  "94b8bb09-e8ac-4402-a933-b79f01b5a813": {
+    "asset": 1555035517000,
+    "meta": 1555038525000,
+    "relativePath": "resources/textures/MiniGame_Blackboard.png"
   }
 }

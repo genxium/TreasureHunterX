@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "GameRule_Decoration",
+    "texture": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+    "atlas": "030d9286-e8a2-40cf-98f8-baf713f0b8c4",
+    "rect": [
+      1222,
+      117,
+      543,
+      117
+    ],
+    "offset": [
+      0,
+      1
+    ],
+    "originalSize": [
+      543,
+      169
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

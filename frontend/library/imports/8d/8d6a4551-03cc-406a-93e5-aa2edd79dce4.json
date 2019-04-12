@@ -1,0 +1,29 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "InGame_Tower2",
+    "texture": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+    "atlas": "030d9286-e8a2-40cf-98f8-baf713f0b8c4",
+    "rect": [
+      1826,
+      651,
+      130,
+      189
+    ],
+    "offset": [
+      1,
+      0
+    ],
+    "originalSize": [
+      132,
+      189
+    ],
+    "rotated": 1,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -223,8 +223,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "玩家在规定时间内得分高则获胜。要注意躲避防御塔的攻击，被击中会被定住5秒的哦。开始游戏吧~",
-    "_N$string": "玩家在规定时间内得分高则获胜。要注意躲避防御塔的攻击，被击中会被定住5秒的哦。开始游戏吧~",
+    "_string": "gameRule.tip",
+    "_N$string": "gameRule.tip",
     "_fontSize": 38,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -270,7 +270,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "f4d8300e-7b7c-4c58-9de5-561a33e54d82"
+      "__uuid__": "0fe43223-61fc-4cb8-95bd-bd9e8f01ce8f"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -285,7 +285,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -445,8 +445,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "1v1 模式",
-    "_N$string": "1v1 模式",
+    "_string": "gameRule.mode",
+    "_N$string": "gameRule.mode",
     "_fontSize": 55,
     "_lineHeight": 50,
     "_enableWrapText": false,
@@ -492,7 +492,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "f3a6be8d-9aa7-41b3-b877-0d9d456fbff3"
+      "__uuid__": "081ad337-20ca-4313-ae3e-bb6dee3547b7"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -507,7 +507,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -571,7 +571,7 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "f3a6be8d-9aa7-41b3-b877-0d9d456fbff3"
+      "__uuid__": "081ad337-20ca-4313-ae3e-bb6dee3547b7"
     },
     "_N$pressedSprite": null,
     "pressedSprite": null,
@@ -665,7 +665,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "ccb0a0a3-1209-46e0-a608-cd7768e15200"
+      "__uuid__": "153d890a-fc37-4d59-8779-93a8fb19fa85"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -680,7 +680,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -720,7 +720,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "d2883f28-7a3b-4a34-9fb5-0010f84932d5"
+      "__uuid__": "7838f276-ab48-445a-b858-937dd27d9520"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -734,9 +734,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": {
-      "__uuid__": "5c2cf558-35ee-4ac6-963a-5690cd601a3d"
-    },
+    "_atlas": null,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_id": ""

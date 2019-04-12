@@ -151,7 +151,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "88b1f536-650d-43f1-a6e7-5c368d65b03e"
+      "__uuid__": "919690f3-9e98-4dca-88cf-ee33db7150cb"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -166,7 +166,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -359,7 +359,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "4a7be75a-6002-4839-8d07-840c8ad48f4c"
+      "__uuid__": "ef0ce43c-ad0d-4f7a-adad-ccdc3b07da45"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -374,7 +374,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -442,7 +442,7 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "4a7be75a-6002-4839-8d07-840c8ad48f4c"
+      "__uuid__": "ef0ce43c-ad0d-4f7a-adad-ccdc3b07da45"
     },
     "_N$pressedSprite": {
       "__uuid__": "e9ec654c-97a2-4787-9325-e6a10375219a"
@@ -661,7 +661,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "6dc3250c-6783-41f8-bd4d-01455e2a4ea0"
+      "__uuid__": "08935a3f-220c-4440-bb99-5576598b3601"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -676,7 +676,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "030d9286-e8a2-40cf-98f8-baf713f0b8c4"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -744,7 +744,7 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "6dc3250c-6783-41f8-bd4d-01455e2a4ea0"
+      "__uuid__": "08935a3f-220c-4440-bb99-5576598b3601"
     },
     "_N$pressedSprite": {
       "__uuid__": "e9ec654c-97a2-4787-9325-e6a10375219a"

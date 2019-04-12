@@ -1,0 +1,29 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "GameRule_Button",
+    "texture": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+    "atlas": "030d9286-e8a2-40cf-98f8-baf713f0b8c4",
+    "rect": [
+      993,
+      779,
+      210,
+      119
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      210,
+      119
+    ],
+    "rotated": 1,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
