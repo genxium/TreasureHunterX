@@ -288,6 +288,9 @@ cc.Class({
     if (self.inputControlTimer) {
       clearInterval(self.inputControlTimer);
     }
+    if (self.testOnlyResyncInterval) {
+      clearInterval(self.testOnlyResyncInterval);
+    }
   },
   _lazilyTriggerResync: function _lazilyTriggerResync() {
     if (true == this.resyncing) return;
@@ -309,6 +312,9 @@ cc.Class({
     console.warn("_onResyncCompleted, resyncing took ", resyncingDurationMillis, " milliseconds.");
     if (null != this.resyncingHintPopup && this.resyncingHintPopup.parent) {
       this.resyncingHintPopup.parent.removeChild(this.resyncingHintPopup);
+      if (ALL_MAP_STATES.SHOWING_MODAL_POPUP == this.state) {
+        this.transitToState(ALL_MAP_STATES.VISUAL);
+      }
     }
   },
   popupSimplePressToGo: function popupSimplePressToGo(labelString, hideYesButton) {
@@ -1051,11 +1057,14 @@ cc.Class({
       self.countdownToBeginGameNode.parent.removeChild(self.countdownToBeginGameNode);
     }
     self.transitToState(ALL_MAP_STATES.VISUAL);
-
-    clearInterval(window._lazilyTriggerResyncTimer);
-    window._lazilyTriggerResyncTimer = setInterval(function () {
-      window.mapIns._lazilyTriggerResync();
-    }, 10000);
+    if (CC_DEBUG) {
+      if (self.testOnlyResyncInterval) {
+        clearInterval(self.testOnlyResyncInterval);
+      }
+      self.testOnlyResyncInterval = setInterval(function () {
+        self._lazilyTriggerResync();
+      }, 10 * 1000);
+    }
   },
   onBattleStopped: function onBattleStopped(players) {
     var self = this;

@@ -61,3 +61,7 @@ ErrFatal        {"err": "MISCONF Redis is configured to save RDB snapshots, but 
 ```
 
 Just restart your `redis-server` process.
+
+# 3. Git configs cautions
+
+Please make sure that you've set `ignorecase = false` in your `[core] section of <proj-root>/.git/config`.
