@@ -240,7 +240,7 @@ cc.Class({
 
   _onPerUpsyncFrame: function _onPerUpsyncFrame() {
     var instance = this;
-    if (instance.resyncing) return;
+    var ackingFrameId = instance.resyncing ? 0 : instance.lastRoomDownsyncFrameId;
     if (null == instance.selfPlayerInfo || null == instance.selfPlayerScriptIns || null == instance.selfPlayerScriptIns.scheduledDirection) return;
     var upsyncFrameData = {
       id: instance.selfPlayerInfo.id,
@@ -255,7 +255,7 @@ cc.Class({
       },
       x: parseFloat(instance.selfPlayerNode.x),
       y: parseFloat(instance.selfPlayerNode.y),
-      ackingFrameId: instance.lastRoomDownsyncFrameId
+      ackingFrameId: ackingFrameId
     };
     var wrapped = {
       msgId: Date.now(),
@@ -292,7 +292,7 @@ cc.Class({
   _lazilyTriggerResync: function _lazilyTriggerResync() {
     if (true == this.resyncing) return;
     this.lastResyncingStartedAt = Date.now();
-    this.resyncing = true;
+    this.resyncing = true; // Will keep `this._onPerUpsyncFrame()` sending `ackingFrameId == 0` till the invocation of `this._onResyncCompleted()`. 
 
     console.warn("_lazilyTriggerResync, resyncing");
 
@@ -852,26 +852,22 @@ cc.Class({
           return;
         }
         var isInitiatingFrame = 0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId;
-        /*
-        if (frameId % 300 == 0) {
-          // WARNING: For testing only!
-          if (0 < frameId) {
-            self._lazilyTriggerResync(); 
-          }
-          console.log(JSON.stringify(diffFrame));
-        }
-        */
         var cachedFullFrame = self.recentFrameCache[refFrameId];
-        if (!isInitiatingFrame && self.useDiffFrameAlgo && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync". 
-        && null == cachedFullFrame) {
+
+        var missingRequiredRefFrameCache = false == isInitiatingFrame && (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync".
+        && null == cachedFullFrame;
+        if (self.useDiffFrameAlgo && missingRequiredRefFrameCache) {
           self._lazilyTriggerResync();
-          // Later incoming diffFrames will all suffice that `0 < self.recentFrameCacheCurrentSize && null == cachedFullFrame`, until `this._onResyncCompleted` is successfully invoked.
           return;
         }
 
-        if (isInitiatingFrame && 0 == refFrameId) {
-          // Reaching here implies that you've received the resync frame.
-          self._onResyncCompleted();
+        if (true == self.resyncing) {
+          if (isInitiatingFrame && 0 == refFrameId) {
+            // Reaching here implies that you've received the resync frame.
+            self._onResyncCompleted();
+          } else {
+            return;
+          }
         }
         var countdownNanos = diffFrame.countdownNanos;
         if (countdownNanos < 0) {
@@ -1266,7 +1262,7 @@ cc.Class({
           //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = function () {
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
-              console.error("Init bullet direction error, startAtPoint:" + startAtPoint + ", endAtPoint:" + endAtPoint);
+              console.error("Init bullet direction error, startAtPoint:" + bulletInfo.startAtPoint + ", endAtPoint:" + bulletInfo.endAtPoint);
               return 0;
             } else {
 
@@ -1500,8 +1496,8 @@ cc.Class({
         }
       }
     } catch (err) {
-      console.warn("Map.update(dt)内发生了错误, 即将清空localStorage并回到登录页面", err);
-      self.clearLocalStorageAndBackToLoginScene(true);
+      console.warn("Map.update(dt)内发生了错误, 即将主动发起resync", err);
+      self._lazilyTriggerResync();
     }
   },
   transitToState: function transitToState(s) {
