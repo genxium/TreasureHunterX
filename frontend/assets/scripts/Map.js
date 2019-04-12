@@ -903,6 +903,13 @@ cc.Class({
       self.countdownToBeginGameNode.parent.removeChild(self.countdownToBeginGameNode);
     }
     self.transitToState(ALL_MAP_STATES.VISUAL);
+
+    /*
+    clearInterval(window._lazilyTriggerResyncTimer);
+    window._lazilyTriggerResyncTimer = setInterval(() => {
+      window.mapIns._lazilyTriggerResync();
+    }, 10000);
+    */
   },
 
   onBattleStopped(players) {

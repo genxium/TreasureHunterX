@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1555033122000,
+    "asset": 1555043541000,
     "meta": 1553153265000,
     "relativePath": "scripts"
   },
@@ -859,11 +859,6 @@
     "meta": 1554970925000,
     "relativePath": "plugin_scripts/conf.js"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1555033122000,
-    "meta": 1555033156000,
-    "relativePath": "scripts/Map.js"
-  },
   "02291e64-1c6c-4d1e-a7df-5c618395cb42": {
     "asset": 1555038193000,
     "meta": 1555038004000,
@@ -893,5 +888,10 @@
     "asset": 1555035517000,
     "meta": 1555038525000,
     "relativePath": "resources/textures/MiniGame_Blackboard.png"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1555043541000,
+    "meta": 1555043555000,
+    "relativePath": "scripts/Map.js"
   }
 }
