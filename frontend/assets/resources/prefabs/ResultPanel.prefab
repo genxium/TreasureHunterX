@@ -1452,7 +1452,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "257fc0e7-3568-4f9c-a348-cfcf68ff72ea"
+      "__uuid__": "2739e1c1-1780-4459-b4d0-bf2b02730e77"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -1467,7 +1467,7 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": {
-      "__uuid__": "5ad61f1e-785d-4245-8744-3276b20d841d"
+      "__uuid__": "e4e457db-639b-4e68-b1b1-7893fdf2bae7"
     },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
@@ -1660,7 +1660,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 240,
+      "width": 700.52,
       "height": 70
     },
     "_anchorPoint": {
@@ -1703,8 +1703,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "再来一局",
-    "_N$string": "再来一局",
+    "_string": "resultPanel.againBtnLabel",
+    "_N$string": "resultPanel.againBtnLabel",
     "_fontSize": 60,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -1964,7 +1964,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 240,
+      "width": 703.8,
       "height": 70
     },
     "_anchorPoint": {
@@ -2007,8 +2007,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_string": "回到首页",
-    "_N$string": "回到首页",
+    "_string": "resultPanel.homeBtnLabel",
+    "_N$string": "resultPanel.homeBtnLabel",
     "_fontSize": 60,
     "_lineHeight": 70,
     "_enableWrapText": true,

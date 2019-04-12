@@ -2,11 +2,11 @@
   "__type__": "cc.SpriteFrame",
   "content": {
     "name": "ResultPanel_Iron",
-    "texture": "e8c22004-f2df-41be-9bc3-29e64fa65d65",
-    "atlas": "5ad61f1e-785d-4245-8744-3276b20d841d",
+    "texture": "7e95c8ae-8130-48c6-8a83-01697cc5000d",
+    "atlas": "e4e457db-639b-4e68-b1b1-7893fdf2bae7",
     "rect": [
-      754,
-      1998,
+      1,
+      1923,
       201,
       39
     ],

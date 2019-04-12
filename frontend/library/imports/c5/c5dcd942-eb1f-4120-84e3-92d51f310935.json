@@ -1,22 +1,22 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "ResultPanel_Copper",
+    "name": "InGame_Joystick_bottom",
     "texture": "e8c22004-f2df-41be-9bc3-29e64fa65d65",
     "atlas": "5ad61f1e-785d-4245-8744-3276b20d841d",
     "rect": [
-      1573,
-      1653,
-      206,
-      42
+      1699,
+      1697,
+      80,
+      80
     ],
     "offset": [
       0,
       0
     ],
     "originalSize": [
-      206,
-      42
+      80,
+      80
     ],
     "capInsets": [
       0,

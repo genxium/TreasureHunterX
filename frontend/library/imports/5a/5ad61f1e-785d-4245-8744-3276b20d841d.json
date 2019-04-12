@@ -43,6 +43,9 @@
     "InGame_Joystick": {
       "__uuid__": "fc6202e3-d8af-400d-a2da-3abfbddbf8ca"
     },
+    "InGame_Joystick_bottom": {
+      "__uuid__": "c5dcd942-eb1f-4120-84e3-92d51f310935"
+    },
     "InGame_LowScoreTreasure": {
       "__uuid__": "b54c9dfa-5323-4703-ba2d-5503a944e623"
     },
@@ -90,9 +93,6 @@
     },
     "ResultPanel_Gold": {
       "__uuid__": "40eeac8b-c016-4002-9b71-547547cedaf9"
-    },
-    "ResultPanel_Iron": {
-      "__uuid__": "257fc0e7-3568-4f9c-a348-cfcf68ff72ea"
     },
     "ResultPanel_Silver": {
       "__uuid__": "9ff36c1e-c74b-4a98-9cbe-bfee90aad8da"

@@ -15,9 +15,9 @@
                 <key>spriteSourceSize</key>
                 <string>{344,200}</string>
                 <key>textureRect</key>
-                <string>{{647,1669},{344,200}}</string>
+                <string>{{1669,647},{344,200}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>GameRule_Blackboard.png</key>
             <dict>
@@ -30,9 +30,9 @@
                 <key>spriteSourceSize</key>
                 <string>{644,793}</string>
                 <key>textureRect</key>
-                <string>{{1,1027},{644,793}}</string>
+                <string>{{1027,1},{644,793}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>InGame_Blackboard.png</key>
             <dict>
@@ -47,7 +47,7 @@
                 <key>textureRect</key>
                 <string>{{1,1},{1024,1920}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InGame_ResultPanel_Background.png</key>
             <dict>
@@ -60,9 +60,9 @@
                 <key>spriteSourceSize</key>
                 <string>{287,272}</string>
                 <key>textureRect</key>
-                <string>{{1609,1602},{287,272}}</string>
+                <string>{{1602,1609},{287,272}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
             </dict>
             <key>Login_Background.png</key>
             <dict>
@@ -75,9 +75,9 @@
                 <key>spriteSourceSize</key>
                 <string>{640,960}</string>
                 <key>textureRect</key>
-                <string>{{647,1027},{640,960}}</string>
+                <string>{{1027,647},{640,960}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>ResultPanel_Bg1v1.png</key>
             <dict>
@@ -90,9 +90,24 @@
                 <key>spriteSourceSize</key>
                 <string>{573,356}</string>
                 <key>textureRect</key>
-                <string>{{1609,1027},{573,356}}</string>
+                <string>{{1027,1609},{573,356}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
+            </dict>
+            <key>ResultPanel_Iron.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{201,39}</string>
+                <key>spriteSourceSize</key>
+                <string>{201,39}</string>
+                <key>textureRect</key>
+                <string>{{1,1923},{201,39}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
         </dict>
         <key>metadata</key>
@@ -106,9 +121,9 @@
             <key>realTextureFileName</key>
             <string>GuiElements_1.png</string>
             <key>size</key>
-            <string>{1966,1875}</string>
+            <string>{1875,1966}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:9357aa0724c16ee5410aaa3cfb792032:db6f9da3951835bfec427bcef3d23166:c414829fdba7464f4f1ffc7cf387c5fc$</string>
+            <string>$TexturePacker:SmartUpdate:fb20514d078e0165d01d0fb55fddd8ca:21a26ef4b0287de66a535aafb5b57c18:c414829fdba7464f4f1ffc7cf387c5fc$</string>
             <key>textureFileName</key>
             <string>GuiElements_1.png</string>
         </dict>
