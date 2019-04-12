@@ -969,16 +969,6 @@
     "meta": 1554949638000,
     "relativePath": "resources/textures/newJoystickBG.png"
   },
-  "6e8b1c3a-050f-49b9-bd27-4c478d290aa2": {
-    "asset": 1554803461000,
-    "meta": 1554949638000,
-    "relativePath": "resources/textures/Theme.zip"
-  },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1554963772000,
-    "meta": 1554967240000,
-    "relativePath": "scripts/Map.js"
-  },
   "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
     "asset": 1554970924000,
     "meta": 1554970925000,
@@ -994,11 +984,6 @@
     "meta": 1555032983000,
     "relativePath": "resources/textures/GuiElements_1.plist"
   },
-  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
-    "asset": 1554804232000,
-    "meta": 1555032983000,
-    "relativePath": "resources/textures/GuiElements_1.png"
-  },
   "e8c22004-f2df-41be-9bc3-29e64fa65d65": {
     "asset": 1554804232000,
     "meta": 1555032983000,
@@ -1013,5 +998,20 @@
     "asset": 1554804233000,
     "meta": 1555032983000,
     "relativePath": "resources/textures/GuiElements_2.png"
+  },
+  "6e8b1c3a-050f-49b9-bd27-4c478d290aa2": {
+    "asset": 1554803461000,
+    "meta": 1555033155000,
+    "relativePath": "resources/textures/Theme.zip"
+  },
+  "7e95c8ae-8130-48c6-8a83-01697cc5000d": {
+    "asset": 1554804232000,
+    "meta": 1555033156000,
+    "relativePath": "resources/textures/GuiElements_1.png"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1555033122000,
+    "meta": 1555033156000,
+    "relativePath": "scripts/Map.js"
   }
 }
