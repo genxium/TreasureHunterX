@@ -62,6 +62,74 @@ ErrFatal        {"err": "MISCONF Redis is configured to save RDB snapshots, but 
 
 Just restart your `redis-server` process.
 
+### 2.5.2 Uploading `<proj-root>/frontend/build/wechatgame/res/` to remote resource directory
+
+Please make sure that you've read "https://app.yinxiang.com/shard/s61/nl/13267014/d6b1f7aa-8c6b-4200-b8e4-8b5a21b22fa1" as a prerequisite.
+
+To publish this game to `wechatgame` platform, you'll have to first upload it to the platform which requires the whole package to be no larger than 8MB.
+
+A non-tricky way to make package size always uploadable is to 
+- upload the local `<proj-root>/frontend/build/wechatgame/res/` to wherever specified by magic variable `wxDownloader.REMOTE_SERVER_ROOT` in `<proj-root>/frontend/build-templates/wechatgame/game.js` (often an additional nginx config file lookup effort is necessary), then
+- delete the local `<proj-root>/frontend/build/wechatgame/res/`, then
+- upload the residual package files in "微信开发者工具(downloaded from https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)".
+
+For example, given the following context
+```
+/* <proj-root>/frontend/build-templates/wechatgame/game.js */
+
+wxDownloader.REMOTE_SERVER_ROOT = "https://bgmoba.lokcol.com/static/";
+```
+
+```
+shell> nslookup bgmoba.lokcol.com
+Server:  XiaoQiang
+Address:  192.168.31.1
+
+Non-authoritative answer:
+Name:    bgmoba.lokcol.com
+Address:  58.87.122.61
+
+# Shows 2 lines before as well as 2 lines after the matching line.
+shell> cat ~/.ssh/config | grep -B 2 -A 2 58.87.122.61
+Host lokcol-4-ubuntu
+  Hostname 58.87.122.61
+  User ubuntu
+
+Host lokcol-4-pomelo
+  Hostname 58.87.122.61
+  User pomelo
+```
+
+```
+# The file `/etc/nginx/vhost/bgmoba.lokcol.com` on `58.87.122.61`. 
+
+server {
+  listen 443;
+  server_name bgmoba.lokcol.com;
+
+  root         "/var/www/html/bgmoba";
+  index index.html;
+  access_log /var/log/nginx/bgmoba-access.log;
+  error_log /var/log/nginx/bgmoba-err.log;
+
+  ssl on;
+  ssl_certificate  /etc/nginx/certs/bgmoba.lokcol.com.fullchain.cer;
+  ssl_certificate_key /etc/nginx/certs/bgmoba.lokcol.com.key;
+  gzip on;
+  gzip_min_length 1k;
+  gzip_buffers 4 16k;
+  gzip_comp_level 5;
+  gzip_types text/plain application/x-javascript text/css application/xml text/javascript application/x-http
+    hp application/json application/javascript;
+  gzip_vary on;
+}
+```
+
+, you should upload by the following command(s).
+```
+shell> scp -r ./frontend/build/wechatgame/res/* ubuntu@bgmoba.lokcol.com:/var/www/html/bgmoba/static/res/
+```
+
 # 3. Git configs cautions
 
 Please make sure that you've set `ignorecase = false` in your `[core] section of <proj-root>/.git/config`.

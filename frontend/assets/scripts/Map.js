@@ -281,7 +281,7 @@ cc.Class({
       window.handleRoomDownsyncFrame = null;
     }
     if (null != window.handleClientSessionCloseOrError) {
-      window.handleClientSessionCloseOrError = null; 
+      window.handleClientSessionCloseOrError = null;
     }
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
@@ -290,7 +290,7 @@ cc.Class({
       clearInterval(self.inputControlTimer);
     }
     if (self.testOnlyResyncInterval) {
-      clearInterval(self.testOnlyResyncInterval); 
+      clearInterval(self.testOnlyResyncInterval);
     }
   },
 
@@ -545,7 +545,7 @@ cc.Class({
     resultPanelScriptIns.onAgainClicked = () => {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self._resetCurrentMatch();
-      window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
+      window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */ );
     };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
@@ -664,9 +664,9 @@ cc.Class({
       self.setupInputControls();
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
-        if (ALL_BATTLE_STATES.WAITING != self.battleState 
-            && ALL_BATTLE_STATES.IN_BATTLE != self.battleState 
-            && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
+        if (ALL_BATTLE_STATES.WAITING != self.battleState
+          && ALL_BATTLE_STATES.IN_BATTLE != self.battleState
+          && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
           return;
         }
         const refFrameId = diffFrame.refFrameId;
@@ -697,12 +697,12 @@ cc.Class({
         const isInitiatingFrame = (0 >= self.recentFrameCacheCurrentSize || 0 == refFrameId);
         const cachedFullFrame = self.recentFrameCache[refFrameId];
 
-        const missingRequiredRefFrameCache = (false == isInitiatingFrame 
-                                              && 
-                                              (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync".
-                                              &&
-                                              null == cachedFullFrame
-                                             );
+        const missingRequiredRefFrameCache = (false == isInitiatingFrame
+          &&
+          (refFrameId > 0 || 0 < self.recentFrameCacheCurrentSize) // Critical condition to differentiate between "BattleStarted" or "ShouldResync".
+          &&
+          null == cachedFullFrame
+        );
         if (self.useDiffFrameAlgo && missingRequiredRefFrameCache) {
           self._lazilyTriggerResync();
           return;
@@ -713,7 +713,7 @@ cc.Class({
             // Reaching here implies that you've received the resync frame.
             self._onResyncCompleted();
           } else {
-            return; 
+            return;
           }
         }
         let countdownNanos = diffFrame.countdownNanos;
@@ -842,9 +842,9 @@ cc.Class({
       // TODO: Inject a NetworkDoctor as introduced in https://app.yinxiang.com/shard/s61/nl/13267014/5c575124-01db-419b-9c02-ec81f78c6ddc/.
       };
     }
-    
+
     // The player is now viewing "self.gameRuleNode" with button(s) to start an actual battle. -- YFLu
-    const expectedRoomId = window.getExpectedRoomIdSync(); 
+    const expectedRoomId = window.getExpectedRoomIdSync();
     console.warn("expectedRoomId: ", expectedRoomId);
     if (null != expectedRoomId) {
       self.disableGameRuleNode();
@@ -911,11 +911,11 @@ cc.Class({
     self.transitToState(ALL_MAP_STATES.VISUAL);
     if (CC_DEBUG) {
       if (self.testOnlyResyncInterval) {
-        clearInterval(self.testOnlyResyncInterval); 
+        clearInterval(self.testOnlyResyncInterval);
       }
       self.testOnlyResyncInterval = setInterval(() => {
-        self._lazilyTriggerResync(); 
-      }, 10*1000); 
+        self._lazilyTriggerResync();
+      }, 10 * 1000);
     }
   },
 
@@ -928,7 +928,7 @@ cc.Class({
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(players);
-    window.clearBoundRoomIdInBothVolatileAndPersistentStorage(); 
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
@@ -1149,13 +1149,11 @@ cc.Class({
         if (!targetNode) {
           targetNode = cc.instantiate(self.trapBulletPrefab);
 
-          //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = (() => {
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
               console.error(`Init bullet direction error, startAtPoint:${bulletInfo.startAtPoint}, endAtPoint:${bulletInfo.endAtPoint}`);
-              return 0;
+              return null;
             } else {
-
               const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
               const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
               const radian = (() => {
@@ -1192,7 +1190,10 @@ cc.Class({
               return angle;
             }
           })();
-          //
+
+          if (null == targetNode.rotation) {
+            continue;  
+          }
 
           self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
@@ -1410,7 +1411,7 @@ cc.Class({
       self.clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     }
 
-    const selfPlayerStr = cc.sys.localStorage.getItem("selfPlayer"); 
+    const selfPlayerStr = cc.sys.localStorage.getItem("selfPlayer");
     if (null != selfPlayerStr) {
       const selfPlayer = JSON.parse(selfPlayerStr);
       const requestContent = {
@@ -1458,7 +1459,7 @@ cc.Class({
 
   onGameRule1v1ModeClicked(evt, cb) {
     const self = this;
-    window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */);
+    window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */ );
     self.hideGameRuleNode();
   },
 

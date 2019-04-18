@@ -1273,13 +1273,11 @@ cc.Class({
         if (!targetNode) {
           targetNode = cc.instantiate(self.trapBulletPrefab);
 
-          //kobako: 创建子弹node的时候设置旋转角度
           targetNode.rotation = function () {
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
               console.error("Init bullet direction error, startAtPoint:" + bulletInfo.startAtPoint + ", endAtPoint:" + bulletInfo.endAtPoint);
-              return 0;
+              return null;
             } else {
-
               var dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
               var dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
               var radian = function () {
@@ -1316,7 +1314,10 @@ cc.Class({
               return angle;
             }
           }();
-          //
+
+          if (null == targetNode.rotation) {
+            return "continue";
+          }
 
           self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
@@ -1368,7 +1369,9 @@ cc.Class({
       };
 
       for (var _k15 in self.trapBulletInfoDict) {
-        _loop(_k15);
+        var _ret = _loop(_k15);
+
+        if (_ret === "continue") continue;
       }
 
       //更新南瓜少年的显示
