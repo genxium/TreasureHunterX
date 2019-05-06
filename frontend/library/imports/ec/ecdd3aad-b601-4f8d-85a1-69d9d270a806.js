@@ -76,15 +76,15 @@ cc.Class({
       cc.director.loadScene('login');
     }
   },
-  updatePlayersInfo: function updatePlayersInfo(players) {
+  updatePlayersInfo: function updatePlayersInfo(playerMetas) {
     var _this = this;
 
-    if (!players) return;
-    for (var i in players) {
-      var playerInfo = players[i];
-      var playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
+    if (!playerMetas) return;
+    for (var i in playerMetas) {
+      var playerMeta = playerMetas[i];
+      var playerInfoNode = this.playersInfoNode[playerMeta.joinIndex];
       playerInfoNode.active = true;
-      if (2 == playerInfo.joinIndex) {
+      if (2 == playerMeta.joinIndex) {
         this.findingAnimNode.active = false;
       }
     }
@@ -92,16 +92,16 @@ cc.Class({
     //显示自己的头像名称以及他人的头像名称
 
     var _loop = function _loop(_i) {
-      var playerInfo = players[_i];
-      console.log(playerInfo);
-      var playerInfoNode = _this.playersInfoNode[playerInfo.joinIndex];
+      var playerMeta = playerMetas[_i];
+      console.log("Showing playerMeta:", playerMeta);
+      var playerInfoNode = _this.playersInfoNode[playerMeta.joinIndex];
 
       (function () {
         //远程加载头像
-        var remoteUrl = playerInfo.avatar;
+        var remoteUrl = playerMeta.avatar;
         if (remoteUrl == null || remoteUrl == '') {
           cc.log('No avatar to show for :');
-          cc.log(playerInfo);
+          cc.log(playerMeta);
           remoteUrl = 'http://wx.qlogo.cn/mmopen/PiajxSqBRaEJUWib5D85KXWHumaxhU4E9XOn9bUpCNKF3F4ibfOj8JYHCiaoosvoXCkTmOQE1r2AKKs8ObMaz76EdA/0';
         }
         cc.loader.load({
@@ -124,10 +124,10 @@ cc.Class({
 
       var nameNode = playerInfoNode.getChildByName("name");
       var nameToDisplay = function () {
-        if (!isEmptyString(playerInfo.displayName)) {
-          return playerInfo.displayName;
-        } else if (!isEmptyString(playerInfo.name)) {
-          return playerInfo.name;
+        if (!isEmptyString(playerMeta.displayName)) {
+          return playerMeta.displayName;
+        } else if (!isEmptyString(playerMeta.name)) {
+          return playerMeta.name;
         } else {
           return "No name";
         }
@@ -135,7 +135,7 @@ cc.Class({
       nameNode.getComponent(cc.Label).string = nameToDisplay;
     };
 
-    for (var _i in players) {
+    for (var _i in playerMetas) {
       _loop(_i);
     }
   }

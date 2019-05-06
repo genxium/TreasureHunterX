@@ -19,12 +19,17 @@ message Player {
   int32 speed = 5;
   int32 battleState = 6;
   int32 lastMoveGmtMillis = 7;
-  string name = 8;
-  string displayName = 9;
   int32 score = 10;
   bool removed = 11;
   int32 joinIndex = 12;
-  string avatar = 13;
+}
+
+message PlayerMeta {
+  int64 id = 1;
+  string name = 2;
+  string displayName = 3;
+  string avatar = 4;
+  int32 joinIndex = 5;
 }
 
 message Treasure {
@@ -93,4 +98,5 @@ message RoomDownsyncFrame {
   map<int32, SpeedShoes> speedShoes = 9;
   map<int32, Pumpkin> pumpkin = 10;
   map<int32, GuardTower> guardTowers = 11; 
+  map<int32, PlayerMeta> playerMetas = 12;
 }

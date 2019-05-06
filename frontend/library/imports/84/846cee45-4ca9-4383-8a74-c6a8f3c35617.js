@@ -15,8 +15,8 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-  updateData: function updateData(playerInfo) {
-    var joinIndex = playerInfo.joinIndex;
+  updateData: function updateData(playerMeta) {
+    var joinIndex = playerMeta.joinIndex;
     var playerNode = this.listNode.getChildByName("player" + joinIndex);
     if (!playerNode) {
       return;
@@ -28,18 +28,18 @@ cc.Class({
     }
 
     var nameToDisplay = function () {
-      if (!isEmptyString(playerInfo.displayName)) {
-        return playerInfo.displayName;
-      } else if (!isEmptyString(playerInfo.name)) {
-        return playerInfo.name;
+      if (!isEmptyString(playerMeta.displayName)) {
+        return playerMeta.displayName;
+      } else if (!isEmptyString(playerMeta.name)) {
+        return playerMeta.name;
       } else {
-        return "No name";
+        return "";
       }
     }();
 
     playerNameLabelNode.getComponent(cc.Label).string = nameToDisplay;
 
-    var score = playerInfo.score ? playerInfo.score : 0;
+    var score = playerMeta.score ? playerMeta.score : 0;
     var playerScoreLabelNode = playerNode.getChildByName("score");
     playerScoreLabelNode.getComponent(cc.Label).string = score;
   },

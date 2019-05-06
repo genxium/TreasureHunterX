@@ -72,28 +72,28 @@ cc.Class({
     }
   },
 
-  updatePlayersInfo(players) {
-    if (!players) return;
-    for (let i in players) {
-      const playerInfo = players[i];
-      const playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
+  updatePlayersInfo(playerMetas) {
+    if (!playerMetas) return;
+    for (let i in playerMetas) {
+      const playerMeta = playerMetas[i];
+      const playerInfoNode = this.playersInfoNode[playerMeta.joinIndex];
       playerInfoNode.active = true;
-      if (2 == playerInfo.joinIndex) {
+      if (2 == playerMeta.joinIndex) {
         this.findingAnimNode.active = false;
       }
     }
 
     //显示自己的头像名称以及他人的头像名称
-    for (let i in players) {
-      const playerInfo = players[i];
-      console.log(playerInfo);
-      const playerInfoNode = this.playersInfoNode[playerInfo.joinIndex];
+    for (let i in playerMetas) {
+      const playerMeta = playerMetas[i];
+      console.log("Showing playerMeta:", playerMeta);
+      const playerInfoNode = this.playersInfoNode[playerMeta.joinIndex];
 
       (() => { //远程加载头像
-        let remoteUrl = playerInfo.avatar;
+        let remoteUrl = playerMeta.avatar;
         if (remoteUrl == null || remoteUrl == '') {
           cc.log(`No avatar to show for :`);
-          cc.log(playerInfo);
+          cc.log(playerMeta);
           remoteUrl = 'http://wx.qlogo.cn/mmopen/PiajxSqBRaEJUWib5D85KXWHumaxhU4E9XOn9bUpCNKF3F4ibfOj8JYHCiaoosvoXCkTmOQE1r2AKKs8ObMaz76EdA/0'
         }
         cc.loader.load({
@@ -116,10 +116,10 @@ cc.Class({
 
       const nameNode = playerInfoNode.getChildByName("name");
       const nameToDisplay = (() => {
-        if (!isEmptyString(playerInfo.displayName)) {
-          return playerInfo.displayName
-        } else if (!isEmptyString(playerInfo.name)) {
-          return playerInfo.name
+        if (!isEmptyString(playerMeta.displayName)) {
+          return playerMeta.displayName
+        } else if (!isEmptyString(playerMeta.name)) {
+          return playerMeta.name
         } else {
           return "No name"
         }

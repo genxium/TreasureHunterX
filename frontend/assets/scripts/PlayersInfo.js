@@ -9,8 +9,8 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-  updateData(playerInfo) {
-    const joinIndex = playerInfo.joinIndex;
+  updateData(playerMeta) {
+    const joinIndex = playerMeta.joinIndex;
     const playerNode = this.listNode.getChildByName("player" + joinIndex);
     if (!playerNode) {
       return;
@@ -22,21 +22,22 @@ cc.Class({
     }
 
     const nameToDisplay = (() => {
-      if (!isEmptyString(playerInfo.displayName)) {
-        return playerInfo.displayName;
-      } else if (!isEmptyString(playerInfo.name)) {
-        return playerInfo.name;
+      if (!isEmptyString(playerMeta.displayName)) {
+        return playerMeta.displayName;
+      } else if (!isEmptyString(playerMeta.name)) {
+        return playerMeta.name;
       } else {
-        return "No name"
+        return ""
       }
     })();
 
     playerNameLabelNode.getComponent(cc.Label).string = nameToDisplay;
 
-    const score = (playerInfo.score ? playerInfo.score : 0);
+    const score = (playerMeta.score ? playerMeta.score : 0);
     const playerScoreLabelNode = playerNode.getChildByName("score");
     playerScoreLabelNode.getComponent(cc.Label).string = score;
   },
+
   onLoad() {},
 
   clearInfo() {

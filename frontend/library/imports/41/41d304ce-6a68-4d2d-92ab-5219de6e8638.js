@@ -20,6 +20,11 @@ window.ALL_BATTLE_STATES = {
   IN_DISMISSAL: 3
 };
 
+window.MAGIC_ROOM_DOWNSYNC_FRAME_ID = {
+  BATTLE_READY_TO_START: -99,
+  PLAYER_ADDED: -98
+};
+
 cc.Class({
   extends: cc.Component,
 
@@ -828,18 +833,21 @@ cc.Class({
       self._inputControlEnabled = false;
       self.setupInputControls();
 
+      var cachedPlayerMetas = {};
+
       window.handleRoomDownsyncFrame = function (diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState && ALL_BATTLE_STATES.IN_BATTLE != self.battleState && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
           return;
         }
         var refFrameId = diffFrame.refFrameId;
-        if (-99 == refFrameId) {
+        if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.BATTLE_READY_TO_START == refFrameId) {
           //显示倒计时
-          self.playersMatched(diffFrame.players);
+          self.playersMatched(diffFrame.playerMetas);
+          cachedPlayerMetas = diffFrame.playerMetas;
           //隐藏返回按钮
           var _findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           _findingPlayerScriptIns.hideExitButton();
-        } else if (-98 == refFrameId) {
+        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_ADDED == refFrameId) {
           //显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
@@ -848,7 +856,8 @@ cc.Class({
           if (!self.findingPlayerNode.parent) {
             self.showPopupInCanvas(self.findingPlayerNode);
           }
-          _findingPlayerScriptIns2.updatePlayersInfo(diffFrame.players);
+          _findingPlayerScriptIns2.updatePlayersInfo(diffFrame.playerMetas);
+          cachedPlayerMetas = diffFrame.playerMetas;
           return;
         }
 
@@ -884,8 +893,7 @@ cc.Class({
           cc.warn("countdownSeconds is NaN for countdownNanos == " + countdownNanos + ".");
         }
         self.countdownLabel.string = countdownSeconds;
-        var roomDownsyncFrame = //根据refFrameId和diffFrame计算出新的一帧
-        isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
+        var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
 
         if (countdownNanos <= 0) {
           self.onBattleStopped(roomDownsyncFrame.players);
@@ -914,6 +922,7 @@ cc.Class({
             continue;
           }
           var anotherPlayer = players[k];
+          Object.assign(anotherPlayer, cachedPlayerMetas[k]);
           // Note that this callback is invoked in the NetworkThread, and the rendering should be executed in the GUIThread, e.g. within `update(dt)`.
           self.otherPlayerCachedDataDict[playerId] = anotherPlayer;
         }
@@ -1044,7 +1053,7 @@ cc.Class({
     this._inputControlEnabled = false;
   },
   onBattleStarted: function onBattleStarted() {
-    cc.warn('On battle started!');
+    console.log('On battle started!');
     var self = window.mapIns;
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.playBGM();
@@ -1582,21 +1591,20 @@ cc.Class({
     safelyAddChild(self.widgetsAboveAllNode, toShowNode);
     setLocalZOrder(toShowNode, 10);
   },
-  playersMatched: function playersMatched(players) {
-    console.log("Calling `playersMatched`", players);
+  playersMatched: function playersMatched(playerMetas) {
+    console.log("Calling `playersMatched` with:", playerMetas);
 
     var self = this;
     var findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
-    findingPlayerScriptIns.updatePlayersInfo(players);
+    findingPlayerScriptIns.updatePlayersInfo(playerMetas);
     window.setTimeout(function () {
       if (self.findingPlayerNode.parent) {
         self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
         self.transitToState(ALL_MAP_STATES.VISUAL);
-        for (var i in players) {
-          //更新在线玩家信息面板的信息
-          var playerInfo = players[i];
-          var playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
-          playersScriptIns.updateData(playerInfo);
+        for (var i in playerMetas) {
+          var playerMeta = playerMetas[i];
+          var playersInfoScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+          playersInfoScriptIns.updateData(playerMeta);
         }
       }
       var countDownScriptIns = self.countdownToBeginGameNode.getComponent("CountdownToBeginGame");

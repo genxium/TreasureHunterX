@@ -85,7 +85,7 @@ func InitRoomHeapManager() {
 	// Init "pseudo class constants".
 	InitRoomBattleStateIns()
 	InitPlayerBattleStateIns()
-	initialCountOfRooms := 3
+	initialCountOfRooms := 32
 	pq := make(RoomHeap, initialCountOfRooms)
 	roomMap := make(RoomMap, initialCountOfRooms)
 

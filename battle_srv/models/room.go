@@ -15,11 +15,15 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
-  "log"
 )
 
 const (
 	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START = -99
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED          = -98
+
+	MAGIC_JOIN_INDEX_DEFAULT = 0
+	MAGIC_JOIN_INDEX_INVALID = -1
 )
 
 const (
@@ -116,6 +120,14 @@ type Room struct {
 	JoinIndexBooleanArr          []bool
 }
 
+type PlayerMeta struct {
+	Id          int32  `protobuf:"varint,1,opt,name=id,proto3"`
+	Name        string `protobuf:"bytes,2,opt,name=name,proto3"`
+	DisplayName string `protobuf:"bytes,3,opt,name=displayName,proto3"`
+	Avatar      string `protobuf:"bytes,4,opt,name=avatar,proto3"`
+	JoinIndex   int32  `protobuf:"varint,5,opt,name=joinIndex,proto3"`
+}
+
 type RoomDownsyncFrame struct {
 	/* TODO
 	An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
@@ -133,6 +145,7 @@ type RoomDownsyncFrame struct {
 	SpeedShoes     map[int32]*SpeedShoe  `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Pumpkins       map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	GuardTowers    map[int32]*GuardTower `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"guardTowers,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	PlayerMetas    map[int32]*PlayerMeta `protobuf:"bytes,12,rep,name=playerMetas,proto3" json:"playerMetas,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
@@ -1376,17 +1389,32 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	}
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("Battle state transitted to RoomBattleStateIns.PREPARE for:", zap.Any("roomId", pR.Id))
-	playerJoinIndexFrame := &RoomDownsyncFrame{
-		Id:         pR.Tick,
-		Players:    pR.Players,
-		SentAt:     utils.UnixtimeMilli(),
-		RefFrameId: -99, // Hardcoded for Ready to start.
+
+	playerMetas := make(map[int32]*PlayerMeta, 0)
+	for _, player := range pR.Players {
+		playerMetas[player.Id] = &PlayerMeta{
+			Id:          player.Id,
+			Name:        player.Name,
+			DisplayName: player.DisplayName,
+			Avatar:      player.Avatar,
+			JoinIndex:   player.JoinIndex,
+		}
 	}
-	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
+
+	battleReadyToStartFrame := &RoomDownsyncFrame{
+		Id:          pR.Tick,
+		Players:     pR.Players,
+		SentAt:      utils.UnixtimeMilli(),
+		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START,
+		PlayerMetas: playerMetas,
+	}
+
+	theBytes, marshalErr := proto.Marshal(battleReadyToStartFrame)
 	if marshalErr != nil {
-		Logger.Error("Error marshalling playerJoinIndexFrame in onBattlePrepare:", zap.Any("the error", marshalErr))
+		Logger.Error("Error marshalling battleReadyToStartFrame in onBattlePrepare:", zap.Any("the error", marshalErr))
 	}
-  log.Println("Sending out frame for RoomBattleState.PREPARE bytes:", theBytes)
+	Logger.Info("Before broadcasting playerAddedFrame:", zap.Any("playerMetas", playerMetas))
+	Logger.Info("Sending out frame for RoomBattleState.PREPARE ", zap.Any("theBytes", theBytes))
 	theStr := string(theBytes)
 	for _, player := range pR.Players {
 		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
@@ -1541,7 +1569,7 @@ func (pR *Room) onPlayerLost(playerId int32) {
 		} else {
 			Logger.Warn("Room OnPlayerLost, pR.JoinIndexBooleanArr is out of range: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
 		}
-		player.JoinIndex = -1
+		player.JoinIndex = MAGIC_JOIN_INDEX_INVALID
 	}
 }
 
@@ -1562,6 +1590,7 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		}(pR)
 	}
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
+
 	for index, value := range pR.JoinIndexBooleanArr {
 		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
@@ -1569,16 +1598,29 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			break
 		}
 	}
-	playerJoinIndexFrame := &RoomDownsyncFrame{
-		Id:         pR.Tick,
-		Players:    pR.Players,
-		SentAt:     utils.UnixtimeMilli(),
-		RefFrameId: -98, // Hardcoded for messages player joinIndex.
+
+	playerMetas := make(map[int32]*PlayerMeta, 0)
+	for _, player := range pR.Players {
+		playerMetas[player.Id] = &PlayerMeta{
+			Id:          player.Id,
+			Name:        player.Name,
+			DisplayName: player.DisplayName,
+			Avatar:      player.Avatar,
+			JoinIndex:   player.JoinIndex,
+		}
 	}
 
-	theBytes, marshalErr := proto.Marshal(playerJoinIndexFrame)
+	playerAddedFrame := &RoomDownsyncFrame{
+		Id:          pR.Tick,
+		Players:     pR.Players,
+		SentAt:      utils.UnixtimeMilli(),
+		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED,
+		PlayerMetas: playerMetas,
+	}
+
+	theBytes, marshalErr := proto.Marshal(playerAddedFrame)
 	if marshalErr != nil {
-		Logger.Error("Error marshalling playerJoinIndexFrame in onPlayerAdded:", zap.Any("the error", marshalErr))
+		Logger.Error("Error marshalling playerAddedFrame in onPlayerAdded:", zap.Any("the error", marshalErr))
 	}
 	theStr := string(theBytes)
 
