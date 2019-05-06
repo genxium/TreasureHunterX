@@ -129,6 +129,10 @@ func Serve(c *gin.Context) {
 		if err != nil {
 			Logger.Error("Unable to send the CloseFrame control message to player(client-side):", zap.Any("playerId", playerId), zap.Error(err))
 		}
+    err = conn.Close()
+		if err != nil {
+			Logger.Error("Error actively closing the connection of:", zap.Any("playerId", playerId), zap.Error(err))
+		}
 	}
 
 	onReceivedCloseMessageFromClient := func(code int, text string) error {

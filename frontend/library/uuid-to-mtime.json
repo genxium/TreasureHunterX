@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1557123888232,
+    "asset": 1557142095634,
     "meta": 1545031560260,
     "relativePath": "plugin_scripts"
   },
@@ -774,11 +774,6 @@
     "meta": 1555054643850,
     "relativePath": "scripts\\WsSessionMgr.js"
   },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1554810911254,
-    "meta": 1555054643848,
-    "relativePath": "scripts\\WechatGameLogin.js"
-  },
   "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
     "asset": 1554810911212,
     "meta": 1555054644255,
@@ -839,11 +834,6 @@
     "meta": 1555054640985,
     "relativePath": "resources\\i18n\\zh.js"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1554520547147,
-    "meta": 1555054639888,
-    "relativePath": "plugin_scripts\\conf.js"
-  },
   "02291e64-1c6c-4d1e-a7df-5c618395cb42": {
     "asset": 1555054567123,
     "meta": 1555053906843,
@@ -893,5 +883,15 @@
     "asset": 1557130363300,
     "meta": 1557130368439,
     "relativePath": "scripts\\Map.js"
+  },
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1557144252468,
+    "meta": 1557144793339,
+    "relativePath": "scripts\\WechatGameLogin.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1557146846483,
+    "meta": 1557146853020,
+    "relativePath": "plugin_scripts\\conf.js"
   }
 }

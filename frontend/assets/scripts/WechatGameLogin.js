@@ -28,9 +28,9 @@ cc.Class({
 
     wx.onHide((res) => {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
-      console.log("+++++ wx onHide(), mapIns.counter: ", window.mapIns.counter, "onHide.res: ", res);
       if ("close" == res.mode) { 
         if (window.mapIns) {
+          console.log("+++++ wx onHide(), mapIns.counter: ", window.mapIns.counter, "onHide.res: ", res);
           window.mapIns.clearLocalStorageAndBackToLoginScene();
         }
       } else { 
