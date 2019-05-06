@@ -44,8 +44,8 @@ cc.Class({
     window.mapIns.clearLocalStorageAndBackToLoginScene();
   },
 
-  showPlayerInfo(players) {
-    this.showRanking(players);
+  showPlayerInfo(playerMetas) {
+    this.showRanking(playerMetas);
     this.showMyAvatar();
     this.showMyName();
   },
@@ -64,12 +64,12 @@ cc.Class({
     myNameNodeLabel.string = name;
   },
 
-  showRanking(players) {
+  showRanking(playerMetas) {
     const self = this;
     const sortablePlayers = [];
 
-    for (let playerId in players) {
-      const p = players[playerId];
+    for (let playerId in playerMetas) {
+      const p = playerMetas[playerId];
       p.id = playerId; //附带上id
       sortablePlayers.push(p);
     }
@@ -88,7 +88,8 @@ cc.Class({
     })
 
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
-    sortedPlayers.forEach((p, id) => {
+    for (let k in sortedPlayers) {
+      const p = sortedPlayers[k]; 
       const nameToDisplay = (() => {
         function isEmptyString(str) {
           return str == null || str == '';
@@ -98,20 +99,20 @@ cc.Class({
         } else if (!isEmptyString(p.name)) {
           return p.name;
         } else {
-          return "No name";
+          return "";
         }
       })();
 
       if (selfPlayerInfo.playerId == p.id) { //如果不是第一名就不显示WIN字样
-        const rank = id + 1;
+        const rank = p.id + 1;
         if (rank != 1 && null != self.winNode) {
           self.winNode.active = false;
         }
       }
 
-      self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
-      self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
-    })
+      self.rankingNodes[p.id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      self.rankingNodes[p.id].getChildByName('score').getComponent(cc.Label).string = p.score;
+    } 
   },
 
   showMyAvatar() {

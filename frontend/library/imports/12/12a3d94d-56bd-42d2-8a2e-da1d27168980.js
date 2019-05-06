@@ -133,7 +133,7 @@ cc.Class({
       if (false == (cc.sys.platform == cc.sys.WECHAT_GAME)) {
         // Otherwise, `window.RoomDownsyncFrame` is already assigned.
         var protoRoot = new protobuf.Root();
-        protobuf.parse(textAsset.text, protoRoot);
+        window.protobuf.parse(textAsset.text, protoRoot);
         window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame");
       }
       self.checkIntAuthTokenExpire().then(function () {

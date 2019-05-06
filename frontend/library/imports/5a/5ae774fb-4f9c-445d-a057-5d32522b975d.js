@@ -46,8 +46,8 @@ cc.Class({
     if (null == window.mapIns) return;
     window.mapIns.clearLocalStorageAndBackToLoginScene();
   },
-  showPlayerInfo: function showPlayerInfo(players) {
-    this.showRanking(players);
+  showPlayerInfo: function showPlayerInfo(playerMetas) {
+    this.showRanking(playerMetas);
     this.showMyAvatar();
     this.showMyName();
   },
@@ -64,12 +64,12 @@ cc.Class({
     if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },
-  showRanking: function showRanking(players) {
+  showRanking: function showRanking(playerMetas) {
     var self = this;
     var sortablePlayers = [];
 
-    for (var playerId in players) {
-      var p = players[playerId];
+    for (var playerId in playerMetas) {
+      var p = playerMetas[playerId];
       p.id = playerId; //附带上id
       sortablePlayers.push(p);
     }
@@ -91,7 +91,9 @@ cc.Class({
     });
 
     var selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
-    sortedPlayers.forEach(function (p, id) {
+
+    var _loop = function _loop(k) {
+      var p = sortedPlayers[k];
       var nameToDisplay = function () {
         function isEmptyString(str) {
           return str == null || str == '';
@@ -101,21 +103,25 @@ cc.Class({
         } else if (!isEmptyString(p.name)) {
           return p.name;
         } else {
-          return "No name";
+          return "";
         }
       }();
 
       if (selfPlayerInfo.playerId == p.id) {
         //如果不是第一名就不显示WIN字样
-        var rank = id + 1;
+        var rank = p.id + 1;
         if (rank != 1 && null != self.winNode) {
           self.winNode.active = false;
         }
       }
 
-      self.rankingNodes[id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
-      self.rankingNodes[id].getChildByName('score').getComponent(cc.Label).string = p.score;
-    });
+      self.rankingNodes[p.id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      self.rankingNodes[p.id].getChildByName('score').getComponent(cc.Label).string = p.score;
+    };
+
+    for (var k in sortedPlayers) {
+      _loop(k);
+    }
   },
   showMyAvatar: function showMyAvatar() {
     var self = this;

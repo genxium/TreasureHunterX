@@ -46,12 +46,14 @@ func (p *playerController) GetWechatShareConfig(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil || req.Url == "" {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 	config, err := utils.WechatIns.GetJsConfig(req.Url)
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+    c.Abort()
 		return
 	}
 	resp := struct {
@@ -60,12 +62,14 @@ func (p *playerController) GetWechatShareConfig(c *gin.Context) {
 	}{Constants.RetCode.Ok, config}
 	c.JSON(http.StatusOK, resp)
 }
+
 func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	var req smsCaptchReq
 	err := c.ShouldBindQuery(&req)
 	api.CErr(c, err)
 	if err != nil || req.Num == "" || req.CountryCode == "" {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 	// Composite a key to access against Redis-server.
@@ -74,12 +78,14 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.UnknownError)
+    c.Abort()
 		return
 	}
 	// Redis剩余时长校验
 	if ttl >= ConstVals.Player.CaptchaMaxTTL {
 		Logger.Info("There's an existing SmsCaptcha record in Redis-server: ", zap.String("key", redisKey), zap.Duration("ttl", ttl))
 		c.Set(api.RET, Constants.RetCode.SmsCaptchaRequestedTooFrequently)
+    c.Abort()
 		return
 	}
 	Logger.Info("A new SmsCaptcha record is needed for: ", zap.String("key", redisKey))
@@ -121,6 +127,7 @@ func (p *playerController) SMSCaptchaGet(c *gin.Context) {
 	}
 	if !pass {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 	resp := struct {
@@ -171,6 +178,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil || req.Num == "" || req.CountryCode == "" || req.Captcha == "" {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 
@@ -179,6 +187,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	Logger.Info("Comparing captchas", zap.String("key", redisKey), zap.String("whats-in-redis", captcha), zap.String("whats-from-req", req.Captcha))
 	if captcha != req.Captcha {
 		c.Set(api.RET, Constants.RetCode.SmsCaptchaNotMatch)
+    c.Abort()
 		return
 	}
 
@@ -186,6 +195,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 	now := utils.UnixtimeMilli()
@@ -203,6 +213,7 @@ func (p *playerController) SMSCaptchaLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 	storage.RedisManagerIns.Del(redisKey)
@@ -228,6 +239,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil || req.Authcode == "" {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 
@@ -237,6 +249,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+    c.Abort()
 		return
 	}
 
@@ -245,6 +258,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+    c.Abort()
 		return
 	}
 	//fserver不会返回openId
@@ -254,6 +268,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 
@@ -273,6 +288,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 
@@ -305,6 +321,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil || req.Authcode == "" || req.AvatarUrl == "" || req.NickName == "" {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 
@@ -314,6 +331,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+    c.Abort()
 		return
 	}
 
@@ -327,6 +345,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
 		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+    c.Abort()
 		return
 	}
 	//fserver不会返回openId
@@ -336,6 +355,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 
@@ -355,6 +375,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 
@@ -377,19 +398,22 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 
 func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 	token := p.getIntAuthToken(c)
-	if token == "" {
+	if "" == token {
+    c.Abort();
 		return
 	}
 	playerLogin, err := models.GetPlayerLoginByToken(token)
 	api.CErr(c, err)
 	if err != nil || playerLogin == nil {
 		c.Set(api.RET, Constants.RetCode.InvalidToken)
+    c.Abort()
 		return
 	}
 	if playerLogin.FromPublicIP != models.NewNullString(c.ClientIP()) {
 		err = models.DelPlayerLoginByToken(playerLogin.IntAuthToken)
 		if err != nil {
 			c.Set(api.RET, Constants.RetCode.MysqlError)
+      c.Abort()
 			return
 		}
 		//新生成一个token
@@ -421,33 +445,40 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 
 func (p *playerController) IntAuthTokenLogout(c *gin.Context) {
 	token := p.getIntAuthToken(c)
-	if token == "" {
+	if "" == token {
+    c.Abort();
 		return
 	}
 	err := models.DelPlayerLoginByToken(token)
 	api.CErr(c, err)
 	if err != nil {
 		c.Set(api.RET, Constants.RetCode.UnknownError)
+    c.Abort()
 		return
 	}
 	c.Set(api.RET, Constants.RetCode.Ok)
+  c.Abort()
 }
+
 func (p *playerController) FetchProfile(c *gin.Context) {
 	playerId := c.GetInt(api.PLAYER_ID)
 	wallet, err := models.GetPlayerWalletById(playerId)
 	if err != nil {
 		api.CErr(c, err)
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 	player, err := models.GetPlayerById(playerId)
 	if err != nil {
 		api.CErr(c, err)
 		c.Set(api.RET, Constants.RetCode.MysqlError)
+    c.Abort()
 		return
 	}
 	if wallet == nil || player == nil {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+    c.Abort()
 		return
 	}
 	resp := struct {
@@ -464,11 +495,12 @@ func (p *playerController) TokenWithPlayerIdAuth(c *gin.Context) {
 		PlayerId int    `form:"targetPlayerId"`
 	}
 	err := c.ShouldBindWith(&req, binding.FormPost)
-	if err == nil {
+	if nil == err {
 		exist, err := models.EnsuredPlayerLoginByToken(int(req.PlayerId), req.Token)
 		api.CErr(c, err)
 		if err == nil && exist {
 			c.Set(api.PLAYER_ID, req.PlayerId)
+      c.Next()
 			return
 		}
 	}
@@ -488,6 +520,7 @@ func (p *playerController) TokenAuth(c *gin.Context) {
 		api.CErr(c, err)
 		if err == nil && playerLogin != nil {
 			c.Set(api.PLAYER_ID, playerLogin.PlayerID)
+      c.Next()
 			return
 		}
 	}
@@ -660,7 +693,7 @@ func (p *playerController) getIntAuthToken(c *gin.Context) string {
 	var req intAuthTokenReq
 	err := c.ShouldBindWith(&req, binding.FormPost)
 	api.CErr(c, err)
-	if err != nil || req.Token == "" {
+	if err != nil || "" == req.Token {
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return ""
 	}
@@ -728,6 +761,7 @@ func sendSMSViaVendor(mobile string, nationcode string, captchaCode string) int 
 	if err != nil {
 		Logger.Info("resp", zap.Any("err:", err))
 	}
+  defer resp.Body.Close()
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		Logger.Info("body", zap.Any("response body err:", err))

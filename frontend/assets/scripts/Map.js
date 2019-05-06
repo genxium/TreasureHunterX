@@ -17,6 +17,7 @@ window.ALL_BATTLE_STATES = {
 window.MAGIC_ROOM_DOWNSYNC_FRAME_ID = {
   BATTLE_READY_TO_START: -99,
   PLAYER_ADDED: -98,
+  PLAYER_READDED: -97,
 };
 
 cc.Class({
@@ -696,6 +697,11 @@ cc.Class({
           findingPlayerScriptIns.updatePlayersInfo(diffFrame.playerMetas);
           cachedPlayerMetas = diffFrame.playerMetas;
           return;
+        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_READDED == refFrameId) {
+          cachedPlayerMetas = diffFrame.playerMetas;
+          return;
+        } else {
+          // Deliberately left blank.
         }
 
         const frameId = diffFrame.id;
@@ -743,7 +749,7 @@ cc.Class({
         );
 
         if (countdownNanos <= 0) {
-          self.onBattleStopped(roomDownsyncFrame.players);
+          self.onBattleStopped(cachedPlayerMetas);
           return;
         }
         self._dumpToFullFrameCache(roomDownsyncFrame);
@@ -929,7 +935,7 @@ cc.Class({
     }
   },
 
-  onBattleStopped(players) {
+  onBattleStopped(playerMetas) {
     const self = this;
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
@@ -937,7 +943,7 @@ cc.Class({
     const canvasNode = self.canvasNode;
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
-    resultPanelScriptIns.showPlayerInfo(players);
+    resultPanelScriptIns.showPlayerInfo(playerMetas);
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;
@@ -1160,6 +1166,9 @@ cc.Class({
           targetNode = cc.instantiate(self.trapBulletPrefab);
 
           targetNode.rotation = (() => {
+            if (true == bulletInfo.remove) {
+              return null;
+            }
             if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
               console.error(`Init bullet direction error, startAtPoint:${bulletInfo.startAtPoint}, endAtPoint:${bulletInfo.endAtPoint}`);
               return null;

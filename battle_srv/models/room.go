@@ -21,6 +21,7 @@ const (
 	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
 	MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START = -99
 	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED          = -98
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED          = -97
 
 	MAGIC_JOIN_INDEX_DEFAULT = 0
 	MAGIC_JOIN_INDEX_INVALID = -1
@@ -1587,6 +1588,9 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			if nil != botServerRespErr {
 				Logger.Warn("Request to the BotServer has got an error:", zap.Any("botServerResp", botServerResp), zap.Any("botServerRespErr", botServerRespErr))
 			}
+      if nil != botServerResp && nil != botServerResp.Body {
+        defer botServerResp.Body.Close()
+      }
 		}(pR)
 	}
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
@@ -1646,6 +1650,36 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 		}
 	}
 	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
+
+	playerMetas := make(map[int32]*PlayerMeta, 0)
+	for _, player := range pR.Players {
+		playerMetas[player.Id] = &PlayerMeta{
+			Id:          player.Id,
+			Name:        player.Name,
+			DisplayName: player.DisplayName,
+			Avatar:      player.Avatar,
+			JoinIndex:   player.JoinIndex,
+		}
+	}
+
+	playerReAddedFrame := &RoomDownsyncFrame{
+		Id:          pR.Tick,
+		Players:     pR.Players,
+		SentAt:      utils.UnixtimeMilli(),
+		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED,
+		PlayerMetas: playerMetas,
+	}
+
+	theBytes, marshalErr := proto.Marshal(playerReAddedFrame)
+	if marshalErr != nil {
+		Logger.Error("Error marshalling playerReAddedFrame in onPlayerReAdded:", zap.Any("the error", marshalErr))
+	}
+	theStr := string(theBytes)
+
+	for _, player := range pR.Players {
+		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
+		utils.SendStrSafely(theStr, theForwardingChannel)
+	}
 	pR.updateScore()
 }
 

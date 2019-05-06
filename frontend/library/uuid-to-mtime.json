@@ -520,8 +520,8 @@
     "relativePath": "resources\\animation\\findingPlayer.anim"
   },
   "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4": {
-    "asset": 1555551905857,
-    "meta": 1555551905897,
+    "asset": 1557149353110,
+    "meta": 1557149353131,
     "relativePath": "scenes\\login.fire"
   },
   "115ea7bb-d47f-4d3c-a52a-f46584346c3f": {
@@ -744,11 +744,6 @@
     "meta": 1555054639951,
     "relativePath": "plugin_scripts\\constants.js"
   },
-  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
-    "asset": 1553738168231,
-    "meta": 1555054642917,
-    "relativePath": "scripts\\Login.js"
-  },
   "92160186-3e0d-4e0a-ae20-97286170ba58": {
     "asset": 1555053906974,
     "meta": 1555054641469,
@@ -763,11 +758,6 @@
     "asset": 1554456803148,
     "meta": 1555054642116,
     "relativePath": "scripts\\GameRule.js"
-  },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1554540561868,
-    "meta": 1555054643236,
-    "relativePath": "scripts\\ResultPanel.js"
   },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
     "asset": 1554538972338,
@@ -879,19 +869,29 @@
     "meta": 1557129398529,
     "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
   },
-  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1557130363300,
-    "meta": 1557130368439,
-    "relativePath": "scripts\\Map.js"
-  },
   "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
     "asset": 1557144252468,
     "meta": 1557144793339,
     "relativePath": "scripts\\WechatGameLogin.js"
   },
   "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1557146846483,
-    "meta": 1557146853020,
+    "asset": 1557149273279,
+    "meta": 1557149277564,
     "relativePath": "plugin_scripts\\conf.js"
+  },
+  "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
+    "asset": 1557150932296,
+    "meta": 1557150935034,
+    "relativePath": "scripts\\Map.js"
+  },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1557152071190,
+    "meta": 1557152073588,
+    "relativePath": "scripts\\ResultPanel.js"
+  },
+  "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
+    "asset": 1557153941419,
+    "meta": 1557153943805,
+    "relativePath": "scripts\\Login.js"
   }
 }
