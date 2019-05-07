@@ -159,32 +159,39 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomId) {
   };
 
   clientSession.onmessage = function (event) {
-    var resp = JSON.parse(event.data);
-    switch (resp.act) {
-      case "HeartbeatRequirements":
-        window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
-        break;
-      case "HeartbeatPong":
-        window.handleHbPong(resp);
-        break;
-      case "RoomDownsyncFrame":
-        if (window.handleRoomDownsyncFrame) {
-          var typedArray = _base64ToUint8Array(resp.data);
-          var parsedRoomDownsyncFrame = function () {
-            return window.RoomDownsyncFrame.decode(typedArray);
-          }();
-          window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
-        }
-        break;
-      case "Ready":
-        {
-          if (window.handleGameReadyResp) {
-            window.handleGameReadyResp(resp);
+    if (null == event || null == event.data) {
+      return;
+    }
+    try {
+      var resp = JSON.parse(event.data);
+      switch (resp.act) {
+        case "HeartbeatRequirements":
+          window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
+          break;
+        case "HeartbeatPong":
+          window.handleHbPong(resp);
+          break;
+        case "RoomDownsyncFrame":
+          if (window.handleRoomDownsyncFrame) {
+            var typedArray = _base64ToUint8Array(resp.data);
+            var parsedRoomDownsyncFrame = function () {
+              return window.RoomDownsyncFrame.decode(typedArray);
+            }();
+            window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
           }
           break;
-        }
-      default:
-        break;
+        case "Ready":
+          {
+            if (window.handleGameReadyResp) {
+              window.handleGameReadyResp(resp);
+            }
+            break;
+          }
+        default:
+          break;
+      }
+    } catch (e) {
+      console.warn("Unexpected error when parsing data of:", event.data);
     }
   };
 

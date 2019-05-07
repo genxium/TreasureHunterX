@@ -1464,12 +1464,17 @@ func (pR *Room) Dismiss() {
 		return
 	}
 	pR.State = RoomBattleStateIns.IN_DISMISSAL
-	for playerId, _ := range pR.Players {
-		pR.DismissalWaitGroup.Add(1)
-		pR.expelPlayerForDismissal(playerId)
+	if 0 < len(pR.Players) {
+		Logger.Info("The room is in dismissal:", zap.Any("roomId", pR.Id))
+		for playerId, _ := range pR.Players {
+			Logger.Info("Adding 1 to pR.DismissalWaitGroup:", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+			pR.DismissalWaitGroup.Add(1)
+			pR.expelPlayerForDismissal(playerId)
+			pR.DismissalWaitGroup.Done()
+			Logger.Info("Decremented 1 to pR.DismissalWaitGroup:", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+		}
+		pR.DismissalWaitGroup.Wait()
 	}
-	Logger.Info("The room is in dismissal:", zap.Any("roomId", pR.Id))
-	pR.DismissalWaitGroup.Wait()
 	pR.onDismissed()
 }
 
@@ -1515,12 +1520,18 @@ func (pR *Room) onPlayerExpelledDuringGame(playerId int32) {
 }
 
 func (pR *Room) onPlayerExpelledForDismissal(playerId int32) {
-	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-	utils.SendStrSafely("", theForwardingChannel)
 	pR.onPlayerLost(playerId)
-	pR.DismissalWaitGroup.Done()
 
 	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+
+	/*
+	 * This is a magic empty string handled by `<proj-root>/battle_srv/ws/serve.go` to invoke respective `signalToCloseConnOfThisPlayer`.
+	 * It's deliberately put AFTER the invocation of `pR.onPlayerLost(...)` for each in-battle-player to
+	 *
+	 *  -- YFLu
+	 */
+	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
+	utils.SendStrSafely("", theForwardingChannel)
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int32) {
@@ -1564,13 +1575,13 @@ func (pR *Room) onPlayerLost(playerId int32) {
 		}
 		pR.EffectivePlayerCount--
 		indiceInJoinIndexBooleanArr := int(player.JoinIndex - 1)
-		Logger.Info("Room OnPlayerLost, about to turn one of pR.JoinIndexBooleanArr to false: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr))
 		if (0 <= indiceInJoinIndexBooleanArr) && (indiceInJoinIndexBooleanArr < len(pR.JoinIndexBooleanArr)) {
 			pR.JoinIndexBooleanArr[indiceInJoinIndexBooleanArr] = false
 		} else {
 			Logger.Warn("Room OnPlayerLost, pR.JoinIndexBooleanArr is out of range: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("indiceInJoinIndexBooleanArr", indiceInJoinIndexBooleanArr), zap.Any("len(pR.JoinIndexBooleanArr)", len(pR.JoinIndexBooleanArr)))
 		}
 		player.JoinIndex = MAGIC_JOIN_INDEX_INVALID
+		Logger.Info("Room OnPlayerLost: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 	}
 }
 
@@ -1593,7 +1604,6 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			}
 		}(pR)
 	}
-	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
 	for index, value := range pR.JoinIndexBooleanArr {
 		if false == value {
@@ -1602,6 +1612,8 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			break
 		}
 	}
+
+	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
 	playerMetas := make(map[int32]*PlayerMeta, 0)
 	for _, player := range pR.Players {
@@ -1649,7 +1661,7 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 			break
 		}
 	}
-	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
+	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
 	playerMetas := make(map[int32]*PlayerMeta, 0)
 	for _, player := range pR.Players {

@@ -50,7 +50,7 @@
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1557153941473,
+    "asset": 1557205266522,
     "meta": 1545031560427,
     "relativePath": "scripts"
   },
@@ -760,8 +760,8 @@
     "relativePath": "scripts\\GameRule.js"
   },
   "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1554538972338,
-    "meta": 1555054643850,
+    "asset": 1557202088152,
+    "meta": 1557205346729,
     "relativePath": "scripts\\WsSessionMgr.js"
   },
   "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
