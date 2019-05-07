@@ -765,8 +765,9 @@ cc.Class({
           const playerId = parseInt(k);
           if (playerId == self.selfPlayerInfo.id) {
             const immediateSelfPlayerInfo = players[k];
+            const immediateSelfPlayerMeta = cachedPlayerMetas[k];
             Object.assign(self.selfPlayerInfo, {
-              displayName: (null == immediateSelfPlayerInfo.displayName ? (null == immediateSelfPlayerInfo.name ? "" : immediateSelfPlayerInfo.name) : immediateSelfPlayerInfo.displayName),
+              displayName: (null == immediateSelfPlayerMeta.displayName ? (null == immediateSelfPlayerMeta.name ? "" : immediateSelfPlayerMeta.name) : immediateSelfPlayerMeta.displayName),
               x: immediateSelfPlayerInfo.x,
               y: immediateSelfPlayerInfo.y,
               speed: immediateSelfPlayerInfo.speed,
