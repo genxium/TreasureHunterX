@@ -31,14 +31,12 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad: function onLoad() {
-
     wx.onHide(function (res) {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
-      if ("close" == res.mode) {
-        if (window.mapIns) {
-          console.log("+++++ wx onHide(), mapIns.counter: ", window.mapIns.counter, "onHide.res: ", res);
-          window.mapIns.clearLocalStorageAndBackToLoginScene();
-        }
+      console.log("+++++ wx onHide(), onHide.res: ", res);
+      if ("back" == res.mode // After "WeChat v7.0.4 on iOS" 
+      || "close" == res.mode) {
+        window.clearLocalStorageAndBackToLoginScene();
       } else {
         // Deliberately left blank.
       }
@@ -152,11 +150,7 @@ cc.Class({
     });
   },
   onDestroy: function onDestroy() {
-    if (window.mapIns) {
-      console.log("+++++++ WechatGameLogin onDestroy(), mapIns.counter: " + window.mapIns.counter);
-    } else {
-      console.log("+++++++ WechatGameLogin onDestroy(), mapIns.counter: 0");
-    }
+    console.log("+++++++ WechatGameLogin onDestroy()");
   },
   showTips: function showTips(text) {
     if (this.tipsLabel != null) {

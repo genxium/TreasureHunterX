@@ -240,4 +240,35 @@ window.initPersistentSessionClient = function (onopenCb, expectedRoomId) {
   };
 };
 
+window.clearLocalStorageAndBackToLoginScene = function (shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+  console.warn("+++++++ Calling `clearLocalStorageAndBackToLoginScene`");
+
+  if (window.mapIns && window.mapIns.musicEffectManagerScriptIns) {
+    window.mapIns.musicEffectManagerScriptIns.stopAllMusic();
+  }
+  /**
+   * Here I deliberately removed the callback in the "common `handleClientSessionCloseOrError` callback"
+   * within which another invocation to `clearLocalStorageAndBackToLoginScene` will be made.
+   *
+   * It'll be re-assigned to the common one upon reentrance of `Map.onLoad`.
+   *
+   * -- YFLu 2019-04-06
+   */
+  window.handleClientSessionCloseOrError = function () {
+    console.warn("+++++++ Special handleClientSessionCloseOrError() assigned within `clearLocalStorageAndBackToLoginScene`");
+    // TBD.
+    window.handleClientSessionCloseOrError = null; // To ensure that it's called at most once. 
+  };
+  window.closeWSConnection();
+  window.clearSelfPlayer();
+  if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+  }
+  if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    cc.director.loadScene('wechatGameLogin');
+  } else {
+    cc.director.loadScene('login');
+  }
+};
+
 cc._RF.pop();

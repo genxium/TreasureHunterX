@@ -57,7 +57,7 @@ window.handleHbRequirements = function(resp) {
 
 window.handleHbPong = function(resp) {
   if (constants.RET_CODE.OK != resp.ret) return;
-  // TBD.
+// TBD.
 };
 
 function _base64ToUint8Array(base64) {
@@ -91,7 +91,7 @@ window.getExpectedRoomIdSync = function() {
     } else {
       if (window.history && window.history.state) {
         return window.history.state.expectedRoomId;
-      } 
+      }
     }
   }
 
@@ -104,7 +104,7 @@ window.unsetClientSessionCloseOrErrorFlag = function() {
 }
 
 window.setClientSessionCloseOrErrorFlag = function() {
-  const oldVal = cc.sys.localStorage.getItem("ClientSessionCloseOrErrorFlag"); 
+  const oldVal = cc.sys.localStorage.getItem("ClientSessionCloseOrErrorFlag");
   if (true == oldVal) return false;
   cc.sys.localStorage.setItem("ClientSessionCloseOrErrorFlag", true);
   return true;
@@ -157,7 +157,7 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
       return;
     }
     try {
-    const resp = JSON.parse(event.data)
+      const resp = JSON.parse(event.data)
       switch (resp.act) {
         case "HeartbeatRequirements":
           window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
@@ -190,7 +190,7 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
 
   clientSession.onerror = function(event) {
     if (!window.setClientSessionCloseOrErrorFlag()) {
-      return; 
+      return;
     }
     console.error("Error caught on the WS clientSession: ", event);
     if (window.clientSessionPingInterval) {
@@ -204,7 +204,7 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
 
   clientSession.onclose = function(event) {
     if (!window.setClientSessionCloseOrErrorFlag()) {
-      return; 
+      return;
     }
     console.warn("The WS clientSession is closed: ", event);
     if (window.clientSessionPingInterval) {
@@ -231,5 +231,36 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
     }
     window.unsetClientSessionCloseOrErrorFlag();
   };
+};
+
+window.clearLocalStorageAndBackToLoginScene = function(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+  console.warn("+++++++ Calling `clearLocalStorageAndBackToLoginScene`");
+
+  if (window.mapIns && window.mapIns.musicEffectManagerScriptIns) {
+    window.mapIns.musicEffectManagerScriptIns.stopAllMusic();
+  }
+  /**
+   * Here I deliberately removed the callback in the "common `handleClientSessionCloseOrError` callback"
+   * within which another invocation to `clearLocalStorageAndBackToLoginScene` will be made.
+   *
+   * It'll be re-assigned to the common one upon reentrance of `Map.onLoad`.
+   *
+   * -- YFLu 2019-04-06
+   */
+  window.handleClientSessionCloseOrError = () => {
+    console.warn("+++++++ Special handleClientSessionCloseOrError() assigned within `clearLocalStorageAndBackToLoginScene`");
+    // TBD.
+    window.handleClientSessionCloseOrError = null; // To ensure that it's called at most once. 
+  };
+  window.closeWSConnection();
+  window.clearSelfPlayer();
+  if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
+    window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+  }
+  if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+    cc.director.loadScene('wechatGameLogin');
+  } else {
+    cc.director.loadScene('login');
+  }
 };
 

@@ -271,14 +271,14 @@ cc.Class({
     window.sendSafely(JSON.stringify(wrapped));
   },
   onEnable: function onEnable() {
-    cc.warn("+++++++ Map onEnable(), mapIns.counter: " + window.mapIns.counter);
+    cc.log("+++++++ Map onEnable()");
   },
   onDisable: function onDisable() {
-    cc.warn("+++++++ Map onDisable(), mapIns.counter: " + window.mapIns.counter);
+    cc.log("+++++++ Map onDisable()");
   },
   onDestroy: function onDestroy() {
     var self = this;
-    cc.warn("+++++++ Map onDestroy(), mapIns.counter: " + window.mapIns.counter);
+    console.warn("+++++++ Map onDestroy()");
     if (null == self.battleState || ALL_BATTLE_STATES.WAITING == self.battleState) {
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     }
@@ -491,60 +491,21 @@ cc.Class({
     self.showPopupInCanvas(self.gameRuleNode);
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
   },
-  clearLocalStorageAndBackToLoginScene: function clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-    var self = this;
-    console.warn('+++++++ Calling `clearLocalStorageAndBackToLoginScene`, mapIns.counter:', self.counter);
-
-    if (self.musicEffectManagerScriptIns) {
-      self.musicEffectManagerScriptIns.stopAllMusic();
-    }
-    /**
-     * Here I deliberately removed the callback in the "common `handleClientSessionCloseOrError` callback"
-     * within which another invocation to `clearLocalStorageAndBackToLoginScene` will be made.
-     *
-     * It'll be re-assigned to the common one upon reentrance of `Map.onLoad`.
-     *
-     * -- YFLu 2019-04-06
-     */
-    window.handleClientSessionCloseOrError = function () {
-      console.warn('+++++++ Special handleClientSessionCloseOrError() assigned within `clearLocalStorageAndBackToLoginScene`, mapIns.counter:', window.mapIns.counter);
-      // TBD.
-      window.handleClientSessionCloseOrError = null; // To ensure that it's called at most once. 
-    };
-    window.closeWSConnection();
-    window.clearSelfPlayer();
-    if (true != shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
-      window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-    }
-    if (cc.sys.platform == cc.sys.WECHAT_GAME) {
-      cc.director.loadScene('wechatGameLogin');
-    } else {
-      cc.director.loadScene('login');
-    }
-  },
   onLoad: function onLoad() {
     var self = this;
     window.mapIns = self;
     window.forceBigEndianFloatingNumDecoding = self.forceBigEndianFloatingNumDecoding;
 
-    self.counter = function () {
-      if (window.mapIns == null || null == window.mapIns.counter) {
-        return 0;
-      } else {
-        return window.mapIns.counter + 1;
-      }
-    }();
-
-    cc.warn('+++++++ Map onLoad(), map counter:', window.mapIns.counter);
+    console.warn("+++++++ Map onLoad()");
     window.handleClientSessionCloseOrError = function () {
-      console.warn('+++++++ Common handleClientSessionCloseOrError(), mapIns.counter:', window.mapIns.counter);
+      console.warn('+++++++ Common handleClientSessionCloseOrError()');
 
       if (ALL_BATTLE_STATES.IN_SETTLEMENT == self.battleState) {
         //如果是游戏时间结束引起的断连
         console.log("游戏结束引起的断连, 不需要回到登录页面");
       } else {
         console.warn("意外断连，即将回到登录页面");
-        self.clearLocalStorageAndBackToLoginScene(true);
+        window.clearLocalStorageAndBackToLoginScene(true);
       }
     };
 
@@ -1545,7 +1506,7 @@ cc.Class({
   logout: function logout(byClick /* The case where this param is "true" will be triggered within `ConfirmLogout.js`.*/, shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     var self = this;
     var localClearance = function localClearance() {
-      self.clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
+      window.clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage);
     };
 
     var selfPlayerStr = cc.sys.localStorage.getItem("selfPlayer");

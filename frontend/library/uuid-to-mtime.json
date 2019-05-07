@@ -25,7 +25,7 @@
     "relativePath": "prefab"
   },
   "a351f972-c36f-48ae-b978-30512b7e8b6b": {
-    "asset": 1557187966583,
+    "asset": 1557210839747,
     "meta": 1545031560260,
     "relativePath": "plugin_scripts"
   },
@@ -45,12 +45,12 @@
     "relativePath": "resources\\textures"
   },
   "8c047451-39ef-4152-8134-b019287bff60": {
-    "asset": 1555054567173,
+    "asset": 1557211257043,
     "meta": 1545031560423,
     "relativePath": "scenes"
   },
   "d93f9ded-a211-4fb3-a151-f4498c40cf38": {
-    "asset": 1557205266522,
+    "asset": 1557211768115,
     "meta": 1545031560427,
     "relativePath": "scripts"
   },
@@ -759,11 +759,6 @@
     "meta": 1555054642116,
     "relativePath": "scripts\\GameRule.js"
   },
-  "07a29622-1fef-4e3a-b892-7e203315ca91": {
-    "asset": 1557202088152,
-    "meta": 1557205346729,
-    "relativePath": "scripts\\WsSessionMgr.js"
-  },
   "7fd0b77d-0736-4e00-89eb-7111f07ed4f1": {
     "asset": 1554810911212,
     "meta": 1555054644255,
@@ -869,11 +864,6 @@
     "meta": 1557129398529,
     "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
   },
-  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1557144252468,
-    "meta": 1557144793339,
-    "relativePath": "scripts\\WechatGameLogin.js"
-  },
   "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
     "asset": 1557149273279,
     "meta": 1557149277564,
@@ -890,8 +880,18 @@
     "relativePath": "scripts\\ResultPanel.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
-    "asset": 1557197900056,
-    "meta": 1557197905430,
+    "asset": 1557213647706,
+    "meta": 1557213770338,
     "relativePath": "scripts\\Map.js"
+  },
+  "07a29622-1fef-4e3a-b892-7e203315ca91": {
+    "asset": 1557213765881,
+    "meta": 1557213770407,
+    "relativePath": "scripts\\WsSessionMgr.js"
+  },
+  "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
+    "asset": 1557214343007,
+    "meta": 1557214346388,
+    "relativePath": "scripts\\WechatGameLogin.js"
   }
 }

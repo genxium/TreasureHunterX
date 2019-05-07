@@ -267,7 +267,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 }
 
 func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
-	if RoomBattleStateIns.PREPARE != pR.State && RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State {
+	if RoomBattleStateIns.PREPARE != pR.State && RoomBattleStateIns.WAITING != pR.State && RoomBattleStateIns.IN_BATTLE != pR.State && RoomBattleStateIns.IN_SETTLEMENT != pR.State && RoomBattleStateIns.IN_DISMISSAL != pR.State {
 		Logger.Warn("ReAddPlayerIfPossible error due to roomState:", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
@@ -1654,13 +1654,12 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 }
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
-	for index, value := range pR.JoinIndexBooleanArr {
-		if false == value {
-			pR.Players[playerId].JoinIndex = int32(index) + 1
-			pR.JoinIndexBooleanArr[index] = true
-			break
-		}
-	}
+  /*
+  * [WARNING]
+  *
+  * If a player quits at "RoomBattleState.WAITING", then his/her re-joining will always invoke `AddPlayerIfPossible(...)`. Therefore, this
+  * function will only be invoked for players who quit the battle at ">RoomBattleState.WAITING" and re-join at "RoomBattleState.IN_BATTLE", during which the `pR.JoinIndexBooleanArr` doesn't change.
+  */
 	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
 	playerMetas := make(map[int32]*PlayerMeta, 0)
