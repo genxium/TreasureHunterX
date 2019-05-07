@@ -153,31 +153,38 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
   };
 
   clientSession.onmessage = function(event) {
+    if (null == event || null == event.data) {
+      return;
+    }
+    try {
     const resp = JSON.parse(event.data)
-    switch (resp.act) {
-      case "HeartbeatRequirements":
-        window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
-        break;
-      case "HeartbeatPong":
-        window.handleHbPong(resp);
-        break;
-      case "RoomDownsyncFrame":
-        if (window.handleRoomDownsyncFrame) {
-          const typedArray = _base64ToUint8Array(resp.data);
-          const parsedRoomDownsyncFrame = (() => {
-            return window.RoomDownsyncFrame.decode(typedArray);
-          })();
-          window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
+      switch (resp.act) {
+        case "HeartbeatRequirements":
+          window.handleHbRequirements(resp); //获取boundRoomId并存储到localStorage
+          break;
+        case "HeartbeatPong":
+          window.handleHbPong(resp);
+          break;
+        case "RoomDownsyncFrame":
+          if (window.handleRoomDownsyncFrame) {
+            const typedArray = _base64ToUint8Array(resp.data);
+            const parsedRoomDownsyncFrame = (() => {
+              return window.RoomDownsyncFrame.decode(typedArray);
+            })();
+            window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
+          }
+          break;
+        case "Ready": {
+          if (window.handleGameReadyResp) {
+            window.handleGameReadyResp(resp);
+          }
+          break;
         }
-        break;
-      case "Ready": {
-        if (window.handleGameReadyResp) {
-          window.handleGameReadyResp(resp);
-        }
-        break;
+        default:
+          break;
       }
-      default:
-        break;
+    } catch (e) {
+      console.warn("Unexpected error when parsing data of:", event.data);
     }
   };
 
