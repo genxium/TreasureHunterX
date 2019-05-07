@@ -44,6 +44,12 @@ func main() {
 		Addr:    fmt.Sprintf(":%d", Conf.Sio.Port),
 		Handler: router,
 	}
+	/*
+	 * To disable "Keep-Alive" of http/1.0 clients, thus avoid confusing results when inspecting leaks by `netstat`.
+	 *
+	 * -- YFLu
+	 */
+	srv.SetKeepAlivesEnabled(false)
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			Logger.Fatal("Error launching the service:", zap.Error(err))
@@ -98,7 +104,7 @@ func setRouter(router *gin.Engine) {
 		apiRouter.POST("/player/v1/wechatGame/login", v1.Player.WechatGameLogin)
 
 		authRouter := func(method string, url string, handler gin.HandlerFunc) {
-			apiRouter.Handle(method, url, v1.Player.TokenWithPlayerIdAuth, handler)
+			apiRouter.Handle(method, url, v1.Player.TokenAuth, handler)
 		}
 		authRouter(http.MethodPost, "/player/v1/profile/fetch", v1.Player.FetchProfile)
 	}

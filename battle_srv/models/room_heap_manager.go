@@ -107,7 +107,7 @@ func InitRoomHeapManager() {
 			Index:                  i,
 			Tick:                   0,
 			EffectivePlayerCount:   0,
-			//BattleDurationNanos:          int64(15 * 1000 * 1000 * 1000),
+			// BattleDurationNanos:          int64(15 * 1000 * 1000 * 1000),
 			BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),

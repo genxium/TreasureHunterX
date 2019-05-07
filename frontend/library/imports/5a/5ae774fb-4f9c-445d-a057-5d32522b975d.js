@@ -46,8 +46,8 @@ cc.Class({
     if (null == window.mapIns) return;
     window.mapIns.clearLocalStorageAndBackToLoginScene();
   },
-  showPlayerInfo: function showPlayerInfo(playerMetas) {
-    this.showRanking(playerMetas);
+  showPlayerInfo: function showPlayerInfo(playerMetas, players) {
+    this.showRanking(playerMetas, players);
     this.showMyAvatar();
     this.showMyName();
   },
@@ -64,7 +64,7 @@ cc.Class({
     if (!myNameNodeLabel || null == name) return;
     myNameNodeLabel.string = name;
   },
-  showRanking: function showRanking(playerMetas) {
+  showRanking: function showRanking(playerMetas, players) {
     var self = this;
     var sortablePlayers = [];
 
@@ -109,14 +109,14 @@ cc.Class({
 
       if (selfPlayerInfo.playerId == p.id) {
         //如果不是第一名就不显示WIN字样
-        var rank = p.id + 1;
+        var rank = k + 1;
         if (rank != 1 && null != self.winNode) {
           self.winNode.active = false;
         }
       }
 
-      self.rankingNodes[p.id].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
-      self.rankingNodes[p.id].getChildByName('score').getComponent(cc.Label).string = p.score;
+      self.rankingNodes[k].getChildByName('name').getComponent(cc.Label).string = nameToDisplay;
+      self.rankingNodes[k].getChildByName('score').getComponent(cc.Label).string = players[p.id].score;
     };
 
     for (var k in sortedPlayers) {

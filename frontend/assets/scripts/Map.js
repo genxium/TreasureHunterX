@@ -478,6 +478,8 @@ cc.Class({
 
   clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     const self = this;
+    console.warn('+++++++ Calling `clearLocalStorageAndBackToLoginScene`, mapIns.counter:', self.counter);
+
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
     }
@@ -749,7 +751,7 @@ cc.Class({
         );
 
         if (countdownNanos <= 0) {
-          self.onBattleStopped(cachedPlayerMetas);
+          self.onBattleStopped(cachedPlayerMetas, roomDownsyncFrame.players);
           return;
         }
         self._dumpToFullFrameCache(roomDownsyncFrame);
@@ -935,7 +937,7 @@ cc.Class({
     }
   },
 
-  onBattleStopped(playerMetas) {
+  onBattleStopped(playerMetas, players) {
     const self = this;
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
@@ -943,7 +945,7 @@ cc.Class({
     const canvasNode = self.canvasNode;
     const resultPanelNode = self.resultPanelNode;
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
-    resultPanelScriptIns.showPlayerInfo(playerMetas);
+    resultPanelScriptIns.showPlayerInfo(playerMetas, players);
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;

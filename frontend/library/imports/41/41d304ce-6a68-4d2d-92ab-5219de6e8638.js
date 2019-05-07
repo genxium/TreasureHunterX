@@ -493,6 +493,8 @@ cc.Class({
   },
   clearLocalStorageAndBackToLoginScene: function clearLocalStorageAndBackToLoginScene(shouldRetainBoundRoomIdInBothVolatileAndPersistentStorage) {
     var self = this;
+    console.warn('+++++++ Calling `clearLocalStorageAndBackToLoginScene`, mapIns.counter:', self.counter);
+
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
     }
@@ -902,7 +904,7 @@ cc.Class({
         var roomDownsyncFrame = isInitiatingFrame || !self.useDiffFrameAlgo ? diffFrame : self._generateNewFullFrame(cachedFullFrame, diffFrame);
 
         if (countdownNanos <= 0) {
-          self.onBattleStopped(cachedPlayerMetas);
+          self.onBattleStopped(cachedPlayerMetas, roomDownsyncFrame.players);
           return;
         }
         self._dumpToFullFrameCache(roomDownsyncFrame);
@@ -1081,7 +1083,7 @@ cc.Class({
       }, 10 * 1000);
     }
   },
-  onBattleStopped: function onBattleStopped(playerMetas) {
+  onBattleStopped: function onBattleStopped(playerMetas, players) {
     var self = this;
     if (self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.stopAllMusic();
@@ -1089,7 +1091,7 @@ cc.Class({
     var canvasNode = self.canvasNode;
     var resultPanelNode = self.resultPanelNode;
     var resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
-    resultPanelScriptIns.showPlayerInfo(playerMetas);
+    resultPanelScriptIns.showPlayerInfo(playerMetas, players);
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
     // Such that it doesn't execute "update(dt)" anymore. 
     self.selfPlayerNode.active = false;

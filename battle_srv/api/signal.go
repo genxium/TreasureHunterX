@@ -7,6 +7,7 @@ import (
 
 const RET = "ret"
 const PLAYER_ID = "playerId"
+const TARGET_PLAYER_ID = "targetPlayerId"
 const TOKEN = "token"
 
 func CErr(c *gin.Context, err error) {

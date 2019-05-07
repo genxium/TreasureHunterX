@@ -21,7 +21,7 @@ const (
 	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
 	MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START = -99
 	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED          = -98
-	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED          = -97
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED        = -97
 
 	MAGIC_JOIN_INDEX_DEFAULT = 0
 	MAGIC_JOIN_INDEX_INVALID = -1
@@ -1588,9 +1588,9 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			if nil != botServerRespErr {
 				Logger.Warn("Request to the BotServer has got an error:", zap.Any("botServerResp", botServerResp), zap.Any("botServerRespErr", botServerRespErr))
 			}
-      if nil != botServerResp && nil != botServerResp.Body {
-        defer botServerResp.Body.Close()
-      }
+			if nil != botServerResp && nil != botServerResp.Body {
+				defer botServerResp.Body.Close()
+			}
 		}(pR)
 	}
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))

@@ -129,8 +129,11 @@ func Serve(c *gin.Context) {
 		if err != nil {
 			Logger.Error("Unable to send the CloseFrame control message to player(client-side):", zap.Any("playerId", playerId), zap.Error(err))
 		}
-    // Is it necessary to close the wrapping TCP-connection (of http/1.0) at the end? I'm not sure. -- YFLu
-		c.AbortWithStatus(http.StatusOK)
+
+		time.AfterFunc(3*time.Second, func() {
+			// To actually terminates the underlying TCP connection which might be in `CLOSE_WAIT` state if inspected by `netstat`.
+			conn.Close()
+		})
 	}
 
 	onReceivedCloseMessageFromClient := func(code int, text string) error {
