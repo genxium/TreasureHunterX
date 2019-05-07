@@ -1,5 +1,11 @@
 const i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
+
+const WECHAT_ON_HIDE_TARGET_ACTION = {
+  SHARE_CHAT_MESSAGE: 8,
+  CLOSE: 3,
+};
+
 cc.Class({
   extends: cc.Component,
 
@@ -22,13 +28,15 @@ cc.Class({
     },
   },
 
+  
   // LIFE-CYCLE CALLBACKS:
-
   onLoad() {
     wx.onHide((res) => {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
       console.log("+++++ wx onHide(), onHide.res: ", res);
       if (
+         WECHAT_ON_HIDE_TARGET_ACTION == res.targetAction
+         ||
          "back" == res.mode // After "WeChat v7.0.4 on iOS" 
          || 
          "close" == res.mode

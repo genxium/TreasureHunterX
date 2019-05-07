@@ -6,6 +6,12 @@ cc._RF.push(module, '8264fty40hF5JqzW/+5pWHu', 'WechatGameLogin');
 
 var i18n = require('LanguageData');
 i18n.init(window.language); // languageID should be equal to the one we input in New Language ID input field
+
+var WECHAT_ON_HIDE_TARGET_ACTION = {
+  SHARE_CHAT_MESSAGE: 8,
+  CLOSE: 3
+};
+
 cc.Class({
   extends: cc.Component,
 
@@ -29,12 +35,11 @@ cc.Class({
   },
 
   // LIFE-CYCLE CALLBACKS:
-
   onLoad: function onLoad() {
     wx.onHide(function (res) {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
       console.log("+++++ wx onHide(), onHide.res: ", res);
-      if ("back" == res.mode // After "WeChat v7.0.4 on iOS" 
+      if (WECHAT_ON_HIDE_TARGET_ACTION == res.targetAction || "back" == res.mode // After "WeChat v7.0.4 on iOS" 
       || "close" == res.mode) {
         window.clearLocalStorageAndBackToLoginScene();
       } else {

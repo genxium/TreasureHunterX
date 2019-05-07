@@ -864,20 +864,10 @@
     "meta": 1557129398529,
     "relativePath": "resources\\pbfiles\\room_downsync_frame.proto"
   },
-  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
-    "asset": 1557149273279,
-    "meta": 1557149277564,
-    "relativePath": "plugin_scripts\\conf.js"
-  },
   "12a3d94d-56bd-42d2-8a2e-da1d27168980": {
     "asset": 1557153941419,
     "meta": 1557153943805,
     "relativePath": "scripts\\Login.js"
-  },
-  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
-    "asset": 1557195001176,
-    "meta": 1557195005520,
-    "relativePath": "scripts\\ResultPanel.js"
   },
   "41d304ce-6a68-4d2d-92ab-5219de6e8638": {
     "asset": 1557213647706,
@@ -890,8 +880,18 @@
     "relativePath": "scripts\\WsSessionMgr.js"
   },
   "8264fb72-e348-45e4-9ab3-5bffb9a561ee": {
-    "asset": 1557214343007,
-    "meta": 1557214346388,
+    "asset": 1557216433112,
+    "meta": 1557216439550,
     "relativePath": "scripts\\WechatGameLogin.js"
+  },
+  "0d28f4f5-4c13-4bb0-885b-6a21602cc394": {
+    "asset": 1557216568666,
+    "meta": 1557216571446,
+    "relativePath": "plugin_scripts\\conf.js"
+  },
+  "5ae774fb-4f9c-445d-a057-5d32522b975d": {
+    "asset": 1557216997882,
+    "meta": 1557217024162,
+    "relativePath": "scripts\\ResultPanel.js"
   }
 }

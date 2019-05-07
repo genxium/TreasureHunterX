@@ -40,8 +40,7 @@ cc.Class({
   },
 
   homeBtnOnClick(evt) {
-    if (null == window.mapIns) return;    
-    window.mapIns.clearLocalStorageAndBackToLoginScene();
+    window.clearLocalStorageAndBackToLoginScene();
   },
 
   showPlayerInfo(playerMetas, players) {

@@ -43,8 +43,7 @@ cc.Class({
     this.onAgainClicked();
   },
   homeBtnOnClick: function homeBtnOnClick(evt) {
-    if (null == window.mapIns) return;
-    window.mapIns.clearLocalStorageAndBackToLoginScene();
+    window.clearLocalStorageAndBackToLoginScene();
   },
   showPlayerInfo: function showPlayerInfo(playerMetas, players) {
     this.showRanking(playerMetas, players);
