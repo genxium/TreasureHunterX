@@ -1,7 +1,7 @@
 {
   "ver": "1.2.4",
   "uuid": "030d9286-e8a2-40cf-98f8-baf713f0b8c4",
-  "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+  "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
   "size": {
     "width": 2022,
     "height": 990
@@ -11,7 +11,7 @@
     "BaseBoard.png": {
       "ver": "1.0.3",
       "uuid": "637f31c2-c53e-4dec-ae11-d56c0c6177ad",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -33,7 +33,7 @@
     "ButtonActive.png": {
       "ver": "1.0.3",
       "uuid": "ef0ce43c-ad0d-4f7a-adad-ccdc3b07da45",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -55,7 +55,7 @@
     "ButtonNegative.png": {
       "ver": "1.0.3",
       "uuid": "08935a3f-220c-4440-bb99-5576598b3601",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -77,7 +77,7 @@
     "Captcha.png": {
       "ver": "1.0.3",
       "uuid": "1be42d0a-f3c9-4368-a6cb-c55164166f80",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -99,7 +99,7 @@
     "Clock.png": {
       "ver": "1.0.3",
       "uuid": "75a2c1e3-2c22-480c-9572-eb65f4a554e1",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -121,7 +121,7 @@
     "FindingPlayer_DecorationDown.png": {
       "ver": "1.0.3",
       "uuid": "3aefb317-71e0-44e1-a7f1-69d8b08e3310",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -143,7 +143,7 @@
     "FindingPlayer_DecorationUp.png": {
       "ver": "1.0.3",
       "uuid": "eee6cdea-8b25-4855-8b72-8d68fc3b3988",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -165,7 +165,7 @@
     "FindingPlayer_PlayerLeft.png": {
       "ver": "1.0.3",
       "uuid": "e5936983-59d7-4a82-9079-4c758551ece9",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -187,7 +187,7 @@
     "FindingPlayer_PlayerRight.png": {
       "ver": "1.0.3",
       "uuid": "a373e215-1826-41ed-b3f4-a9b1407739bc",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -209,7 +209,7 @@
     "FindingPlayer_vs.png": {
       "ver": "1.0.3",
       "uuid": "c35d7a88-2a8b-4d5e-a6ab-599264006ecd",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -231,7 +231,7 @@
     "GameRule_Blackboard.png": {
       "ver": "1.0.3",
       "uuid": "0fe43223-61fc-4cb8-95bd-bd9e8f01ce8f",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -253,7 +253,7 @@
     "GameRule_Button.png": {
       "ver": "1.0.3",
       "uuid": "081ad337-20ca-4313-ae3e-bb6dee3547b7",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -275,7 +275,7 @@
     "GameRule_Decoration.png": {
       "ver": "1.0.3",
       "uuid": "153d890a-fc37-4d59-8779-93a8fb19fa85",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -297,7 +297,7 @@
     "InGame_HighScoreTreasure.png": {
       "ver": "1.0.3",
       "uuid": "cc1486e4-5c38-4a73-a0d3-70416d0dd57f",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -319,7 +319,7 @@
     "InGame_InfoBG.jpg": {
       "ver": "1.0.3",
       "uuid": "d812cf3d-1f87-4ca6-a435-c2b5c5e4ed1e",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -341,7 +341,7 @@
     "InGame_Joystick.png": {
       "ver": "1.0.3",
       "uuid": "7d4baacd-294c-4a5d-9cd6-5d36e4394c9e",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -363,7 +363,7 @@
     "InGame_Joystick_bottom.png": {
       "ver": "1.0.3",
       "uuid": "447f7cfe-e678-4424-be03-0afdab8659de",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -385,7 +385,7 @@
     "InGame_LowScoreTreasure.png": {
       "ver": "1.0.3",
       "uuid": "69fa5b02-211c-4f30-8518-764440265567",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -407,7 +407,7 @@
     "InGame_ResultPanel_AgainButton.png": {
       "ver": "1.0.3",
       "uuid": "37cdf925-4518-44e0-98b4-9d0423bd7989",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -429,7 +429,7 @@
     "InGame_ResultPanel_Background.png": {
       "ver": "1.0.3",
       "uuid": "d1581e56-4a64-466f-beb9-5f09319bcf5e",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -451,7 +451,7 @@
     "InGame_ResultPanel_HomeButton.png": {
       "ver": "1.0.3",
       "uuid": "88d833ba-15fb-4a42-95ee-c55fe6628ed2",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -473,7 +473,7 @@
     "InGame_StatusBar_Blue.png": {
       "ver": "1.0.3",
       "uuid": "d7a9288a-d75a-4a4a-b018-0cda2d7639c7",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -495,7 +495,7 @@
     "InGame_StatusBar_Red.png": {
       "ver": "1.0.3",
       "uuid": "9af48a68-a401-4c92-aa12-2936e69dd5e3",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -517,7 +517,7 @@
     "InGame_Tower2.png": {
       "ver": "1.0.3",
       "uuid": "8d6a4551-03cc-406a-93e5-aa2edd79dce4",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -539,7 +539,7 @@
     "Login_Logo.png": {
       "ver": "1.0.3",
       "uuid": "9e564509-0a36-4f01-a833-79ff8f2e8328",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -561,7 +561,7 @@
     "Login_Pacman.png": {
       "ver": "1.0.3",
       "uuid": "2158ddd8-02de-47c2-ade8-f701288c22e5",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -583,7 +583,7 @@
     "Players_Avatar1.jpg": {
       "ver": "1.0.3",
       "uuid": "2c1cb245-613a-4b30-bcdc-87b4a4214bb0",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -605,7 +605,7 @@
     "Players_Avatar2.jpg": {
       "ver": "1.0.3",
       "uuid": "36708165-94a2-43d1-b5f3-1cfc4555ee2a",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -627,7 +627,7 @@
     "Players_Baseball.jpg": {
       "ver": "1.0.3",
       "uuid": "350fd890-3d28-4e53-9dfa-1bf00d857737",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -649,7 +649,7 @@
     "Players_arrowTip.png": {
       "ver": "1.0.3",
       "uuid": "a2170e4c-df31-41ef-be73-f4f605e75821",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -671,7 +671,7 @@
     "PopupBg.png": {
       "ver": "1.0.3",
       "uuid": "919690f3-9e98-4dca-88cf-ee33db7150cb",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -693,7 +693,7 @@
     "ResultPanel_Bg1v1.png": {
       "ver": "1.0.3",
       "uuid": "07225a7f-587f-4e0e-907a-ca9f06cf77a5",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -715,7 +715,7 @@
     "ResultPanel_Copper.png": {
       "ver": "1.0.3",
       "uuid": "70dae15c-39ae-4d74-96bb-8dde66090ba6",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -737,7 +737,7 @@
     "ResultPanel_Gold.png": {
       "ver": "1.0.3",
       "uuid": "9fc079f3-756f-4a2a-91d8-0bfff986bf3b",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -759,7 +759,7 @@
     "ResultPanel_Iron.png": {
       "ver": "1.0.3",
       "uuid": "551d804b-78b0-46ff-a374-a74063af4444",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": true,
@@ -781,7 +781,7 @@
     "ResultPanel_Silver.png": {
       "ver": "1.0.3",
       "uuid": "72e26a0c-7b83-4e74-a8d2-e5597b16214d",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -803,7 +803,7 @@
     "Verification_Code.png": {
       "ver": "1.0.3",
       "uuid": "137d0749-cf08-459d-8976-ebe5bd052637",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -825,7 +825,7 @@
     "Verification_Code_Grey.png": {
       "ver": "1.0.3",
       "uuid": "ab4283be-3935-44c5-b12a-9458aef99953",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -847,7 +847,7 @@
     "WhiteStars.png": {
       "ver": "1.0.3",
       "uuid": "1a2d934e-9d6d-45bf-83c6-564586cc8400",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -869,7 +869,7 @@
     "exit.jpg": {
       "ver": "1.0.3",
       "uuid": "bec0b8cf-0f82-47b9-808e-13bb713a3ede",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -891,7 +891,7 @@
     "login2.png": {
       "ver": "1.0.3",
       "uuid": "04ebd3d5-0550-409e-b815-81219667f1fa",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -913,7 +913,7 @@
     "phone.png": {
       "ver": "1.0.3",
       "uuid": "75a4d771-f3f7-4ff2-8e23-e7b3d54e7bea",
-      "rawTextureUuid": "a1e5c37e-2f16-493f-8a1a-9719fc7a1b6a",
+      "rawTextureUuid": "8f30ce68-ec25-459e-b6e4-3eb4f3a211a5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
