@@ -644,13 +644,13 @@
             <key>premultiplyAlpha</key>
             <false/>
             <key>realTextureFileName</key>
-            <string>GUIElements_0.png</string>
+            <string>GuiElements_0.png</string>
             <key>size</key>
             <string>{2022,990}</string>
             <key>smartupdate</key>
             <string>$TexturePacker:SmartUpdate:e5e4012d3a559f9501f4cb19a7bea3c5:821d635fecb489cec5f6ffd15d091ea2:dc9a5be97839fbd50fd8575bd48970fd$</string>
             <key>textureFileName</key>
-            <string>GUIElements_0.png</string>
+            <string>GuiElements_0.png</string>
         </dict>
     </dict>
 </plist>

@@ -14,6 +14,9 @@ battle_srv/server
 battle_srv/main
 *.sqlite-journal
 frontend/assets/plugin_scripts/conf.js
+frontend/assets/plugin_scripts/conf.js.meta
+frontend/library
+frontend/library/*
 .skeema
 *.rdb
 
