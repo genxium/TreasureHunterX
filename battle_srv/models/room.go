@@ -816,6 +816,15 @@ func (pR *Room) InitContactListener() {
 		name: "kobako",
 		room: pR,
 	}
+  /*
+  * Setting a "ContactListener" for "pR.CollidableWorld" 
+  * will only trigger corresponding callbacks in the 
+  * SAME GOROUTINE of "pR.CollidableWorld.Step(...)" according
+  * to "https://github.com/ByteArena/box2d/blob/master/DynamicsB2World.go" and 
+  * "https://github.com/ByteArena/box2d/blob/master/DynamicsB2Contact.go".
+  *
+  * The invocation-chain involves "Step -> SolveTOI -> B2ContactUpdate -> [BeginContact, EndContact, PreSolve]".
+  */
 	pR.CollidableWorld.SetContactListener(listener)
 }
 
