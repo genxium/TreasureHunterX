@@ -6,6 +6,9 @@ const WECHAT_ON_HIDE_TARGET_ACTION = {
   CLOSE: 3,
 };
 
+const pbStructRoot = require('./modules/room_downsync_frame_proto_bundle.forcemsg.js');
+window.RoomDownsyncFrame = pbStructRoot.models.RoomDownsyncFrame;
+
 cc.Class({
   extends: cc.Component,
 
