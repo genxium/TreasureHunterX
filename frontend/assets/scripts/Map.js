@@ -298,6 +298,7 @@ cc.Class({
     if (self.testOnlyResyncInterval) {
       clearInterval(self.testOnlyResyncInterval);
     }
+    self.closeBottomBannerAd();
   },
 
   _lazilyTriggerResync() {
@@ -515,6 +516,9 @@ cc.Class({
       self._resetCurrentMatch();
       window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */ );
     };
+    resultPanelScriptIns.onCloseDelegate = () => {
+      self.closeBottomBannerAd();
+    };
 
     self.gameRuleNode = cc.instantiate(self.gameRulePrefab);
     self.gameRuleNode.width = self.canvasNode.width;
@@ -656,6 +660,13 @@ cc.Class({
           if (!self.findingPlayerNode.parent) {
             self.showPopupInCanvas(self.findingPlayerNode);
           }
+          self.openBottonBannerAd(function() {
+            if (null != self.bottomBannerAd) {
+              self.bottomBannerAd.autoDisappearTimmer = setTimeout(function() {
+                self.closeBottomBannerAd();
+              }, 10000);
+            }
+          });
           findingPlayerScriptIns.updatePlayersInfo(diffFrame.playerMetas);
           cachedPlayerMetas = diffFrame.playerMetas;
           return;
@@ -832,6 +843,46 @@ cc.Class({
     } else {
       // Deliberately left blank. -- YFLu
     }
+    self.bottomBannerAd = null;
+  },
+
+  openBottonBannerAd(callback) {
+    const self = this;
+    if (CC_WECHATGAME && null == self.bottomBannerAd) {
+      let {windowWidth, windowHeight} = wx.getSystemInfoSync();
+      self.bottomBannerAd = self.bottomBannerAd || wx.createBannerAd({
+        adUnitId: 'adunit-b1088bf52d58a70d',
+        style: {
+            left: 1,
+            top: 9999,
+            // WARNING: 如果宽度铺满屏幕，有些广告会出现顶部有占位框的情况。
+            width: windowWidth - 2,
+        }
+      });
+      
+      self.bottomBannerAd.onLoad(function() {
+        self.bottomBannerAd.style.top = windowHeight - self.bottomBannerAd.style.realHeight;
+        self.bottomBannerAd.show().then(function() {
+          callback && callback.call(self);
+        });
+      })
+      
+      self.bottomBannerAd.onError(function(err) {
+        console.log(this, err);
+      });
+    }
+  },
+
+  closeBottomBannerAd() {
+    const self = this;
+    if (CC_WECHATGAME && null != self.bottomBannerAd) {
+      self.bottomBannerAd.destroy();
+      if (null != self.bottomBannerAd.autoDisappearTimmer) {
+        clearTimeout(self.bottomBannerAd.autoDisappearTimmer);
+        self.bottomBannerAd.autoDisappearTimmer = null;
+      }
+      self.bottomBannerAd = null;
+    }
   },
 
   disableGameRuleNode() {
@@ -912,6 +963,7 @@ cc.Class({
     self.selfPlayerNode.active = false;
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopupInCanvas(resultPanelNode);
+    self.openBottonBannerAd();
 
     // Clear player info
     self.playersInfoNode.getComponent("PlayersInfo").clearInfo();
@@ -1460,6 +1512,7 @@ cc.Class({
     const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
     findingPlayerScriptIns.updatePlayersInfo(playerMetas);
     window.setTimeout(() => {
+      self.closeBottomBannerAd();
       if (self.findingPlayerNode.parent) {
         self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
         self.transitToState(ALL_MAP_STATES.VISUAL);

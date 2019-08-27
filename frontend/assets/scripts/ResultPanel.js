@@ -40,6 +40,7 @@ cc.Class({
   },
 
   homeBtnOnClick(evt) {
+    this.onClose();
     window.clearLocalStorageAndBackToLoginScene();
   },
 
