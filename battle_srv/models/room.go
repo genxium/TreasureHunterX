@@ -13,9 +13,9 @@ import (
 	"path/filepath"
 	. "server/common"
 	"server/common/utils"
+	pb "server/pb_output"
 	"sync"
 	"time"
-	pb "server/pb_output"
 )
 
 const (
@@ -784,15 +784,15 @@ func (pR *Room) InitContactListener() {
 		name: "TreasureHunterX",
 		room: pR,
 	}
-  /*
-  * Setting a "ContactListener" for "pR.CollidableWorld" 
-  * will only trigger corresponding callbacks in the 
-  * SAME GOROUTINE of "pR.CollidableWorld.Step(...)" according
-  * to "https://github.com/ByteArena/box2d/blob/master/DynamicsB2World.go" and 
-  * "https://github.com/ByteArena/box2d/blob/master/DynamicsB2Contact.go".
-  *
-  * The invocation-chain involves "Step -> SolveTOI -> B2ContactUpdate -> [BeginContact, EndContact, PreSolve]".
-  */
+	/*
+	 * Setting a "ContactListener" for "pR.CollidableWorld"
+	 * will only trigger corresponding callbacks in the
+	 * SAME GOROUTINE of "pR.CollidableWorld.Step(...)" according
+	 * to "https://github.com/ByteArena/box2d/blob/master/DynamicsB2World.go" and
+	 * "https://github.com/ByteArena/box2d/blob/master/DynamicsB2Contact.go".
+	 *
+	 * The invocation-chain involves "Step -> SolveTOI -> B2ContactUpdate -> [BeginContact, EndContact, PreSolve]".
+	 */
 	pR.CollidableWorld.SetContactListener(listener)
 }
 
@@ -820,7 +820,7 @@ func calculateDiffFrame(currentFrame *pb.RoomDownsyncFrame, lastFrame *pb.RoomDo
 		}
 		curr, ok := currentFrame.Treasures[k]
 		if !ok {
-			diffFrame.Treasures[k] = &Treasure{Removed: true}
+			diffFrame.Treasures[k] = &pb.Treasure{Removed: true}
 			Logger.Info("A treasure is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("treasure.LocalIdInBattle", curr.LocalIdInBattle))
 			continue
 		}
@@ -867,8 +867,8 @@ func calculateDiffFrame(currentFrame *pb.RoomDownsyncFrame, lastFrame *pb.RoomDo
 	return diffFrame
 }
 
-func diffTreasure(last, curr *Treasure) (bool, *Treasure) {
-	treature := &Treasure{}
+func diffTreasure(last *pb.Treasure, curr *pb.Treasure) (bool, *pb.Treasure) {
+	treature := &pb.Treasure{}
 	t := false
 	if last.Score != curr.Score {
 		treature.Score = curr.Score
@@ -885,8 +885,8 @@ func diffTreasure(last, curr *Treasure) (bool, *Treasure) {
 	return t, treature
 }
 
-func diffTrap(last, curr *Trap) (bool, *Trap) {
-	trap := &Trap{}
+func diffTrap(last *pb.Trap, curr *pb.Trap) (bool, *pb.Trap) {
+	trap := &pb.Trap{}
 	t := false
 	if last.X != curr.X {
 		trap.X = curr.X
@@ -899,8 +899,8 @@ func diffTrap(last, curr *Trap) (bool, *Trap) {
 	return t, trap
 }
 
-func diffSpeedShoe(last, curr *SpeedShoe) (bool, *SpeedShoe) {
-	speedShoe := &SpeedShoe{}
+func diffSpeedShoe(last *pb.SpeedShoe, curr *pb.SpeedShoe) (bool, *pb.SpeedShoe) {
+	speedShoe := &pb.SpeedShoe{}
 	t := false
 	if last.X != curr.X {
 		speedShoe.X = curr.X
@@ -913,8 +913,8 @@ func diffSpeedShoe(last, curr *SpeedShoe) (bool, *SpeedShoe) {
 	return t, speedShoe
 }
 
-func diffBullet(last, curr *Bullet) (bool, *Bullet) {
-	bullet := &Bullet{}
+func diffBullet(last *pb.Bullet, curr *pb.Bullet) (bool, *pb.Bullet) {
+	bullet := &pb.Bullet{}
 	t := false
 	if last.X != curr.X {
 		bullet.X = bullet.X
@@ -1023,18 +1023,17 @@ func (pR *Room) StartBattle() {
 			pR.Tick++
 			stCalculation := utils.UnixtimeNano()
 
-			currentFrame := &RoomDownsyncFrame{
+			currentFrame := &pb.RoomDownsyncFrame{
 				Id:             pR.Tick,
 				RefFrameId:     0, // Hardcoded for now.
-				Players:        pR.Players,
+				Players:        toPbPlayers(pR.Players),
+				Treasures:      toPbTreasures(pR.Treasures),
+				Traps:          toPbTraps(pR.Traps),
+				Bullets:        toPbBullets(pR.Bullets),
+				SpeedShoes:     toPbSpeedShoes(pR.SpeedShoes),
+				GuardTowers:    toPbGuardTowers(pR.GuardTowers),
 				SentAt:         utils.UnixtimeMilli(),
 				CountdownNanos: (pR.BattleDurationNanos - totalElapsedNanos),
-				Treasures:      pR.Treasures,
-				Traps:          pR.Traps,
-				Bullets:        pR.Bullets,
-				SpeedShoes:     pR.SpeedShoes,
-				Pumpkins:       pR.Pumpkins,
-				GuardTowers:    pR.GuardTowers,
 			}
 
 			minAckingFrameId := int32(999999999) // Hardcoded as a max reference.
@@ -1113,11 +1112,11 @@ func (pR *Room) StartBattle() {
 
 					// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 
-          /*
-          An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
+					/*
+					   An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
 
-          Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshalled as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
-          */
+					   Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshalled as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
+					*/
 					theBytes, marshalErr := proto.Marshal(diffFrame)
 					if marshalErr != nil {
 						Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
@@ -1184,7 +1183,8 @@ func (pR *Room) StartBattle() {
 				}
 			}
 
-			for _, pumpkin := range pR.Pumpkins { //移动南瓜
+			//移动南瓜
+			for _, pumpkin := range pR.Pumpkins {
 				if pumpkin.Removed {
 					continue
 				}
@@ -1246,7 +1246,8 @@ func (pR *Room) StartBattle() {
 				}
 			}
 
-			for _, pumpkin := range pR.Pumpkins { //南瓜撞到墙和玩家产生的回调
+			//南瓜撞到墙和玩家产生的回调
+			for _, pumpkin := range pR.Pumpkins {
 				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
 					if edge.Contact.IsTouching() {
 						if barrier, ok := edge.Other.GetUserData().(*Barrier); ok {
@@ -1327,16 +1328,16 @@ func (pR *Room) StopBattleForSettlement() {
 	Logger.Info("Stopping the `battleMainLoop` for:", zap.Any("roomId", pR.Id))
 	pR.Tick++
 	for playerId, _ := range pR.Players {
-		assembledFrame := &RoomDownsyncFrame{
+		assembledFrame := &pb.RoomDownsyncFrame{
 			Id:             pR.Tick,
 			RefFrameId:     0, // Hardcoded for now.
-			Players:        pR.Players,
+			Players:        toPbPlayers(pR.Players),
 			SentAt:         utils.UnixtimeMilli(),
 			CountdownNanos: -1, // TODO: Replace this magic constant!
-			Treasures:      pR.Treasures,
-			Traps:          pR.Traps,
-			Bullets:        pR.Bullets,
-			SpeedShoes:     pR.SpeedShoes,
+			Treasures:      toPbTreasures(pR.Treasures),
+			Traps:          toPbTraps(pR.Traps),
+			Bullets:        toPbBullets(pR.Bullets),
+			SpeedShoes:     toPbSpeedShoes(pR.SpeedShoes),
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		theBytes, marshalErr := proto.Marshal(assembledFrame)
@@ -1368,9 +1369,9 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	pR.State = RoomBattleStateIns.PREPARE
 	Logger.Info("Battle state transitted to RoomBattleStateIns.PREPARE for:", zap.Any("roomId", pR.Id))
 
-	playerMetas := make(map[int32]*PlayerMeta, 0)
+	playerMetas := make(map[int32]*pb.PlayerMeta, 0)
 	for _, player := range pR.Players {
-		playerMetas[player.Id] = &PlayerMeta{
+		playerMetas[player.Id] = &pb.PlayerMeta{
 			Id:          player.Id,
 			Name:        player.Name,
 			DisplayName: player.DisplayName,
@@ -1379,9 +1380,9 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 		}
 	}
 
-	battleReadyToStartFrame := &RoomDownsyncFrame{
+	battleReadyToStartFrame := &pb.RoomDownsyncFrame{
 		Id:          pR.Tick,
-		Players:     pR.Players,
+		Players:     toPbPlayers(pR.Players),
 		SentAt:      utils.UnixtimeMilli(),
 		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START,
 		PlayerMetas: playerMetas,
@@ -1567,6 +1568,11 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
 	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
+    /**
+    * TODO: Choose a map randomly, parse it and cache it to be send "down" to the participants.
+    *
+    * -- YFLu, 2019-08-29
+    */
 		go func(pR *Room) {
 			<-time.After(time.Duration(Conf.BotServer.SecondsBeforeSummoning) * time.Second)
 			botServerEndpoint := fmt.Sprintf("%s://%s:%d/spawnBot?expectedRoomId=%d&symmetricKey=%s", Conf.BotServer.Protocol, Conf.BotServer.Host, Conf.BotServer.Port, pR.Id, Conf.BotServer.SymmetricKey)
@@ -1593,9 +1599,9 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 
 	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
-	playerMetas := make(map[int32]*PlayerMeta, 0)
+	playerMetas := make(map[int32]*pb.PlayerMeta, 0)
 	for _, player := range pR.Players {
-		playerMetas[player.Id] = &PlayerMeta{
+		playerMetas[player.Id] = &pb.PlayerMeta{
 			Id:          player.Id,
 			Name:        player.Name,
 			DisplayName: player.DisplayName,
@@ -1604,9 +1610,9 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		}
 	}
 
-	playerAddedFrame := &RoomDownsyncFrame{
+	playerAddedFrame := &pb.RoomDownsyncFrame{
 		Id:          pR.Tick,
-		Players:     pR.Players,
+		Players:     toPbPlayers(pR.Players),
 		SentAt:      utils.UnixtimeMilli(),
 		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED,
 		PlayerMetas: playerMetas,
@@ -1632,17 +1638,17 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 }
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
-  /*
-  * [WARNING]
-  *
-  * If a player quits at "RoomBattleState.WAITING", then his/her re-joining will always invoke `AddPlayerIfPossible(...)`. Therefore, this
-  * function will only be invoked for players who quit the battle at ">RoomBattleState.WAITING" and re-join at "RoomBattleState.IN_BATTLE", during which the `pR.JoinIndexBooleanArr` doesn't change.
-  */
+	/*
+	 * [WARNING]
+	 *
+	 * If a player quits at "RoomBattleState.WAITING", then his/her re-joining will always invoke `AddPlayerIfPossible(...)`. Therefore, this
+	 * function will only be invoked for players who quit the battle at ">RoomBattleState.WAITING" and re-join at "RoomBattleState.IN_BATTLE", during which the `pR.JoinIndexBooleanArr` doesn't change.
+	 */
 	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
-	playerMetas := make(map[int32]*PlayerMeta, 0)
+	playerMetas := make(map[int32]*pb.PlayerMeta, 0)
 	for _, player := range pR.Players {
-		playerMetas[player.Id] = &PlayerMeta{
+		playerMetas[player.Id] = &pb.PlayerMeta{
 			Id:          player.Id,
 			Name:        player.Name,
 			DisplayName: player.DisplayName,
@@ -1651,9 +1657,9 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 		}
 	}
 
-	playerReAddedFrame := &RoomDownsyncFrame{
+	playerReAddedFrame := &pb.RoomDownsyncFrame{
 		Id:          pR.Tick,
-		Players:     pR.Players,
+		Players:     toPbPlayers(pR.Players),
 		SentAt:      utils.UnixtimeMilli(),
 		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED,
 		PlayerMetas: playerMetas,
@@ -1677,9 +1683,9 @@ type Listener struct {
 	room *Room
 }
 
-// Implementing the GolangBox2d contact listeners [begins]. 
+// Implementing the GolangBox2d contact listeners [begins].
 /**
- * Note that the execution of these listeners is within the SAME GOROUTINE as that of "`battleMainLoop` in the same room". 
+ * Note that the execution of these listeners is within the SAME GOROUTINE as that of "`battleMainLoop` in the same room".
  * See the comments in `Room.InitContactListener()` for details.
  */
 func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
@@ -1741,4 +1747,4 @@ func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2C
 	//fmt.Printf("PostSolve %s\n", l.name);
 }
 
-// Implementing the GolangBox2d contact listeners [ends]. 
+// Implementing the GolangBox2d contact listeners [ends].
