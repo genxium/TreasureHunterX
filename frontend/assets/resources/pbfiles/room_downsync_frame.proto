@@ -1,5 +1,5 @@
 syntax = "proto3";
-package models;
+package treasurehunterx;
 
 message Direction {
   double dx = 1;
@@ -60,7 +60,7 @@ message Trap {
   bool removed = 6;
 }
 
-message SpeedShoes {
+message SpeedShoe {
   int32 id = 1;
   int32 localIdInBattle = 2;
   double x = 3; 
@@ -95,7 +95,7 @@ message RoomDownsyncFrame {
   map<int32, Treasure> treasures = 6; 
   map<int32, Trap> traps = 7; 
   map<int32, Bullet> bullets = 8;
-  map<int32, SpeedShoes> speedShoes = 9;
+  map<int32, SpeedShoe> speedShoes = 9;
   map<int32, Pumpkin> pumpkin = 10;
   map<int32, GuardTower> guardTowers = 11; 
   map<int32, PlayerMeta> playerMetas = 12;

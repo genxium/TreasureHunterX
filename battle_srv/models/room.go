@@ -15,6 +15,7 @@ import (
 	"server/common/utils"
 	"sync"
 	"time"
+	pb "server/pb_output"
 )
 
 const (
@@ -120,38 +121,6 @@ type Room struct {
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
 }
-
-type PlayerMeta struct {
-	Id          int32  `protobuf:"varint,1,opt,name=id,proto3"`
-	Name        string `protobuf:"bytes,2,opt,name=name,proto3"`
-	DisplayName string `protobuf:"bytes,3,opt,name=displayName,proto3"`
-	Avatar      string `protobuf:"bytes,4,opt,name=avatar,proto3"`
-	JoinIndex   int32  `protobuf:"varint,5,opt,name=joinIndex,proto3"`
-}
-
-type RoomDownsyncFrame struct {
-	/* TODO
-	An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
-
-	Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshal as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
-	*/
-	Id             int32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	RefFrameId     int32                 `protobuf:"varint,2,opt,name=refFrameId,proto3" json:"refFrameId,omitempty"`
-	Players        map[int32]*Player     `protobuf:"bytes,3,rep,name=players,proto3" json:"players,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SentAt         int64                 `protobuf:"varint,4,opt,name=sentAt,proto3" json:"sentAt,omitempty"`
-	CountdownNanos int64                 `protobuf:"varint,5,opt,name=countdownNanos,proto3" json:"countdownNanos,omitempty"`
-	Treasures      map[int32]*Treasure   `protobuf:"bytes,6,rep,name=treasures,proto3" json:"treasures,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Traps          map[int32]*Trap       `protobuf:"bytes,7,rep,name=traps,proto3" json:"traps,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bullets        map[int32]*Bullet     `protobuf:"bytes,8,rep,name=bullets,proto3" json:"bullets,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SpeedShoes     map[int32]*SpeedShoe  `protobuf:"bytes,9,rep,name=speedShoes,proto3" json:"speedShoes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Pumpkins       map[int32]*Pumpkin    `protobuf:"bytes,10,rep,name=pumpkin,proto3" json:"pumpkin,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	GuardTowers    map[int32]*GuardTower `protobuf:"bytes,11,rep,name=guardTowers,proto3" json:"guardTowers,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	PlayerMetas    map[int32]*PlayerMeta `protobuf:"bytes,12,rep,name=playerMetas,proto3" json:"playerMetas,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-}
-
-func (m *RoomDownsyncFrame) Reset()         { *m = RoomDownsyncFrame{} }
-func (m *RoomDownsyncFrame) String() string { return proto.CompactTextString(m) }
-func (m *RoomDownsyncFrame) ProtoMessage()  {}
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
 	if _, existent := pR.Treasures[contactingTreasure.LocalIdInBattle]; existent {
@@ -748,7 +717,6 @@ func (pR *Room) InitColliders() {
 		b2TrapBody.SetUserData(trap)
 	}
 
-	//kobako: init guardTower
 	Logger.Info("InitColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
 	for _, tower := range pR.GuardTowers {
 		var bdDef box2d.B2BodyDef
@@ -813,7 +781,7 @@ func (pR *Room) InitColliders() {
 
 func (pR *Room) InitContactListener() {
 	listener := Listener{
-		name: "kobako",
+		name: "TreasureHunterX",
 		room: pR,
 	}
   /*
@@ -828,23 +796,21 @@ func (pR *Room) InitContactListener() {
 	pR.CollidableWorld.SetContactListener(listener)
 }
 
-//currentFrame 是服务器目前所知的所有信息, lastFrame 是该玩家已知的帧
-func calculateDiffFrame(currentFrame, lastFrame *RoomDownsyncFrame) *RoomDownsyncFrame {
+func calculateDiffFrame(currentFrame *pb.RoomDownsyncFrame, lastFrame *pb.RoomDownsyncFrame) *pb.RoomDownsyncFrame {
 	if lastFrame == nil {
 		return currentFrame
 	}
-	diffFrame := &RoomDownsyncFrame{
+	diffFrame := &pb.RoomDownsyncFrame{
 		Id:             currentFrame.Id,
 		RefFrameId:     lastFrame.Id,
 		Players:        currentFrame.Players,
 		SentAt:         currentFrame.SentAt,
 		CountdownNanos: currentFrame.CountdownNanos,
 		Bullets:        currentFrame.Bullets,
-		Treasures:      make(map[int32]*Treasure, 0),
-		Traps:          make(map[int32]*Trap, 0),
-		SpeedShoes:     make(map[int32]*SpeedShoe, 0),
-		Pumpkins:       currentFrame.Pumpkins,
-		GuardTowers:    make(map[int32]*GuardTower, 0),
+		Treasures:      make(map[int32]*pb.Treasure, 0),
+		Traps:          make(map[int32]*pb.Trap, 0),
+		SpeedShoes:     make(map[int32]*pb.SpeedShoe, 0),
+		GuardTowers:    make(map[int32]*pb.GuardTower, 0),
 	}
 
 	for k, last := range lastFrame.Treasures {
@@ -1007,9 +973,7 @@ func (pR *Room) StartBattle() {
 	ErrFatal(err)
 	DeserializeToTsxIns(byteArr, pTsxIns)
 
-	//kobako
 	pR.GuardTowers = make(map[int32]*GuardTower)
-	//kobako
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
@@ -1019,9 +983,7 @@ func (pR *Room) StartBattle() {
 	pR.InitColliders()
 	pR.InitBarrier(pTmxMapIns, pTsxIns)
 
-	//kobako: 初始化listener, 如果需要监听BeginContact或者EndContact事件, hack这个函数
 	pR.InitContactListener()
-	//kobako
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. Note that a `GolangChannel` whose size is too large would induce "large RAM use of the overall process" and thus cause frequent websocket disconnection in this game. */)
@@ -1150,6 +1112,12 @@ func (pR *Room) StartBattle() {
 					diffFrame := calculateDiffFrame(currentFrame, lastFrame)
 
 					// Logger.Info("Sending RoomDownsyncFrame in battleMainLoop:", zap.Any("RoomDownsyncFrame", assembledFrame), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+
+          /*
+          An instance of `RoomDownsyncFrame` contains lots of pointers which will be accessed(R/W) by both `Room.battleMainLoop` and `Room.cmdReceivingLoop`, e.g. involving `Room.Players: map[int32]*Player`, of each room.
+
+          Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshalled as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
+          */
 					theBytes, marshalErr := proto.Marshal(diffFrame)
 					if marshalErr != nil {
 						Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
@@ -1207,7 +1175,7 @@ func (pR *Room) StartBattle() {
 				bullet.X = newB2Vec2Pos.X
 				bullet.Y = newB2Vec2Pos.Y
 
-				//kobako: 如果超出最大飞行距离, 标记消失
+				// 如果超出最大飞行距离, 标记消失
 				if BULLET_MAX_DIST < Distance(bullet.StartAtPoint, &Vec2D{
 					X: bullet.X,
 					Y: bullet.Y,
@@ -1229,7 +1197,7 @@ func (pR *Room) StartBattle() {
 
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 
-			//kobako: 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
+			// 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
 			for _, tower := range pR.GuardTowers {
 				if tower.InRangePlayers.CurrentSize < 1 {
 					continue
@@ -1570,6 +1538,7 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 		break
 	}
 }
+
 func (pR *Room) onPlayerLost(playerId int32) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1708,7 +1677,11 @@ type Listener struct {
 	room *Room
 }
 
-//kobako: Implement interface Start
+// Implementing the GolangBox2d contact listeners [begins]. 
+/**
+ * Note that the execution of these listeners is within the SAME GOROUTINE as that of "`battleMainLoop` in the same room". 
+ * See the comments in `Room.InitContactListener()` for details.
+ */
 func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
 	var pTower *GuardTower
 	var pPlayer *Player
@@ -1768,4 +1741,4 @@ func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2C
 	//fmt.Printf("PostSolve %s\n", l.name);
 }
 
-//Implement interface End
+// Implementing the GolangBox2d contact listeners [ends]. 

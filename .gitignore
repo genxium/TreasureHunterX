@@ -1,4 +1,3 @@
-*.pb.go
 battle_srv/test_cases/test_cases
 battle_srv/test_cases/tests
 *.pid
@@ -6,6 +5,7 @@ local
 local/*
 temp
 temp/*
+*.rdb
 *.rdb.meta
 
 configs
@@ -18,7 +18,6 @@ frontend/assets/plugin_scripts/conf.js.meta
 frontend/library
 frontend/library/*
 .skeema
-*.rdb
 
 *.exe
 *.zip
