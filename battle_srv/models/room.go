@@ -925,7 +925,6 @@ func (pR *Room) StartBattle() {
 		return
 	}
 
-	relativePath := "../frontend/assets/resources/map/pacman/map.tmx"
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
@@ -934,14 +933,21 @@ func (pR *Room) StartBattle() {
 
 	Logger.Info("StartBattle filepaths", zap.Any("execPath", execPath), zap.Any("pwd", pwd))
 
+	relativePathForAllMaps := "../frontend/assets/resources/map"
+  chosenMapDirName := "pacman" // Hardcoded temporarily. -- YFLu
+
+	relativePathForChosenMap := fmt.Sprintf("%s/%s", relativePathForAllMaps, chosenMapDirName)
+
 	tmxMapIns := TmxMap{}
 	pTmxMapIns := &tmxMapIns
-	fp := filepath.Join(pwd, relativePath)
-	if !filepath.IsAbs(fp) {
+
+	absDirPathContainingDirectlyTmxFile := filepath.Join(pwd, relativePathForChosenMap)
+  absTmxFilePath := fmt.Sprintf("%s/map.tmx", absDirPathContainingDirectlyTmxFile)
+	if !filepath.IsAbs(absTmxFilePath) {
 		panic("Tmx filepath must be absolute!")
 	}
 
-	byteArr, err := ioutil.ReadFile(fp)
+	byteArr, err := ioutil.ReadFile(absTmxFilePath)
 	ErrFatal(err)
 	DeserializeToTmxMapIns(byteArr, pTmxMapIns)
 	var index = 0
@@ -953,28 +959,30 @@ func (pR *Room) StartBattle() {
 		player.Score = 0
 	}
 
-	tsxIns := Tsx{}
-	pTsxIns := &tsxIns
-	//relativePath = "../frontend/assets/resources/map/tile_1.tsx"
-	relativePath = "../frontend/assets/resources/map/pacman/Tile_W64_H64_S01.tsx"
-	fp = filepath.Join(pwd, relativePath)
-	if !filepath.IsAbs(fp) {
+  /*
+  * [WARNING]
+  * It's assumed that only the "FIRST of pTmxMapIns.Tilesets" contains
+  * ALL NECESSARY information to initiate the boundaries/colliders for
+  * "Treasures, Traps, GuardTowers etc." for EACH map. 
+  */
+	pTsxIns := &Tsx{}
+	absTsxFilePath := fmt.Sprintf("%s/%s", absDirPathContainingDirectlyTmxFile, pTmxMapIns.Tilesets[0].Source)
+	if !filepath.IsAbs(absTsxFilePath) {
 		panic("Filepath must be absolute!")
 	}
 
-	byteArr, err = ioutil.ReadFile(fp)
+	byteArr, err = ioutil.ReadFile(absTsxFilePath)
 	ErrFatal(err)
 	DeserializeToTsxIns(byteArr, pTsxIns)
-
-	pR.GuardTowers = make(map[int32]*GuardTower)
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)
 	pR.InitGuardTower(pTmxMapIns, pTsxIns)
 	pR.InitPumpkins(pTmxMapIns)
 	pR.InitSpeedShoes(pTmxMapIns, pTsxIns)
+	pR.InitBarrier(pTmxMapIns, pTsxIns) // NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! -- YFLu
+
 	pR.InitColliders()
-	pR.InitBarrier(pTmxMapIns, pTsxIns)
 
 	pR.InitContactListener()
 
