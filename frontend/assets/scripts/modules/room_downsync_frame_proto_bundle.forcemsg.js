@@ -1,7 +1,7 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
 "use strict";
 
-var $protobuf = require('./protobuf-with-floating-num-decoding-endianess-toggle'); // Deliberately changed the require-path. -- YFLu
+var $protobuf = require("./protobuf-with-floating-num-decoding-endianess-toggle");
 
 // Common aliases
 var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
@@ -9,20 +9,20 @@ var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.ut
 // Exported root namespace
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
 
-$root.models = (function() {
+$root.treasurehunterx = (function() {
 
     /**
-     * Namespace models.
-     * @exports models
+     * Namespace treasurehunterx.
+     * @exports treasurehunterx
      * @namespace
      */
-    var models = {};
+    var treasurehunterx = {};
 
-    models.Direction = (function() {
+    treasurehunterx.Direction = (function() {
 
         /**
          * Properties of a Direction.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IDirection
          * @property {number|null} [dx] Direction dx
          * @property {number|null} [dy] Direction dy
@@ -30,11 +30,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Direction.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Direction.
          * @implements IDirection
          * @constructor
-         * @param {models.IDirection=} [properties] Properties to set
+         * @param {treasurehunterx.IDirection=} [properties] Properties to set
          */
         function Direction(properties) {
             if (properties)
@@ -46,7 +46,7 @@ $root.models = (function() {
         /**
          * Direction dx.
          * @member {number} dx
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @instance
          */
         Direction.prototype.dx = 0;
@@ -54,7 +54,7 @@ $root.models = (function() {
         /**
          * Direction dy.
          * @member {number} dy
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @instance
          */
         Direction.prototype.dy = 0;
@@ -62,21 +62,21 @@ $root.models = (function() {
         /**
          * Creates a new Direction instance using the specified properties.
          * @function create
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
-         * @param {models.IDirection=} [properties] Properties to set
-         * @returns {models.Direction} Direction instance
+         * @param {treasurehunterx.IDirection=} [properties] Properties to set
+         * @returns {treasurehunterx.Direction} Direction instance
          */
         Direction.create = function create(properties) {
             return new Direction(properties);
         };
 
         /**
-         * Encodes the specified Direction message. Does not implicitly {@link models.Direction.verify|verify} messages.
+         * Encodes the specified Direction message. Does not implicitly {@link treasurehunterx.Direction.verify|verify} messages.
          * @function encode
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
-         * @param {models.Direction} message Direction message or plain object to encode
+         * @param {treasurehunterx.Direction} message Direction message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -91,11 +91,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Direction message, length delimited. Does not implicitly {@link models.Direction.verify|verify} messages.
+         * Encodes the specified Direction message, length delimited. Does not implicitly {@link treasurehunterx.Direction.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
-         * @param {models.Direction} message Direction message or plain object to encode
+         * @param {treasurehunterx.Direction} message Direction message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -106,18 +106,18 @@ $root.models = (function() {
         /**
          * Decodes a Direction message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Direction} Direction
+         * @returns {treasurehunterx.Direction} Direction
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Direction.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Direction();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Direction();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -138,10 +138,10 @@ $root.models = (function() {
         /**
          * Decodes a Direction message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Direction} Direction
+         * @returns {treasurehunterx.Direction} Direction
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -154,7 +154,7 @@ $root.models = (function() {
         /**
          * Verifies a Direction message.
          * @function verify
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -174,15 +174,15 @@ $root.models = (function() {
         /**
          * Creates a Direction message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Direction} Direction
+         * @returns {treasurehunterx.Direction} Direction
          */
         Direction.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Direction)
+            if (object instanceof $root.treasurehunterx.Direction)
                 return object;
-            var message = new $root.models.Direction();
+            var message = new $root.treasurehunterx.Direction();
             if (object.dx != null)
                 message.dx = Number(object.dx);
             if (object.dy != null)
@@ -193,9 +193,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Direction message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @static
-         * @param {models.Direction} message Direction
+         * @param {treasurehunterx.Direction} message Direction
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -217,7 +217,7 @@ $root.models = (function() {
         /**
          * Converts this Direction to JSON.
          * @function toJSON
-         * @memberof models.Direction
+         * @memberof treasurehunterx.Direction
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -228,11 +228,11 @@ $root.models = (function() {
         return Direction;
     })();
 
-    models.Vec2D = (function() {
+    treasurehunterx.Vec2D = (function() {
 
         /**
          * Properties of a Vec2D.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IVec2D
          * @property {number|null} [x] Vec2D x
          * @property {number|null} [y] Vec2D y
@@ -240,11 +240,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Vec2D.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Vec2D.
          * @implements IVec2D
          * @constructor
-         * @param {models.IVec2D=} [properties] Properties to set
+         * @param {treasurehunterx.IVec2D=} [properties] Properties to set
          */
         function Vec2D(properties) {
             if (properties)
@@ -256,7 +256,7 @@ $root.models = (function() {
         /**
          * Vec2D x.
          * @member {number} x
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @instance
          */
         Vec2D.prototype.x = 0;
@@ -264,7 +264,7 @@ $root.models = (function() {
         /**
          * Vec2D y.
          * @member {number} y
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @instance
          */
         Vec2D.prototype.y = 0;
@@ -272,21 +272,21 @@ $root.models = (function() {
         /**
          * Creates a new Vec2D instance using the specified properties.
          * @function create
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
-         * @param {models.IVec2D=} [properties] Properties to set
-         * @returns {models.Vec2D} Vec2D instance
+         * @param {treasurehunterx.IVec2D=} [properties] Properties to set
+         * @returns {treasurehunterx.Vec2D} Vec2D instance
          */
         Vec2D.create = function create(properties) {
             return new Vec2D(properties);
         };
 
         /**
-         * Encodes the specified Vec2D message. Does not implicitly {@link models.Vec2D.verify|verify} messages.
+         * Encodes the specified Vec2D message. Does not implicitly {@link treasurehunterx.Vec2D.verify|verify} messages.
          * @function encode
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
-         * @param {models.Vec2D} message Vec2D message or plain object to encode
+         * @param {treasurehunterx.Vec2D} message Vec2D message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -301,11 +301,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Vec2D message, length delimited. Does not implicitly {@link models.Vec2D.verify|verify} messages.
+         * Encodes the specified Vec2D message, length delimited. Does not implicitly {@link treasurehunterx.Vec2D.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
-         * @param {models.Vec2D} message Vec2D message or plain object to encode
+         * @param {treasurehunterx.Vec2D} message Vec2D message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -316,18 +316,18 @@ $root.models = (function() {
         /**
          * Decodes a Vec2D message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Vec2D} Vec2D
+         * @returns {treasurehunterx.Vec2D} Vec2D
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Vec2D.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Vec2D();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Vec2D();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -348,10 +348,10 @@ $root.models = (function() {
         /**
          * Decodes a Vec2D message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Vec2D} Vec2D
+         * @returns {treasurehunterx.Vec2D} Vec2D
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -364,7 +364,7 @@ $root.models = (function() {
         /**
          * Verifies a Vec2D message.
          * @function verify
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -384,15 +384,15 @@ $root.models = (function() {
         /**
          * Creates a Vec2D message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Vec2D} Vec2D
+         * @returns {treasurehunterx.Vec2D} Vec2D
          */
         Vec2D.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Vec2D)
+            if (object instanceof $root.treasurehunterx.Vec2D)
                 return object;
-            var message = new $root.models.Vec2D();
+            var message = new $root.treasurehunterx.Vec2D();
             if (object.x != null)
                 message.x = Number(object.x);
             if (object.y != null)
@@ -403,9 +403,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Vec2D message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @static
-         * @param {models.Vec2D} message Vec2D
+         * @param {treasurehunterx.Vec2D} message Vec2D
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -427,7 +427,7 @@ $root.models = (function() {
         /**
          * Converts this Vec2D to JSON.
          * @function toJSON
-         * @memberof models.Vec2D
+         * @memberof treasurehunterx.Vec2D
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -438,16 +438,16 @@ $root.models = (function() {
         return Vec2D;
     })();
 
-    models.Player = (function() {
+    treasurehunterx.Player = (function() {
 
         /**
          * Properties of a Player.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IPlayer
-         * @property {number|Long|null} [id] Player id
+         * @property {number|null} [id] Player id
          * @property {number|null} [x] Player x
          * @property {number|null} [y] Player y
-         * @property {models.Direction|null} [dir] Player dir
+         * @property {treasurehunterx.Direction|null} [dir] Player dir
          * @property {number|null} [speed] Player speed
          * @property {number|null} [battleState] Player battleState
          * @property {number|null} [lastMoveGmtMillis] Player lastMoveGmtMillis
@@ -458,11 +458,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Player.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Player.
          * @implements IPlayer
          * @constructor
-         * @param {models.IPlayer=} [properties] Properties to set
+         * @param {treasurehunterx.IPlayer=} [properties] Properties to set
          */
         function Player(properties) {
             if (properties)
@@ -473,16 +473,16 @@ $root.models = (function() {
 
         /**
          * Player id.
-         * @member {number|Long} id
-         * @memberof models.Player
+         * @member {number} id
+         * @memberof treasurehunterx.Player
          * @instance
          */
-        Player.prototype.id = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        Player.prototype.id = 0;
 
         /**
          * Player x.
          * @member {number} x
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.x = 0;
@@ -490,15 +490,15 @@ $root.models = (function() {
         /**
          * Player y.
          * @member {number} y
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.y = 0;
 
         /**
          * Player dir.
-         * @member {models.Direction|null|undefined} dir
-         * @memberof models.Player
+         * @member {treasurehunterx.Direction|null|undefined} dir
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.dir = null;
@@ -506,7 +506,7 @@ $root.models = (function() {
         /**
          * Player speed.
          * @member {number} speed
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.speed = 0;
@@ -514,7 +514,7 @@ $root.models = (function() {
         /**
          * Player battleState.
          * @member {number} battleState
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.battleState = 0;
@@ -522,7 +522,7 @@ $root.models = (function() {
         /**
          * Player lastMoveGmtMillis.
          * @member {number} lastMoveGmtMillis
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.lastMoveGmtMillis = 0;
@@ -530,7 +530,7 @@ $root.models = (function() {
         /**
          * Player score.
          * @member {number} score
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.score = 0;
@@ -538,7 +538,7 @@ $root.models = (function() {
         /**
          * Player removed.
          * @member {boolean} removed
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.removed = false;
@@ -546,7 +546,7 @@ $root.models = (function() {
         /**
          * Player joinIndex.
          * @member {number} joinIndex
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          */
         Player.prototype.joinIndex = 0;
@@ -554,21 +554,21 @@ $root.models = (function() {
         /**
          * Creates a new Player instance using the specified properties.
          * @function create
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
-         * @param {models.IPlayer=} [properties] Properties to set
-         * @returns {models.Player} Player instance
+         * @param {treasurehunterx.IPlayer=} [properties] Properties to set
+         * @returns {treasurehunterx.Player} Player instance
          */
         Player.create = function create(properties) {
             return new Player(properties);
         };
 
         /**
-         * Encodes the specified Player message. Does not implicitly {@link models.Player.verify|verify} messages.
+         * Encodes the specified Player message. Does not implicitly {@link treasurehunterx.Player.verify|verify} messages.
          * @function encode
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
-         * @param {models.Player} message Player message or plain object to encode
+         * @param {treasurehunterx.Player} message Player message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -576,13 +576,13 @@ $root.models = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.id != null && message.hasOwnProperty("id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.id);
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
             if (message.x != null && message.hasOwnProperty("x"))
                 writer.uint32(/* id 2, wireType 1 =*/17).double(message.x);
             if (message.y != null && message.hasOwnProperty("y"))
                 writer.uint32(/* id 3, wireType 1 =*/25).double(message.y);
             if (message.dir != null && message.hasOwnProperty("dir"))
-                $root.models.Direction.encode(message.dir, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                $root.treasurehunterx.Direction.encode(message.dir, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             if (message.speed != null && message.hasOwnProperty("speed"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.speed);
             if (message.battleState != null && message.hasOwnProperty("battleState"))
@@ -599,11 +599,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Player message, length delimited. Does not implicitly {@link models.Player.verify|verify} messages.
+         * Encodes the specified Player message, length delimited. Does not implicitly {@link treasurehunterx.Player.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
-         * @param {models.Player} message Player message or plain object to encode
+         * @param {treasurehunterx.Player} message Player message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -614,23 +614,23 @@ $root.models = (function() {
         /**
          * Decodes a Player message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Player} Player
+         * @returns {treasurehunterx.Player} Player
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Player.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Player();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Player();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.id = reader.int64();
+                    message.id = reader.int32();
                     break;
                 case 2:
                     message.x = reader.double();
@@ -639,7 +639,7 @@ $root.models = (function() {
                     message.y = reader.double();
                     break;
                 case 4:
-                    message.dir = $root.models.Direction.decode(reader, reader.uint32());
+                    message.dir = $root.treasurehunterx.Direction.decode(reader, reader.uint32());
                     break;
                 case 5:
                     message.speed = reader.int32();
@@ -670,10 +670,10 @@ $root.models = (function() {
         /**
          * Decodes a Player message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Player} Player
+         * @returns {treasurehunterx.Player} Player
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -686,7 +686,7 @@ $root.models = (function() {
         /**
          * Verifies a Player message.
          * @function verify
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -695,8 +695,8 @@ $root.models = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.id != null && message.hasOwnProperty("id"))
-                if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
-                    return "id: integer|Long expected";
+                if (!$util.isInteger(message.id))
+                    return "id: integer expected";
             if (message.x != null && message.hasOwnProperty("x"))
                 if (typeof message.x !== "number")
                     return "x: number expected";
@@ -704,7 +704,7 @@ $root.models = (function() {
                 if (typeof message.y !== "number")
                     return "y: number expected";
             if (message.dir != null && message.hasOwnProperty("dir")) {
-                var error = $root.models.Direction.verify(message.dir);
+                var error = $root.treasurehunterx.Direction.verify(message.dir);
                 if (error)
                     return "dir." + error;
             }
@@ -732,32 +732,25 @@ $root.models = (function() {
         /**
          * Creates a Player message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Player} Player
+         * @returns {treasurehunterx.Player} Player
          */
         Player.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Player)
+            if (object instanceof $root.treasurehunterx.Player)
                 return object;
-            var message = new $root.models.Player();
+            var message = new $root.treasurehunterx.Player();
             if (object.id != null)
-                if ($util.Long)
-                    (message.id = $util.Long.fromValue(object.id)).unsigned = false;
-                else if (typeof object.id === "string")
-                    message.id = parseInt(object.id, 10);
-                else if (typeof object.id === "number")
-                    message.id = object.id;
-                else if (typeof object.id === "object")
-                    message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber();
+                message.id = object.id | 0;
             if (object.x != null)
                 message.x = Number(object.x);
             if (object.y != null)
                 message.y = Number(object.y);
             if (object.dir != null) {
                 if (typeof object.dir !== "object")
-                    throw TypeError(".models.Player.dir: object expected");
-                message.dir = $root.models.Direction.fromObject(object.dir);
+                    throw TypeError(".treasurehunterx.Player.dir: object expected");
+                message.dir = $root.treasurehunterx.Direction.fromObject(object.dir);
             }
             if (object.speed != null)
                 message.speed = object.speed | 0;
@@ -777,9 +770,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Player message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @static
-         * @param {models.Player} message Player
+         * @param {treasurehunterx.Player} message Player
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -788,11 +781,7 @@ $root.models = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                if ($util.Long) {
-                    var long = new $util.Long(0, 0, false);
-                    object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
-                } else
-                    object.id = options.longs === String ? "0" : 0;
+                object.id = 0;
                 object.x = 0;
                 object.y = 0;
                 object.dir = null;
@@ -804,16 +793,13 @@ $root.models = (function() {
                 object.joinIndex = 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
-                if (typeof message.id === "number")
-                    object.id = options.longs === String ? String(message.id) : message.id;
-                else
-                    object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber() : message.id;
+                object.id = message.id;
             if (message.x != null && message.hasOwnProperty("x"))
                 object.x = options.json && !isFinite(message.x) ? String(message.x) : message.x;
             if (message.y != null && message.hasOwnProperty("y"))
                 object.y = options.json && !isFinite(message.y) ? String(message.y) : message.y;
             if (message.dir != null && message.hasOwnProperty("dir"))
-                object.dir = $root.models.Direction.toObject(message.dir, options);
+                object.dir = $root.treasurehunterx.Direction.toObject(message.dir, options);
             if (message.speed != null && message.hasOwnProperty("speed"))
                 object.speed = message.speed;
             if (message.battleState != null && message.hasOwnProperty("battleState"))
@@ -832,7 +818,7 @@ $root.models = (function() {
         /**
          * Converts this Player to JSON.
          * @function toJSON
-         * @memberof models.Player
+         * @memberof treasurehunterx.Player
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -843,13 +829,13 @@ $root.models = (function() {
         return Player;
     })();
 
-    models.PlayerMeta = (function() {
+    treasurehunterx.PlayerMeta = (function() {
 
         /**
          * Properties of a PlayerMeta.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IPlayerMeta
-         * @property {number|Long|null} [id] PlayerMeta id
+         * @property {number|null} [id] PlayerMeta id
          * @property {string|null} [name] PlayerMeta name
          * @property {string|null} [displayName] PlayerMeta displayName
          * @property {string|null} [avatar] PlayerMeta avatar
@@ -858,11 +844,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new PlayerMeta.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a PlayerMeta.
          * @implements IPlayerMeta
          * @constructor
-         * @param {models.IPlayerMeta=} [properties] Properties to set
+         * @param {treasurehunterx.IPlayerMeta=} [properties] Properties to set
          */
         function PlayerMeta(properties) {
             if (properties)
@@ -873,16 +859,16 @@ $root.models = (function() {
 
         /**
          * PlayerMeta id.
-         * @member {number|Long} id
-         * @memberof models.PlayerMeta
+         * @member {number} id
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          */
-        PlayerMeta.prototype.id = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        PlayerMeta.prototype.id = 0;
 
         /**
          * PlayerMeta name.
          * @member {string} name
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          */
         PlayerMeta.prototype.name = "";
@@ -890,7 +876,7 @@ $root.models = (function() {
         /**
          * PlayerMeta displayName.
          * @member {string} displayName
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          */
         PlayerMeta.prototype.displayName = "";
@@ -898,7 +884,7 @@ $root.models = (function() {
         /**
          * PlayerMeta avatar.
          * @member {string} avatar
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          */
         PlayerMeta.prototype.avatar = "";
@@ -906,7 +892,7 @@ $root.models = (function() {
         /**
          * PlayerMeta joinIndex.
          * @member {number} joinIndex
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          */
         PlayerMeta.prototype.joinIndex = 0;
@@ -914,21 +900,21 @@ $root.models = (function() {
         /**
          * Creates a new PlayerMeta instance using the specified properties.
          * @function create
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
-         * @param {models.IPlayerMeta=} [properties] Properties to set
-         * @returns {models.PlayerMeta} PlayerMeta instance
+         * @param {treasurehunterx.IPlayerMeta=} [properties] Properties to set
+         * @returns {treasurehunterx.PlayerMeta} PlayerMeta instance
          */
         PlayerMeta.create = function create(properties) {
             return new PlayerMeta(properties);
         };
 
         /**
-         * Encodes the specified PlayerMeta message. Does not implicitly {@link models.PlayerMeta.verify|verify} messages.
+         * Encodes the specified PlayerMeta message. Does not implicitly {@link treasurehunterx.PlayerMeta.verify|verify} messages.
          * @function encode
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
-         * @param {models.PlayerMeta} message PlayerMeta message or plain object to encode
+         * @param {treasurehunterx.PlayerMeta} message PlayerMeta message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -936,7 +922,7 @@ $root.models = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.id != null && message.hasOwnProperty("id"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.id);
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
             if (message.name != null && message.hasOwnProperty("name"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
             if (message.displayName != null && message.hasOwnProperty("displayName"))
@@ -949,11 +935,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified PlayerMeta message, length delimited. Does not implicitly {@link models.PlayerMeta.verify|verify} messages.
+         * Encodes the specified PlayerMeta message, length delimited. Does not implicitly {@link treasurehunterx.PlayerMeta.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
-         * @param {models.PlayerMeta} message PlayerMeta message or plain object to encode
+         * @param {treasurehunterx.PlayerMeta} message PlayerMeta message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -964,23 +950,23 @@ $root.models = (function() {
         /**
          * Decodes a PlayerMeta message from the specified reader or buffer.
          * @function decode
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.PlayerMeta} PlayerMeta
+         * @returns {treasurehunterx.PlayerMeta} PlayerMeta
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         PlayerMeta.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.PlayerMeta();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.PlayerMeta();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.id = reader.int64();
+                    message.id = reader.int32();
                     break;
                 case 2:
                     message.name = reader.string();
@@ -1005,10 +991,10 @@ $root.models = (function() {
         /**
          * Decodes a PlayerMeta message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.PlayerMeta} PlayerMeta
+         * @returns {treasurehunterx.PlayerMeta} PlayerMeta
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -1021,7 +1007,7 @@ $root.models = (function() {
         /**
          * Verifies a PlayerMeta message.
          * @function verify
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1030,8 +1016,8 @@ $root.models = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.id != null && message.hasOwnProperty("id"))
-                if (!$util.isInteger(message.id) && !(message.id && $util.isInteger(message.id.low) && $util.isInteger(message.id.high)))
-                    return "id: integer|Long expected";
+                if (!$util.isInteger(message.id))
+                    return "id: integer expected";
             if (message.name != null && message.hasOwnProperty("name"))
                 if (!$util.isString(message.name))
                     return "name: string expected";
@@ -1050,24 +1036,17 @@ $root.models = (function() {
         /**
          * Creates a PlayerMeta message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.PlayerMeta} PlayerMeta
+         * @returns {treasurehunterx.PlayerMeta} PlayerMeta
          */
         PlayerMeta.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.PlayerMeta)
+            if (object instanceof $root.treasurehunterx.PlayerMeta)
                 return object;
-            var message = new $root.models.PlayerMeta();
+            var message = new $root.treasurehunterx.PlayerMeta();
             if (object.id != null)
-                if ($util.Long)
-                    (message.id = $util.Long.fromValue(object.id)).unsigned = false;
-                else if (typeof object.id === "string")
-                    message.id = parseInt(object.id, 10);
-                else if (typeof object.id === "number")
-                    message.id = object.id;
-                else if (typeof object.id === "object")
-                    message.id = new $util.LongBits(object.id.low >>> 0, object.id.high >>> 0).toNumber();
+                message.id = object.id | 0;
             if (object.name != null)
                 message.name = String(object.name);
             if (object.displayName != null)
@@ -1082,9 +1061,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a PlayerMeta message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @static
-         * @param {models.PlayerMeta} message PlayerMeta
+         * @param {treasurehunterx.PlayerMeta} message PlayerMeta
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -1093,21 +1072,14 @@ $root.models = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                if ($util.Long) {
-                    var long = new $util.Long(0, 0, false);
-                    object.id = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
-                } else
-                    object.id = options.longs === String ? "0" : 0;
+                object.id = 0;
                 object.name = "";
                 object.displayName = "";
                 object.avatar = "";
                 object.joinIndex = 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
-                if (typeof message.id === "number")
-                    object.id = options.longs === String ? String(message.id) : message.id;
-                else
-                    object.id = options.longs === String ? $util.Long.prototype.toString.call(message.id) : options.longs === Number ? new $util.LongBits(message.id.low >>> 0, message.id.high >>> 0).toNumber() : message.id;
+                object.id = message.id;
             if (message.name != null && message.hasOwnProperty("name"))
                 object.name = message.name;
             if (message.displayName != null && message.hasOwnProperty("displayName"))
@@ -1122,7 +1094,7 @@ $root.models = (function() {
         /**
          * Converts this PlayerMeta to JSON.
          * @function toJSON
-         * @memberof models.PlayerMeta
+         * @memberof treasurehunterx.PlayerMeta
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -1133,11 +1105,11 @@ $root.models = (function() {
         return PlayerMeta;
     })();
 
-    models.Treasure = (function() {
+    treasurehunterx.Treasure = (function() {
 
         /**
          * Properties of a Treasure.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface ITreasure
          * @property {number|null} [id] Treasure id
          * @property {number|null} [localIdInBattle] Treasure localIdInBattle
@@ -1150,11 +1122,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Treasure.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Treasure.
          * @implements ITreasure
          * @constructor
-         * @param {models.ITreasure=} [properties] Properties to set
+         * @param {treasurehunterx.ITreasure=} [properties] Properties to set
          */
         function Treasure(properties) {
             if (properties)
@@ -1166,7 +1138,7 @@ $root.models = (function() {
         /**
          * Treasure id.
          * @member {number} id
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.id = 0;
@@ -1174,7 +1146,7 @@ $root.models = (function() {
         /**
          * Treasure localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.localIdInBattle = 0;
@@ -1182,7 +1154,7 @@ $root.models = (function() {
         /**
          * Treasure score.
          * @member {number} score
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.score = 0;
@@ -1190,7 +1162,7 @@ $root.models = (function() {
         /**
          * Treasure x.
          * @member {number} x
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.x = 0;
@@ -1198,7 +1170,7 @@ $root.models = (function() {
         /**
          * Treasure y.
          * @member {number} y
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.y = 0;
@@ -1206,7 +1178,7 @@ $root.models = (function() {
         /**
          * Treasure removed.
          * @member {boolean} removed
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.removed = false;
@@ -1214,7 +1186,7 @@ $root.models = (function() {
         /**
          * Treasure type.
          * @member {number} type
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          */
         Treasure.prototype.type = 0;
@@ -1222,21 +1194,21 @@ $root.models = (function() {
         /**
          * Creates a new Treasure instance using the specified properties.
          * @function create
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
-         * @param {models.ITreasure=} [properties] Properties to set
-         * @returns {models.Treasure} Treasure instance
+         * @param {treasurehunterx.ITreasure=} [properties] Properties to set
+         * @returns {treasurehunterx.Treasure} Treasure instance
          */
         Treasure.create = function create(properties) {
             return new Treasure(properties);
         };
 
         /**
-         * Encodes the specified Treasure message. Does not implicitly {@link models.Treasure.verify|verify} messages.
+         * Encodes the specified Treasure message. Does not implicitly {@link treasurehunterx.Treasure.verify|verify} messages.
          * @function encode
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
-         * @param {models.Treasure} message Treasure message or plain object to encode
+         * @param {treasurehunterx.Treasure} message Treasure message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1261,11 +1233,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Treasure message, length delimited. Does not implicitly {@link models.Treasure.verify|verify} messages.
+         * Encodes the specified Treasure message, length delimited. Does not implicitly {@link treasurehunterx.Treasure.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
-         * @param {models.Treasure} message Treasure message or plain object to encode
+         * @param {treasurehunterx.Treasure} message Treasure message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1276,18 +1248,18 @@ $root.models = (function() {
         /**
          * Decodes a Treasure message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Treasure} Treasure
+         * @returns {treasurehunterx.Treasure} Treasure
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Treasure.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Treasure();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Treasure();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1323,10 +1295,10 @@ $root.models = (function() {
         /**
          * Decodes a Treasure message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Treasure} Treasure
+         * @returns {treasurehunterx.Treasure} Treasure
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -1339,7 +1311,7 @@ $root.models = (function() {
         /**
          * Verifies a Treasure message.
          * @function verify
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1374,15 +1346,15 @@ $root.models = (function() {
         /**
          * Creates a Treasure message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Treasure} Treasure
+         * @returns {treasurehunterx.Treasure} Treasure
          */
         Treasure.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Treasure)
+            if (object instanceof $root.treasurehunterx.Treasure)
                 return object;
-            var message = new $root.models.Treasure();
+            var message = new $root.treasurehunterx.Treasure();
             if (object.id != null)
                 message.id = object.id | 0;
             if (object.localIdInBattle != null)
@@ -1403,9 +1375,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Treasure message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @static
-         * @param {models.Treasure} message Treasure
+         * @param {treasurehunterx.Treasure} message Treasure
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -1442,7 +1414,7 @@ $root.models = (function() {
         /**
          * Converts this Treasure to JSON.
          * @function toJSON
-         * @memberof models.Treasure
+         * @memberof treasurehunterx.Treasure
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -1453,28 +1425,28 @@ $root.models = (function() {
         return Treasure;
     })();
 
-    models.Bullet = (function() {
+    treasurehunterx.Bullet = (function() {
 
         /**
          * Properties of a Bullet.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IBullet
          * @property {number|null} [localIdInBattle] Bullet localIdInBattle
          * @property {number|null} [linearSpeed] Bullet linearSpeed
          * @property {number|null} [x] Bullet x
          * @property {number|null} [y] Bullet y
          * @property {boolean|null} [removed] Bullet removed
-         * @property {models.Vec2D|null} [startAtPoint] Bullet startAtPoint
-         * @property {models.Vec2D|null} [endAtPoint] Bullet endAtPoint
+         * @property {treasurehunterx.Vec2D|null} [startAtPoint] Bullet startAtPoint
+         * @property {treasurehunterx.Vec2D|null} [endAtPoint] Bullet endAtPoint
          */
 
         /**
          * Constructs a new Bullet.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Bullet.
          * @implements IBullet
          * @constructor
-         * @param {models.IBullet=} [properties] Properties to set
+         * @param {treasurehunterx.IBullet=} [properties] Properties to set
          */
         function Bullet(properties) {
             if (properties)
@@ -1486,7 +1458,7 @@ $root.models = (function() {
         /**
          * Bullet localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.localIdInBattle = 0;
@@ -1494,7 +1466,7 @@ $root.models = (function() {
         /**
          * Bullet linearSpeed.
          * @member {number} linearSpeed
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.linearSpeed = 0;
@@ -1502,7 +1474,7 @@ $root.models = (function() {
         /**
          * Bullet x.
          * @member {number} x
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.x = 0;
@@ -1510,7 +1482,7 @@ $root.models = (function() {
         /**
          * Bullet y.
          * @member {number} y
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.y = 0;
@@ -1518,23 +1490,23 @@ $root.models = (function() {
         /**
          * Bullet removed.
          * @member {boolean} removed
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.removed = false;
 
         /**
          * Bullet startAtPoint.
-         * @member {models.Vec2D|null|undefined} startAtPoint
-         * @memberof models.Bullet
+         * @member {treasurehunterx.Vec2D|null|undefined} startAtPoint
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.startAtPoint = null;
 
         /**
          * Bullet endAtPoint.
-         * @member {models.Vec2D|null|undefined} endAtPoint
-         * @memberof models.Bullet
+         * @member {treasurehunterx.Vec2D|null|undefined} endAtPoint
+         * @memberof treasurehunterx.Bullet
          * @instance
          */
         Bullet.prototype.endAtPoint = null;
@@ -1542,21 +1514,21 @@ $root.models = (function() {
         /**
          * Creates a new Bullet instance using the specified properties.
          * @function create
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
-         * @param {models.IBullet=} [properties] Properties to set
-         * @returns {models.Bullet} Bullet instance
+         * @param {treasurehunterx.IBullet=} [properties] Properties to set
+         * @returns {treasurehunterx.Bullet} Bullet instance
          */
         Bullet.create = function create(properties) {
             return new Bullet(properties);
         };
 
         /**
-         * Encodes the specified Bullet message. Does not implicitly {@link models.Bullet.verify|verify} messages.
+         * Encodes the specified Bullet message. Does not implicitly {@link treasurehunterx.Bullet.verify|verify} messages.
          * @function encode
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
-         * @param {models.Bullet} message Bullet message or plain object to encode
+         * @param {treasurehunterx.Bullet} message Bullet message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1574,18 +1546,18 @@ $root.models = (function() {
             if (message.removed != null && message.hasOwnProperty("removed"))
                 writer.uint32(/* id 5, wireType 0 =*/40).bool(message.removed);
             if (message.startAtPoint != null && message.hasOwnProperty("startAtPoint"))
-                $root.models.Vec2D.encode(message.startAtPoint, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                $root.treasurehunterx.Vec2D.encode(message.startAtPoint, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.endAtPoint != null && message.hasOwnProperty("endAtPoint"))
-                $root.models.Vec2D.encode(message.endAtPoint, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                $root.treasurehunterx.Vec2D.encode(message.endAtPoint, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified Bullet message, length delimited. Does not implicitly {@link models.Bullet.verify|verify} messages.
+         * Encodes the specified Bullet message, length delimited. Does not implicitly {@link treasurehunterx.Bullet.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
-         * @param {models.Bullet} message Bullet message or plain object to encode
+         * @param {treasurehunterx.Bullet} message Bullet message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1596,18 +1568,18 @@ $root.models = (function() {
         /**
          * Decodes a Bullet message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Bullet} Bullet
+         * @returns {treasurehunterx.Bullet} Bullet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Bullet.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Bullet();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Bullet();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1627,10 +1599,10 @@ $root.models = (function() {
                     message.removed = reader.bool();
                     break;
                 case 6:
-                    message.startAtPoint = $root.models.Vec2D.decode(reader, reader.uint32());
+                    message.startAtPoint = $root.treasurehunterx.Vec2D.decode(reader, reader.uint32());
                     break;
                 case 7:
-                    message.endAtPoint = $root.models.Vec2D.decode(reader, reader.uint32());
+                    message.endAtPoint = $root.treasurehunterx.Vec2D.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1643,10 +1615,10 @@ $root.models = (function() {
         /**
          * Decodes a Bullet message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Bullet} Bullet
+         * @returns {treasurehunterx.Bullet} Bullet
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -1659,7 +1631,7 @@ $root.models = (function() {
         /**
          * Verifies a Bullet message.
          * @function verify
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1683,12 +1655,12 @@ $root.models = (function() {
                 if (typeof message.removed !== "boolean")
                     return "removed: boolean expected";
             if (message.startAtPoint != null && message.hasOwnProperty("startAtPoint")) {
-                var error = $root.models.Vec2D.verify(message.startAtPoint);
+                var error = $root.treasurehunterx.Vec2D.verify(message.startAtPoint);
                 if (error)
                     return "startAtPoint." + error;
             }
             if (message.endAtPoint != null && message.hasOwnProperty("endAtPoint")) {
-                var error = $root.models.Vec2D.verify(message.endAtPoint);
+                var error = $root.treasurehunterx.Vec2D.verify(message.endAtPoint);
                 if (error)
                     return "endAtPoint." + error;
             }
@@ -1698,15 +1670,15 @@ $root.models = (function() {
         /**
          * Creates a Bullet message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Bullet} Bullet
+         * @returns {treasurehunterx.Bullet} Bullet
          */
         Bullet.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Bullet)
+            if (object instanceof $root.treasurehunterx.Bullet)
                 return object;
-            var message = new $root.models.Bullet();
+            var message = new $root.treasurehunterx.Bullet();
             if (object.localIdInBattle != null)
                 message.localIdInBattle = object.localIdInBattle | 0;
             if (object.linearSpeed != null)
@@ -1719,13 +1691,13 @@ $root.models = (function() {
                 message.removed = Boolean(object.removed);
             if (object.startAtPoint != null) {
                 if (typeof object.startAtPoint !== "object")
-                    throw TypeError(".models.Bullet.startAtPoint: object expected");
-                message.startAtPoint = $root.models.Vec2D.fromObject(object.startAtPoint);
+                    throw TypeError(".treasurehunterx.Bullet.startAtPoint: object expected");
+                message.startAtPoint = $root.treasurehunterx.Vec2D.fromObject(object.startAtPoint);
             }
             if (object.endAtPoint != null) {
                 if (typeof object.endAtPoint !== "object")
-                    throw TypeError(".models.Bullet.endAtPoint: object expected");
-                message.endAtPoint = $root.models.Vec2D.fromObject(object.endAtPoint);
+                    throw TypeError(".treasurehunterx.Bullet.endAtPoint: object expected");
+                message.endAtPoint = $root.treasurehunterx.Vec2D.fromObject(object.endAtPoint);
             }
             return message;
         };
@@ -1733,9 +1705,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Bullet message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @static
-         * @param {models.Bullet} message Bullet
+         * @param {treasurehunterx.Bullet} message Bullet
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -1763,16 +1735,16 @@ $root.models = (function() {
             if (message.removed != null && message.hasOwnProperty("removed"))
                 object.removed = message.removed;
             if (message.startAtPoint != null && message.hasOwnProperty("startAtPoint"))
-                object.startAtPoint = $root.models.Vec2D.toObject(message.startAtPoint, options);
+                object.startAtPoint = $root.treasurehunterx.Vec2D.toObject(message.startAtPoint, options);
             if (message.endAtPoint != null && message.hasOwnProperty("endAtPoint"))
-                object.endAtPoint = $root.models.Vec2D.toObject(message.endAtPoint, options);
+                object.endAtPoint = $root.treasurehunterx.Vec2D.toObject(message.endAtPoint, options);
             return object;
         };
 
         /**
          * Converts this Bullet to JSON.
          * @function toJSON
-         * @memberof models.Bullet
+         * @memberof treasurehunterx.Bullet
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -1783,11 +1755,11 @@ $root.models = (function() {
         return Bullet;
     })();
 
-    models.Trap = (function() {
+    treasurehunterx.Trap = (function() {
 
         /**
          * Properties of a Trap.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface ITrap
          * @property {number|null} [id] Trap id
          * @property {number|null} [localIdInBattle] Trap localIdInBattle
@@ -1799,11 +1771,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Trap.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Trap.
          * @implements ITrap
          * @constructor
-         * @param {models.ITrap=} [properties] Properties to set
+         * @param {treasurehunterx.ITrap=} [properties] Properties to set
          */
         function Trap(properties) {
             if (properties)
@@ -1815,7 +1787,7 @@ $root.models = (function() {
         /**
          * Trap id.
          * @member {number} id
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.id = 0;
@@ -1823,7 +1795,7 @@ $root.models = (function() {
         /**
          * Trap localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.localIdInBattle = 0;
@@ -1831,7 +1803,7 @@ $root.models = (function() {
         /**
          * Trap type.
          * @member {number} type
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.type = 0;
@@ -1839,7 +1811,7 @@ $root.models = (function() {
         /**
          * Trap x.
          * @member {number} x
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.x = 0;
@@ -1847,7 +1819,7 @@ $root.models = (function() {
         /**
          * Trap y.
          * @member {number} y
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.y = 0;
@@ -1855,7 +1827,7 @@ $root.models = (function() {
         /**
          * Trap removed.
          * @member {boolean} removed
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          */
         Trap.prototype.removed = false;
@@ -1863,21 +1835,21 @@ $root.models = (function() {
         /**
          * Creates a new Trap instance using the specified properties.
          * @function create
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
-         * @param {models.ITrap=} [properties] Properties to set
-         * @returns {models.Trap} Trap instance
+         * @param {treasurehunterx.ITrap=} [properties] Properties to set
+         * @returns {treasurehunterx.Trap} Trap instance
          */
         Trap.create = function create(properties) {
             return new Trap(properties);
         };
 
         /**
-         * Encodes the specified Trap message. Does not implicitly {@link models.Trap.verify|verify} messages.
+         * Encodes the specified Trap message. Does not implicitly {@link treasurehunterx.Trap.verify|verify} messages.
          * @function encode
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
-         * @param {models.Trap} message Trap message or plain object to encode
+         * @param {treasurehunterx.Trap} message Trap message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1900,11 +1872,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Trap message, length delimited. Does not implicitly {@link models.Trap.verify|verify} messages.
+         * Encodes the specified Trap message, length delimited. Does not implicitly {@link treasurehunterx.Trap.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
-         * @param {models.Trap} message Trap message or plain object to encode
+         * @param {treasurehunterx.Trap} message Trap message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1915,18 +1887,18 @@ $root.models = (function() {
         /**
          * Decodes a Trap message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Trap} Trap
+         * @returns {treasurehunterx.Trap} Trap
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Trap.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Trap();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Trap();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1959,10 +1931,10 @@ $root.models = (function() {
         /**
          * Decodes a Trap message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Trap} Trap
+         * @returns {treasurehunterx.Trap} Trap
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -1975,7 +1947,7 @@ $root.models = (function() {
         /**
          * Verifies a Trap message.
          * @function verify
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2007,15 +1979,15 @@ $root.models = (function() {
         /**
          * Creates a Trap message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Trap} Trap
+         * @returns {treasurehunterx.Trap} Trap
          */
         Trap.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Trap)
+            if (object instanceof $root.treasurehunterx.Trap)
                 return object;
-            var message = new $root.models.Trap();
+            var message = new $root.treasurehunterx.Trap();
             if (object.id != null)
                 message.id = object.id | 0;
             if (object.localIdInBattle != null)
@@ -2034,9 +2006,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Trap message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @static
-         * @param {models.Trap} message Trap
+         * @param {treasurehunterx.Trap} message Trap
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -2070,7 +2042,7 @@ $root.models = (function() {
         /**
          * Converts this Trap to JSON.
          * @function toJSON
-         * @memberof models.Trap
+         * @memberof treasurehunterx.Trap
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -2081,29 +2053,29 @@ $root.models = (function() {
         return Trap;
     })();
 
-    models.SpeedShoes = (function() {
+    treasurehunterx.SpeedShoe = (function() {
 
         /**
-         * Properties of a SpeedShoes.
-         * @memberof models
-         * @interface ISpeedShoes
-         * @property {number|null} [id] SpeedShoes id
-         * @property {number|null} [localIdInBattle] SpeedShoes localIdInBattle
-         * @property {number|null} [x] SpeedShoes x
-         * @property {number|null} [y] SpeedShoes y
-         * @property {boolean|null} [removed] SpeedShoes removed
-         * @property {number|null} [type] SpeedShoes type
+         * Properties of a SpeedShoe.
+         * @memberof treasurehunterx
+         * @interface ISpeedShoe
+         * @property {number|null} [id] SpeedShoe id
+         * @property {number|null} [localIdInBattle] SpeedShoe localIdInBattle
+         * @property {number|null} [x] SpeedShoe x
+         * @property {number|null} [y] SpeedShoe y
+         * @property {boolean|null} [removed] SpeedShoe removed
+         * @property {number|null} [type] SpeedShoe type
          */
 
         /**
-         * Constructs a new SpeedShoes.
-         * @memberof models
-         * @classdesc Represents a SpeedShoes.
-         * @implements ISpeedShoes
+         * Constructs a new SpeedShoe.
+         * @memberof treasurehunterx
+         * @classdesc Represents a SpeedShoe.
+         * @implements ISpeedShoe
          * @constructor
-         * @param {models.ISpeedShoes=} [properties] Properties to set
+         * @param {treasurehunterx.ISpeedShoe=} [properties] Properties to set
          */
-        function SpeedShoes(properties) {
+        function SpeedShoe(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -2111,75 +2083,75 @@ $root.models = (function() {
         }
 
         /**
-         * SpeedShoes id.
+         * SpeedShoe id.
          * @member {number} id
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.id = 0;
+        SpeedShoe.prototype.id = 0;
 
         /**
-         * SpeedShoes localIdInBattle.
+         * SpeedShoe localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.localIdInBattle = 0;
+        SpeedShoe.prototype.localIdInBattle = 0;
 
         /**
-         * SpeedShoes x.
+         * SpeedShoe x.
          * @member {number} x
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.x = 0;
+        SpeedShoe.prototype.x = 0;
 
         /**
-         * SpeedShoes y.
+         * SpeedShoe y.
          * @member {number} y
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.y = 0;
+        SpeedShoe.prototype.y = 0;
 
         /**
-         * SpeedShoes removed.
+         * SpeedShoe removed.
          * @member {boolean} removed
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.removed = false;
+        SpeedShoe.prototype.removed = false;
 
         /**
-         * SpeedShoes type.
+         * SpeedShoe type.
          * @member {number} type
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          */
-        SpeedShoes.prototype.type = 0;
+        SpeedShoe.prototype.type = 0;
 
         /**
-         * Creates a new SpeedShoes instance using the specified properties.
+         * Creates a new SpeedShoe instance using the specified properties.
          * @function create
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
-         * @param {models.ISpeedShoes=} [properties] Properties to set
-         * @returns {models.SpeedShoes} SpeedShoes instance
+         * @param {treasurehunterx.ISpeedShoe=} [properties] Properties to set
+         * @returns {treasurehunterx.SpeedShoe} SpeedShoe instance
          */
-        SpeedShoes.create = function create(properties) {
-            return new SpeedShoes(properties);
+        SpeedShoe.create = function create(properties) {
+            return new SpeedShoe(properties);
         };
 
         /**
-         * Encodes the specified SpeedShoes message. Does not implicitly {@link models.SpeedShoes.verify|verify} messages.
+         * Encodes the specified SpeedShoe message. Does not implicitly {@link treasurehunterx.SpeedShoe.verify|verify} messages.
          * @function encode
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
-         * @param {models.SpeedShoes} message SpeedShoes message or plain object to encode
+         * @param {treasurehunterx.SpeedShoe} message SpeedShoe message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        SpeedShoes.encode = function encode(message, writer) {
+        SpeedShoe.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.id != null && message.hasOwnProperty("id"))
@@ -2198,33 +2170,33 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified SpeedShoes message, length delimited. Does not implicitly {@link models.SpeedShoes.verify|verify} messages.
+         * Encodes the specified SpeedShoe message, length delimited. Does not implicitly {@link treasurehunterx.SpeedShoe.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
-         * @param {models.SpeedShoes} message SpeedShoes message or plain object to encode
+         * @param {treasurehunterx.SpeedShoe} message SpeedShoe message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        SpeedShoes.encodeDelimited = function encodeDelimited(message, writer) {
+        SpeedShoe.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a SpeedShoes message from the specified reader or buffer.
+         * Decodes a SpeedShoe message from the specified reader or buffer.
          * @function decode
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.SpeedShoes} SpeedShoes
+         * @returns {treasurehunterx.SpeedShoe} SpeedShoe
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        SpeedShoes.decode = function decode(reader, length) {
+        SpeedShoe.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.SpeedShoes();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.SpeedShoe();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2255,30 +2227,30 @@ $root.models = (function() {
         };
 
         /**
-         * Decodes a SpeedShoes message from the specified reader or buffer, length delimited.
+         * Decodes a SpeedShoe message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.SpeedShoes} SpeedShoes
+         * @returns {treasurehunterx.SpeedShoe} SpeedShoe
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        SpeedShoes.decodeDelimited = function decodeDelimited(reader) {
+        SpeedShoe.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a SpeedShoes message.
+         * Verifies a SpeedShoe message.
          * @function verify
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        SpeedShoes.verify = function verify(message) {
+        SpeedShoe.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.id != null && message.hasOwnProperty("id"))
@@ -2303,17 +2275,17 @@ $root.models = (function() {
         };
 
         /**
-         * Creates a SpeedShoes message from a plain object. Also converts values to their respective internal types.
+         * Creates a SpeedShoe message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.SpeedShoes} SpeedShoes
+         * @returns {treasurehunterx.SpeedShoe} SpeedShoe
          */
-        SpeedShoes.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.SpeedShoes)
+        SpeedShoe.fromObject = function fromObject(object) {
+            if (object instanceof $root.treasurehunterx.SpeedShoe)
                 return object;
-            var message = new $root.models.SpeedShoes();
+            var message = new $root.treasurehunterx.SpeedShoe();
             if (object.id != null)
                 message.id = object.id | 0;
             if (object.localIdInBattle != null)
@@ -2330,15 +2302,15 @@ $root.models = (function() {
         };
 
         /**
-         * Creates a plain object from a SpeedShoes message. Also converts values to other types if specified.
+         * Creates a plain object from a SpeedShoe message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @static
-         * @param {models.SpeedShoes} message SpeedShoes
+         * @param {treasurehunterx.SpeedShoe} message SpeedShoe
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        SpeedShoes.toObject = function toObject(message, options) {
+        SpeedShoe.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
@@ -2366,24 +2338,24 @@ $root.models = (function() {
         };
 
         /**
-         * Converts this SpeedShoes to JSON.
+         * Converts this SpeedShoe to JSON.
          * @function toJSON
-         * @memberof models.SpeedShoes
+         * @memberof treasurehunterx.SpeedShoe
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        SpeedShoes.prototype.toJSON = function toJSON() {
+        SpeedShoe.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return SpeedShoes;
+        return SpeedShoe;
     })();
 
-    models.Pumpkin = (function() {
+    treasurehunterx.Pumpkin = (function() {
 
         /**
          * Properties of a Pumpkin.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IPumpkin
          * @property {number|null} [localIdInBattle] Pumpkin localIdInBattle
          * @property {number|null} [linearSpeed] Pumpkin linearSpeed
@@ -2394,11 +2366,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new Pumpkin.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a Pumpkin.
          * @implements IPumpkin
          * @constructor
-         * @param {models.IPumpkin=} [properties] Properties to set
+         * @param {treasurehunterx.IPumpkin=} [properties] Properties to set
          */
         function Pumpkin(properties) {
             if (properties)
@@ -2410,7 +2382,7 @@ $root.models = (function() {
         /**
          * Pumpkin localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          */
         Pumpkin.prototype.localIdInBattle = 0;
@@ -2418,7 +2390,7 @@ $root.models = (function() {
         /**
          * Pumpkin linearSpeed.
          * @member {number} linearSpeed
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          */
         Pumpkin.prototype.linearSpeed = 0;
@@ -2426,7 +2398,7 @@ $root.models = (function() {
         /**
          * Pumpkin x.
          * @member {number} x
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          */
         Pumpkin.prototype.x = 0;
@@ -2434,7 +2406,7 @@ $root.models = (function() {
         /**
          * Pumpkin y.
          * @member {number} y
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          */
         Pumpkin.prototype.y = 0;
@@ -2442,7 +2414,7 @@ $root.models = (function() {
         /**
          * Pumpkin removed.
          * @member {boolean} removed
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          */
         Pumpkin.prototype.removed = false;
@@ -2450,21 +2422,21 @@ $root.models = (function() {
         /**
          * Creates a new Pumpkin instance using the specified properties.
          * @function create
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
-         * @param {models.IPumpkin=} [properties] Properties to set
-         * @returns {models.Pumpkin} Pumpkin instance
+         * @param {treasurehunterx.IPumpkin=} [properties] Properties to set
+         * @returns {treasurehunterx.Pumpkin} Pumpkin instance
          */
         Pumpkin.create = function create(properties) {
             return new Pumpkin(properties);
         };
 
         /**
-         * Encodes the specified Pumpkin message. Does not implicitly {@link models.Pumpkin.verify|verify} messages.
+         * Encodes the specified Pumpkin message. Does not implicitly {@link treasurehunterx.Pumpkin.verify|verify} messages.
          * @function encode
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
-         * @param {models.Pumpkin} message Pumpkin message or plain object to encode
+         * @param {treasurehunterx.Pumpkin} message Pumpkin message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2485,11 +2457,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified Pumpkin message, length delimited. Does not implicitly {@link models.Pumpkin.verify|verify} messages.
+         * Encodes the specified Pumpkin message, length delimited. Does not implicitly {@link treasurehunterx.Pumpkin.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
-         * @param {models.Pumpkin} message Pumpkin message or plain object to encode
+         * @param {treasurehunterx.Pumpkin} message Pumpkin message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2500,18 +2472,18 @@ $root.models = (function() {
         /**
          * Decodes a Pumpkin message from the specified reader or buffer.
          * @function decode
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.Pumpkin} Pumpkin
+         * @returns {treasurehunterx.Pumpkin} Pumpkin
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pumpkin.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.Pumpkin();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Pumpkin();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2541,10 +2513,10 @@ $root.models = (function() {
         /**
          * Decodes a Pumpkin message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.Pumpkin} Pumpkin
+         * @returns {treasurehunterx.Pumpkin} Pumpkin
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -2557,7 +2529,7 @@ $root.models = (function() {
         /**
          * Verifies a Pumpkin message.
          * @function verify
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2586,15 +2558,15 @@ $root.models = (function() {
         /**
          * Creates a Pumpkin message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.Pumpkin} Pumpkin
+         * @returns {treasurehunterx.Pumpkin} Pumpkin
          */
         Pumpkin.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.Pumpkin)
+            if (object instanceof $root.treasurehunterx.Pumpkin)
                 return object;
-            var message = new $root.models.Pumpkin();
+            var message = new $root.treasurehunterx.Pumpkin();
             if (object.localIdInBattle != null)
                 message.localIdInBattle = object.localIdInBattle | 0;
             if (object.linearSpeed != null)
@@ -2611,9 +2583,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a Pumpkin message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @static
-         * @param {models.Pumpkin} message Pumpkin
+         * @param {treasurehunterx.Pumpkin} message Pumpkin
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -2644,7 +2616,7 @@ $root.models = (function() {
         /**
          * Converts this Pumpkin to JSON.
          * @function toJSON
-         * @memberof models.Pumpkin
+         * @memberof treasurehunterx.Pumpkin
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -2655,11 +2627,11 @@ $root.models = (function() {
         return Pumpkin;
     })();
 
-    models.GuardTower = (function() {
+    treasurehunterx.GuardTower = (function() {
 
         /**
          * Properties of a GuardTower.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IGuardTower
          * @property {number|null} [id] GuardTower id
          * @property {number|null} [localIdInBattle] GuardTower localIdInBattle
@@ -2671,11 +2643,11 @@ $root.models = (function() {
 
         /**
          * Constructs a new GuardTower.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a GuardTower.
          * @implements IGuardTower
          * @constructor
-         * @param {models.IGuardTower=} [properties] Properties to set
+         * @param {treasurehunterx.IGuardTower=} [properties] Properties to set
          */
         function GuardTower(properties) {
             if (properties)
@@ -2687,7 +2659,7 @@ $root.models = (function() {
         /**
          * GuardTower id.
          * @member {number} id
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.id = 0;
@@ -2695,7 +2667,7 @@ $root.models = (function() {
         /**
          * GuardTower localIdInBattle.
          * @member {number} localIdInBattle
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.localIdInBattle = 0;
@@ -2703,7 +2675,7 @@ $root.models = (function() {
         /**
          * GuardTower type.
          * @member {number} type
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.type = 0;
@@ -2711,7 +2683,7 @@ $root.models = (function() {
         /**
          * GuardTower x.
          * @member {number} x
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.x = 0;
@@ -2719,7 +2691,7 @@ $root.models = (function() {
         /**
          * GuardTower y.
          * @member {number} y
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.y = 0;
@@ -2727,7 +2699,7 @@ $root.models = (function() {
         /**
          * GuardTower removed.
          * @member {boolean} removed
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          */
         GuardTower.prototype.removed = false;
@@ -2735,21 +2707,21 @@ $root.models = (function() {
         /**
          * Creates a new GuardTower instance using the specified properties.
          * @function create
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
-         * @param {models.IGuardTower=} [properties] Properties to set
-         * @returns {models.GuardTower} GuardTower instance
+         * @param {treasurehunterx.IGuardTower=} [properties] Properties to set
+         * @returns {treasurehunterx.GuardTower} GuardTower instance
          */
         GuardTower.create = function create(properties) {
             return new GuardTower(properties);
         };
 
         /**
-         * Encodes the specified GuardTower message. Does not implicitly {@link models.GuardTower.verify|verify} messages.
+         * Encodes the specified GuardTower message. Does not implicitly {@link treasurehunterx.GuardTower.verify|verify} messages.
          * @function encode
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
-         * @param {models.GuardTower} message GuardTower message or plain object to encode
+         * @param {treasurehunterx.GuardTower} message GuardTower message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2772,11 +2744,11 @@ $root.models = (function() {
         };
 
         /**
-         * Encodes the specified GuardTower message, length delimited. Does not implicitly {@link models.GuardTower.verify|verify} messages.
+         * Encodes the specified GuardTower message, length delimited. Does not implicitly {@link treasurehunterx.GuardTower.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
-         * @param {models.GuardTower} message GuardTower message or plain object to encode
+         * @param {treasurehunterx.GuardTower} message GuardTower message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2787,18 +2759,18 @@ $root.models = (function() {
         /**
          * Decodes a GuardTower message from the specified reader or buffer.
          * @function decode
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.GuardTower} GuardTower
+         * @returns {treasurehunterx.GuardTower} GuardTower
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         GuardTower.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.GuardTower();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.GuardTower();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2831,10 +2803,10 @@ $root.models = (function() {
         /**
          * Decodes a GuardTower message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.GuardTower} GuardTower
+         * @returns {treasurehunterx.GuardTower} GuardTower
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -2847,7 +2819,7 @@ $root.models = (function() {
         /**
          * Verifies a GuardTower message.
          * @function verify
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2879,15 +2851,15 @@ $root.models = (function() {
         /**
          * Creates a GuardTower message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.GuardTower} GuardTower
+         * @returns {treasurehunterx.GuardTower} GuardTower
          */
         GuardTower.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.GuardTower)
+            if (object instanceof $root.treasurehunterx.GuardTower)
                 return object;
-            var message = new $root.models.GuardTower();
+            var message = new $root.treasurehunterx.GuardTower();
             if (object.id != null)
                 message.id = object.id | 0;
             if (object.localIdInBattle != null)
@@ -2906,9 +2878,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a GuardTower message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @static
-         * @param {models.GuardTower} message GuardTower
+         * @param {treasurehunterx.GuardTower} message GuardTower
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -2942,7 +2914,7 @@ $root.models = (function() {
         /**
          * Converts this GuardTower to JSON.
          * @function toJSON
-         * @memberof models.GuardTower
+         * @memberof treasurehunterx.GuardTower
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -2953,33 +2925,33 @@ $root.models = (function() {
         return GuardTower;
     })();
 
-    models.RoomDownsyncFrame = (function() {
+    treasurehunterx.RoomDownsyncFrame = (function() {
 
         /**
          * Properties of a RoomDownsyncFrame.
-         * @memberof models
+         * @memberof treasurehunterx
          * @interface IRoomDownsyncFrame
          * @property {number|null} [id] RoomDownsyncFrame id
          * @property {number|null} [refFrameId] RoomDownsyncFrame refFrameId
-         * @property {Object.<string,models.Player>|null} [players] RoomDownsyncFrame players
+         * @property {Object.<string,treasurehunterx.Player>|null} [players] RoomDownsyncFrame players
          * @property {number|Long|null} [sentAt] RoomDownsyncFrame sentAt
          * @property {number|Long|null} [countdownNanos] RoomDownsyncFrame countdownNanos
-         * @property {Object.<string,models.Treasure>|null} [treasures] RoomDownsyncFrame treasures
-         * @property {Object.<string,models.Trap>|null} [traps] RoomDownsyncFrame traps
-         * @property {Object.<string,models.Bullet>|null} [bullets] RoomDownsyncFrame bullets
-         * @property {Object.<string,models.SpeedShoes>|null} [speedShoes] RoomDownsyncFrame speedShoes
-         * @property {Object.<string,models.Pumpkin>|null} [pumpkin] RoomDownsyncFrame pumpkin
-         * @property {Object.<string,models.GuardTower>|null} [guardTowers] RoomDownsyncFrame guardTowers
-         * @property {Object.<string,models.PlayerMeta>|null} [playerMetas] RoomDownsyncFrame playerMetas
+         * @property {Object.<string,treasurehunterx.Treasure>|null} [treasures] RoomDownsyncFrame treasures
+         * @property {Object.<string,treasurehunterx.Trap>|null} [traps] RoomDownsyncFrame traps
+         * @property {Object.<string,treasurehunterx.Bullet>|null} [bullets] RoomDownsyncFrame bullets
+         * @property {Object.<string,treasurehunterx.SpeedShoe>|null} [speedShoes] RoomDownsyncFrame speedShoes
+         * @property {Object.<string,treasurehunterx.Pumpkin>|null} [pumpkin] RoomDownsyncFrame pumpkin
+         * @property {Object.<string,treasurehunterx.GuardTower>|null} [guardTowers] RoomDownsyncFrame guardTowers
+         * @property {Object.<string,treasurehunterx.PlayerMeta>|null} [playerMetas] RoomDownsyncFrame playerMetas
          */
 
         /**
          * Constructs a new RoomDownsyncFrame.
-         * @memberof models
+         * @memberof treasurehunterx
          * @classdesc Represents a RoomDownsyncFrame.
          * @implements IRoomDownsyncFrame
          * @constructor
-         * @param {models.IRoomDownsyncFrame=} [properties] Properties to set
+         * @param {treasurehunterx.IRoomDownsyncFrame=} [properties] Properties to set
          */
         function RoomDownsyncFrame(properties) {
             this.players = {};
@@ -2999,7 +2971,7 @@ $root.models = (function() {
         /**
          * RoomDownsyncFrame id.
          * @member {number} id
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.id = 0;
@@ -3007,15 +2979,15 @@ $root.models = (function() {
         /**
          * RoomDownsyncFrame refFrameId.
          * @member {number} refFrameId
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.refFrameId = 0;
 
         /**
          * RoomDownsyncFrame players.
-         * @member {Object.<string,models.Player>} players
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.Player>} players
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.players = $util.emptyObject;
@@ -3023,7 +2995,7 @@ $root.models = (function() {
         /**
          * RoomDownsyncFrame sentAt.
          * @member {number|Long} sentAt
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.sentAt = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
@@ -3031,63 +3003,63 @@ $root.models = (function() {
         /**
          * RoomDownsyncFrame countdownNanos.
          * @member {number|Long} countdownNanos
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.countdownNanos = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
          * RoomDownsyncFrame treasures.
-         * @member {Object.<string,models.Treasure>} treasures
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.Treasure>} treasures
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.treasures = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame traps.
-         * @member {Object.<string,models.Trap>} traps
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.Trap>} traps
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.traps = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame bullets.
-         * @member {Object.<string,models.Bullet>} bullets
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.Bullet>} bullets
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.bullets = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame speedShoes.
-         * @member {Object.<string,models.SpeedShoes>} speedShoes
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.SpeedShoe>} speedShoes
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.speedShoes = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame pumpkin.
-         * @member {Object.<string,models.Pumpkin>} pumpkin
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.Pumpkin>} pumpkin
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.pumpkin = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame guardTowers.
-         * @member {Object.<string,models.GuardTower>} guardTowers
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.GuardTower>} guardTowers
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.guardTowers = $util.emptyObject;
 
         /**
          * RoomDownsyncFrame playerMetas.
-         * @member {Object.<string,models.PlayerMeta>} playerMetas
-         * @memberof models.RoomDownsyncFrame
+         * @member {Object.<string,treasurehunterx.PlayerMeta>} playerMetas
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          */
         RoomDownsyncFrame.prototype.playerMetas = $util.emptyObject;
@@ -3095,21 +3067,21 @@ $root.models = (function() {
         /**
          * Creates a new RoomDownsyncFrame instance using the specified properties.
          * @function create
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
-         * @param {models.IRoomDownsyncFrame=} [properties] Properties to set
-         * @returns {models.RoomDownsyncFrame} RoomDownsyncFrame instance
+         * @param {treasurehunterx.IRoomDownsyncFrame=} [properties] Properties to set
+         * @returns {treasurehunterx.RoomDownsyncFrame} RoomDownsyncFrame instance
          */
         RoomDownsyncFrame.create = function create(properties) {
             return new RoomDownsyncFrame(properties);
         };
 
         /**
-         * Encodes the specified RoomDownsyncFrame message. Does not implicitly {@link models.RoomDownsyncFrame.verify|verify} messages.
+         * Encodes the specified RoomDownsyncFrame message. Does not implicitly {@link treasurehunterx.RoomDownsyncFrame.verify|verify} messages.
          * @function encode
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
-         * @param {models.RoomDownsyncFrame} message RoomDownsyncFrame message or plain object to encode
+         * @param {treasurehunterx.RoomDownsyncFrame} message RoomDownsyncFrame message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -3123,7 +3095,7 @@ $root.models = (function() {
             if (message.players != null && message.hasOwnProperty("players"))
                 for (var keys = Object.keys(message.players), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.Player.encode(message.players[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.Player.encode(message.players[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.sentAt != null && message.hasOwnProperty("sentAt"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.sentAt);
@@ -3132,47 +3104,47 @@ $root.models = (function() {
             if (message.treasures != null && message.hasOwnProperty("treasures"))
                 for (var keys = Object.keys(message.treasures), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 6, wireType 2 =*/50).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.Treasure.encode(message.treasures[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.Treasure.encode(message.treasures[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.traps != null && message.hasOwnProperty("traps"))
                 for (var keys = Object.keys(message.traps), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 7, wireType 2 =*/58).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.Trap.encode(message.traps[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.Trap.encode(message.traps[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.bullets != null && message.hasOwnProperty("bullets"))
                 for (var keys = Object.keys(message.bullets), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 8, wireType 2 =*/66).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.Bullet.encode(message.bullets[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.Bullet.encode(message.bullets[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.speedShoes != null && message.hasOwnProperty("speedShoes"))
                 for (var keys = Object.keys(message.speedShoes), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 9, wireType 2 =*/74).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.SpeedShoes.encode(message.speedShoes[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.SpeedShoe.encode(message.speedShoes[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.pumpkin != null && message.hasOwnProperty("pumpkin"))
                 for (var keys = Object.keys(message.pumpkin), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 10, wireType 2 =*/82).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.Pumpkin.encode(message.pumpkin[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.Pumpkin.encode(message.pumpkin[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.guardTowers != null && message.hasOwnProperty("guardTowers"))
                 for (var keys = Object.keys(message.guardTowers), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 11, wireType 2 =*/90).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.GuardTower.encode(message.guardTowers[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.GuardTower.encode(message.guardTowers[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             if (message.playerMetas != null && message.hasOwnProperty("playerMetas"))
                 for (var keys = Object.keys(message.playerMetas), i = 0; i < keys.length; ++i) {
                     writer.uint32(/* id 12, wireType 2 =*/98).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
-                    $root.models.PlayerMeta.encode(message.playerMetas[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                    $root.treasurehunterx.PlayerMeta.encode(message.playerMetas[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
             return writer;
         };
 
         /**
-         * Encodes the specified RoomDownsyncFrame message, length delimited. Does not implicitly {@link models.RoomDownsyncFrame.verify|verify} messages.
+         * Encodes the specified RoomDownsyncFrame message, length delimited. Does not implicitly {@link treasurehunterx.RoomDownsyncFrame.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
-         * @param {models.RoomDownsyncFrame} message RoomDownsyncFrame message or plain object to encode
+         * @param {treasurehunterx.RoomDownsyncFrame} message RoomDownsyncFrame message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -3183,18 +3155,18 @@ $root.models = (function() {
         /**
          * Decodes a RoomDownsyncFrame message from the specified reader or buffer.
          * @function decode
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {models.RoomDownsyncFrame} RoomDownsyncFrame
+         * @returns {treasurehunterx.RoomDownsyncFrame} RoomDownsyncFrame
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         RoomDownsyncFrame.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.models.RoomDownsyncFrame(), key;
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.RoomDownsyncFrame(), key;
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -3210,7 +3182,7 @@ $root.models = (function() {
                         message.players = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.players[key] = $root.models.Player.decode(reader, reader.uint32());
+                    message.players[key] = $root.treasurehunterx.Player.decode(reader, reader.uint32());
                     break;
                 case 4:
                     message.sentAt = reader.int64();
@@ -3224,7 +3196,7 @@ $root.models = (function() {
                         message.treasures = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.treasures[key] = $root.models.Treasure.decode(reader, reader.uint32());
+                    message.treasures[key] = $root.treasurehunterx.Treasure.decode(reader, reader.uint32());
                     break;
                 case 7:
                     reader.skip().pos++;
@@ -3232,7 +3204,7 @@ $root.models = (function() {
                         message.traps = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.traps[key] = $root.models.Trap.decode(reader, reader.uint32());
+                    message.traps[key] = $root.treasurehunterx.Trap.decode(reader, reader.uint32());
                     break;
                 case 8:
                     reader.skip().pos++;
@@ -3240,7 +3212,7 @@ $root.models = (function() {
                         message.bullets = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.bullets[key] = $root.models.Bullet.decode(reader, reader.uint32());
+                    message.bullets[key] = $root.treasurehunterx.Bullet.decode(reader, reader.uint32());
                     break;
                 case 9:
                     reader.skip().pos++;
@@ -3248,7 +3220,7 @@ $root.models = (function() {
                         message.speedShoes = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.speedShoes[key] = $root.models.SpeedShoes.decode(reader, reader.uint32());
+                    message.speedShoes[key] = $root.treasurehunterx.SpeedShoe.decode(reader, reader.uint32());
                     break;
                 case 10:
                     reader.skip().pos++;
@@ -3256,7 +3228,7 @@ $root.models = (function() {
                         message.pumpkin = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.pumpkin[key] = $root.models.Pumpkin.decode(reader, reader.uint32());
+                    message.pumpkin[key] = $root.treasurehunterx.Pumpkin.decode(reader, reader.uint32());
                     break;
                 case 11:
                     reader.skip().pos++;
@@ -3264,7 +3236,7 @@ $root.models = (function() {
                         message.guardTowers = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.guardTowers[key] = $root.models.GuardTower.decode(reader, reader.uint32());
+                    message.guardTowers[key] = $root.treasurehunterx.GuardTower.decode(reader, reader.uint32());
                     break;
                 case 12:
                     reader.skip().pos++;
@@ -3272,7 +3244,7 @@ $root.models = (function() {
                         message.playerMetas = {};
                     key = reader.int32();
                     reader.pos++;
-                    message.playerMetas[key] = $root.models.PlayerMeta.decode(reader, reader.uint32());
+                    message.playerMetas[key] = $root.treasurehunterx.PlayerMeta.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3285,10 +3257,10 @@ $root.models = (function() {
         /**
          * Decodes a RoomDownsyncFrame message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {models.RoomDownsyncFrame} RoomDownsyncFrame
+         * @returns {treasurehunterx.RoomDownsyncFrame} RoomDownsyncFrame
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -3301,7 +3273,7 @@ $root.models = (function() {
         /**
          * Verifies a RoomDownsyncFrame message.
          * @function verify
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3323,7 +3295,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "players: integer key{k:int32} expected";
                     {
-                        var error = $root.models.Player.verify(message.players[key[i]]);
+                        var error = $root.treasurehunterx.Player.verify(message.players[key[i]]);
                         if (error)
                             return "players." + error;
                     }
@@ -3343,7 +3315,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "treasures: integer key{k:int32} expected";
                     {
-                        var error = $root.models.Treasure.verify(message.treasures[key[i]]);
+                        var error = $root.treasurehunterx.Treasure.verify(message.treasures[key[i]]);
                         if (error)
                             return "treasures." + error;
                     }
@@ -3357,7 +3329,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "traps: integer key{k:int32} expected";
                     {
-                        var error = $root.models.Trap.verify(message.traps[key[i]]);
+                        var error = $root.treasurehunterx.Trap.verify(message.traps[key[i]]);
                         if (error)
                             return "traps." + error;
                     }
@@ -3371,7 +3343,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "bullets: integer key{k:int32} expected";
                     {
-                        var error = $root.models.Bullet.verify(message.bullets[key[i]]);
+                        var error = $root.treasurehunterx.Bullet.verify(message.bullets[key[i]]);
                         if (error)
                             return "bullets." + error;
                     }
@@ -3385,7 +3357,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "speedShoes: integer key{k:int32} expected";
                     {
-                        var error = $root.models.SpeedShoes.verify(message.speedShoes[key[i]]);
+                        var error = $root.treasurehunterx.SpeedShoe.verify(message.speedShoes[key[i]]);
                         if (error)
                             return "speedShoes." + error;
                     }
@@ -3399,7 +3371,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "pumpkin: integer key{k:int32} expected";
                     {
-                        var error = $root.models.Pumpkin.verify(message.pumpkin[key[i]]);
+                        var error = $root.treasurehunterx.Pumpkin.verify(message.pumpkin[key[i]]);
                         if (error)
                             return "pumpkin." + error;
                     }
@@ -3413,7 +3385,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "guardTowers: integer key{k:int32} expected";
                     {
-                        var error = $root.models.GuardTower.verify(message.guardTowers[key[i]]);
+                        var error = $root.treasurehunterx.GuardTower.verify(message.guardTowers[key[i]]);
                         if (error)
                             return "guardTowers." + error;
                     }
@@ -3427,7 +3399,7 @@ $root.models = (function() {
                     if (!$util.key32Re.test(key[i]))
                         return "playerMetas: integer key{k:int32} expected";
                     {
-                        var error = $root.models.PlayerMeta.verify(message.playerMetas[key[i]]);
+                        var error = $root.treasurehunterx.PlayerMeta.verify(message.playerMetas[key[i]]);
                         if (error)
                             return "playerMetas." + error;
                     }
@@ -3439,27 +3411,27 @@ $root.models = (function() {
         /**
          * Creates a RoomDownsyncFrame message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {models.RoomDownsyncFrame} RoomDownsyncFrame
+         * @returns {treasurehunterx.RoomDownsyncFrame} RoomDownsyncFrame
          */
         RoomDownsyncFrame.fromObject = function fromObject(object) {
-            if (object instanceof $root.models.RoomDownsyncFrame)
+            if (object instanceof $root.treasurehunterx.RoomDownsyncFrame)
                 return object;
-            var message = new $root.models.RoomDownsyncFrame();
+            var message = new $root.treasurehunterx.RoomDownsyncFrame();
             if (object.id != null)
                 message.id = object.id | 0;
             if (object.refFrameId != null)
                 message.refFrameId = object.refFrameId | 0;
             if (object.players) {
                 if (typeof object.players !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.players: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.players: object expected");
                 message.players = {};
                 for (var keys = Object.keys(object.players), i = 0; i < keys.length; ++i) {
                     if (typeof object.players[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.players: object expected");
-                    message.players[keys[i]] = $root.models.Player.fromObject(object.players[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.players: object expected");
+                    message.players[keys[i]] = $root.treasurehunterx.Player.fromObject(object.players[keys[i]]);
                 }
             }
             if (object.sentAt != null)
@@ -3482,72 +3454,72 @@ $root.models = (function() {
                     message.countdownNanos = new $util.LongBits(object.countdownNanos.low >>> 0, object.countdownNanos.high >>> 0).toNumber();
             if (object.treasures) {
                 if (typeof object.treasures !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.treasures: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.treasures: object expected");
                 message.treasures = {};
                 for (var keys = Object.keys(object.treasures), i = 0; i < keys.length; ++i) {
                     if (typeof object.treasures[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.treasures: object expected");
-                    message.treasures[keys[i]] = $root.models.Treasure.fromObject(object.treasures[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.treasures: object expected");
+                    message.treasures[keys[i]] = $root.treasurehunterx.Treasure.fromObject(object.treasures[keys[i]]);
                 }
             }
             if (object.traps) {
                 if (typeof object.traps !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.traps: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.traps: object expected");
                 message.traps = {};
                 for (var keys = Object.keys(object.traps), i = 0; i < keys.length; ++i) {
                     if (typeof object.traps[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.traps: object expected");
-                    message.traps[keys[i]] = $root.models.Trap.fromObject(object.traps[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.traps: object expected");
+                    message.traps[keys[i]] = $root.treasurehunterx.Trap.fromObject(object.traps[keys[i]]);
                 }
             }
             if (object.bullets) {
                 if (typeof object.bullets !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.bullets: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.bullets: object expected");
                 message.bullets = {};
                 for (var keys = Object.keys(object.bullets), i = 0; i < keys.length; ++i) {
                     if (typeof object.bullets[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.bullets: object expected");
-                    message.bullets[keys[i]] = $root.models.Bullet.fromObject(object.bullets[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.bullets: object expected");
+                    message.bullets[keys[i]] = $root.treasurehunterx.Bullet.fromObject(object.bullets[keys[i]]);
                 }
             }
             if (object.speedShoes) {
                 if (typeof object.speedShoes !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.speedShoes: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.speedShoes: object expected");
                 message.speedShoes = {};
                 for (var keys = Object.keys(object.speedShoes), i = 0; i < keys.length; ++i) {
                     if (typeof object.speedShoes[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.speedShoes: object expected");
-                    message.speedShoes[keys[i]] = $root.models.SpeedShoes.fromObject(object.speedShoes[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.speedShoes: object expected");
+                    message.speedShoes[keys[i]] = $root.treasurehunterx.SpeedShoe.fromObject(object.speedShoes[keys[i]]);
                 }
             }
             if (object.pumpkin) {
                 if (typeof object.pumpkin !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.pumpkin: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.pumpkin: object expected");
                 message.pumpkin = {};
                 for (var keys = Object.keys(object.pumpkin), i = 0; i < keys.length; ++i) {
                     if (typeof object.pumpkin[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.pumpkin: object expected");
-                    message.pumpkin[keys[i]] = $root.models.Pumpkin.fromObject(object.pumpkin[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.pumpkin: object expected");
+                    message.pumpkin[keys[i]] = $root.treasurehunterx.Pumpkin.fromObject(object.pumpkin[keys[i]]);
                 }
             }
             if (object.guardTowers) {
                 if (typeof object.guardTowers !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.guardTowers: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.guardTowers: object expected");
                 message.guardTowers = {};
                 for (var keys = Object.keys(object.guardTowers), i = 0; i < keys.length; ++i) {
                     if (typeof object.guardTowers[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.guardTowers: object expected");
-                    message.guardTowers[keys[i]] = $root.models.GuardTower.fromObject(object.guardTowers[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.guardTowers: object expected");
+                    message.guardTowers[keys[i]] = $root.treasurehunterx.GuardTower.fromObject(object.guardTowers[keys[i]]);
                 }
             }
             if (object.playerMetas) {
                 if (typeof object.playerMetas !== "object")
-                    throw TypeError(".models.RoomDownsyncFrame.playerMetas: object expected");
+                    throw TypeError(".treasurehunterx.RoomDownsyncFrame.playerMetas: object expected");
                 message.playerMetas = {};
                 for (var keys = Object.keys(object.playerMetas), i = 0; i < keys.length; ++i) {
                     if (typeof object.playerMetas[keys[i]] !== "object")
-                        throw TypeError(".models.RoomDownsyncFrame.playerMetas: object expected");
-                    message.playerMetas[keys[i]] = $root.models.PlayerMeta.fromObject(object.playerMetas[keys[i]]);
+                        throw TypeError(".treasurehunterx.RoomDownsyncFrame.playerMetas: object expected");
+                    message.playerMetas[keys[i]] = $root.treasurehunterx.PlayerMeta.fromObject(object.playerMetas[keys[i]]);
                 }
             }
             return message;
@@ -3556,9 +3528,9 @@ $root.models = (function() {
         /**
          * Creates a plain object from a RoomDownsyncFrame message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @static
-         * @param {models.RoomDownsyncFrame} message RoomDownsyncFrame
+         * @param {treasurehunterx.RoomDownsyncFrame} message RoomDownsyncFrame
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -3598,7 +3570,7 @@ $root.models = (function() {
             if (message.players && (keys2 = Object.keys(message.players)).length) {
                 object.players = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.players[keys2[j]] = $root.models.Player.toObject(message.players[keys2[j]], options);
+                    object.players[keys2[j]] = $root.treasurehunterx.Player.toObject(message.players[keys2[j]], options);
             }
             if (message.sentAt != null && message.hasOwnProperty("sentAt"))
                 if (typeof message.sentAt === "number")
@@ -3613,37 +3585,37 @@ $root.models = (function() {
             if (message.treasures && (keys2 = Object.keys(message.treasures)).length) {
                 object.treasures = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.treasures[keys2[j]] = $root.models.Treasure.toObject(message.treasures[keys2[j]], options);
+                    object.treasures[keys2[j]] = $root.treasurehunterx.Treasure.toObject(message.treasures[keys2[j]], options);
             }
             if (message.traps && (keys2 = Object.keys(message.traps)).length) {
                 object.traps = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.traps[keys2[j]] = $root.models.Trap.toObject(message.traps[keys2[j]], options);
+                    object.traps[keys2[j]] = $root.treasurehunterx.Trap.toObject(message.traps[keys2[j]], options);
             }
             if (message.bullets && (keys2 = Object.keys(message.bullets)).length) {
                 object.bullets = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.bullets[keys2[j]] = $root.models.Bullet.toObject(message.bullets[keys2[j]], options);
+                    object.bullets[keys2[j]] = $root.treasurehunterx.Bullet.toObject(message.bullets[keys2[j]], options);
             }
             if (message.speedShoes && (keys2 = Object.keys(message.speedShoes)).length) {
                 object.speedShoes = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.speedShoes[keys2[j]] = $root.models.SpeedShoes.toObject(message.speedShoes[keys2[j]], options);
+                    object.speedShoes[keys2[j]] = $root.treasurehunterx.SpeedShoe.toObject(message.speedShoes[keys2[j]], options);
             }
             if (message.pumpkin && (keys2 = Object.keys(message.pumpkin)).length) {
                 object.pumpkin = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.pumpkin[keys2[j]] = $root.models.Pumpkin.toObject(message.pumpkin[keys2[j]], options);
+                    object.pumpkin[keys2[j]] = $root.treasurehunterx.Pumpkin.toObject(message.pumpkin[keys2[j]], options);
             }
             if (message.guardTowers && (keys2 = Object.keys(message.guardTowers)).length) {
                 object.guardTowers = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.guardTowers[keys2[j]] = $root.models.GuardTower.toObject(message.guardTowers[keys2[j]], options);
+                    object.guardTowers[keys2[j]] = $root.treasurehunterx.GuardTower.toObject(message.guardTowers[keys2[j]], options);
             }
             if (message.playerMetas && (keys2 = Object.keys(message.playerMetas)).length) {
                 object.playerMetas = {};
                 for (var j = 0; j < keys2.length; ++j)
-                    object.playerMetas[keys2[j]] = $root.models.PlayerMeta.toObject(message.playerMetas[keys2[j]], options);
+                    object.playerMetas[keys2[j]] = $root.treasurehunterx.PlayerMeta.toObject(message.playerMetas[keys2[j]], options);
             }
             return object;
         };
@@ -3651,7 +3623,7 @@ $root.models = (function() {
         /**
          * Converts this RoomDownsyncFrame to JSON.
          * @function toJSON
-         * @memberof models.RoomDownsyncFrame
+         * @memberof treasurehunterx.RoomDownsyncFrame
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -3662,7 +3634,7 @@ $root.models = (function() {
         return RoomDownsyncFrame;
     })();
 
-    return models;
+    return treasurehunterx;
 })();
 
 module.exports = $root;

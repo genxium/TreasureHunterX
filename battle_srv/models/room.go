@@ -837,6 +837,8 @@ func calculateDiffFrame(currentFrame *pb.RoomDownsyncFrame, lastFrame *pb.RoomDo
 		 * -- YFLu
 		 */
 		if false == ok {
+			diffFrame.Bullets[k] = &pb.Bullet{Removed: true}
+			// Logger.Info("A bullet is removed.", zap.Any("diffFrame.id", diffFrame.Id), zap.Any("bullet.LocalIdInBattle", lastFrame.Bullets[k].LocalIdInBattle))
 			continue
 		}
 		if ok, v := diffBullet(last, curr); ok {
@@ -914,17 +916,8 @@ func diffSpeedShoe(last *pb.SpeedShoe, curr *pb.SpeedShoe) (bool, *pb.SpeedShoe)
 }
 
 func diffBullet(last *pb.Bullet, curr *pb.Bullet) (bool, *pb.Bullet) {
-	bullet := &pb.Bullet{}
-	t := false
-	if last.X != curr.X {
-		bullet.X = bullet.X
-		t = true
-	}
-	if last.Y != curr.Y {
-		bullet.Y = curr.Y
-		t = true
-	}
-	return t, bullet
+  t := true
+	return t, curr
 }
 
 func (pR *Room) StartBattle() {
@@ -1336,8 +1329,6 @@ func (pR *Room) StopBattleForSettlement() {
 			CountdownNanos: -1, // TODO: Replace this magic constant!
 			Treasures:      toPbTreasures(pR.Treasures),
 			Traps:          toPbTraps(pR.Traps),
-			Bullets:        toPbBullets(pR.Bullets),
-			SpeedShoes:     toPbSpeedShoes(pR.SpeedShoes),
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		theBytes, marshalErr := proto.Marshal(assembledFrame)

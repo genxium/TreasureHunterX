@@ -6,6 +6,9 @@ import (
 
 func toPbPlayers(modelInstances map[int32]*Player) map[int32]*pb.Player {
 	toRet := make(map[int32]*pb.Player, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
 		toRet[k] = &pb.Player{
@@ -29,6 +32,9 @@ func toPbPlayers(modelInstances map[int32]*Player) map[int32]*pb.Player {
 
 func toPbTreasures(modelInstances map[int32]*Treasure) map[int32]*pb.Treasure {
 	toRet := make(map[int32]*pb.Treasure, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
 		toRet[k] = &pb.Treasure{
@@ -47,6 +53,9 @@ func toPbTreasures(modelInstances map[int32]*Treasure) map[int32]*pb.Treasure {
 
 func toPbTraps(modelInstances map[int32]*Trap) map[int32]*pb.Trap {
 	toRet := make(map[int32]*pb.Trap, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
 		toRet[k] = &pb.Trap{
@@ -64,8 +73,14 @@ func toPbTraps(modelInstances map[int32]*Trap) map[int32]*pb.Trap {
 
 func toPbBullets(modelInstances map[int32]*Bullet) map[int32]*pb.Bullet {
 	toRet := make(map[int32]*pb.Bullet, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
+    if nil == last.StartAtPoint || nil == last.EndAtPoint {
+      continue
+    }
 		toRet[k] = &pb.Bullet{
 			LocalIdInBattle: last.LocalIdInBattle,
 			X:               last.X,
@@ -88,6 +103,9 @@ func toPbBullets(modelInstances map[int32]*Bullet) map[int32]*pb.Bullet {
 
 func toPbSpeedShoes(modelInstances map[int32]*SpeedShoe) map[int32]*pb.SpeedShoe {
 	toRet := make(map[int32]*pb.SpeedShoe, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
 		toRet[k] = &pb.SpeedShoe{
@@ -105,6 +123,9 @@ func toPbSpeedShoes(modelInstances map[int32]*SpeedShoe) map[int32]*pb.SpeedShoe
 
 func toPbGuardTowers(modelInstances map[int32]*GuardTower) map[int32]*pb.GuardTower {
 	toRet := make(map[int32]*pb.GuardTower, 0)
+  if nil == modelInstances {
+    return toRet
+  }
 
 	for k, last := range modelInstances {
 		toRet[k] = &pb.GuardTower{

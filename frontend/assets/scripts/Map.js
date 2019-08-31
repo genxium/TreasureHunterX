@@ -205,7 +205,7 @@ cc.Class({
       const k = bulletsLocalIdStrList[i];
       const bulletLocalIdInBattle = parseInt(k);
       if (true == diffFrame.bullets[bulletLocalIdInBattle].removed) {
-        console.log("Bullet with localIdInBattle == ", bulletLocalIdInBattle, "is removed.");
+        // console.log("Bullet with localIdInBattle == ", bulletLocalIdInBattle, "is removed.");
         delete newFullFrame.bullets[bulletLocalIdInBattle];
       } else {
         newFullFrame.bullets[bulletLocalIdInBattle] = diffFrame.bullets[bulletLocalIdInBattle];
@@ -1069,7 +1069,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) { //如果移动过大 打印log但还是会移动
-            console.log("Player ", cachedPlayerData.id, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
+            console.log("Player ", cachedPlayerData.id, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1253,7 +1253,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
-            console.log("Bullet ", bulletLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
+            console.log("Bullet ", bulletLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
             aBulletScriptIns.activeDirection = {
               dx: 0,
               dy: 0
@@ -1313,7 +1313,7 @@ cc.Class({
           };
         } else {
           if (toMoveByVecMag > toTeleportDisThreshold) {
-            console.log("Pumpkin ", pumpkinLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ${toMoveByVecMag}, toTeleportDisThreshold == ", toTeleportDisThreshold);
+            console.log("Pumpkin ", pumpkinLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
             aPumpkinScriptIns.activeDirection = {
               dx: 0,
               dy: 0

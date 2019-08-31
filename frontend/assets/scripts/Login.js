@@ -128,7 +128,7 @@ cc.Class({
         // Otherwise, `window.RoomDownsyncFrame` is already assigned.
         let protoRoot = new protobuf.Root;
         window.protobuf.parse(textAsset.text, protoRoot);
-        window.RoomDownsyncFrame = protoRoot.lookupType("models.RoomDownsyncFrame"); 
+        window.RoomDownsyncFrame = protoRoot.lookupType("treasurehunterx.RoomDownsyncFrame"); 
       }
       self.checkIntAuthTokenExpire().then(
         () => {
