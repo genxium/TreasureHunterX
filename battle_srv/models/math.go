@@ -29,7 +29,7 @@ func (v2 *Vec2D) ToB2Vec2() box2d.B2Vec2 {
 }
 
 type Polygon2D struct {
-	Anchor *Vec2D   `json:"anchor,omitempty"`
+	Anchor *Vec2D   `json:"-"` // This "Polygon2D.Anchor" is used to be assigned to "B2BodyDef.Position", which in turn is used as the position of the FIRST POINT of the polygon. Such specification also matches our polygon notation used in "Tmx>Tsx files".
 	Points []*Vec2D `json:"-"`
 }
 

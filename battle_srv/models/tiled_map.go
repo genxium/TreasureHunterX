@@ -57,7 +57,7 @@ type TmxImage struct {
 	Height int    `xml:"height,attr"`
 }
 
-// w tileSet
+// TileSet
 type TmxTileset struct {
 	FirstGid   uint32     `xml:"firstgid,attr"` // w 此图块集的第一个图块在全局图块集中的位置
 	Name       string     `xml:"name,attr"`
@@ -81,14 +81,14 @@ type TmxObjectGroup struct {
 	Objects []TmxObject `xml:"object"`
 }
 
-// w map
+// Map
 type TmxMap struct {
 	Version      string            `xml:"version,attr"`
 	Orientation  string            `xml:"orientation,attr"`
-	Width        int               `xml:"width,attr"`      // w 地图的宽度
-	Height       int               `xml:"height,attr"`     // w 地图的高度（tile 个数）
-	TileWidth    int               `xml:"tilewidth,attr"`  // w 单Tile的宽度
-	TileHeight   int               `xml:"tileheight,attr"` // w 单Tile的高度
+	Width        int               `xml:"width,attr"`
+	Height       int               `xml:"height,attr"`
+	TileWidth    int               `xml:"tilewidth,attr"`
+	TileHeight   int               `xml:"tileheight,attr"`
 	Properties   []*TmxProperties  `xml:"properties"`
 	Tilesets     []*TmxTileset     `xml:"tileset"`
 	Layers       []*TmxLayer       `xml:"layer"`
@@ -127,7 +127,7 @@ type Tsx struct {
 	LowTreasurePolyLineList    []*TmxPolyline
 	TrapPolyLineList           []*TmxPolyline
 	SpeedShoesPolyLineList     []*TmxPolyline
-	BarrierPolyLineList        map[int]*TmxPolyline // w barrier polyline
+	BarrierPolyLineList        map[int]*TmxPolyline
 	GuardTowerPolyLineList     []*TmxPolyline
 }
 
@@ -384,7 +384,6 @@ func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
 					Y: obj.Y,
 				}
 				trapPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				//pTmxMapIns.GuardTowerInitPosList[index] = trapPos
 				pTmxMapIns.GuardTowersInitPosList[index] = trapPos
 			}
 		}

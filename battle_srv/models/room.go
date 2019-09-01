@@ -948,7 +948,9 @@ func (pR *Room) StartBattle() {
 	}
 
 	byteArr, err := ioutil.ReadFile(absTmxFilePath)
-	ErrFatal(err)
+  if nil != err {
+		panic(err)
+  }
 	DeserializeToTmxMapIns(byteArr, pTmxMapIns)
 	var index = 0
 	for _, player := range pR.Players {
@@ -966,13 +968,19 @@ func (pR *Room) StartBattle() {
   * "Treasures, Traps, GuardTowers etc." for EACH map. 
   */
 	pTsxIns := &Tsx{}
-	absTsxFilePath := fmt.Sprintf("%s/%s", absDirPathContainingDirectlyTmxFile, pTmxMapIns.Tilesets[0].Source)
+  relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), pTmxMapIns.Tilesets[0].Source) // Note that "TmxTileset.Source" can be a string of "relative path".
+	absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
+  if nil != err {
+		panic(err)
+  }
 	if !filepath.IsAbs(absTsxFilePath) {
 		panic("Filepath must be absolute!")
 	}
 
 	byteArr, err = ioutil.ReadFile(absTsxFilePath)
-	ErrFatal(err)
+  if nil != err {
+		panic(err)
+  }
 	DeserializeToTsxIns(byteArr, pTsxIns)
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)

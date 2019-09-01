@@ -4,6 +4,25 @@ import (
 	pb "server/pb_output"
 )
 
+func toPbVec2D(modelInstance *Vec2D) *pb.Vec2D {
+  toRet := &pb.Vec2D{
+    X: modelInstance.X,
+    Y: modelInstance.Y,
+  }
+  return toRet
+}
+
+func toPbPolygon2D(modelInstance *Polygon2D) *pb.Polygon2D {
+  toRet := &pb.Polygon2D{
+    Anchor: toPbVec2D(modelInstance.Anchor),
+    Points: make([]*pb.Vec2D, len(modelInstance.Points)),
+  }
+  for index, p := range modelInstance.Points {
+    toRet.Points[index] = toPbVec2D(p)
+  }
+  return toRet
+}
+
 func toPbPlayers(modelInstances map[int32]*Player) map[int32]*pb.Player {
 	toRet := make(map[int32]*pb.Player, 0)
   if nil == modelInstances {

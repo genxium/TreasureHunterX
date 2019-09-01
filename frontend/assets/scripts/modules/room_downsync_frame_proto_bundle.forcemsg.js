@@ -438,6 +438,242 @@ $root.treasurehunterx = (function() {
         return Vec2D;
     })();
 
+    treasurehunterx.Polygon2D = (function() {
+
+        /**
+         * Properties of a Polygon2D.
+         * @memberof treasurehunterx
+         * @interface IPolygon2D
+         * @property {treasurehunterx.Vec2D|null} [Anchor] Polygon2D Anchor
+         * @property {Array.<treasurehunterx.Vec2D>|null} [Points] Polygon2D Points
+         */
+
+        /**
+         * Constructs a new Polygon2D.
+         * @memberof treasurehunterx
+         * @classdesc Represents a Polygon2D.
+         * @implements IPolygon2D
+         * @constructor
+         * @param {treasurehunterx.IPolygon2D=} [properties] Properties to set
+         */
+        function Polygon2D(properties) {
+            this.Points = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Polygon2D Anchor.
+         * @member {treasurehunterx.Vec2D|null|undefined} Anchor
+         * @memberof treasurehunterx.Polygon2D
+         * @instance
+         */
+        Polygon2D.prototype.Anchor = null;
+
+        /**
+         * Polygon2D Points.
+         * @member {Array.<treasurehunterx.Vec2D>} Points
+         * @memberof treasurehunterx.Polygon2D
+         * @instance
+         */
+        Polygon2D.prototype.Points = $util.emptyArray;
+
+        /**
+         * Creates a new Polygon2D instance using the specified properties.
+         * @function create
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {treasurehunterx.IPolygon2D=} [properties] Properties to set
+         * @returns {treasurehunterx.Polygon2D} Polygon2D instance
+         */
+        Polygon2D.create = function create(properties) {
+            return new Polygon2D(properties);
+        };
+
+        /**
+         * Encodes the specified Polygon2D message. Does not implicitly {@link treasurehunterx.Polygon2D.verify|verify} messages.
+         * @function encode
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {treasurehunterx.Polygon2D} message Polygon2D message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Polygon2D.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.Anchor != null && message.hasOwnProperty("Anchor"))
+                $root.treasurehunterx.Vec2D.encode(message.Anchor, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.Points != null && message.Points.length)
+                for (var i = 0; i < message.Points.length; ++i)
+                    $root.treasurehunterx.Vec2D.encode(message.Points[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Polygon2D message, length delimited. Does not implicitly {@link treasurehunterx.Polygon2D.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {treasurehunterx.Polygon2D} message Polygon2D message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Polygon2D.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Polygon2D message from the specified reader or buffer.
+         * @function decode
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {treasurehunterx.Polygon2D} Polygon2D
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Polygon2D.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Polygon2D();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.Anchor = $root.treasurehunterx.Vec2D.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    if (!(message.Points && message.Points.length))
+                        message.Points = [];
+                    message.Points.push($root.treasurehunterx.Vec2D.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Polygon2D message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {treasurehunterx.Polygon2D} Polygon2D
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Polygon2D.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Polygon2D message.
+         * @function verify
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Polygon2D.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.Anchor != null && message.hasOwnProperty("Anchor")) {
+                var error = $root.treasurehunterx.Vec2D.verify(message.Anchor);
+                if (error)
+                    return "Anchor." + error;
+            }
+            if (message.Points != null && message.hasOwnProperty("Points")) {
+                if (!Array.isArray(message.Points))
+                    return "Points: array expected";
+                for (var i = 0; i < message.Points.length; ++i) {
+                    var error = $root.treasurehunterx.Vec2D.verify(message.Points[i]);
+                    if (error)
+                        return "Points." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a Polygon2D message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {treasurehunterx.Polygon2D} Polygon2D
+         */
+        Polygon2D.fromObject = function fromObject(object) {
+            if (object instanceof $root.treasurehunterx.Polygon2D)
+                return object;
+            var message = new $root.treasurehunterx.Polygon2D();
+            if (object.Anchor != null) {
+                if (typeof object.Anchor !== "object")
+                    throw TypeError(".treasurehunterx.Polygon2D.Anchor: object expected");
+                message.Anchor = $root.treasurehunterx.Vec2D.fromObject(object.Anchor);
+            }
+            if (object.Points) {
+                if (!Array.isArray(object.Points))
+                    throw TypeError(".treasurehunterx.Polygon2D.Points: array expected");
+                message.Points = [];
+                for (var i = 0; i < object.Points.length; ++i) {
+                    if (typeof object.Points[i] !== "object")
+                        throw TypeError(".treasurehunterx.Polygon2D.Points: object expected");
+                    message.Points[i] = $root.treasurehunterx.Vec2D.fromObject(object.Points[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Polygon2D message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof treasurehunterx.Polygon2D
+         * @static
+         * @param {treasurehunterx.Polygon2D} message Polygon2D
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Polygon2D.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.Points = [];
+            if (options.defaults)
+                object.Anchor = null;
+            if (message.Anchor != null && message.hasOwnProperty("Anchor"))
+                object.Anchor = $root.treasurehunterx.Vec2D.toObject(message.Anchor, options);
+            if (message.Points && message.Points.length) {
+                object.Points = [];
+                for (var j = 0; j < message.Points.length; ++j)
+                    object.Points[j] = $root.treasurehunterx.Vec2D.toObject(message.Points[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this Polygon2D to JSON.
+         * @function toJSON
+         * @memberof treasurehunterx.Polygon2D
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Polygon2D.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return Polygon2D;
+    })();
+
     treasurehunterx.Player = (function() {
 
         /**

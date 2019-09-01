@@ -11,6 +11,11 @@ message Vec2D {
   double y = 2;
 }
 
+message Polygon2D {
+  Vec2D Anchor = 1;
+  repeated Vec2D Points = 2;
+}
+
 message Player {
   int32 id = 1;
   double x = 2; 
@@ -70,20 +75,20 @@ message SpeedShoe {
 }
 
 message Pumpkin {
-    int32 localIdInBattle = 1;
-    double linearSpeed = 2;
-    double x = 3;
-    double y = 4;
-    bool removed = 5;
+  int32 localIdInBattle = 1;
+  double linearSpeed = 2;
+  double x = 3;
+  double y = 4;
+  bool removed = 5;
 }
 
 message GuardTower {
-    int32 id = 1;
-    int32 localIdInBattle = 2;
-    int32 type = 3;
-    double x = 4;
-    double y = 5;
-    bool removed = 6;
+  int32 id = 1;
+  int32 localIdInBattle = 2;
+  int32 type = 3;
+  double x = 4;
+  double y = 5;
+  bool removed = 6;
 }
 
 message RoomDownsyncFrame {
