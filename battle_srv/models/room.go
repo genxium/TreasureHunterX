@@ -956,7 +956,7 @@ func (pR *Room) StartBattle() {
 	}
 
   // Obtain the content of `gidBoundariesMap`.
-  gidBoundariesMap := make(map[string]Polygon2DList, 0)
+  gidBoundariesMap := make(map[int]StrToPolygon2DListMap, 0)
   for _, tileset := range pTmxMapIns.Tilesets {
     relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), pTsxIns.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
     absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)

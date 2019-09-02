@@ -336,8 +336,6 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     barriers: [],
     shelters: [],
     sheltersZReducer: [],
-    loungeEntry: [],
-    regions: [],
     frameAnimations: [],
     minigames: []
   };
@@ -400,7 +398,6 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
           barriers: [],
           shelters: [],
           sheltersZReducer: [],
-          loungeEntry: [],
         };
         for (var oidx = 0; oidx < currentObjectGroupUnderTile._objects.length; ++oidx) {
           var oo = currentObjectGroupUnderTile._objects[oidx];
@@ -496,26 +493,6 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
             toPushSheltersZReducer.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[kkk])));
           }
           toRet.sheltersZReducer.push(toPushSheltersZReducer);
-          break;
-        case "region":
-          var toPushRegions = [];
-          for (var kkkk = 0; kkkk < polylinePoints.length; ++kkkk) {
-            toPushRegions.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[kkkk])));
-          }
-          toRet.regions.push({
-            regionName: object.name,
-            points: toPushRegions
-          });
-          break;
-        case "minigame":
-          var toPushMinigame = [];
-          for (var kkkk = 0; kkkk < polylinePoints.length; ++kkkk) {
-            toPushMinigame.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[kkkk])));
-          }
-          toRet.minigames.push({
-            minigameId: object.minigameId,
-            points: toPushMinigame
-          });
           break;
         default:
           break;

@@ -54,17 +54,23 @@ type TmxOrTsxObjectGroup struct {
 	Objects   []*TmxOrTsxObject `xml:"object"`
 }
 
+type TmxOrTsxImage struct {
+	Source string `xml:"source,attr"`
+	Width  int    `xml:"width,attr"`
+	Height int    `xml:"height,attr"`
+}
+
 // For either a "*.tmx" or "*.tsx" file. [ends]
 
 // Within a "*.tsx" file. [begins]
 type Tsx struct {
-	Name       string      `xml:"name,attr"`
-	TileWidth  int         `xml:"tilewidth,attr"`
-	TileHeight int         `xml:"tileheight,attr"`
-	TileCount  int         `xml:"tilecount,attr"`
-	Columns    int         `xml:"columns,attr"`
-	Image      []*TmxImage `xml:"image"`
-	Tiles      []*TsxTile  `xml:"tile"`
+	Name       string           `xml:"name,attr"`
+	TileWidth  int              `xml:"tilewidth,attr"`
+	TileHeight int              `xml:"tileheight,attr"`
+	TileCount  int              `xml:"tilecount,attr"`
+	Columns    int              `xml:"columns,attr"`
+	Image      []*TmxOrTsxImage `xml:"image"`
+	Tiles      []*TsxTile       `xml:"tile"`
 }
 
 type TsxTile struct {
@@ -98,32 +104,26 @@ type TmxLayer struct {
 	Tile   []*TmxLayerDecodedTileData
 }
 
-type TmxImage struct {
-	Source string `xml:"source,attr"`
-	Width  int    `xml:"width,attr"`
-	Height int    `xml:"height,attr"`
-}
-
 type TmxTileset struct {
-	FirstGid   uint32     `xml:"firstgid,attr"`
-	Name       string     `xml:"name,attr"`
-	TileWidth  int        `xml:"tilewidth,attr"`
-	TileHeight int        `xml:"tileheight,attr"`
-	Images     []TmxImage `xml:"image"`
-	Source     string     `xml:"source,attr"`
+	FirstGid   uint32           `xml:"firstgid,attr"`
+	Name       string           `xml:"name,attr"`
+	TileWidth  int              `xml:"tilewidth,attr"`
+	TileHeight int              `xml:"tileheight,attr"`
+	Images     []*TmxOrTsxImage `xml:"image"`
+	Source     string           `xml:"source,attr"`
 }
 
 type TmxMap struct {
-	Version      string                `xml:"version,attr"`
-	Orientation  string                `xml:"orientation,attr"`
-	Width        int                   `xml:"width,attr"`
-	Height       int                   `xml:"height,attr"`
-	TileWidth    int                   `xml:"tilewidth,attr"`
-	TileHeight   int                   `xml:"tileheight,attr"`
-	Properties   []*TmxOrTsxProperties `xml:"properties"`
-	Tilesets     []*TmxTileset         `xml:"tileset"`
-	Layers       []*TmxLayer           `xml:"layer"`
-	ObjectGroups []*TmxObjectGroup     `xml:"objectgroup"`
+	Version      string                 `xml:"version,attr"`
+	Orientation  string                 `xml:"orientation,attr"`
+	Width        int                    `xml:"width,attr"`
+	Height       int                    `xml:"height,attr"`
+	TileWidth    int                    `xml:"tilewidth,attr"`
+	TileHeight   int                    `xml:"tileheight,attr"`
+	Properties   []*TmxOrTsxProperties  `xml:"properties"`
+	Tilesets     []*TmxTileset          `xml:"tileset"`
+	Layers       []*TmxLayer            `xml:"layer"`
+	ObjectGroups []*TmxOrTsxObjectGroup `xml:"objectgroup"`
 
 	ControlledPlayersInitPosList []*Vec2D
 	LowTreasureInfoList          []*TreasureInfo
@@ -200,8 +200,9 @@ func (m *TmxMap) getCoordByGid(index int) (x float64, y float64) {
 }
 
 type Polygon2DList []*Polygon2D
+type StrToPolygon2DListMap map[string]Polygon2DList
 
-func DeserializeTsxToColliderDict(byteArr []byte, firstGid int, gidBoundariesMap map[string]Polygon2DList) error {
+func DeserializeTsxToColliderDict(byteArr []byte, firstGid int, gidBoundariesMap map[string]StrToPolygon2DListMap) error {
 	pTsxIns := &Tsx{}
 	err := xml.Unmarshal(byteArr, pTsxIns)
 	if nil != err {
@@ -211,7 +212,7 @@ func DeserializeTsxToColliderDict(byteArr []byte, firstGid int, gidBoundariesMap
 	var factorHalf float64 = 0.5
 
 	for _, tile := range pTsxIns.Tiles {
-		globalGid := (firstGid + tile.Id)
+		globalGid := (firstGid + int(tile.Id))
 		/**
 				   Per tile xml str could be
 
@@ -241,13 +242,23 @@ func DeserializeTsxToColliderDict(byteArr []byte, firstGid int, gidBoundariesMap
 			if nil == singleObj.Properties.Property || "type" != singleObj.Properties.Property[0].Name {
 				continue
 			}
+
 			key := singleObj.Properties.Property[0].Value
 
+			var theStrToPolygon2DListMap StrToPolygon2DListMap
+			if existingStrToPolygon2DListMap, ok := gidBoundariesMap[globalGid]; ok {
+				theStrToPolygon2DListMap = existingPolygon2DList
+			} else {
+				gidBoundariesMap[globalGid] = make(StrToPolygon2DListMap, 0)
+				theStrToPolygon2DListMap = gidBoundariesMap[globalGid]
+			}
+
 			var thePolygon2DList Polygon2DList
-			if existingPolygon2DList, ok := gidBoundariesMap[globalGid]; ok {
+			if existingPolygon2DList, ok := theStrToPolygon2DListMap[key]; ok {
 				thePolygon2DList = existingPolygon2DList
 			} else {
-				thePolygon2DList = make(Polygon2DList, 0)
+				theStrToPolygon2DListMap[key] = make(Polygon2DList, 0)
+				thePolygon2DList = theStrToPolygon2DListMap[key]
 			}
 
 			offsetFromTopLeftInTileLocalCoordX := singleObj.X
@@ -284,14 +295,57 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMap map[string]Pol
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
 		correspondingPolygon2DList := gidBoundariesMap[objGroup.Name]
 
-		switch objGroup.Name {
+		switch (objGroup.Name) {
 		case "ControlledPlayerStartingPos":
+    case "Pumpkin":
+    case "SpeedShoe":
 		case "Barrier":
-		case "LowScoreTreasure", "HighScoreTreasure", "GuardTower", "SpeedShoe", "Pumpkin":
+			/*
+			   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" is located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World.
+
+         -- YFLu
+			*/
+      for _, singleObj := range objGroup.Objects {
+      }
+		case "LowScoreTreasure", "GuardTower", "HighScoreTreasure":
+			/*
+			   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" ISN'T located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World, refer to "https://shimo.im/docs/SmLJJhXm2C8XMzZT" for details.
+
+         -- YFLu
+			*/
+      var theGlobalGid int // Hardcoded temporarily. -- YFLu
+      switch (objGroup.Name) {
+		  case "LowScoreTreasure":
+        theGlobalGid = (1 + 12)
+      case "GuardTower":
+        theGlobalGid = (1 + 13)
+      case "HighScoreTreasure":
+        theGlobalGid = (1 + 15)
+      default:
+      }
+
+      theStrToPolygon2DListMap, ok := gidBoundariesMap[theGlobalGid]
+      if false == ok {
+        continue
+      }
+      thePolygon2DList, ok := theStrToPolygon2DListMap[objGroup.Name]
+      if false == ok {
+        continue
+      }
+      thePolygon2D, ok := thePolygon2DList[0]
+      if false == ok {
+        continue
+      }
+      for _, singleObj := range objGroup.Objects {
+        thePolygon2D.Anchor = &Vec2D{
+          X: singleObj.X,
+          Y: singleObj.Y,
+        }
+      }
 		default:
 		}
 	}
-	return
+	return nil
 }
 
 func (pTmxMap *TmxMap) ToXML() (string, error) {
