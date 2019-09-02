@@ -938,8 +938,7 @@ func (pR *Room) StartBattle() {
 
 	relativePathForChosenMap := fmt.Sprintf("%s/%s", relativePathForAllMaps, chosenMapDirName)
 
-	tmxMapIns := TmxMap{}
-	pTmxMapIns := &tmxMapIns
+	pTmxMapIns := &TmxMap{}
 
 	absDirPathContainingDirectlyTmxFile := filepath.Join(pwd, relativePathForChosenMap)
   absTmxFilePath := fmt.Sprintf("%s/map.tmx", absDirPathContainingDirectlyTmxFile)
@@ -951,7 +950,33 @@ func (pR *Room) StartBattle() {
   if nil != err {
 		panic(err)
   }
-	DeserializeToTmxMapIns(byteArr, pTmxMapIns)
+	err = xml.Unmarshal(byteArr, pTmxMapIns)
+	if nil != err {
+		panic(err)
+	}
+
+  // Obtain the content of `gidBoundariesMap`.
+  gidBoundariesMap := make(map[string]Polygon2DList, 0)
+  for _, tileset := range pTmxMapIns.Tilesets {
+    relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), pTsxIns.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
+    absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
+    if nil != err {
+      panic(err)
+    }
+    if !filepath.IsAbs(absTsxFilePath) {
+      panic("Filepath must be absolute!")
+    }
+
+    byteArrOfTsxFile, err := ioutil.ReadFile(absTsxFilePath)
+    if nil != err {
+      panic(err)
+    }
+
+    DeserializeTsxToColliderDict(byteArrOfTsxFile, tileset.FirstGid, gidBoundariesMap)
+  }
+
+  ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMap)
+
 	var index = 0
 	for _, player := range pR.Players {
 		tmp := pTmxMapIns.ControlledPlayersInitPosList[index]
@@ -960,28 +985,6 @@ func (pR *Room) StartBattle() {
 		player.Y = tmp.Y
 		player.Score = 0
 	}
-
-  /*
-  * [WARNING]
-  * It's assumed that only the "FIRST of pTmxMapIns.Tilesets" contains
-  * ALL NECESSARY information to initiate the boundaries/colliders for
-  * "Treasures, Traps, GuardTowers etc." for EACH map. 
-  */
-	pTsxIns := &Tsx{}
-  relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), pTmxMapIns.Tilesets[0].Source) // Note that "TmxTileset.Source" can be a string of "relative path".
-	absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
-  if nil != err {
-		panic(err)
-  }
-	if !filepath.IsAbs(absTsxFilePath) {
-		panic("Filepath must be absolute!")
-	}
-
-	byteArr, err = ioutil.ReadFile(absTsxFilePath)
-  if nil != err {
-		panic(err)
-  }
-	DeserializeToTsxIns(byteArr, pTsxIns)
 
 	pR.InitTreasures(pTmxMapIns, pTsxIns)
 	pR.InitTraps(pTmxMapIns, pTsxIns)

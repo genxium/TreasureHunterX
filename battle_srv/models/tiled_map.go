@@ -26,7 +26,57 @@ const (
 	FLIPPED_DIAGONALLY_FLAG   uint32 = 0x20000000
 )
 
-type TmxTile struct {
+// For either a "*.tmx" or "*.tsx" file. [begins]
+type TmxOrTsxProperty struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
+}
+
+type TmxOrTsxProperties struct {
+	Property []*TmxOrTsxProperty `xml:"property"`
+}
+
+type TmxOrTsxPolyline struct {
+	Points string `xml:"points,attr"`
+}
+
+type TmxOrTsxObject struct {
+	Id         int                   `xml:"id,attr"`
+	X          float64               `xml:"x,attr"`
+	Y          float64               `xml:"y,attr"`
+	Properties []*TmxOrTsxProperties `xml:"properties"`
+	Polyline   *TmxOrTsxPolyline     `xml:"polyline"`
+}
+
+type TmxOrTsxObjectGroup struct {
+	Draworder string            `xml:"draworder,attr"`
+	Name      string            `xml:"name,attr"`
+	Objects   []*TmxOrTsxObject `xml:"object"`
+}
+
+// For either a "*.tmx" or "*.tsx" file. [ends]
+
+// Within a "*.tsx" file. [begins]
+type Tsx struct {
+	Name       string      `xml:"name,attr"`
+	TileWidth  int         `xml:"tilewidth,attr"`
+	TileHeight int         `xml:"tileheight,attr"`
+	TileCount  int         `xml:"tilecount,attr"`
+	Columns    int         `xml:"columns,attr"`
+	Image      []*TmxImage `xml:"image"`
+	Tiles      []*TsxTile  `xml:"tile"`
+}
+
+type TsxTile struct {
+	Id          int                  `xml:"id,attr"`
+	ObjectGroup *TmxOrTsxObjectGroup `xml:"objectgroup"`
+	Properties  *TmxOrTsxProperties  `xml:"properties"`
+}
+
+// Within a "*.tsx" file. [ends]
+
+// Within a "*.tmx" file. [begins]
+type TmxLayerDecodedTileData struct {
 	Id             uint32
 	Tileset        *TmxTileset
 	FlipHorizontal bool
@@ -34,21 +84,18 @@ type TmxTile struct {
 	FlipDiagonal   bool
 }
 
+type TmxLayerEncodedData struct {
+	Encoding    string `xml:"encoding,attr"`
+	Compression string `xml:"compression,attr"`
+	Value       string `xml:",chardata"`
+}
+
 type TmxLayer struct {
-	Name   string  `xml:"name,attr"`
-	Width  int     `xml:"width,attr"`
-	Height int     `xml:"height,attr"`
-	Data   TmxData `xml:"data"`
-	Tile   []*TmxTile
-}
-
-type TmxProperty struct {
-	Name  string `xml:"name,attr"`
-	Value string `xml:"value,attr"`
-}
-
-type TmxProperties struct {
-	Property []TmxProperty `xml:"property"`
+	Name   string               `xml:"name,attr"`
+	Width  int                  `xml:"width,attr"`
+	Height int                  `xml:"height,attr"`
+	Data   *TmxLayerEncodedData `xml:"data"`
+	Tile   []*TmxLayerDecodedTileData
 }
 
 type TmxImage struct {
@@ -57,9 +104,8 @@ type TmxImage struct {
 	Height int    `xml:"height,attr"`
 }
 
-// TileSet
 type TmxTileset struct {
-	FirstGid   uint32     `xml:"firstgid,attr"` // w 此图块集的第一个图块在全局图块集中的位置
+	FirstGid   uint32     `xml:"firstgid,attr"`
 	Name       string     `xml:"name,attr"`
 	TileWidth  int        `xml:"tilewidth,attr"`
 	TileHeight int        `xml:"tileheight,attr"`
@@ -67,105 +113,41 @@ type TmxTileset struct {
 	Source     string     `xml:"source,attr"`
 }
 
-type TmxObject struct {
-	Id         string        `xml:"id,attr"`
-	X          float64       `xml:"x,attr"`
-	Y          float64       `xml:"y,attr"`
-	Properties TmxProperties `xml:"properties"`
-}
-
-type TmxObjectGroup struct {
-	Name    string      `xml:"name,attr"`
-	Width   int         `xml:"width,attr"`
-	Height  int         `xml:"height,attr"`
-	Objects []TmxObject `xml:"object"`
-}
-
-// Map
 type TmxMap struct {
-	Version      string            `xml:"version,attr"`
-	Orientation  string            `xml:"orientation,attr"`
-	Width        int               `xml:"width,attr"`
-	Height       int               `xml:"height,attr"`
-	TileWidth    int               `xml:"tilewidth,attr"`
-	TileHeight   int               `xml:"tileheight,attr"`
-	Properties   []*TmxProperties  `xml:"properties"`
-	Tilesets     []*TmxTileset     `xml:"tileset"`
-	Layers       []*TmxLayer       `xml:"layer"`
-	ObjectGroups []*TmxObjectGroup `xml:"objectgroup"`
+	Version      string                `xml:"version,attr"`
+	Orientation  string                `xml:"orientation,attr"`
+	Width        int                   `xml:"width,attr"`
+	Height       int                   `xml:"height,attr"`
+	TileWidth    int                   `xml:"tilewidth,attr"`
+	TileHeight   int                   `xml:"tileheight,attr"`
+	Properties   []*TmxOrTsxProperties `xml:"properties"`
+	Tilesets     []*TmxTileset         `xml:"tileset"`
+	Layers       []*TmxLayer           `xml:"layer"`
+	ObjectGroups []*TmxObjectGroup     `xml:"objectgroup"`
 
-	ControlledPlayersInitPosList []Vec2D
-	TreasuresInfo                []TreasuresInfo
-	HighTreasuresInfo            []TreasuresInfo
-	SpeedShoesList               []SpeedShoesInfo
-	TrapsInitPosList             []Vec2D
-	GuardTowersInitPosList       []Vec2D
-	Pumpkins                     []*Vec2D
+	ControlledPlayersInitPosList []*Vec2D
+	LowTreasureInfoList          []*TreasureInfo
+	HighTreasureInfoList         []*TreasureInfo
+	SpeedShoeInfoList            []*SpeedShoeInfo
+	TrapsInitPosList             []*Vec2D
+	GuardTowersInitPosList       []*Vec2D
+	PumpkinPosList               []*Vec2D
 }
 
-type TreasuresInfo struct {
+// Within a "*.tmx" file. [ends]
+
+type TreasureInfo struct {
 	InitPos Vec2D
 	Type    int32
 	Score   int32
 }
 
-type SpeedShoesInfo struct {
+type SpeedShoeInfo struct {
 	InitPos Vec2D
 	Type    int32
 }
 
-type Tsx struct {
-	Name       string     `xml:"name,attr"`
-	TileWidth  int        `xml:"tilewidth,attr"`
-	TileHeight int        `xml:"tileheight,attr"`
-	TileCount  int        `xml:"tilecount,attr"`
-	Columns    int        `xml:"columns,attr"`
-	Image      []TmxImage `xml:"image"`
-	Tiles      []TsxTile  `xml:"tile"`
-
-	HigherTreasurePolyLineList []*TmxPolyline
-	LowTreasurePolyLineList    []*TmxPolyline
-	TrapPolyLineList           []*TmxPolyline
-	SpeedShoesPolyLineList     []*TmxPolyline
-	BarrierPolyLineList        map[int]*TmxPolyline
-	GuardTowerPolyLineList     []*TmxPolyline
-}
-
-type TsxTile struct {
-	Id          int            `xml:"id,attr"`
-	ObjectGroup TsxObjectGroup `xml:"objectgroup"`
-	Properties  TmxProperties  `xml:"properties"`
-}
-
-type TsxObjectGroup struct {
-	Draworder  string      `xml:"draworder,attr"`
-	TsxObjects []TsxObject `xml:"object"`
-}
-
-type TsxObject struct {
-	Id         int             `xml:"id,attr"`
-	X          float64         `xml:"x,attr"`
-	Y          float64         `xml:"y,attr"`
-	Properties []TmxProperties `xml:"properties"`
-	Polyline   TsxPolyline     `xml:"polyline"`
-}
-
-type TsxPolyline struct {
-	Points string `xml:"points,attr"`
-}
-
-type TmxData struct {
-	Encoding    string `xml:"encoding,attr"`
-	Compression string `xml:"compression,attr"`
-	Value       string `xml:",chardata"`
-}
-
-type TmxPolyline struct {
-	InitPos *Vec2D
-	Points  []*Vec2D
-}
-
-func (d *TmxData) decodeBase64() ([]byte, error) {
+func (d *TmxLayerEncodedData) decodeBase64() ([]byte, error) {
 	r := bytes.NewReader([]byte(strings.TrimSpace(d.Value)))
 	decr := base64.NewDecoder(base64.StdEncoding, r)
 	if d.Compression == "zlib" {
@@ -217,203 +199,99 @@ func (m *TmxMap) getCoordByGid(index int) (x float64, y float64) {
 	return vec2.X, vec2.Y
 }
 
-func (m *TmxMap) decodeLayerGid() error {
-	for _, layer := range m.Layers {
-		gids, err := layer.decodeBase64()
-		if err != nil {
-			return err
-		}
-		tmxsets := make([]*TmxTile, len(gids))
-		for index, gid := range gids {
-			if gid == 0 {
+type Polygon2DList []*Polygon2D
+
+func DeserializeTsxToColliderDict(byteArr []byte, firstGid int, gidBoundariesMap map[string]Polygon2DList) error {
+	pTsxIns := &Tsx{}
+	err := xml.Unmarshal(byteArr, pTsxIns)
+	if nil != err {
+		return err
+	}
+
+	var factorHalf float64 = 0.5
+
+	for _, tile := range pTsxIns.Tiles {
+		globalGid := (firstGid + tile.Id)
+		/**
+				   Per tile xml str could be
+
+				   ```
+				   <tile id="13">
+				    <objectgroup draworder="index">
+				     <object id="1" x="-154" y="-159">
+		          <properties>
+		           <property name="type" value="guardTower"/>
+		          </properties>
+				      <polyline points="0,0 -95,179 18,407 361,434 458,168 333,-7"/>
+				     </object>
+				    </objectgroup>
+				   </tile>
+				   ```
+				   , we currently REQUIRE that "`an object of a tile` with ONE OR MORE polylines must come with a single corresponding '<property name=`type` value=`...` />', and viceversa".
+
+				  Refer to https://shimo.im/docs/SmLJJhXm2C8XMzZT for how we theoretically fit a "Polyline in Tsx" into a "Polygon2D" and then into the corresponding "B2BodyDef & B2Body in the `world of colliding bodies`".
+		*/
+
+		theObjGroup := tile.ObjectGroup
+		for _, singleObj := range theObjGroup.Objects {
+			if nil == singleObj.Polyline {
+				// Temporarily omit those non-polyline-containing objects.
 				continue
 			}
-			flipHorizontal := (gid & FLIPPED_HORIZONTALLY_FLAG)
-			flipVertical := (gid & FLIPPED_VERTICALLY_FLAG)
-			flipDiagonal := (gid & FLIPPED_DIAGONALLY_FLAG)
-			gid := gid & ^(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
-			for i := len(m.Tilesets) - 1; i >= 0; i-- {
-				if m.Tilesets[i].FirstGid <= gid {
-					tmxsets[index] = &TmxTile{
-						Id:             gid - m.Tilesets[i].FirstGid,
-						Tileset:        m.Tilesets[i],
-						FlipHorizontal: flipHorizontal > 0,
-						FlipVertical:   flipVertical > 0,
-						FlipDiagonal:   flipDiagonal > 0,
-					}
-					break
-				}
+			if nil == singleObj.Properties.Property || "type" != singleObj.Properties.Property[0].Name {
+				continue
 			}
-		}
-		layer.Tile = tmxsets
-	}
-	return nil
-}
+			key := singleObj.Properties.Property[0].Value
 
-func DeserializeToTsxIns(byteArr []byte, pTsxIns *Tsx) error {
-	err := xml.Unmarshal(byteArr, pTsxIns)
-	if err != nil {
-		return err
-	}
-	pPolyLineMap := make(map[int]*TmxPolyline, 0)
-	for _, tile := range pTsxIns.Tiles {
-		if tile.Properties.Property != nil && tile.Properties.Property[0].Name == "type" {
-			tileObjectGroup := tile.ObjectGroup
-			pPolyLineList := make([]*TmxPolyline, len(tileObjectGroup.TsxObjects))
-			for index, obj := range tileObjectGroup.TsxObjects { //初始化tsx.BarrierPolyLineList, 这个gid -> polyline的map, 只有对象组属性值为barrier的时候(石头, 人头骨, 箱子)才存到BarrierPolyLineList这个map里面
-				//初始化initPos
-				initPos := &Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				//初始化Points
-				singleValueArray := strings.Split(obj.Polyline.Points, " ")
-				pointsArrayWrtInit := make([]Vec2D, len(singleValueArray))
-				for key, value := range singleValueArray {
-					for k, v := range strings.Split(value, ",") {
-						n, err := strconv.ParseFloat(v, 64)
-						if err != nil {
-							return err
-						}
-						if k%2 == 0 {
-							pointsArrayWrtInit[key].X = n + initPos.X
-						} else {
-							pointsArrayWrtInit[key].Y = n + initPos.Y
-						}
+			var thePolygon2DList Polygon2DList
+			if existingPolygon2DList, ok := gidBoundariesMap[globalGid]; ok {
+				thePolygon2DList = existingPolygon2DList
+			} else {
+				thePolygon2DList = make(Polygon2DList, 0)
+			}
+
+			offsetFromTopLeftInTileLocalCoordX := singleObj.X
+			offsetFromTopLeftInTileLocalCoordY := singleObj.Y
+
+			singleValueArray := strings.Split(obj.Polyline.Points, " ")
+
+			thePolygon2DFromPolyline := &Polygon2D{
+				Anchor: nil,
+				Points: make([]*Vec2D, len(singleValueArray)),
+			}
+
+			for k, value := range singleValueArray {
+				for k, v := range strings.Split(value, ",") {
+					coordinateValue, err := strconv.ParseFloat(v, 64)
+					if nil != err {
+						return err
 					}
-				}
-				pointsArrayTransted := make([]*Vec2D, len(pointsArrayWrtInit))
-				var scale float64 = 0.5
-				for key, value := range pointsArrayWrtInit {
-					pointsArrayTransted[key] = &Vec2D{X: value.X - scale*float64(pTsxIns.TileWidth), Y: scale*float64(pTsxIns.TileHeight) - value.Y}
-				}
-				pPolyLineList[index] = &TmxPolyline{
-					InitPos: initPos,
-					Points:  pointsArrayTransted,
-				}
-				for _, pros := range obj.Properties { //只有对象组属性值为barrier的时候才存到BarrierPolyLineList这个map里面
-					for _, p := range pros.Property {
-						if p.Value == "barrier" {
-							pPolyLineMap[tile.Id] = pPolyLineList[index]
-						}
+					if 0 == (k % 2) {
+						thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
+					} else {
+						thePolygon2DFromPolyline.Points[k].Y = factorHalf*float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
 					}
 				}
 			}
-			if tile.Properties.Property[0].Value == "highScoreTreasure" {
-				pTsxIns.HigherTreasurePolyLineList = pPolyLineList
-			} else if tile.Properties.Property[0].Value == "lowScoreTreasure" {
-				pTsxIns.LowTreasurePolyLineList = pPolyLineList
-			} else if "trap" == tile.Properties.Property[0].Value {
-				pTsxIns.TrapPolyLineList = pPolyLineList
-			} else if "speedShoes" == tile.Properties.Property[0].Value {
-				pTsxIns.SpeedShoesPolyLineList = pPolyLineList
-			} else if "guardTower" == tile.Properties.Property[0].Value {
-				pTsxIns.GuardTowerPolyLineList = pPolyLineList
-			}
-			pTsxIns.BarrierPolyLineList = pPolyLineMap
+
+			thePolygon2DList = append(thePolygon2DList, thePolygon2DFromPolyline)
 		}
 	}
 	return nil
 }
 
-func DeserializeToTmxMapIns(byteArr []byte, pTmxMapIns *TmxMap) error {
-	err := xml.Unmarshal(byteArr, pTmxMapIns)
-	if err != nil {
-		return err
-	}
+func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMap map[string]Polygon2DList) error {
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-		if "controlled_players_starting_pos_list" == objGroup.Name {
-			pTmxMapIns.ControlledPlayersInitPosList = make([]Vec2D, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				controlledPlayerStartingPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.ControlledPlayersInitPosList[index] = controlledPlayerStartingPos
-			}
-		}
+		correspondingPolygon2DList := gidBoundariesMap[objGroup.Name]
 
-		if "highTreasures" == objGroup.Name {
-			pTmxMapIns.HighTreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-
-				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.HighTreasuresInfo[index].Score = HIGH_SCORE_TREASURE_SCORE
-				pTmxMapIns.HighTreasuresInfo[index].Type = HIGH_SCORE_TREASURE_TYPE
-				pTmxMapIns.HighTreasuresInfo[index].InitPos = treasurePos
-			}
-		}
-
-		if "lowScoreTreasures" == objGroup.Name {
-			pTmxMapIns.TreasuresInfo = make([]TreasuresInfo, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				treasurePos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.TreasuresInfo[index].Score = TREASURE_SCORE
-				pTmxMapIns.TreasuresInfo[index].Type = TREASURE_TYPE
-				pTmxMapIns.TreasuresInfo[index].InitPos = treasurePos
-			}
-		}
-
-		if "traps" == objGroup.Name {
-			pTmxMapIns.TrapsInitPosList = make([]Vec2D, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				trapPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.TrapsInitPosList[index] = trapPos
-			}
-		}
-
-		if "guardTower" == objGroup.Name {
-			pTmxMapIns.GuardTowersInitPosList = make([]Vec2D, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				trapPos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.GuardTowersInitPosList[index] = trapPos
-			}
-		}
-
-		if "pumpkins" == objGroup.Name {
-			pTmxMapIns.Pumpkins = make([]*Vec2D, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				pos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.Pumpkins[index] = &pos
-			}
-		}
-
-		if "speed_shoes" == objGroup.Name {
-			pTmxMapIns.SpeedShoesList = make([]SpeedShoesInfo, len(objGroup.Objects))
-			for index, obj := range objGroup.Objects {
-				tmp := Vec2D{
-					X: obj.X,
-					Y: obj.Y,
-				}
-				pos := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(&tmp)
-				pTmxMapIns.SpeedShoesList[index].Type = SPEED_SHOES_TYPE
-				pTmxMapIns.SpeedShoesList[index].InitPos = pos
-			}
+		switch objGroup.Name {
+		case "ControlledPlayerStartingPos":
+		case "Barrier":
+		case "LowScoreTreasure", "HighScoreTreasure", "GuardTower", "SpeedShoe", "Pumpkin":
+		default:
 		}
 	}
-	return pTmxMapIns.decodeLayerGid()
+	return
 }
 
 func (pTmxMap *TmxMap) ToXML() (string, error) {

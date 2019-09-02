@@ -6,7 +6,7 @@
    eJztz0ENACAMALGR4F8zNspyjwronZm7xPlcD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPy7bHBg/ldQwR
   </data>
  </layer>
- <objectgroup id="2" name="controlled_players_starting_pos_list" locked="1">
+ <objectgroup id="2" name="PlayerStartingPos" locked="1">
   <object id="135" x="320" y="2884">
    <point/>
   </object>
@@ -19,7 +19,7 @@
    eJztWctuBCEMW7Vqt9v2/7+32gMSQnnYTmB6WB+ZwZmEkHHgdnuBxe8/5WLwcyHXuzH2ccAuw5Wty3j/bjyzxlC7M9iYrFxZfNbnqi/IOqAxqfow8AWOoXZmZL58k9xvzrg1L+JS9oO6LijfCR882yvWdUH5rG+KuBgfrFo42+7CJ/m+l5MWoloYjZ+CUsN2+OLVc0YDRPa9nNzhC7LPs//Xo8FuNs5wRvt2Rw7v8AXZ5zty2FvL3Xsf4e+qsVf60l1jq754MR2w8qFSY6MaqdSRJ7KYRnNWIL509iseZ4de93TyHZirwOOM1lXtC6JnSg+K2FPnVHSysr9P+4Dq8a5+Wp2jcHq5FPWgFXuZXu/sqxCuHX1cR+1BtN4A0y96/ycldiu8XOquxWhNOZ1LDFA+RCdn/4OOeFjw9nLl/5TVUPZ8YIX3bSd6z26w33zKl0xzM/xd2hvhnKFo7ox/h/ZmtOcpXzp1q6K5PXjfjPSAKJcF9jwXQdd9B8q1E8pZYUW3zlBqVYSOPRatm1XjKrUqQsUXties1qqs9kd8im5l7ovQnOzYr0wuWc+YOz7kvcq6ILkU9ZOqhmfvdj17M6rn3ayGV30YUM8qB6qxeIK9n96FaixmXOVDJ3bomRc4/AGscghn
   </data>
  </layer>
- <objectgroup id="7" name="highTreasures">
+ <objectgroup id="7" name="HighScoreTreasure">
   <object id="147" x="742.424" y="2924.24">
    <point/>
   </object>
@@ -63,7 +63,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="4" name="barrier" locked="1">
+ <objectgroup id="4" name="Barrier" locked="1">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
@@ -326,7 +326,7 @@
    <polyline points="0,0 -78.7879,-1.27898e-13 -66.6667,3121.21 1.13687e-13,3121.21"/>
   </object>
  </objectgroup>
- <objectgroup id="5" name="lowScoreTreasures" visible="0">
+ <objectgroup id="5" name="LowScoreTreasure">
   <object id="62" x="600" y="2648">
    <point/>
   </object>
@@ -535,7 +535,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="6" name="guardTower" locked="1">
+ <objectgroup id="6" name="GuardTower" locked="1">
   <object id="131" x="460" y="452">
    <point/>
   </object>
