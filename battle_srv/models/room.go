@@ -7,7 +7,6 @@ import (
 	"go.uber.org/zap"
 	"io/ioutil"
 	"math"
-	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,6 +15,7 @@ import (
 	pb "server/pb_output"
 	"sync"
 	"time"
+	"encoding/xml"
 )
 
 const (
@@ -208,7 +208,7 @@ func (pR *Room) onPumpkinEncounterBarrier(pumpkin *Pumpkin, barrier *Barrier) {
 }
 
 func (pR *Room) onPumpkinEncounterPlayer(pumpkin *Pumpkin, player *Player) {
-	Logger.Info("pumpkin has catched the player: ", zap.Any("pumpkinId", pumpkin.LocalIdInBattle), zap.Any("playerId", player.Id))
+	Logger.Info("pumpkin has caught the player: ", zap.Any("pumpkinId", pumpkin.LocalIdInBattle), zap.Any("playerId", player.Id))
 }
 
 func (pR *Room) updateScore() {
@@ -257,67 +257,6 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 
 	Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
 	return true
-}
-
-func (pR *Room) createTrap(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *Tsx) *Trap {
-
-	polyLine := pTsxIns.TrapPolyLineList[0]
-
-	thePoints := make([]*Vec2D, len(polyLine.Points))
-	for index, value := range polyLine.Points {
-		thePoints[index] = &Vec2D{
-			X: value.X,
-			Y: value.Y,
-		}
-	}
-
-	thePolygon := Polygon2D{
-		Anchor: pAnchor,
-		Points: thePoints,
-	}
-
-	theTrap := Trap{
-		Id:              0,
-		LocalIdInBattle: trapLocalIdInBattle,
-		X:               pAnchor.X,
-		Y:               pAnchor.Y,
-		PickupBoundary:  &thePolygon,
-	}
-
-	return &theTrap
-}
-
-func (pR *Room) createGuardTower(pAnchor *Vec2D, trapLocalIdInBattle int32, pTsxIns *Tsx) *GuardTower {
-
-	polyLine := pTsxIns.GuardTowerPolyLineList[0]
-
-	thePoints := make([]*Vec2D, len(polyLine.Points))
-	for index, value := range polyLine.Points {
-		thePoints[index] = &Vec2D{
-			X: value.X,
-			Y: value.Y,
-		}
-	}
-
-	thePolygon := Polygon2D{
-		Anchor: pAnchor,
-		Points: thePoints,
-	}
-
-	var pInRangePlayers *InRangePlayerCollection
-	pInRangePlayers = pInRangePlayers.Init(10)
-	theGuardTower := GuardTower{
-		Id:              0,
-		LocalIdInBattle: trapLocalIdInBattle,
-		X:               pAnchor.X,
-		Y:               pAnchor.Y,
-		PickupBoundary:  &thePolygon,
-
-		InRangePlayers: pInRangePlayers,
-		LastAttackTick: utils.UnixtimeNano(),
-	}
-
-	return &theGuardTower
 }
 
 func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet {
@@ -379,227 +318,63 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	return pR.createTrapBulletByPos(startPos, endPos)
 }
 
-func (pR *Room) createTreasure(Type int32, pAnchor *Vec2D, treasureLocalIdInBattle int32, pTsxIns *Tsx) *Treasure {
-	var polyLine *TmxPolyline
-	if Type == HIGH_SCORE_TREASURE_TYPE {
-		polyLine = pTsxIns.HigherTreasurePolyLineList[0]
-	}
-	if Type == TREASURE_TYPE {
-		polyLine = pTsxIns.LowTreasurePolyLineList[0]
-	}
+func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, guardTowerPolygon2DList Polygon2DList) {
+  var guardTowerLocalIdInBattle int32 = 0
+	for _, polygon2D := range guardTowerPolygon2DList {
+    var inRangePlayers InRangePlayerCollection
+    pInRangePlayers := &inRangePlayers
+    pInRangePlayers = pInRangePlayers.Init(10)
+    theGuardTower := &GuardTower{
+      Id:              0,
+      LocalIdInBattle: guardTowerLocalIdInBattle,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+      InRangePlayers:  pInRangePlayers,
+      LastAttackTick: utils.UnixtimeNano(),
+    }
 
-	thePoints := make([]*Vec2D, len(polyLine.Points))
-	for index, value := range polyLine.Points {
-		thePoints[index] = &Vec2D{
-			X: value.X,
-			Y: value.Y,
-		}
-	}
+    pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
 
-	thePolygon := Polygon2D{
-		Anchor: pAnchor,
-		Points: thePoints,
+    guardTowerLocalIdInBattle++
 	}
-
-	theTreasure := Treasure{
-		Id:              0,
-		LocalIdInBattle: treasureLocalIdInBattle,
-		Score:           0,
-		Type:            0,
-		X:               pAnchor.X,
-		Y:               pAnchor.Y,
-		PickupBoundary:  &thePolygon,
-	}
-
-	return &theTreasure
+	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.GuardTowers))
 }
 
-func (pR *Room) createSpeedShoe(pAnchor *Vec2D, speedShoesLocalIdInBattle int32, pTsxIns *Tsx) *SpeedShoe {
-	polyLine := pTsxIns.SpeedShoesPolyLineList[0]
+func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, lowScoreTreasurePolygon2DList Polygon2DList, highScoreTreasurePolygon2DList Polygon2DList) {
+  var treasureLocalIdInBattle int32 = 0
+	for _, polygon2D := range lowScoreTreasurePolygon2DList {
+    theTreasure := &Treasure{
+      Id:              0,
+      LocalIdInBattle: treasureLocalIdInBattle,
+      Score:           LOW_SCORE_TREASURE_SCORE,
+      Type:            LOW_SCORE_TREASURE_TYPE,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+    }
 
-	thePoints := make([]*Vec2D, len(polyLine.Points))
-	for index, value := range polyLine.Points {
-		thePoints[index] = &Vec2D{
-			X: value.X,
-			Y: value.Y,
-		}
+    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
+
+    treasureLocalIdInBattle++
 	}
 
-	thePolygon := Polygon2D{
-		Anchor: pAnchor,
-		Points: thePoints,
-	}
+	for _, polygon2D := range highScoreTreasurePolygon2DList {
+    theTreasure := &Treasure{
+      Id:              0,
+      LocalIdInBattle: treasureLocalIdInBattle,
+      Score:           HIGH_SCORE_TREASURE_SCORE,
+      Type:            HIGH_SCORE_TREASURE_TYPE,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+    }
 
-	theSpeedShoe := SpeedShoe{
-		Id:              0,
-		LocalIdInBattle: speedShoesLocalIdInBattle,
-		Type:            0,
-		X:               pAnchor.X,
-		Y:               pAnchor.Y,
-		PickupBoundary:  &thePolygon,
-	}
+    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 
-	return &theSpeedShoe
-}
-
-func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for key, value := range pTmxMapIns.GuardTowersInitPosList {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.X),
-				Y: float64(value.Y),
-			}
-			tower := pR.createGuardTower(pAnchor, int32(key), pTsxIns)
-			pR.GuardTowers[tower.LocalIdInBattle] = tower
-		}
-	}
-	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
-}
-
-func (pR *Room) InitTraps(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for key, value := range pTmxMapIns.TrapsInitPosList {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.X),
-				Y: float64(value.Y),
-			}
-			theTrap := pR.createTrap(pAnchor, int32(key), pTsxIns)
-			pR.Traps[theTrap.LocalIdInBattle] = theTrap
-		}
-	}
-	Logger.Info("InitTraps finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.Traps))
-}
-
-func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for key, value := range pTmxMapIns.TreasuresInfo {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.InitPos.X),
-				Y: float64(value.InitPos.Y),
-			}
-			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
-			theTreasure.Score = value.Score
-			theTreasure.Type = value.Type
-			/*
-				      if (true == theTreasure.Removed) {
-				        // A useless proof of "no memory contamination for consecutive battles in a same room". -- YFLu
-					      Logger.Info("A treasure initiated with .Removed == true:", zap.Any("roomId", pR.Id), zap.Any("localIdInBattle", theTreasure.LocalIdInBattle))
-				      }
-			*/
-			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-		}
-	}
-	for key, value := range pTmxMapIns.HighTreasuresInfo {
-		{
-			pAnchor := &Vec2D{
-				X: float64(value.InitPos.X),
-				Y: float64(value.InitPos.Y),
-			}
-			theTreasure := pR.createTreasure(value.Type, pAnchor, int32(key), pTsxIns)
-			theTreasure.Score = value.Score
-			theTreasure.Type = value.Type
-			/*
-				      if (true == theTreasure.Removed) {
-				        // A useless proof of "no memory contamination for consecutive battles in a same room". -- YFLu
-					      Logger.Info("A treasure initiated with .Removed == true:", zap.Any("roomId", pR.Id), zap.Any("localIdInBattle", theTreasure.LocalIdInBattle))
-				      }
-			*/
-			pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-		}
+    treasureLocalIdInBattle++
 	}
 	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("# of treasures", len(pR.Treasures)))
-}
-
-func (pR *Room) InitSpeedShoes(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for key, value := range pTmxMapIns.SpeedShoesList {
-		pAnchor := &Vec2D{
-			X: float64(value.InitPos.X),
-			Y: float64(value.InitPos.Y),
-		}
-		theSpeedShoe := pR.createSpeedShoe(pAnchor, int32(key), pTsxIns)
-		theSpeedShoe.Type = value.Type
-		pR.SpeedShoes[theSpeedShoe.LocalIdInBattle] = theSpeedShoe
-	}
-	Logger.Info("InitSpeedShoes finished:", zap.Any("roomId", pR.Id), zap.Any("speedshoes", pR.SpeedShoes))
-}
-
-func (pR *Room) InitPumpkins(pTmxMapIns *TmxMap) {
-	for key, value := range pTmxMapIns.Pumpkins {
-		p := &Pumpkin{}
-		p.LocalIdInBattle = int32(key)
-		p.LinearSpeed = 0.0000004
-		p.X = value.X
-		p.Y = value.Y
-		p.Dir = &Direction{rand.Float64(), rand.Float64()} // todo
-		pR.Pumpkins[p.LocalIdInBattle] = p
-	}
-}
-
-//从layers获取所有遮挡物的tile, 然后根据gid获取坐标,
-//从tsx获取对应的多边形线条, 初始化一个Boundary
-//
-func (pR *Room) InitBarrier(pTmxMapIns *TmxMap, pTsxIns *Tsx) {
-	for _, lay := range pTmxMapIns.Layers {
-		if lay.Name != "tile_1 human skeleton" && lay.Name != "tile_1 board" && lay.Name != "tile_1 stone" {
-			continue
-		}
-		for index, tile := range lay.Tile {
-			if tile == nil || tile.Tileset == nil {
-				continue
-			}
-			if tile.Tileset.Source != "tile_1.tsx" {
-				continue
-			}
-
-			barrier := &Barrier{}
-			//Set coord
-			barrier.X, barrier.Y = pTmxMapIns.getCoordByGid(index)
-			barrier.Type = tile.Id
-			if v, ok := pTsxIns.BarrierPolyLineList[int(tile.Id)]; ok {
-				thePoints := make([]*Vec2D, 0)
-				for _, p := range v.Points {
-					thePoints = append(thePoints, &Vec2D{
-						X: p.X,
-						Y: p.Y,
-					})
-				}
-				//Get points
-				barrier.Boundary = &Polygon2D{Points: thePoints}
-			}
-
-			//Get body def by X,Y
-			var bdDef box2d.B2BodyDef
-			bdDef = box2d.MakeB2BodyDef()
-			bdDef.Type = box2d.B2BodyType.B2_staticBody
-			bdDef.Position.Set(barrier.X, barrier.Y)
-			b2BarrierBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-			//Get fixture def by Points
-			fd := box2d.MakeB2FixtureDef()
-			if barrier.Boundary != nil {
-				b2Vertices := make([]box2d.B2Vec2, len(barrier.Boundary.Points))
-				for vIndex, v2 := range barrier.Boundary.Points {
-					b2Vertices[vIndex] = v2.ToB2Vec2()
-				}
-				b2PolygonShape := box2d.MakeB2PolygonShape()
-				b2PolygonShape.Set(b2Vertices, len(barrier.Boundary.Points))
-				fd.Shape = &b2PolygonShape
-			} else {
-				b2CircleShape := box2d.MakeB2CircleShape()
-				b2CircleShape.M_radius = 32
-				fd.Shape = &b2CircleShape
-			}
-
-			fd.Filter.CategoryBits = COLLISION_CATEGORY_BARRIER
-			fd.Filter.MaskBits = COLLISION_MASK_FOR_BARRIER
-			fd.Density = 0.0
-			b2BarrierBody.CreateFixtureFromDef(&fd)
-
-			barrier.CollidableBody = b2BarrierBody
-			b2BarrierBody.SetUserData(barrier)
-			pR.Barriers[int32(index)] = barrier
-		}
-	}
 }
 
 func (pR *Room) InitColliders() {
@@ -633,29 +408,6 @@ func (pR *Room) InitColliders() {
 		// PrettyPrintBody(player.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.Pumpkins:", zap.Any("roomId", pR.Id))
-	for _, p := range pR.Pumpkins {
-		var bdDef box2d.B2BodyDef
-		bdDef = box2d.MakeB2BodyDef()
-		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
-		bdDef.Position.Set(p.X, p.Y)
-
-		b2PumpkinBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-		b2CircleShape := box2d.MakeB2CircleShape()
-		b2CircleShape.M_radius = 32
-
-		fd := box2d.MakeB2FixtureDef()
-		fd.Shape = &b2CircleShape
-		fd.Filter.CategoryBits = COLLISION_CATEGORY_PUMPKIN
-		fd.Filter.MaskBits = COLLISION_MASK_FOR_PUMPKIN
-		fd.Density = 0.0
-		b2PumpkinBody.CreateFixtureFromDef(&fd)
-
-		p.CollidableBody = b2PumpkinBody
-		b2PumpkinBody.SetUserData(p)
-	}
-
 	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
@@ -687,36 +439,6 @@ func (pR *Room) InitColliders() {
 		// PrettyPrintBody(treasure.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.Traps:", zap.Any("roomId", pR.Id))
-	for _, trap := range pR.Traps {
-		var bdDef box2d.B2BodyDef
-		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
-		bdDef = box2d.MakeB2BodyDef()
-		bdDef.Position.Set(trap.PickupBoundary.Anchor.X, trap.PickupBoundary.Anchor.Y)
-
-		b2TrapBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-		pointsCount := len(trap.PickupBoundary.Points)
-
-		b2Vertices := make([]box2d.B2Vec2, pointsCount)
-		for vIndex, v2 := range trap.PickupBoundary.Points {
-			b2Vertices[vIndex] = v2.ToB2Vec2()
-		}
-
-		b2PolygonShape := box2d.MakeB2PolygonShape()
-		b2PolygonShape.Set(b2Vertices, pointsCount)
-
-		fd := box2d.MakeB2FixtureDef()
-		fd.Shape = &b2PolygonShape
-		fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
-		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
-		fd.Density = 0.0
-		b2TrapBody.CreateFixtureFromDef(&fd)
-
-		trap.CollidableBody = b2TrapBody
-		b2TrapBody.SetUserData(trap)
-	}
-
 	Logger.Info("InitColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
 	for _, tower := range pR.GuardTowers {
 		var bdDef box2d.B2BodyDef
@@ -745,37 +467,6 @@ func (pR *Room) InitColliders() {
 
 		tower.CollidableBody = b2TrapBody
 		b2TrapBody.SetUserData(tower)
-	}
-
-	Logger.Info("InitColliders for pR.SpeedShoes:", zap.Any("roomId", pR.Id))
-	for _, v := range pR.SpeedShoes {
-		var bdDef box2d.B2BodyDef
-		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
-		bdDef = box2d.MakeB2BodyDef()
-		bdDef.Position.Set(v.PickupBoundary.Anchor.X, v.PickupBoundary.Anchor.Y)
-
-		b2SpeedShoeBody := pR.CollidableWorld.CreateBody(&bdDef)
-
-		pointsCount := len(v.PickupBoundary.Points)
-
-		b2Vertices := make([]box2d.B2Vec2, pointsCount)
-		for vIndex, v2 := range v.PickupBoundary.Points {
-			b2Vertices[vIndex] = v2.ToB2Vec2()
-		}
-
-		b2PolygonShape := box2d.MakeB2PolygonShape()
-		b2PolygonShape.Set(b2Vertices, pointsCount)
-
-		fd := box2d.MakeB2FixtureDef()
-		fd.Shape = &b2PolygonShape
-		fd.Filter.CategoryBits = COLLISION_CATEGORY_SPEED_SHOES
-		fd.Filter.MaskBits = COLLISION_MASK_FOR_SPEED_SHOES
-		fd.Density = 0.0
-		b2SpeedShoeBody.CreateFixtureFromDef(&fd)
-
-		v.CollidableBody = b2SpeedShoeBody
-		b2SpeedShoeBody.SetUserData(v)
-		//PrettyPrintBody(v.CollidableBody)
 	}
 }
 
@@ -955,10 +646,10 @@ func (pR *Room) StartBattle() {
 		panic(err)
 	}
 
-  // Obtain the content of `gidBoundariesMap`.
-  gidBoundariesMap := make(map[int]StrToPolygon2DListMap, 0)
+  // Obtain the content of `gidBoundariesMapInB2World`.
+  gidBoundariesMapInB2World := make(map[int]StrToPolygon2DListMap, 0)
   for _, tileset := range pTmxMapIns.Tilesets {
-    relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), pTsxIns.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
+    relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), tileset.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
     absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
     if nil != err {
       panic(err)
@@ -972,26 +663,30 @@ func (pR *Room) StartBattle() {
       panic(err)
     }
 
-    DeserializeTsxToColliderDict(byteArrOfTsxFile, tileset.FirstGid, gidBoundariesMap)
+    DeserializeTsxToColliderDict(pTmxMapIns, byteArrOfTsxFile, int(tileset.FirstGid), gidBoundariesMapInB2World)
   }
 
-  ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMap)
+  toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
 
-	var index = 0
-	for _, player := range pR.Players {
-		tmp := pTmxMapIns.ControlledPlayersInitPosList[index]
-		index++
-		player.X = tmp.X
-		player.Y = tmp.Y
+  // Player position initialization.
+  playerPosList := toRetStrToVec2DListMap["ControlledPlayerStartingPos"]
+	for index, player := range pR.Players {
+		player.X = playerPosList[index].X
+		player.Y = playerPosList[index].Y
 		player.Score = 0
 	}
 
-	pR.InitTreasures(pTmxMapIns, pTsxIns)
-	pR.InitTraps(pTmxMapIns, pTsxIns)
-	pR.InitGuardTower(pTmxMapIns, pTsxIns)
-	pR.InitPumpkins(pTmxMapIns)
-	pR.InitSpeedShoes(pTmxMapIns, pTsxIns)
-	pR.InitBarrier(pTmxMapIns, pTsxIns) // NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! -- YFLu
+  lowScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["LowScoreTreasure"]
+  highScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["HighScoreTreasure"]
+	pR.InitTreasures(pTmxMapIns, lowScoreTreasurePolygon2DList, highScoreTreasurePolygon2DList)
+
+  guardTowerPolygon2DList := toRetStrToPolygon2DListMap["GuardTower"]
+	pR.InitGuardTower(pTmxMapIns, guardTowerPolygon2DList)
+	/* 
+    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! 
+
+  -- YFLu
+  */
 
 	pR.InitColliders()
 
@@ -1195,18 +890,6 @@ func (pR *Room) StartBattle() {
 				}
 			}
 
-			//移动南瓜
-			for _, pumpkin := range pR.Pumpkins {
-				if pumpkin.Removed {
-					continue
-				}
-				elapsedMag := pumpkin.LinearSpeed * float64(nanosPerFrame)
-				newB2Vec2Pos := box2d.MakeB2Vec2(pumpkin.X+float64(elapsedMag)*pumpkin.Dir.Dx, pumpkin.Y+float64(elapsedMag)*pumpkin.Dir.Dy)
-				MoveDynamicBody(pumpkin.CollidableBody, &newB2Vec2Pos, 0)
-				pumpkin.X = newB2Vec2Pos.X
-				pumpkin.Y = newB2Vec2Pos.Y
-			}
-
 			pR.CollidableWorld.Step(secondsPerFrame, velocityIterationsPerFrame, positionIterationsPerFrame)
 
 			// 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
@@ -1253,19 +936,6 @@ func (pR *Room) StartBattle() {
 							pR.onSpeedShoePickedUp(player, v, collisionNowMillis)
 						default:
 							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
-						}
-					}
-				}
-			}
-
-			//南瓜撞到墙和玩家产生的回调
-			for _, pumpkin := range pR.Pumpkins {
-				for edge := pumpkin.CollidableBody.GetContactList(); edge != nil; edge = edge.Next {
-					if edge.Contact.IsTouching() {
-						if barrier, ok := edge.Other.GetUserData().(*Barrier); ok {
-							pR.onPumpkinEncounterBarrier(pumpkin, barrier)
-						} else if player, ok := edge.Other.GetUserData().(*Player); ok {
-							pR.onPumpkinEncounterPlayer(pumpkin, player)
 						}
 					}
 				}

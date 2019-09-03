@@ -556,73 +556,7 @@ cc.Class({
 
     const tiledMapIns = self.node.getComponent(cc.TiledMap);
     const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
-    for (let frameAnim of boundaryObjs.frameAnimations) {
-      const animNode = cc.instantiate(self.tiledAnimPrefab);
-      const anim = animNode.getComponent(cc.Animation);
-      animNode.setPosition(frameAnim.posInMapNode);
-      animNode.width = frameAnim.sizeInMapNode.width;
-      animNode.height = frameAnim.sizeInMapNode.height;
-      animNode.setScale(frameAnim.sizeInMapNode.width / frameAnim.origSize.width, frameAnim.sizeInMapNode.height / frameAnim.origSize.height);
-      animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
-      safelyAddChild(self.node, animNode);
-      setLocalZOrder(animNode, 5);
-      anim.addClip(frameAnim.animationClip, "default");
-      anim.play("default");
-    }
-
-    self.barrierColliders = [];
-    for (let boundaryObj of boundaryObjs.barriers) {
-      const newBarrier = cc.instantiate(self.barrierPrefab);
-      const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-      newBarrier.setPosition(newBoundaryOffsetInMapNode);
-      newBarrier.setAnchorPoint(cc.v2(0, 0));
-      const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
-      newBarrierColliderIns.points = [];
-      for (let p of boundaryObj) {
-        newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-      }
-      self.barrierColliders.push(newBarrierColliderIns);
-      self.node.addChild(newBarrier);
-    }
-    const allLayers = tiledMapIns.getLayers();
-    for (let layer of allLayers) {
-      const layerType = layer.getProperty("type");
-      switch (layerType) {
-        case "normal":
-          setLocalZOrder(layer.node, 0);
-          break;
-        case "barrier_and_shelter":
-          setLocalZOrder(layer.node, 3);
-          break;
-        default:
-          break;
-      }
-    }
-
-    const allObjectGroups = tiledMapIns.getObjectGroups();
-    for (let objectGroup of allObjectGroups) {
-      const objectGroupType = objectGroup.getProperty("type");
-      switch (objectGroupType) {
-        case "barrier_and_shelter":
-          setLocalZOrder(objectGroup.node, 3);
-          break;
-        default:
-          break;
-      }
-    }
-
-    for (let boundaryObj of boundaryObjs.sheltersZReducer) {
-      const newShelter = cc.instantiate(self.shelterZReducerPrefab);
-      const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-      newShelter.setPosition(newBoundaryOffsetInMapNode);
-      newShelter.setAnchorPoint(cc.v2(0, 0));
-      const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
-      newShelterColliderIns.points = [];
-      for (let p of boundaryObj) {
-        newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-      }
-      self.node.addChild(newShelter);
-    }
+    tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
 
     self.initAfterWSConnected = () => {
       const self = window.mapIns;

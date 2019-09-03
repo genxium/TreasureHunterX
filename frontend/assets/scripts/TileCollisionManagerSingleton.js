@@ -610,4 +610,194 @@ TileCollisionManager.prototype.isOutOfMapNode = function (tiledMapNode, continuo
   return true;
 };
 
+TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScriptIns, mapNode, extractedBoundaryObjs) {
+  const tiledMapIns = mapNode.getComponent(cc.TiledMap);
+  if (extractedBoundaryObjs.grandBoundaries) {
+    window.grandBoundary = [];
+    for (let boundaryObj of extractedBoundaryObjs.grandBoundaries) {
+      for (let p of boundaryObj) {
+        if (CC_DEBUG) {
+          const labelNode = new cc.Node();
+          labelNode.setPosition(p);
+          const label = labelNode.addComponent(cc.Label);
+          label.string = "GB_(" + p.x.toFixed(2) + ", " + p.y.toFixed(2) + ")";
+          safelyAddChild(mapNode, labelNode);
+          setLocalZOrder(labelNode, 999);
+        }
+        window.grandBoundary.push(p);
+      }
+      break;
+    }
+  }
+  for (let imageObject of extractedBoundaryObjs.imageObjects) {
+    const imageObjectNode = cc.instantiate(mapScriptIns.imageObjectPrefab);
+    const spriteComp = imageObjectNode.getComponent(cc.Sprite);
+    imageObjectNode.setPosition(imageObject.posInMapNode);
+    imageObjectNode.width = imageObject.sizeInMapNode.width;
+    imageObjectNode.height = imageObject.sizeInMapNode.height;
+    imageObjectNode.setScale(imageObject.sizeInMapNode.width / imageObject.origSize.width, imageObject.sizeInMapNode.height / imageObject.origSize.height);
+    imageObjectNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
+    spriteComp.spriteFrame = imageObject.spriteFrame;
+    imageObjectNode.active = false;
+    safelyAddChild(mapScriptIns.node, imageObjectNode);
+    setLocalZOrder(imageObjectNode, window.CORE_LAYER_Z_INDEX.IMAGE_OBJ);
+    imageObjectNode.origZIndex = window.CORE_LAYER_Z_INDEX.IMAGE_OBJ;
+    imageObject.imageObjectNode = imageObjectNode;
+  }
+
+  mapScriptIns.dictOfTiledFrameAnimationList = {};
+  for (let frameAnim of extractedBoundaryObjs.frameAnimations) {
+    if (!frameAnim.type) {
+      cc.warn("should bind a type to the frameAnim obejct layer");
+      continue
+    }
+    const tiledMapIns = mapScriptIns.node.getComponent(cc.TiledMap);
+    let frameAnimInType = mapScriptIns.dictOfTiledFrameAnimationList[frameAnim.type];
+    if (!frameAnimInType) {
+      mapScriptIns.dictOfTiledFrameAnimationList[frameAnim.type] = [];
+      frameAnimInType = mapScriptIns.dictOfTiledFrameAnimationList[frameAnim.type];
+    }
+    const animNode = cc.instantiate(mapScriptIns.tiledAnimPrefab);
+    const anim = animNode.getComponent(cc.Animation);
+    animNode.setPosition(frameAnim.posInMapNode);
+    animNode.width = frameAnim.sizeInMapNode.width;
+    animNode.height = frameAnim.sizeInMapNode.height;
+    animNode.setScale(frameAnim.sizeInMapNode.width / frameAnim.origSize.width, frameAnim.sizeInMapNode.height / frameAnim.origSize.height);
+    animNode.opacity = 0;
+    animNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
+    safelyAddChild(mapScriptIns.node, animNode);
+    setLocalZOrder(animNode, 5);
+    anim.addClip(frameAnim.animationClip, "default");
+    anim.play("default");
+    frameAnimInType.push(animNode);
+  }
+
+  for (let boundaryObj of extractedBoundaryObjs.shelterChainTails) {
+    const newShelter = cc.instantiate(mapScriptIns.polygonBoundaryShelterPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newShelter.setPosition(newBoundaryOffsetInMapNode);
+    newShelter.setAnchorPoint(cc.v2(0, 0));
+    const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+    newShelterColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    newShelter.pTiledLayer = boundaryObj.pTiledLayer;
+    newShelter.tileDiscretePos = boundaryObj.tileDiscretePos;
+    if (null != boundaryObj.imageObject) {
+      newShelter.imageObject = boundaryObj.imageObject;
+      newShelter.tailOrHead = "tail";
+      window.addToGlobalShelterChainVerticeMap(newShelter.imageObject.imageObjectNode); // Deliberately NOT adding at the "traversal of shelterChainHeads".
+    }
+    newShelter.boundaryObj = boundaryObj;
+    mapScriptIns.node.addChild(newShelter);
+  }
+
+  for (let boundaryObj of extractedBoundaryObjs.shelterChainHeads) {
+    const newShelter = cc.instantiate(mapScriptIns.polygonBoundaryShelterPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newShelter.setPosition(newBoundaryOffsetInMapNode);
+    newShelter.setAnchorPoint(cc.v2(0, 0));
+    const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+    newShelterColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    newShelter.pTiledLayer = boundaryObj.pTiledLayer;
+    newShelter.tileDiscretePos = boundaryObj.tileDiscretePos;
+    if (null != boundaryObj.imageObject) {
+      newShelter.imageObject = boundaryObj.imageObject;
+      newShelter.tailOrHead = "head";
+    }
+    newShelter.boundaryObj = boundaryObj;
+    mapScriptIns.node.addChild(newShelter);
+  }
+
+  mapScriptIns.statefulBuildableInhibitionColliders = [];
+  for (let boundaryObj of extractedBoundaryObjs.statefulBuildableInhibitions) {
+    const newStatefulBuildableInhibition = cc.instantiate(mapScriptIns.polygonBoundaryStatefulBuildableInhibitionPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newStatefulBuildableInhibition.setPosition(newBoundaryOffsetInMapNode);
+    newStatefulBuildableInhibition.setAnchorPoint(cc.v2(0, 0));
+    const newStatefulBuildableInhibitionColliderIns = newStatefulBuildableInhibition.getComponent(cc.PolygonCollider);
+    newStatefulBuildableInhibitionColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newStatefulBuildableInhibitionColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    mapScriptIns.statefulBuildableInhibitionColliders.push(newStatefulBuildableInhibition);
+    mapScriptIns.node.addChild(newStatefulBuildableInhibition);
+  }
+
+  mapScriptIns.barrierColliders = [];
+  for (let boundaryObj of extractedBoundaryObjs.barriers) {
+    const newBarrier = cc.instantiate(mapScriptIns.polygonBoundaryBarrierPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newBarrier.setPosition(newBoundaryOffsetInMapNode);
+    newBarrier.setAnchorPoint(cc.v2(0, 0));
+    const newBarrierColliderIns = newBarrier.getComponent(cc.PolygonCollider);
+    newBarrierColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newBarrierColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    mapScriptIns.barrierColliders.push(newBarrierColliderIns);
+    mapScriptIns.node.addChild(newBarrier);
+  }
+
+  for (let boundaryObj of extractedBoundaryObjs.transparents) {
+    const newTransparent = cc.instantiate(mapScriptIns.polygonBoundaryTransparentPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newTransparent.setPosition(newBoundaryOffsetInMapNode);
+    newTransparent.setAnchorPoint(cc.v2(0, 0));
+    const newTransparentColliderIns = newTransparent.getComponent(cc.PolygonCollider);
+    newTransparentColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newTransparentColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    newTransparent.pTiledLayer = boundaryObj.pTiledLayer;
+    newTransparent.tileDiscretePos = boundaryObj.tileDiscretePos;
+    mapScriptIns.node.addChild(newTransparent);
+  }
+
+  for (let boundaryObj of extractedBoundaryObjs.sheltersZReducer) {
+    const newShelter = cc.instantiate(mapScriptIns.polygonBoundaryShelterZReducerPrefab);
+    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
+    newShelter.setPosition(newBoundaryOffsetInMapNode);
+    newShelter.setAnchorPoint(cc.v2(0, 0));
+    const newShelterColliderIns = newShelter.getComponent(cc.PolygonCollider);
+    newShelterColliderIns.points = [];
+    for (let p of boundaryObj) {
+      newShelterColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
+    }
+    mapScriptIns.node.addChild(newShelter);
+  }
+
+  const allLayers = tiledMapIns.getLayers();
+  for (let layer of allLayers) {
+    const layerType = layer.getProperty("type");
+    switch (layerType) {
+      case "barrier_and_shelter":
+        setLocalZOrder(layer.node, 3);
+        break;
+      case "shelter_preview":
+        layer.node.opacity = 100;
+        setLocalZOrder(layer.node, 500);
+        break;
+      default:
+        break;
+    }
+  }
+
+  const allObjectGroups = tiledMapIns.getObjectGroups();
+  for (let objectGroup of allObjectGroups) {
+    const objectGroupType = objectGroup.getProperty("type");
+    switch (objectGroupType) {
+      case "barrier_and_shelter":
+        setLocalZOrder(objectGroup.node, 3);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 window.tileCollisionManager = new TileCollisionManager();
