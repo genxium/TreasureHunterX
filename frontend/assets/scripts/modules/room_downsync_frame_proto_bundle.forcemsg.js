@@ -674,6 +674,710 @@ $root.treasurehunterx = (function() {
         return Polygon2D;
     })();
 
+    treasurehunterx.Vec2DList = (function() {
+
+        /**
+         * Properties of a Vec2DList.
+         * @memberof treasurehunterx
+         * @interface IVec2DList
+         * @property {Array.<treasurehunterx.Vec2D>|null} [vec2DList] Vec2DList vec2DList
+         */
+
+        /**
+         * Constructs a new Vec2DList.
+         * @memberof treasurehunterx
+         * @classdesc Represents a Vec2DList.
+         * @implements IVec2DList
+         * @constructor
+         * @param {treasurehunterx.IVec2DList=} [properties] Properties to set
+         */
+        function Vec2DList(properties) {
+            this.vec2DList = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Vec2DList vec2DList.
+         * @member {Array.<treasurehunterx.Vec2D>} vec2DList
+         * @memberof treasurehunterx.Vec2DList
+         * @instance
+         */
+        Vec2DList.prototype.vec2DList = $util.emptyArray;
+
+        /**
+         * Creates a new Vec2DList instance using the specified properties.
+         * @function create
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {treasurehunterx.IVec2DList=} [properties] Properties to set
+         * @returns {treasurehunterx.Vec2DList} Vec2DList instance
+         */
+        Vec2DList.create = function create(properties) {
+            return new Vec2DList(properties);
+        };
+
+        /**
+         * Encodes the specified Vec2DList message. Does not implicitly {@link treasurehunterx.Vec2DList.verify|verify} messages.
+         * @function encode
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {treasurehunterx.Vec2DList} message Vec2DList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Vec2DList.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.vec2DList != null && message.vec2DList.length)
+                for (var i = 0; i < message.vec2DList.length; ++i)
+                    $root.treasurehunterx.Vec2D.encode(message.vec2DList[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Vec2DList message, length delimited. Does not implicitly {@link treasurehunterx.Vec2DList.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {treasurehunterx.Vec2DList} message Vec2DList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Vec2DList.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Vec2DList message from the specified reader or buffer.
+         * @function decode
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {treasurehunterx.Vec2DList} Vec2DList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Vec2DList.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Vec2DList();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.vec2DList && message.vec2DList.length))
+                        message.vec2DList = [];
+                    message.vec2DList.push($root.treasurehunterx.Vec2D.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Vec2DList message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {treasurehunterx.Vec2DList} Vec2DList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Vec2DList.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Vec2DList message.
+         * @function verify
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Vec2DList.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.vec2DList != null && message.hasOwnProperty("vec2DList")) {
+                if (!Array.isArray(message.vec2DList))
+                    return "vec2DList: array expected";
+                for (var i = 0; i < message.vec2DList.length; ++i) {
+                    var error = $root.treasurehunterx.Vec2D.verify(message.vec2DList[i]);
+                    if (error)
+                        return "vec2DList." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a Vec2DList message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {treasurehunterx.Vec2DList} Vec2DList
+         */
+        Vec2DList.fromObject = function fromObject(object) {
+            if (object instanceof $root.treasurehunterx.Vec2DList)
+                return object;
+            var message = new $root.treasurehunterx.Vec2DList();
+            if (object.vec2DList) {
+                if (!Array.isArray(object.vec2DList))
+                    throw TypeError(".treasurehunterx.Vec2DList.vec2DList: array expected");
+                message.vec2DList = [];
+                for (var i = 0; i < object.vec2DList.length; ++i) {
+                    if (typeof object.vec2DList[i] !== "object")
+                        throw TypeError(".treasurehunterx.Vec2DList.vec2DList: object expected");
+                    message.vec2DList[i] = $root.treasurehunterx.Vec2D.fromObject(object.vec2DList[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Vec2DList message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof treasurehunterx.Vec2DList
+         * @static
+         * @param {treasurehunterx.Vec2DList} message Vec2DList
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Vec2DList.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.vec2DList = [];
+            if (message.vec2DList && message.vec2DList.length) {
+                object.vec2DList = [];
+                for (var j = 0; j < message.vec2DList.length; ++j)
+                    object.vec2DList[j] = $root.treasurehunterx.Vec2D.toObject(message.vec2DList[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this Vec2DList to JSON.
+         * @function toJSON
+         * @memberof treasurehunterx.Vec2DList
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Vec2DList.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return Vec2DList;
+    })();
+
+    treasurehunterx.Polygon2DList = (function() {
+
+        /**
+         * Properties of a Polygon2DList.
+         * @memberof treasurehunterx
+         * @interface IPolygon2DList
+         * @property {Array.<treasurehunterx.Polygon2D>|null} [polygon2DList] Polygon2DList polygon2DList
+         */
+
+        /**
+         * Constructs a new Polygon2DList.
+         * @memberof treasurehunterx
+         * @classdesc Represents a Polygon2DList.
+         * @implements IPolygon2DList
+         * @constructor
+         * @param {treasurehunterx.IPolygon2DList=} [properties] Properties to set
+         */
+        function Polygon2DList(properties) {
+            this.polygon2DList = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Polygon2DList polygon2DList.
+         * @member {Array.<treasurehunterx.Polygon2D>} polygon2DList
+         * @memberof treasurehunterx.Polygon2DList
+         * @instance
+         */
+        Polygon2DList.prototype.polygon2DList = $util.emptyArray;
+
+        /**
+         * Creates a new Polygon2DList instance using the specified properties.
+         * @function create
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {treasurehunterx.IPolygon2DList=} [properties] Properties to set
+         * @returns {treasurehunterx.Polygon2DList} Polygon2DList instance
+         */
+        Polygon2DList.create = function create(properties) {
+            return new Polygon2DList(properties);
+        };
+
+        /**
+         * Encodes the specified Polygon2DList message. Does not implicitly {@link treasurehunterx.Polygon2DList.verify|verify} messages.
+         * @function encode
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {treasurehunterx.Polygon2DList} message Polygon2DList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Polygon2DList.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.polygon2DList != null && message.polygon2DList.length)
+                for (var i = 0; i < message.polygon2DList.length; ++i)
+                    $root.treasurehunterx.Polygon2D.encode(message.polygon2DList[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Polygon2DList message, length delimited. Does not implicitly {@link treasurehunterx.Polygon2DList.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {treasurehunterx.Polygon2DList} message Polygon2DList message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Polygon2DList.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Polygon2DList message from the specified reader or buffer.
+         * @function decode
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {treasurehunterx.Polygon2DList} Polygon2DList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Polygon2DList.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.Polygon2DList();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.polygon2DList && message.polygon2DList.length))
+                        message.polygon2DList = [];
+                    message.polygon2DList.push($root.treasurehunterx.Polygon2D.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Polygon2DList message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {treasurehunterx.Polygon2DList} Polygon2DList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Polygon2DList.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Polygon2DList message.
+         * @function verify
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Polygon2DList.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.polygon2DList != null && message.hasOwnProperty("polygon2DList")) {
+                if (!Array.isArray(message.polygon2DList))
+                    return "polygon2DList: array expected";
+                for (var i = 0; i < message.polygon2DList.length; ++i) {
+                    var error = $root.treasurehunterx.Polygon2D.verify(message.polygon2DList[i]);
+                    if (error)
+                        return "polygon2DList." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a Polygon2DList message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {treasurehunterx.Polygon2DList} Polygon2DList
+         */
+        Polygon2DList.fromObject = function fromObject(object) {
+            if (object instanceof $root.treasurehunterx.Polygon2DList)
+                return object;
+            var message = new $root.treasurehunterx.Polygon2DList();
+            if (object.polygon2DList) {
+                if (!Array.isArray(object.polygon2DList))
+                    throw TypeError(".treasurehunterx.Polygon2DList.polygon2DList: array expected");
+                message.polygon2DList = [];
+                for (var i = 0; i < object.polygon2DList.length; ++i) {
+                    if (typeof object.polygon2DList[i] !== "object")
+                        throw TypeError(".treasurehunterx.Polygon2DList.polygon2DList: object expected");
+                    message.polygon2DList[i] = $root.treasurehunterx.Polygon2D.fromObject(object.polygon2DList[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Polygon2DList message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof treasurehunterx.Polygon2DList
+         * @static
+         * @param {treasurehunterx.Polygon2DList} message Polygon2DList
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Polygon2DList.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.polygon2DList = [];
+            if (message.polygon2DList && message.polygon2DList.length) {
+                object.polygon2DList = [];
+                for (var j = 0; j < message.polygon2DList.length; ++j)
+                    object.polygon2DList[j] = $root.treasurehunterx.Polygon2D.toObject(message.polygon2DList[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this Polygon2DList to JSON.
+         * @function toJSON
+         * @memberof treasurehunterx.Polygon2DList
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Polygon2DList.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return Polygon2DList;
+    })();
+
+    treasurehunterx.BattleColliderInfo = (function() {
+
+        /**
+         * Properties of a BattleColliderInfo.
+         * @memberof treasurehunterx
+         * @interface IBattleColliderInfo
+         * @property {string|null} [stageName] BattleColliderInfo stageName
+         * @property {Object.<string,treasurehunterx.Vec2DList>|null} [strToVec2DListMap] BattleColliderInfo strToVec2DListMap
+         * @property {Object.<string,treasurehunterx.Polygon2DList>|null} [strToPolygon2DListMap] BattleColliderInfo strToPolygon2DListMap
+         */
+
+        /**
+         * Constructs a new BattleColliderInfo.
+         * @memberof treasurehunterx
+         * @classdesc Represents a BattleColliderInfo.
+         * @implements IBattleColliderInfo
+         * @constructor
+         * @param {treasurehunterx.IBattleColliderInfo=} [properties] Properties to set
+         */
+        function BattleColliderInfo(properties) {
+            this.strToVec2DListMap = {};
+            this.strToPolygon2DListMap = {};
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * BattleColliderInfo stageName.
+         * @member {string} stageName
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.stageName = "";
+
+        /**
+         * BattleColliderInfo strToVec2DListMap.
+         * @member {Object.<string,treasurehunterx.Vec2DList>} strToVec2DListMap
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.strToVec2DListMap = $util.emptyObject;
+
+        /**
+         * BattleColliderInfo strToPolygon2DListMap.
+         * @member {Object.<string,treasurehunterx.Polygon2DList>} strToPolygon2DListMap
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.strToPolygon2DListMap = $util.emptyObject;
+
+        /**
+         * Creates a new BattleColliderInfo instance using the specified properties.
+         * @function create
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {treasurehunterx.IBattleColliderInfo=} [properties] Properties to set
+         * @returns {treasurehunterx.BattleColliderInfo} BattleColliderInfo instance
+         */
+        BattleColliderInfo.create = function create(properties) {
+            return new BattleColliderInfo(properties);
+        };
+
+        /**
+         * Encodes the specified BattleColliderInfo message. Does not implicitly {@link treasurehunterx.BattleColliderInfo.verify|verify} messages.
+         * @function encode
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {treasurehunterx.BattleColliderInfo} message BattleColliderInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        BattleColliderInfo.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.stageName != null && message.hasOwnProperty("stageName"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.stageName);
+            if (message.strToVec2DListMap != null && message.hasOwnProperty("strToVec2DListMap"))
+                for (var keys = Object.keys(message.strToVec2DListMap), i = 0; i < keys.length; ++i) {
+                    writer.uint32(/* id 2, wireType 2 =*/18).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]);
+                    $root.treasurehunterx.Vec2DList.encode(message.strToVec2DListMap[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                }
+            if (message.strToPolygon2DListMap != null && message.hasOwnProperty("strToPolygon2DListMap"))
+                for (var keys = Object.keys(message.strToPolygon2DListMap), i = 0; i < keys.length; ++i) {
+                    writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]);
+                    $root.treasurehunterx.Polygon2DList.encode(message.strToPolygon2DListMap[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+                }
+            return writer;
+        };
+
+        /**
+         * Encodes the specified BattleColliderInfo message, length delimited. Does not implicitly {@link treasurehunterx.BattleColliderInfo.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {treasurehunterx.BattleColliderInfo} message BattleColliderInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        BattleColliderInfo.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a BattleColliderInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {treasurehunterx.BattleColliderInfo} BattleColliderInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        BattleColliderInfo.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.treasurehunterx.BattleColliderInfo(), key;
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.stageName = reader.string();
+                    break;
+                case 2:
+                    reader.skip().pos++;
+                    if (message.strToVec2DListMap === $util.emptyObject)
+                        message.strToVec2DListMap = {};
+                    key = reader.string();
+                    reader.pos++;
+                    message.strToVec2DListMap[key] = $root.treasurehunterx.Vec2DList.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    reader.skip().pos++;
+                    if (message.strToPolygon2DListMap === $util.emptyObject)
+                        message.strToPolygon2DListMap = {};
+                    key = reader.string();
+                    reader.pos++;
+                    message.strToPolygon2DListMap[key] = $root.treasurehunterx.Polygon2DList.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a BattleColliderInfo message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {treasurehunterx.BattleColliderInfo} BattleColliderInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        BattleColliderInfo.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a BattleColliderInfo message.
+         * @function verify
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        BattleColliderInfo.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.stageName != null && message.hasOwnProperty("stageName"))
+                if (!$util.isString(message.stageName))
+                    return "stageName: string expected";
+            if (message.strToVec2DListMap != null && message.hasOwnProperty("strToVec2DListMap")) {
+                if (!$util.isObject(message.strToVec2DListMap))
+                    return "strToVec2DListMap: object expected";
+                var key = Object.keys(message.strToVec2DListMap);
+                for (var i = 0; i < key.length; ++i) {
+                    var error = $root.treasurehunterx.Vec2DList.verify(message.strToVec2DListMap[key[i]]);
+                    if (error)
+                        return "strToVec2DListMap." + error;
+                }
+            }
+            if (message.strToPolygon2DListMap != null && message.hasOwnProperty("strToPolygon2DListMap")) {
+                if (!$util.isObject(message.strToPolygon2DListMap))
+                    return "strToPolygon2DListMap: object expected";
+                var key = Object.keys(message.strToPolygon2DListMap);
+                for (var i = 0; i < key.length; ++i) {
+                    var error = $root.treasurehunterx.Polygon2DList.verify(message.strToPolygon2DListMap[key[i]]);
+                    if (error)
+                        return "strToPolygon2DListMap." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a BattleColliderInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {treasurehunterx.BattleColliderInfo} BattleColliderInfo
+         */
+        BattleColliderInfo.fromObject = function fromObject(object) {
+            if (object instanceof $root.treasurehunterx.BattleColliderInfo)
+                return object;
+            var message = new $root.treasurehunterx.BattleColliderInfo();
+            if (object.stageName != null)
+                message.stageName = String(object.stageName);
+            if (object.strToVec2DListMap) {
+                if (typeof object.strToVec2DListMap !== "object")
+                    throw TypeError(".treasurehunterx.BattleColliderInfo.strToVec2DListMap: object expected");
+                message.strToVec2DListMap = {};
+                for (var keys = Object.keys(object.strToVec2DListMap), i = 0; i < keys.length; ++i) {
+                    if (typeof object.strToVec2DListMap[keys[i]] !== "object")
+                        throw TypeError(".treasurehunterx.BattleColliderInfo.strToVec2DListMap: object expected");
+                    message.strToVec2DListMap[keys[i]] = $root.treasurehunterx.Vec2DList.fromObject(object.strToVec2DListMap[keys[i]]);
+                }
+            }
+            if (object.strToPolygon2DListMap) {
+                if (typeof object.strToPolygon2DListMap !== "object")
+                    throw TypeError(".treasurehunterx.BattleColliderInfo.strToPolygon2DListMap: object expected");
+                message.strToPolygon2DListMap = {};
+                for (var keys = Object.keys(object.strToPolygon2DListMap), i = 0; i < keys.length; ++i) {
+                    if (typeof object.strToPolygon2DListMap[keys[i]] !== "object")
+                        throw TypeError(".treasurehunterx.BattleColliderInfo.strToPolygon2DListMap: object expected");
+                    message.strToPolygon2DListMap[keys[i]] = $root.treasurehunterx.Polygon2DList.fromObject(object.strToPolygon2DListMap[keys[i]]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a BattleColliderInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @static
+         * @param {treasurehunterx.BattleColliderInfo} message BattleColliderInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        BattleColliderInfo.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.objects || options.defaults) {
+                object.strToVec2DListMap = {};
+                object.strToPolygon2DListMap = {};
+            }
+            if (options.defaults)
+                object.stageName = "";
+            if (message.stageName != null && message.hasOwnProperty("stageName"))
+                object.stageName = message.stageName;
+            var keys2;
+            if (message.strToVec2DListMap && (keys2 = Object.keys(message.strToVec2DListMap)).length) {
+                object.strToVec2DListMap = {};
+                for (var j = 0; j < keys2.length; ++j)
+                    object.strToVec2DListMap[keys2[j]] = $root.treasurehunterx.Vec2DList.toObject(message.strToVec2DListMap[keys2[j]], options);
+            }
+            if (message.strToPolygon2DListMap && (keys2 = Object.keys(message.strToPolygon2DListMap)).length) {
+                object.strToPolygon2DListMap = {};
+                for (var j = 0; j < keys2.length; ++j)
+                    object.strToPolygon2DListMap[keys2[j]] = $root.treasurehunterx.Polygon2DList.toObject(message.strToPolygon2DListMap[keys2[j]], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this BattleColliderInfo to JSON.
+         * @function toJSON
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        BattleColliderInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return BattleColliderInfo;
+    })();
+
     treasurehunterx.Player = (function() {
 
         /**

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/xml"
 	"fmt"
 	"github.com/ByteArena/box2d"
 	"github.com/golang/protobuf/proto"
@@ -15,7 +16,6 @@ import (
 	pb "server/pb_output"
 	"sync"
 	"time"
-	"encoding/xml"
 )
 
 const (
@@ -120,6 +120,9 @@ type Room struct {
 	CollidableWorld              *box2d.B2World
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
+
+	RawBattleStrToVec2DListMap     StrToVec2DListMap
+	RawBattleStrToPolygon2DListMap StrToPolygon2DListMap
 }
 
 func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure *Treasure) {
@@ -171,7 +174,7 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 
 		if contactingPlayer != nil {
 			if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) {
-				// Deliberately doing nothing. -- YFLu, 2019-09-04. 
+				// Deliberately doing nothing. -- YFLu, 2019-09-04.
 			} else {
 				pR.Players[contactingPlayer.Id].Speed = 0
 				pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
@@ -226,7 +229,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. */)
-	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+	pPlayer.BattleState = PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK
 	pPlayer.FrozenAtGmtMillis = -1       // Hardcoded temporarily.
 	pPlayer.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
 	pPlayer.AddSpeedAtGmtMillis = -1     // Hardcoded temporarily.
@@ -251,6 +254,14 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	defer pR.onPlayerReAdded(pTmpPlayerInstance.Id)
 	pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
 	pEffectiveInRoomPlayerInstance.AckingFrameId = 0
+
+	/*
+	  [WARNING]
+
+	  It's UNNECESSARY to mark a "ReAddedPlayer" to "BattleState == PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK".
+
+	  -- YFLu, 2019-09-04
+	*/
 	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
 
 	Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
@@ -316,11 +327,11 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 }
 
 func (pR *Room) refreshColliders() {
-	/* 
-    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! 
+	/*
+	    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection!
 
-  -- YFLu
-  */
+	  -- YFLu
+	*/
 	gravity := box2d.MakeB2Vec2(0.0, 0.0)
 	world := box2d.MakeB2World(gravity)
 	world.SetContactFilter(&box2d.B2ContactFilter{})
@@ -547,153 +558,156 @@ func diffSpeedShoe(last *pb.SpeedShoe, curr *pb.SpeedShoe) (bool, *pb.SpeedShoe)
 }
 
 func diffBullet(last *pb.Bullet, curr *pb.Bullet) (bool, *pb.Bullet) {
-  t := true
+	t := true
 	return t, curr
 }
 
-func (pR *Room) ChooseMapAndRefreshColliders() error {
-  /*
-  * We use the verb "refresh" here to imply that upon invocation of this function, all colliders will be recovered if they were destroyed in the previous battle.  
-  * 
-  * -- YFLu, 2019-09-04
-  */
+func (pR *Room) ChooseStageAndRefreshColliders() error {
+	/*
+	 * We use the verb "refresh" here to imply that upon invocation of this function, all colliders will be recovered if they were destroyed in the previous battle.
+	 *
+	 * -- YFLu, 2019-09-04
+	 */
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-	relativePathForAllMaps := "../frontend/assets/resources/map"
-  chosenMapDirName := "pacman" // Hardcoded temporarily. -- YFLu
+	relativePathForAllStages := "../frontend/assets/resources/map"
+	chosenStageDir := "pacman" // Hardcoded temporarily. -- YFLu
 
-	relativePathForChosenMap := fmt.Sprintf("%s/%s", relativePathForAllMaps, chosenMapDirName)
+	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, chosenStageDir)
 
 	pTmxMapIns := &TmxMap{}
 
-	absDirPathContainingDirectlyTmxFile := filepath.Join(pwd, relativePathForChosenMap)
-  absTmxFilePath := fmt.Sprintf("%s/map.tmx", absDirPathContainingDirectlyTmxFile)
+	absDirPathContainingDirectlyTmxFile := filepath.Join(pwd, relativePathForChosenStage)
+	absTmxFilePath := fmt.Sprintf("%s/map.tmx", absDirPathContainingDirectlyTmxFile)
 	if !filepath.IsAbs(absTmxFilePath) {
 		panic("Tmx filepath must be absolute!")
 	}
 
 	byteArr, err := ioutil.ReadFile(absTmxFilePath)
-  if nil != err {
+	if nil != err {
 		panic(err)
-  }
+	}
 	err = xml.Unmarshal(byteArr, pTmxMapIns)
 	if nil != err {
 		panic(err)
 	}
 
-  // Obtain the content of `gidBoundariesMapInB2World`.
-  gidBoundariesMapInB2World := make(map[int]StrToPolygon2DListMap, 0)
-  for _, tileset := range pTmxMapIns.Tilesets {
-    relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenMap), tileset.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
-    absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
-    if nil != err {
-      panic(err)
-    }
-    if !filepath.IsAbs(absTsxFilePath) {
-      panic("Filepath must be absolute!")
-    }
+	// Obtain the content of `gidBoundariesMapInB2World`.
+	gidBoundariesMapInB2World := make(map[int]StrToPolygon2DListMap, 0)
+	for _, tileset := range pTmxMapIns.Tilesets {
+		relativeTsxFilePath := fmt.Sprintf("%s/%s", filepath.Join(pwd, relativePathForChosenStage), tileset.Source) // Note that "TmxTileset.Source" can be a string of "relative path".
+		absTsxFilePath, err := filepath.Abs(relativeTsxFilePath)
+		if nil != err {
+			panic(err)
+		}
+		if !filepath.IsAbs(absTsxFilePath) {
+			panic("Filepath must be absolute!")
+		}
 
-    byteArrOfTsxFile, err := ioutil.ReadFile(absTsxFilePath)
-    if nil != err {
-      panic(err)
-    }
+		byteArrOfTsxFile, err := ioutil.ReadFile(absTsxFilePath)
+		if nil != err {
+			panic(err)
+		}
 
-    DeserializeTsxToColliderDict(pTmxMapIns, byteArrOfTsxFile, int(tileset.FirstGid), gidBoundariesMapInB2World)
-  }
+		DeserializeTsxToColliderDict(pTmxMapIns, byteArrOfTsxFile, int(tileset.FirstGid), gidBoundariesMapInB2World)
+	}
 
-  toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
-  if nil != err {
-    panic(err)
-  }
+	toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
+	if nil != err {
+		panic(err)
+	}
 
-  // Refresh "Player" data for RoomDownsyncFrame.
-  playerPosList := *(toRetStrToVec2DListMap["PlayerStartingPos"])
+	pR.RawBattleStrToVec2DListMap = toRetStrToVec2DListMap
+	pR.RawBattleStrToPolygon2DListMap = toRetStrToPolygon2DListMap
+
+	// Refresh "Player" data for RoomDownsyncFrame.
+	playerPosList := *(toRetStrToVec2DListMap["PlayerStartingPos"])
 	for index, player := range pR.Players {
 		player.X = playerPosList[index].X
 		player.Y = playerPosList[index].Y
 		player.Score = 0
 	}
 
-  // Refresh "Treasure" data for RoomDownsyncFrame.
-  lowScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["LowScoreTreasure"])
-  highScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["HighScoreTreasure"])
+	// Refresh "Treasure" data for RoomDownsyncFrame.
+	lowScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["LowScoreTreasure"])
+	highScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["HighScoreTreasure"])
 
-  var treasureLocalIdInBattle int32 = 0
+	var treasureLocalIdInBattle int32 = 0
 	for _, polygon2D := range lowScoreTreasurePolygon2DList {
-    /*
-    // For debug-printing only. 
+		/*
+		   // For debug-printing only.
 
-    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for lowScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
-    */
+		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for lowScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+		*/
 
-    theTreasure := &Treasure{
-      Id:              0,
-      LocalIdInBattle: treasureLocalIdInBattle,
-      Score:           LOW_SCORE_TREASURE_SCORE,
-      Type:            LOW_SCORE_TREASURE_TYPE,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-    }
+		theTreasure := &Treasure{
+			Id:              0,
+			LocalIdInBattle: treasureLocalIdInBattle,
+			Score:           LOW_SCORE_TREASURE_SCORE,
+			Type:            LOW_SCORE_TREASURE_TYPE,
+			X:               polygon2D.Anchor.X,
+			Y:               polygon2D.Anchor.Y,
+			PickupBoundary:  polygon2D,
+		}
 
-    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-    treasureLocalIdInBattle++
+		pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
+		treasureLocalIdInBattle++
 	}
 
 	for _, polygon2D := range highScoreTreasurePolygon2DList {
-    /*
-    // For debug-printing only. 
+		/*
+		   // For debug-printing only.
 
-    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for highScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
-    */
-    theTreasure := &Treasure{
-      Id:              0,
-      LocalIdInBattle: treasureLocalIdInBattle,
-      Score:           HIGH_SCORE_TREASURE_SCORE,
-      Type:            HIGH_SCORE_TREASURE_TYPE,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-    }
+		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for highScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+		*/
+		theTreasure := &Treasure{
+			Id:              0,
+			LocalIdInBattle: treasureLocalIdInBattle,
+			Score:           HIGH_SCORE_TREASURE_SCORE,
+			Type:            HIGH_SCORE_TREASURE_TYPE,
+			X:               polygon2D.Anchor.X,
+			Y:               polygon2D.Anchor.Y,
+			PickupBoundary:  polygon2D,
+		}
 
-    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
+		pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
 
-    treasureLocalIdInBattle++
+		treasureLocalIdInBattle++
 	}
 
-  // Refresh "GuardTower" data for RoomDownsyncFrame.
-  guardTowerPolygon2DList := *(toRetStrToPolygon2DListMap["GuardTower"])
-  var guardTowerLocalIdInBattle int32 = 0
+	// Refresh "GuardTower" data for RoomDownsyncFrame.
+	guardTowerPolygon2DList := *(toRetStrToPolygon2DListMap["GuardTower"])
+	var guardTowerLocalIdInBattle int32 = 0
 	for _, polygon2D := range guardTowerPolygon2DList {
-    /*
-    // For debug-printing only. 
+		/*
+		   // For debug-printing only.
 
-    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for guardTowerPolygon2DList", zap.Any("guardTowerLocalIdInBattle", guardTowerLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points), zap.Any("pR.GuardTowers", pR.GuardTowers))
-    */
+		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for guardTowerPolygon2DList", zap.Any("guardTowerLocalIdInBattle", guardTowerLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points), zap.Any("pR.GuardTowers", pR.GuardTowers))
+		*/
 
-    var inRangePlayers InRangePlayerCollection
-    pInRangePlayers := &inRangePlayers
-    pInRangePlayers = pInRangePlayers.Init(10)
-    theGuardTower := &GuardTower{
-      Id:              0,
-      LocalIdInBattle: guardTowerLocalIdInBattle,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-      InRangePlayers:  pInRangePlayers,
-      LastAttackTick:  utils.UnixtimeNano(),
-    }
+		var inRangePlayers InRangePlayerCollection
+		pInRangePlayers := &inRangePlayers
+		pInRangePlayers = pInRangePlayers.Init(10)
+		theGuardTower := &GuardTower{
+			Id:              0,
+			LocalIdInBattle: guardTowerLocalIdInBattle,
+			X:               polygon2D.Anchor.X,
+			Y:               polygon2D.Anchor.Y,
+			PickupBoundary:  polygon2D,
+			InRangePlayers:  pInRangePlayers,
+			LastAttackTick:  utils.UnixtimeNano(),
+		}
 
-    pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
+		pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
 
-    guardTowerLocalIdInBattle++
+		guardTowerLocalIdInBattle++
 	}
 
-  // Refresh "Colliders" for server-side contact listening of B2World.
+	// Refresh "Colliders" for server-side contact listening of B2World.
 	pR.refreshColliders()
 	pR.refreshContactListener()
-  return nil
+	return nil
 }
 
 func (pR *Room) StartBattle() {
@@ -723,8 +737,7 @@ func (pR *Room) StartBattle() {
 		var totalElapsedNanos int64 //离游戏开始的时间
 		totalElapsedNanos = 0
 
-		hardcodedAttackInterval := int64(4 * 1000 * 1000 * 1000) //守护塔攻击频率4秒
-		//perPlayerSafeTime := int64(8 * 1000 * 1000 * 1000) //玩家受击后的保护时间
+		GUARD_TOWER_ATTACK_INTERVAL_NANOS := int64(4 * 1000 * 1000 * 1000) // 守护塔攻击频率4秒
 
 		BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
 
@@ -861,7 +874,7 @@ func (pR *Room) StartBattle() {
 			}
 
 			// Collision detection & resolution. Reference https://github.com/genxium/GoCollision2DPrac/tree/master/by_box2d.
-			for _, player := range pR.Players { //被蜘蛛网网住
+			for _, player := range pR.Players {
 				/**
 				 * WARNING Statements within this loop MUST be called by the same OSThread/L(ight)W(eight)P(rocess) to ensure that the "WorldLockAssertion" doesn't fail.
 				 */
@@ -869,7 +882,7 @@ func (pR *Room) StartBattle() {
 				MoveDynamicBody(player.CollidableBody, &newB2Vec2Pos, 0)
 
 				if -1 == player.FrozenAtGmtMillis {
-					// TODO: Removed the magic number `-1`.
+					// TODO: Remove the magic number `-1`.
 					continue
 				}
 				if maxMillisToFreezePerPlayer > (collisionNowMillis - player.FrozenAtGmtMillis) {
@@ -903,7 +916,7 @@ func (pR *Room) StartBattle() {
 
 			// 对于所有GuardTower, 如果攻击列表不为空, 判断是否发射子弹
 			for _, tower := range pR.GuardTowers {
-				if tower.InRangePlayers.CurrentSize < 1 {
+				if 1 > tower.InRangePlayers.CurrentSize {
 					continue
 				}
 				now := utils.UnixtimeNano()
@@ -911,7 +924,7 @@ func (pR *Room) StartBattle() {
 				/*
 				 * 顺序攻击
 				 */
-				if now-tower.LastAttackTick > hardcodedAttackInterval {
+				if (now - tower.LastAttackTick) > GUARD_TOWER_ATTACK_INTERVAL_NANOS {
 					tower.LastAttackTick = now
 
 					playerNode := tower.InRangePlayers.NextPlayerToAttack()
@@ -936,9 +949,7 @@ func (pR *Room) StartBattle() {
 						case *Treasure:
 							pR.onTreasurePickedUp(player, v)
 						case *Trap:
-							pR.onTrapPickedUp(player, v) //触发陷阱
-						case *GuardTower:
-							//这部分的操作在Listener做
+							pR.onTrapPickedUp(player, v)
 						case *Bullet:
 							pR.onBulletCrashed(player, v, collisionNowMillis, maxMillisToFreezePerPlayer)
 						case *SpeedShoe:
@@ -1161,10 +1172,10 @@ func (pR *Room) onDismissed() {
 	pR.CmdFromPlayersChan = nil
 	pR.RoomDownsyncFrameBuffer = NewRingBuffer(512)
 
-  pR.ChooseMapAndRefreshColliders()
+	pR.ChooseStageAndRefreshColliders()
 	pR.EffectivePlayerCount = 0
 
-  // [WARNING] It's deliberately ordered such that "pR.State = RoomBattleStateIns.IDLE" is put AFTER all the refreshing operations above.
+	// [WARNING] It's deliberately ordered such that "pR.State = RoomBattleStateIns.IDLE" is put AFTER all the refreshing operations above.
 	pR.State = RoomBattleStateIns.IDLE
 	pR.updateScore()
 
@@ -1262,11 +1273,11 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	pR.EffectivePlayerCount++
 	if 1 == pR.EffectivePlayerCount {
 		pR.State = RoomBattleStateIns.WAITING
-    /**
-    * TODO: Choose a map randomly, parse it and cache it to be send "down" to the participants.
-    *
-    * -- YFLu, 2019-08-29
-    */
+		/**
+		 * TODO: Choose a map randomly, parse it and cache it to be send "down" to the participants.
+		 *
+		 * -- YFLu, 2019-08-29
+		 */
 		go func(pR *Room) {
 			<-time.After(time.Duration(Conf.BotServer.SecondsBeforeSummoning) * time.Second)
 			botServerEndpoint := fmt.Sprintf("%s://%s:%d/spawnBot?expectedRoomId=%d&symmetricKey=%s", Conf.BotServer.Protocol, Conf.BotServer.Host, Conf.BotServer.Port, pR.Id, Conf.BotServer.SymmetricKey)
@@ -1323,10 +1334,6 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 
-	if pR.Capacity == len(pR.Players) {
-		pR.StartBattle()
-	}
-
 	pR.updateScore()
 	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
 }
@@ -1370,6 +1377,30 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
 	pR.updateScore()
+}
+
+func (pR *Room) OnPlayerBattleColliderAcked(playerId int32) bool {
+	pPlayer, ok := pR.Players[playerId]
+	if false == ok {
+		return false
+	}
+	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+
+	if pR.Capacity == len(pR.Players) {
+		allAcked := true
+		for _, p := range pR.Players {
+			if PlayerBattleStateIns.ACTIVE != p.BattleState {
+				allAcked = false
+				break
+			}
+		}
+		if true == allAcked {
+			pR.StartBattle()
+		}
+	}
+
+	pR.updateScore()
+	return true
 }
 
 type RoomBattleContactListener struct {

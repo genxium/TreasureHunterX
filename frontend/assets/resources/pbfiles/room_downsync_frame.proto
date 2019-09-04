@@ -16,6 +16,20 @@ message Polygon2D {
   repeated Vec2D Points = 2;
 }
 
+message Vec2DList {
+  repeated Vec2D vec2DList = 1;
+}
+
+message Polygon2DList {
+  repeated Polygon2D polygon2DList = 1;
+}
+
+message BattleColliderInfo {
+  string stageName = 1;
+  map<string, Vec2DList> strToVec2DListMap = 2; 
+  map<string, Polygon2DList> strToPolygon2DListMap = 3; 
+}
+
 message Player {
   int32 id = 1;
   double x = 2; 

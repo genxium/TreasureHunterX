@@ -107,12 +107,12 @@ func InitRoomHeapManager() {
 			Index:                  i,
 			Tick:                   0,
 			EffectivePlayerCount:   0,
-			BattleDurationNanos:          int64(15 * 1000 * 1000 * 1000),
+			BattleDurationNanos:    int64(15 * 1000 * 1000 * 1000),
 			// BattleDurationNanos:          int64(60 * 1000 * 1000 * 1000),
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),
 			Traps:                        make(map[int32]*Trap),
-      GuardTowers:                  make(map[int32]*GuardTower),
+			GuardTowers:                  make(map[int32]*GuardTower),
 			Bullets:                      make(map[int32]*Bullet),
 			SpeedShoes:                   make(map[int32]*SpeedShoe),
 			Barriers:                     make(map[int32]*Barrier),
@@ -122,7 +122,7 @@ func InitRoomHeapManager() {
 			JoinIndexBooleanArr:          joinIndexBooleanArr,
 		}
 		roomMap[pq[i].Id] = pq[i]
-    pq[i].ChooseMapAndRefreshColliders()
+		pq[i].ChooseStageAndRefreshColliders()
 	}
 	heap.Init(&pq)
 	RoomHeapManagerIns = &pq

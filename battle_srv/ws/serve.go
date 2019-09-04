@@ -155,7 +155,7 @@ func Serve(c *gin.Context) {
 
 	pPlayer, err := models.GetPlayerById(playerId)
 
-	if err != nil || pPlayer == nil {
+	if nil != err || nil == pPlayer {
 		// TODO: Abort with specific message.
 		signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotFound, "")
 	}
@@ -181,10 +181,10 @@ func Serve(c *gin.Context) {
 	if 0 < boundRoomId {
 		if tmpPRoom, existent := (*models.RoomMapManagerIns)[int32(boundRoomId)]; existent {
 			pRoom = tmpPRoom
-			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
+			Logger.Info("Successfully got:\n", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
 			res := pRoom.ReAddPlayerIfPossible(pPlayer)
 			if !res {
-				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
+				Logger.Warn("Failed to get:\n", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forBoundRoomId", boundRoomId))
 			} else {
 				playerSuccessfullyAddedToRoom = true
 			}
@@ -194,14 +194,14 @@ func Serve(c *gin.Context) {
 	if 0 < expectRoomId {
 		if tmpRoom, existent := (*models.RoomMapManagerIns)[int32(expectRoomId)]; existent {
 			pRoom = tmpRoom
-			Logger.Info("Successfully got:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
+			Logger.Info("Successfully got:\n", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
 
 			if pRoom.ReAddPlayerIfPossible(pPlayer) {
 				playerSuccessfullyAddedToRoom = true
 			} else if pRoom.AddPlayerIfPossible(pPlayer) {
 				playerSuccessfullyAddedToRoom = true
 			} else {
-				Logger.Warn("Failed to get:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
+				Logger.Warn("Failed to get:\n", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Any("forExpectedRoomId", expectRoomId))
 				playerSuccessfullyAddedToRoom = false
 			}
 
@@ -221,10 +221,10 @@ func Serve(c *gin.Context) {
 			signalToCloseConnOfThisPlayer(Constants.RetCode.LocallyNoAvailableRoom, fmt.Sprintf("Cannot pop a (*Room) for playerId == %v!", playerId))
 		} else {
 			pRoom = tmpRoom
-			Logger.Info("Successfully popped:\n", zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+			Logger.Info("Successfully popped:\n", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId))
 			res := pRoom.AddPlayerIfPossible(pPlayer)
 			if !res {
-				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomID == %v, playerId == %v!", pRoom.Id, playerId))
+				signalToCloseConnOfThisPlayer(Constants.RetCode.PlayerNotAddableToRoom, fmt.Sprintf("AddPlayerIfPossible returns false for roomId == %v, playerId == %v!", pRoom.Id, playerId))
 			}
 		}
 	}
@@ -258,7 +258,7 @@ func Serve(c *gin.Context) {
 			if r := recover(); r != nil {
 				Logger.Warn("Goroutine `receivingLoopAgainstPlayer`, recovery spot#1, recovered from: ", zap.Any("panic", r))
 			}
-			Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
+			Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
 		}()
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
@@ -269,12 +269,14 @@ func Serve(c *gin.Context) {
 			var pReq *wsReq
 			pReq = new(wsReq)
 			err := conn.ReadJSON(pReq)
-			if err != nil {
+			if nil != err {
+				Logger.Error("About to `signalToCloseConnOfThisPlayer`", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Error(err))
 				signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 				return nil
 			}
-			// startOrFeedHeartbeatWatchdog(conn)
-			if pReq.Act == "PlayerUpsyncCmd" {
+
+			switch pReq.Act {
+			case "PlayerUpsyncCmd":
 				immediatePlayerData := new(models.Player)
 				json.Unmarshal([]byte(pReq.Data), immediatePlayerData)
 				// Logger.Info("Unmarshalled `PlayerUpsyncCmd`:", zap.Any("immediatePlayerData", immediatePlayerData))
@@ -286,7 +288,14 @@ func Serve(c *gin.Context) {
 				} else {
 					utils.SendSafely(immediatePlayerData, pRoom.CmdFromPlayersChan)
 				}
-			} else {
+			case "PlayerBattleColliderAck":
+				res := pRoom.OnPlayerBattleColliderAcked(int32(playerId))
+				if false == res {
+					Logger.Error("About to `signalToCloseConnOfThisPlayer`", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId), zap.Error(err))
+					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
+					return nil
+				}
+			default:
 				// Deliberately not responding to other `pReq.Act`s to avoid the use of `connIOMux` within `forwardingLoopAgainstBoundRoom`.
 			}
 		}
@@ -299,7 +308,7 @@ func Serve(c *gin.Context) {
 			if r := recover(); r != nil {
 				Logger.Error("Goroutine `forwardingLoopAgainstBoundRoom` recovery spot#1, recovered from: ")
 			}
-			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomID", pRoom.Id))
+			Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
 		}()
 		for {
 			if swapped := atomic.CompareAndSwapInt32(pConnHasBeenSignaledToClose, 1, 1); swapped {
@@ -311,7 +320,7 @@ func Serve(c *gin.Context) {
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 					return nil
 				}
-				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomID", pRoom.Id), zap.Any("playerId", playerId))
+				// Logger.Info("Goroutine `forwardingLoopAgainstBoundRoom` sending:", zap.Any("RoomDownsyncFrame", typedRoomDownsyncFrame), zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId))
 				wsSendActionPb(conn, "RoomDownsyncFrame", typedRoomDownsyncFrame)
 			default:
 			}

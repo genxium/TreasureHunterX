@@ -9,22 +9,24 @@ import (
 )
 
 type PlayerBattleState struct {
-	ACTIVE                int32
-	DISCONNECTED          int32
-	LOST                  int32
-	EXPELLED_DURING_GAME  int32
-	EXPELLED_IN_DISMISSAL int32
+	PENDING_BATTLE_COLLIDER_ACK int32
+	ACTIVE                      int32
+	DISCONNECTED                int32
+	LOST                        int32
+	EXPELLED_DURING_GAME        int32
+	EXPELLED_IN_DISMISSAL       int32
 }
 
 var PlayerBattleStateIns PlayerBattleState
 
 func InitPlayerBattleStateIns() {
 	PlayerBattleStateIns = PlayerBattleState{
-		ACTIVE:                0,
-		DISCONNECTED:          1,
-		LOST:                  2,
-		EXPELLED_DURING_GAME:  3,
-		EXPELLED_IN_DISMISSAL: 4,
+		PENDING_BATTLE_COLLIDER_ACK: 0,
+		ACTIVE:                      1,
+		DISCONNECTED:                2,
+		LOST:                        3,
+		EXPELLED_DURING_GAME:        4,
+		EXPELLED_IN_DISMISSAL:       5,
 	}
 }
 

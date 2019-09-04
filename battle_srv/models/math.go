@@ -29,16 +29,16 @@ func (v2 *Vec2D) ToB2Vec2() box2d.B2Vec2 {
 }
 
 type Polygon2D struct {
-	Anchor *Vec2D   `json:"-"` // This "Polygon2D.Anchor" is used to be assigned to "B2BodyDef.Position", which in turn is used as the position of the FIRST POINT of the polygon. 
+	Anchor *Vec2D   `json:"-"` // This "Polygon2D.Anchor" is used to be assigned to "B2BodyDef.Position", which in turn is used as the position of the FIRST POINT of the polygon.
 	Points []*Vec2D `json:"-"`
 
-  /*
-     When used to represent a "polyline directly drawn in a `Tmx file`", we can initialize both "Anchor" and "Points" simultaneously. 
+	/*
+	   When used to represent a "polyline directly drawn in a `Tmx file`", we can initialize both "Anchor" and "Points" simultaneously.
 
-     Yet when used to represent a "polyline drawn in a `Tsx file`", we have to first initialize "Points w.r.t. center of the tile-rectangle", and then "Anchor(initially nil) of the tile positioned in the `Tmx file`". 
+	   Yet when used to represent a "polyline drawn in a `Tsx file`", we have to first initialize "Points w.r.t. center of the tile-rectangle", and then "Anchor(initially nil) of the tile positioned in the `Tmx file`".
 
-     Refer to https://shimo.im/docs/SmLJJhXm2C8XMzZT for more information.
-  */
+	   Refer to https://shimo.im/docs/SmLJJhXm2C8XMzZT for more information.
+	*/
 }
 
 func MoveDynamicBody(body *box2d.B2Body, pToTargetPos *box2d.B2Vec2, inSeconds float64) {
