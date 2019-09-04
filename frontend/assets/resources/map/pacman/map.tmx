@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="208">
+<map version="1.2" tiledversion="1.2.3" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="11" nextobjectid="210">
  <tileset firstgid="1" source="Tile_W64_H64_S01.tsx"/>
  <tileset firstgid="17" source="Tile_W300_H300_S01.tsx"/>
  <layer id="1" name="GroundFloor" width="50" height="50" locked="1">
@@ -325,10 +325,10 @@
   <object id="206" gid="13" x="2612.12" y="2064" width="64" height="64"/>
   <object id="207" gid="13" x="3030.3" y="1985.21" width="64" height="64"/>
  </objectgroup>
- <objectgroup id="6" name="GuardTower" locked="1">
-  <object id="188" gid="17" x="1421.21" y="1734.27" width="300" height="300"/>
-  <object id="189" gid="17" x="1742.42" y="1406.06" width="300" height="300"/>
-  <object id="190" gid="17" x="533.333" y="530.303" width="300" height="300"/>
-  <object id="191" gid="17" x="2775.76" y="2778.79" width="300" height="300"/>
+ <objectgroup id="6" name="GuardTower">
+  <object id="188" gid="17" x="1600" y="1600" width="300" height="300"/>
+  <object id="209" x="1600" y="1600">
+   <point/>
+  </object>
  </objectgroup>
 </map>

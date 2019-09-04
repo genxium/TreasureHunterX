@@ -49,6 +49,8 @@ type TmxOrTsxObject struct {
 	Y          float64             `xml:"y,attr"`
 	Properties *TmxOrTsxProperties `xml:"properties"`
 	Polyline   *TmxOrTsxPolyline   `xml:"polyline"`
+	Width      *float64            `xml:"width,attr"`
+	Height     *float64            `xml:"height,attr"`
 }
 
 type TmxOrTsxObjectGroup struct {
@@ -235,7 +237,13 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 	thePolygon2DFromPolyline := &Polygon2D{
 		Anchor: nil,
 		Points: make([]*Vec2D, len(singleValueArray)),
+    TileWidth: &pTsxIns.TileWidth,
+    TileHeight: &pTsxIns.TileHeight,
 	}
+
+  /*
+  [WARNING] In this case, the "Treasure"s and "GuardTower"s are put into Tmx file as "ImageObject"s, of each the "ProportionalAnchor" is (0.5, 0). Therefore we calculate that "thePolygon2DFromPolyline.Points" are "offsets(in B2World) w.r.t. the BottomCenter". See https://shimo.im/docs/SmLJJhXm2C8XMzZT for details.
+  */
 
 	for k, value := range singleValueArray {
 		thePolygon2DFromPolyline.Points[k] = &Vec2D{}
@@ -245,10 +253,11 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 				panic(err)
 			}
 			if 0 == (kk % 2) {
+        // W.r.t. center.
 				thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
 			} else {
-				thePolygon2DFromPolyline.Points[k].Y = factorHalf*float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
-
+        // W.r.t. bottom.
+				thePolygon2DFromPolyline.Points[k].Y = float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
 			}
 		}
 
@@ -355,7 +364,7 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 	*/
 
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-		switch objGroup.Name {
+		switch (objGroup.Name) {
 		case "PlayerStartingPos":
 			var pTheVec2DListToCache *Vec2DList
 			_, ok := toRetStrToVec2DListMap[objGroup.Name]
@@ -437,11 +446,13 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 				}
 
 				for _, thePolygon2D := range *pThePolygon2DList {
-					theUntransformedAnchor := &Vec2D{
+					theUntransformedBottomCenter := &Vec2D{
 						X: singleObjInTmxFile.X,
 						Y: singleObjInTmxFile.Y,
 					}
-					theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedAnchor)
+
+					theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedBottomCenter)
+
 					thePolygon2DInWorld := &Polygon2D{
 						Anchor: &theTransformedAnchor,
 						Points: make([]*Vec2D, len(thePolygon2D.Points)),
@@ -496,13 +507,9 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
 }
 
 func (pTmxMapIns *TmxMap) continuousObjLayerOffsetToContinuousMapNodePos(continuousObjLayerOffset *Vec2D) Vec2D {
-	var tileRectilinearSize TileRectilinearSize
-	tileRectilinearSize.Width = float64(pTmxMapIns.TileWidth)
-	tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
-
 	layerOffset := Vec2D{
 		X: 0,
-		Y: float64(pTmxMapIns.Height) * 0.5,
+		Y: float64(pTmxMapIns.Height*pTmxMapIns.TileHeight) * 0.5,
 	}
 
 	calibratedVec := continuousObjLayerOffset

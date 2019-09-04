@@ -286,7 +286,6 @@ TileCollisionManager.prototype.continuousObjLayerOffsetToContinuousMapNodePos = 
   var tiledMapIns = withTiledMapNode.getComponent(cc.TiledMap);
 
   var mapOrientation = tiledMapIns.getMapOrientation();
-  var mapTileRectilinearSize = tiledMapIns.getTileSize();
 
   switch (mapOrientation) {
     case cc.TiledMap.Orientation.ORTHO:
@@ -294,10 +293,10 @@ TileCollisionManager.prototype.continuousObjLayerOffsetToContinuousMapNodePos = 
       return null;
 
     case cc.TiledMap.Orientation.ISO:
-      var calibratedVec = continuousObjLayerOffset; // TODO: Respect the real offsets!
+      const calibratedVec = continuousObjLayerOffset; // TODO: Respect the real offsets!
 
       // The immediately following statement takes a magic assumption that the anchor of `withTiledMapNode` is (0.5, 0.5) which is NOT NECESSARILY true.
-      var layerOffset = cc.v2(0, +(withTiledMapNode.getContentSize().height * 0.5));
+      const layerOffset = cc.v2(0, +(withTiledMapNode.getContentSize().height * 0.5));
 
       return layerOffset.add(this.continuousObjLayerVecToContinuousMapNodeVec(withTiledMapNode, calibratedVec));
 

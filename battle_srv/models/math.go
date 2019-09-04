@@ -39,6 +39,12 @@ type Polygon2D struct {
 
 	   Refer to https://shimo.im/docs/SmLJJhXm2C8XMzZT for more information.
 	*/
+
+  /*
+  [WARNING] Used to cache "`TileWidth & TileHeight` of a tileset" only.
+  */
+  TileWidth  *int
+  TileHeight *int
 }
 
 func MoveDynamicBody(body *box2d.B2Body, pToTargetPos *box2d.B2Vec2, inSeconds float64) {
