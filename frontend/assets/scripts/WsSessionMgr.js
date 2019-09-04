@@ -174,6 +174,15 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
             window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
           }
           break;
+        case "BattleColliderInfo":
+          if (window.handleBattleColliderInfo) {
+            const typedArray = _base64ToUint8Array(resp.data);
+            const parsedBattleColliderInfo = (() => {
+              return window.BattleColliderInfo.decode(typedArray);
+            })();
+            window.handleBattleColliderInfo(parsedBattleColliderInfo);
+          }
+          break;
         case "Ready": {
           if (window.handleGameReadyResp) {
             window.handleGameReadyResp(resp);

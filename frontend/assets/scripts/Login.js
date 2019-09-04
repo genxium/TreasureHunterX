@@ -129,6 +129,7 @@ cc.Class({
         let protoRoot = new protobuf.Root;
         window.protobuf.parse(textAsset.text, protoRoot);
         window.RoomDownsyncFrame = protoRoot.lookupType("treasurehunterx.RoomDownsyncFrame"); 
+        window.BattleColliderInfo = protoRoot.lookupType("treasurehunterx.BattleColliderInfo"); 
       }
       self.checkIntAuthTokenExpire().then(
         () => {

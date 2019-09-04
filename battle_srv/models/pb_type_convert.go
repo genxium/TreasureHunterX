@@ -43,7 +43,7 @@ func toPbPolygon2DList(modelInstance *Polygon2DList) *pb.Polygon2DList {
 	return toRet
 }
 
-func toPbStrToBattleColliderInfo(stageName string, modelInstance1 StrToVec2DListMap, modelInstance2 StrToPolygon2DListMap) *pb.BattleColliderInfo {
+func ToPbStrToBattleColliderInfo(stageName string, modelInstance1 StrToVec2DListMap, modelInstance2 StrToPolygon2DListMap) *pb.BattleColliderInfo {
 	toRet := &pb.BattleColliderInfo{
 		StageName:             stageName,
 		StrToVec2DListMap:     make(map[string]*pb.Vec2DList, 0),

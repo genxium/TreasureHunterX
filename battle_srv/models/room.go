@@ -121,6 +121,7 @@ type Room struct {
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
 
+  StageName                    string
 	RawBattleStrToVec2DListMap     StrToVec2DListMap
 	RawBattleStrToPolygon2DListMap StrToPolygon2DListMap
 }
@@ -229,6 +230,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. */)
+
 	pPlayer.BattleState = PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK
 	pPlayer.FrozenAtGmtMillis = -1       // Hardcoded temporarily.
 	pPlayer.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
@@ -571,10 +573,10 @@ func (pR *Room) ChooseStageAndRefreshColliders() error {
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-	relativePathForAllStages := "../frontend/assets/resources/map"
-	chosenStageDir := "pacman" // Hardcoded temporarily. -- YFLu
+  pR.StageName = "pacman" // Hardcoded temporarily. -- YFLu
 
-	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, chosenStageDir)
+	relativePathForAllStages := "../frontend/assets/resources/map"
+	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, pR.StageName)
 
 	pTmxMapIns := &TmxMap{}
 
@@ -847,7 +849,7 @@ func (pR *Room) StartBattle() {
 					   Therefore any `assembledFrame: RoomDownsyncFrame` should be pre-marshalled as `toForwardMsg := proto.Marshal(assembledFrame)` before being sent via each `theForwardingChannel (per player*room)`, to avoid thread-safety issues due to further access to `RoomDownsyncFrame.AnyField` AFTER it's retrieved from the "exit" of the channel.
 					*/
 					theBytes, marshalErr := proto.Marshal(diffFrame)
-					if marshalErr != nil {
+					if nil != marshalErr {
 						Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 						continue
 					}
@@ -1041,7 +1043,7 @@ func (pR *Room) StopBattleForSettlement() {
 		}
 		theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
 		theBytes, marshalErr := proto.Marshal(assembledFrame)
-		if marshalErr != nil {
+		if nil != marshalErr {
 			Logger.Error("Error marshalling RoomDownsyncFrame in battleMainLoop:", zap.Any("the error", marshalErr), zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 			continue
 		}
@@ -1089,7 +1091,7 @@ func (pR *Room) onBattlePrepare(cb battleStartCbType) {
 	}
 
 	theBytes, marshalErr := proto.Marshal(battleReadyToStartFrame)
-	if marshalErr != nil {
+	if nil != marshalErr {
 		Logger.Error("Error marshalling battleReadyToStartFrame in onBattlePrepare:", zap.Any("the error", marshalErr))
 	}
 	Logger.Info("Before broadcasting playerAddedFrame:", zap.Any("playerMetas", playerMetas))
@@ -1324,7 +1326,7 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 	}
 
 	theBytes, marshalErr := proto.Marshal(playerAddedFrame)
-	if marshalErr != nil {
+	if nil != marshalErr {
 		Logger.Error("Error marshalling playerAddedFrame in onPlayerAdded:", zap.Any("the error", marshalErr))
 	}
 	theStr := string(theBytes)
@@ -1367,8 +1369,8 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 	}
 
 	theBytes, marshalErr := proto.Marshal(playerReAddedFrame)
-	if marshalErr != nil {
-		Logger.Error("Error marshalling playerReAddedFrame in onPlayerReAdded:", zap.Any("the error", marshalErr))
+	if nil != marshalErr {
+		Logger.Error("Error marshalling playerReAddedFrame in `onPlayerReAdded`:", zap.Any("the error", marshalErr))
 	}
 	theStr := string(theBytes)
 

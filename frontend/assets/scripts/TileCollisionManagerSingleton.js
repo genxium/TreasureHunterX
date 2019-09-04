@@ -335,9 +335,13 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
   var toRet = {
     barriers: [],
     shelters: [],
+    shelterChainTails: [],
+    shelterChainHeads: [],
     sheltersZReducer: [],
     frameAnimations: [],
-    minigames: []
+    imageObjects: [],
+    grandBoundaries: [],
+    transparents: [],
   };
   var tiledMapIns = withTiledMapNode.getComponent(cc.TiledMap); // This is a magic name.
   var mapTileSize = tiledMapIns.getTileSize();
@@ -711,21 +715,6 @@ TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScript
     }
     newShelter.boundaryObj = boundaryObj;
     mapScriptIns.node.addChild(newShelter);
-  }
-
-  mapScriptIns.statefulBuildableInhibitionColliders = [];
-  for (let boundaryObj of extractedBoundaryObjs.statefulBuildableInhibitions) {
-    const newStatefulBuildableInhibition = cc.instantiate(mapScriptIns.polygonBoundaryStatefulBuildableInhibitionPrefab);
-    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-    newStatefulBuildableInhibition.setPosition(newBoundaryOffsetInMapNode);
-    newStatefulBuildableInhibition.setAnchorPoint(cc.v2(0, 0));
-    const newStatefulBuildableInhibitionColliderIns = newStatefulBuildableInhibition.getComponent(cc.PolygonCollider);
-    newStatefulBuildableInhibitionColliderIns.points = [];
-    for (let p of boundaryObj) {
-      newStatefulBuildableInhibitionColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-    }
-    mapScriptIns.statefulBuildableInhibitionColliders.push(newStatefulBuildableInhibition);
-    mapScriptIns.node.addChild(newStatefulBuildableInhibition);
   }
 
   mapScriptIns.barrierColliders = [];

@@ -60,15 +60,15 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
-    barrierPrefab: {
+    polygonBoundaryBarrierPrefab: {
       type: cc.Prefab,
       default: null,
     },
-    shelterPrefab: {
+    polygonBoundaryShelterPrefab: {
       type: cc.Prefab,
       default: null,
     },
-    shelterZReducerPrefab: {
+    polygonBoundaryShelterZReducerPrefab: {
       type: cc.Prefab,
       default: null,
     },
@@ -286,6 +286,9 @@ cc.Class({
     }
     if (null != window.handleRoomDownsyncFrame) {
       window.handleRoomDownsyncFrame = null;
+    }
+    if (null != window.handleBattleColliderInfo) {
+      window.handleBattleColliderInfo = null;
     }
     if (null != window.handleClientSessionCloseOrError) {
       window.handleClientSessionCloseOrError = null;
@@ -571,6 +574,11 @@ cc.Class({
       self.setupInputControls();
 
       let cachedPlayerMetas = {};
+
+      window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
+        console.log(parsedBattleColliderInfo);
+        // TODO: Acks a signal back to the server for actually toggling the corresponding `pRoom.Players[playerId].BattleState: PENDING_BATTLE_COLLIDER_ACK -> ACTIVE`.
+      };
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
         if (ALL_BATTLE_STATES.WAITING != self.battleState
