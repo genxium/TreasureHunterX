@@ -193,27 +193,28 @@ func TmxPolylineToPolygon2DInB2World(pTmxMapIns *TmxMap, singleObjInTmxFile *Tmx
     Points: make([]*Vec2D, len(singleValueArray)),
   }
 
-  for _, value := range singleValueArray {
-    for k, v := range strings.Split(value, ",") {
+  for k, value := range singleValueArray {
+    thePolygon2DFromPolyline.Points[k] = &Vec2D{}
+    for kk, v := range strings.Split(value, ",") {
       coordinateValue, err := strconv.ParseFloat(v, 64)
       if nil != err {
         panic(err)
       }
-      if 0 == (k % 2) {
+      if 0 == (kk % 2) {
         thePolygon2DFromPolyline.Points[k].X = (coordinateValue)
       } else {
         thePolygon2DFromPolyline.Points[k].Y = (coordinateValue)
-
-        // Transform to B2World space coordinate.
-        tmp := &Vec2D{
-          X: thePolygon2DFromPolyline.Points[k].X,
-          Y: thePolygon2DFromPolyline.Points[k].Y,
-        }
-        transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
-        thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
-        thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
       }
     }
+
+    // Transform to B2World space coordinate.
+    tmp := &Vec2D{
+      X: thePolygon2DFromPolyline.Points[k].X,
+      Y: thePolygon2DFromPolyline.Points[k].Y,
+    }
+    transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
+    thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
+    thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
   }
 
   return thePolygon2DFromPolyline, nil
@@ -234,38 +235,50 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
     Points: make([]*Vec2D, len(singleValueArray)),
   }
 
-  for _, value := range singleValueArray {
-    for k, v := range strings.Split(value, ",") {
+  for k, value := range singleValueArray {
+    thePolygon2DFromPolyline.Points[k] = &Vec2D{}
+    for kk, v := range strings.Split(value, ",") {
       coordinateValue, err := strconv.ParseFloat(v, 64)
       if nil != err {
         panic(err)
       }
-      if 0 == (k % 2) {
+      if 0 == (kk % 2) {
         thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
       } else {
         thePolygon2DFromPolyline.Points[k].Y = factorHalf*float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
 
-        // Transform to B2World space coordinate.
-        tmp := &Vec2D{
-          X: thePolygon2DFromPolyline.Points[k].X,
-          Y: thePolygon2DFromPolyline.Points[k].Y,
-        }
-        transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
-        thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
-        thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
       }
     }
+
+    // Transform to B2World space coordinate.
+    tmp := &Vec2D{
+      X: thePolygon2DFromPolyline.Points[k].X,
+      Y: thePolygon2DFromPolyline.Points[k].Y,
+    }
+    transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
+    thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
+    thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
   }
 
   return thePolygon2DFromPolyline, nil
 }
 
-func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArr []byte, firstGid int, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) error {
+func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, firstGid int, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) error {
 	pTsxIns := &Tsx{}
-	err := xml.Unmarshal(byteArr, pTsxIns)
+	err := xml.Unmarshal(byteArrOfTsxFile, pTsxIns)
 	if nil != err {
 		panic(err)
 	}
+  /*
+  // For debug-printing only. -- YFLu, 2019-09-04.
+
+  reserializedTmxMap, err := pTmxMapIns.ToXML()
+	if nil != err {
+		panic(err)
+	}
+  */
+
+  Logger.Info("DeserializeTsxToColliderDict", zap.Any("pTsxIns", pTsxIns))
 
 	for _, tile := range pTsxIns.Tiles {
 		globalGid := (firstGid + int(tile.Id))

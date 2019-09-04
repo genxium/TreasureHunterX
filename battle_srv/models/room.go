@@ -132,8 +132,8 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 }
 
 const (
-	PLAYER_DEFAULT_SPEED = 300 //Hardcoded
-	ADD_SPEED            = 100 //Hardcoded
+	PLAYER_DEFAULT_SPEED = 300 // Hardcoded
+	ADD_SPEED            = 100 // Hardcoded
 )
 
 func (pR *Room) onSpeedShoePickedUp(contactingPlayer *Player, contactingSpeedShoe *SpeedShoe, nowMillis int64) {
@@ -152,7 +152,7 @@ func (pR *Room) onSpeedShoePickedUp(contactingPlayer *Player, contactingSpeedSho
 func (pR *Room) onTrapPickedUp(contactingPlayer *Player, contactingTrap *Trap) {
 	if _, existent := pR.Traps[contactingTrap.LocalIdInBattle]; existent {
 		Logger.Info("Player has met trap:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingTrap.LocalIdInBattle", contactingTrap.LocalIdInBattle))
-		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody) //触碰后即刻删除
+		pR.CollidableWorld.DestroyBody(contactingTrap.CollidableBody) // Trap is destroyed once activated.
 		pR.Traps[contactingTrap.LocalIdInBattle] = &Trap{
 			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
@@ -168,15 +168,13 @@ func (pR *Room) onBulletCrashed(contactingPlayer *Player, contactingBullet *Bull
 			Removed:          true,
 			RemovedAtFrameId: pR.Tick,
 		}
-		// TODO: Resume speed of this player later in `battleMainLoop` w.r.t. `Player.FrozenAtGmtMillis`, instead of a delicate timer to prevent thread-safety issues.
 
 		if contactingPlayer != nil {
-			if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) { //由于守护塔的原因暂时不叠加缠住时间
-				//Do nothing
+			if maxMillisToFreezePerPlayer > (nowMillis - pR.Players[contactingPlayer.Id].FrozenAtGmtMillis) {
+				// Deliberately doing nothing. -- YFLu, 2019-09-04. 
 			} else {
 				pR.Players[contactingPlayer.Id].Speed = 0
 				pR.Players[contactingPlayer.Id].FrozenAtGmtMillis = nowMillis
-				//被冻住同时加速效果消除
 				pR.Players[contactingPlayer.Id].AddSpeedAtGmtMillis = -1
 				//Logger.Info("Player has picked up bullet:", zap.Any("roomId", pR.Id), zap.Any("contactingPlayer.Id", contactingPlayer.Id), zap.Any("contactingBullet.LocalIdInBattle", contactingBullet.LocalIdInBattle), zap.Any("pR.Players[contactingPlayer.Id].Speed", pR.Players[contactingPlayer.Id].Speed))
 			}
@@ -260,7 +258,6 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 }
 
 func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet {
-
 	pR.AccumulatedLocalIdForBullets++
 
 	var bdDef box2d.B2BodyDef
@@ -319,71 +316,20 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 }
 
 func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, guardTowerPolygon2DList Polygon2DList) {
-  var guardTowerLocalIdInBattle int32 = 0
-	for _, polygon2D := range guardTowerPolygon2DList {
-    var inRangePlayers InRangePlayerCollection
-    pInRangePlayers := &inRangePlayers
-    pInRangePlayers = pInRangePlayers.Init(10)
-    theGuardTower := &GuardTower{
-      Id:              0,
-      LocalIdInBattle: guardTowerLocalIdInBattle,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-      InRangePlayers:  pInRangePlayers,
-      LastAttackTick: utils.UnixtimeNano(),
-    }
-
-    pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
-
-    guardTowerLocalIdInBattle++
-	}
-	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.GuardTowers))
 }
 
-func (pR *Room) InitTreasures(pTmxMapIns *TmxMap, lowScoreTreasurePolygon2DList Polygon2DList, highScoreTreasurePolygon2DList Polygon2DList) {
-  var treasureLocalIdInBattle int32 = 0
-	for _, polygon2D := range lowScoreTreasurePolygon2DList {
-    theTreasure := &Treasure{
-      Id:              0,
-      LocalIdInBattle: treasureLocalIdInBattle,
-      Score:           LOW_SCORE_TREASURE_SCORE,
-      Type:            LOW_SCORE_TREASURE_TYPE,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-    }
+func (pR *Room) refreshColliders() {
+	/* 
+    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! 
 
-    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-
-    treasureLocalIdInBattle++
-	}
-
-	for _, polygon2D := range highScoreTreasurePolygon2DList {
-    theTreasure := &Treasure{
-      Id:              0,
-      LocalIdInBattle: treasureLocalIdInBattle,
-      Score:           HIGH_SCORE_TREASURE_SCORE,
-      Type:            HIGH_SCORE_TREASURE_TYPE,
-      X:               polygon2D.Anchor.X,
-      Y:               polygon2D.Anchor.Y,
-      PickupBoundary:  polygon2D,
-    }
-
-    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
-
-    treasureLocalIdInBattle++
-	}
-	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("# of treasures", len(pR.Treasures)))
-}
-
-func (pR *Room) InitColliders() {
+  -- YFLu
+  */
 	gravity := box2d.MakeB2Vec2(0.0, 0.0)
 	world := box2d.MakeB2World(gravity)
 	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
 
-	Logger.Info("InitColliders for pR.Players:", zap.Any("roomId", pR.Id))
+	Logger.Info("refreshColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -408,7 +354,7 @@ func (pR *Room) InitColliders() {
 		// PrettyPrintBody(player.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
+	Logger.Info("refreshColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -439,7 +385,8 @@ func (pR *Room) InitColliders() {
 		// PrettyPrintBody(treasure.CollidableBody)
 	}
 
-	Logger.Info("InitColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
+	Logger.Info("refreshColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
+
 	for _, tower := range pR.GuardTowers {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -470,8 +417,8 @@ func (pR *Room) InitColliders() {
 	}
 }
 
-func (pR *Room) InitContactListener() {
-	listener := Listener{
+func (pR *Room) refreshContactListener() {
+	listener := RoomBattleContactListener{
 		name: "TreasureHunterX",
 		room: pR,
 	}
@@ -611,11 +558,12 @@ func diffBullet(last *pb.Bullet, curr *pb.Bullet) (bool, *pb.Bullet) {
 	return t, curr
 }
 
-func (pR *Room) StartBattle() {
-	if RoomBattleStateIns.WAITING != pR.State {
-		return
-	}
-
+func (pR *Room) ChooseMapAndRefreshColliders() error {
+  /*
+  * We use the verb "refresh" here to imply that upon invocation of this function, all colliders will be recovered if they were destroyed in the previous battle.  
+  * 
+  * -- YFLu, 2019-09-04
+  */
 	execPath, err := os.Executable()
 	ErrFatal(err)
 
@@ -667,8 +615,14 @@ func (pR *Room) StartBattle() {
   }
 
   toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
+  if nil != err {
+    panic(err)
+  }
 
-  // Player position initialization.
+  Logger.Info("ParseTmxLayersAndGroups finished#1", zap.Any("roomId", pR.Id), zap.Any("toRetStrToVec2DListMap", toRetStrToVec2DListMap))
+  Logger.Info("ParseTmxLayersAndGroups finished#2", zap.Any("roomId", pR.Id), zap.Any("toRetStrToPolygon2DListMap", toRetStrToPolygon2DListMap))
+
+  // Refresh "Player" data for RoomDownsyncFrame.
   playerPosList := toRetStrToVec2DListMap["ControlledPlayerStartingPos"]
 	for index, player := range pR.Players {
 		player.X = playerPosList[index].X
@@ -676,21 +630,76 @@ func (pR *Room) StartBattle() {
 		player.Score = 0
 	}
 
+  // Refresh "Treasure" data for RoomDownsyncFrame.
   lowScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["LowScoreTreasure"]
   highScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["HighScoreTreasure"]
-	pR.InitTreasures(pTmxMapIns, lowScoreTreasurePolygon2DList, highScoreTreasurePolygon2DList)
 
+  var treasureLocalIdInBattle int32 = 0
+	for _, polygon2D := range lowScoreTreasurePolygon2DList {
+    theTreasure := &Treasure{
+      Id:              0,
+      LocalIdInBattle: treasureLocalIdInBattle,
+      Score:           LOW_SCORE_TREASURE_SCORE,
+      Type:            LOW_SCORE_TREASURE_TYPE,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+    }
+
+    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
+    treasureLocalIdInBattle++
+	}
+
+	for _, polygon2D := range highScoreTreasurePolygon2DList {
+    theTreasure := &Treasure{
+      Id:              0,
+      LocalIdInBattle: treasureLocalIdInBattle,
+      Score:           HIGH_SCORE_TREASURE_SCORE,
+      Type:            HIGH_SCORE_TREASURE_TYPE,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+    }
+
+    pR.Treasures[theTreasure.LocalIdInBattle] = theTreasure
+
+    treasureLocalIdInBattle++
+	}
+	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("# of treasures", len(pR.Treasures)))
+
+  // Refresh "GuardTower" data for RoomDownsyncFrame.
   guardTowerPolygon2DList := toRetStrToPolygon2DListMap["GuardTower"]
-	pR.InitGuardTower(pTmxMapIns, guardTowerPolygon2DList)
-	/* 
-    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! 
+  var guardTowerLocalIdInBattle int32 = 0
+	for _, polygon2D := range guardTowerPolygon2DList {
+    var inRangePlayers InRangePlayerCollection
+    pInRangePlayers := &inRangePlayers
+    pInRangePlayers = pInRangePlayers.Init(10)
+    theGuardTower := &GuardTower{
+      Id:              0,
+      LocalIdInBattle: guardTowerLocalIdInBattle,
+      X:               polygon2D.Anchor.X,
+      Y:               polygon2D.Anchor.Y,
+      PickupBoundary:  polygon2D,
+      InRangePlayers:  pInRangePlayers,
+      LastAttackTick: utils.UnixtimeNano(),
+    }
 
-  -- YFLu
-  */
+    pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
 
-	pR.InitColliders()
+    guardTowerLocalIdInBattle++
+	}
+	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.GuardTowers))
 
-	pR.InitContactListener()
+  // Refresh "Colliders" for server-side contact listening of B2World.
+	pR.refreshColliders()
+	pR.refreshContactListener()
+  return nil
+}
+
+func (pR *Room) StartBattle() {
+	if RoomBattleStateIns.WAITING != pR.State {
+		return
+	}
 
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.CmdFromPlayersChan = make(chan interface{}, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. Note that a `GolangChannel` whose size is too large would induce "large RAM use of the overall process" and thus cause frequent websocket disconnection in this game. */)
@@ -1137,9 +1146,6 @@ func (pR *Room) Dismiss() {
 }
 
 func (pR *Room) onDismissed() {
-	Logger.Info("The room is completely dismissed:", zap.Any("roomId", pR.Id))
-	pR.State = RoomBattleStateIns.IDLE
-	pR.EffectivePlayerCount = 0
 
 	// Always instantiates new HeapRAM blocks and let the old blocks die out due to not being retained by any root reference.
 	pR.Players = make(map[int32]*Player)
@@ -1154,7 +1160,15 @@ func (pR *Room) onDismissed() {
 	}
 	pR.CmdFromPlayersChan = nil
 	pR.RoomDownsyncFrameBuffer = NewRingBuffer(512)
+
+  pR.ChooseMapAndRefreshColliders()
+	pR.EffectivePlayerCount = 0
+
+  // [WARNING] It's deliberately ordered such that "pR.State = RoomBattleStateIns.IDLE" is put AFTER all the refreshing operations above.
+	pR.State = RoomBattleStateIns.IDLE
 	pR.updateScore()
+
+	Logger.Info("The room is completely dismissed:", zap.Any("roomId", pR.Id))
 }
 
 func (pR *Room) Unicast(toPlayerId int32, msg interface{}) {
@@ -1358,7 +1372,7 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 	pR.updateScore()
 }
 
-type Listener struct {
+type RoomBattleContactListener struct {
 	name string
 	room *Room
 }
@@ -1366,9 +1380,9 @@ type Listener struct {
 // Implementing the GolangBox2d contact listeners [begins].
 /**
  * Note that the execution of these listeners is within the SAME GOROUTINE as that of "`battleMainLoop` in the same room".
- * See the comments in `Room.InitContactListener()` for details.
+ * See the comments in `Room.refreshContactListener()` for details.
  */
-func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
+func (l RoomBattleContactListener) BeginContact(contact box2d.B2ContactInterface) {
 	var pTower *GuardTower
 	var pPlayer *Player
 
@@ -1394,7 +1408,7 @@ func (l Listener) BeginContact(contact box2d.B2ContactInterface) {
 	}
 }
 
-func (l Listener) EndContact(contact box2d.B2ContactInterface) {
+func (l RoomBattleContactListener) EndContact(contact box2d.B2ContactInterface) {
 	var pTower *GuardTower
 	var pPlayer *Player
 
@@ -1419,11 +1433,11 @@ func (l Listener) EndContact(contact box2d.B2ContactInterface) {
 	}
 }
 
-func (l Listener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
+func (l RoomBattleContactListener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
 	//fmt.Printf("I am PreSolve %s\n", l.name);
 }
 
-func (l Listener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
+func (l RoomBattleContactListener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
 	//fmt.Printf("PostSolve %s\n", l.name);
 }
 
