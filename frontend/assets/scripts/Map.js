@@ -578,6 +578,13 @@ cc.Class({
       window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
         console.log(parsedBattleColliderInfo);
         // TODO: Acks a signal back to the server for actually toggling the corresponding `pRoom.Players[playerId].BattleState: PENDING_BATTLE_COLLIDER_ACK -> ACTIVE`.
+
+        const wrapped = {
+          msgId: Date.now(),
+          act: "PlayerBattleColliderAck",
+          data: {},
+        }
+        window.sendSafely(JSON.stringify(wrapped));
       };
 
       window.handleRoomDownsyncFrame = function(diffFrame) {

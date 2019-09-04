@@ -122,7 +122,7 @@ func InitRoomHeapManager() {
 			JoinIndexBooleanArr:          joinIndexBooleanArr,
 		}
 		roomMap[pq[i].Id] = pq[i]
-		pq[i].ChooseStageAndRefreshColliders()
+		pq[i].ChooseStage()
 	}
 	heap.Init(&pq)
 	RoomHeapManagerIns = &pq

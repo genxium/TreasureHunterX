@@ -360,7 +360,6 @@ func (pR *Room) refreshColliders() {
 
 		player.CollidableBody = b2PlayerBody
 		b2PlayerBody.SetUserData(player)
-		// PrettyPrintBody(player.CollidableBody)
 	}
 
 	for _, treasure := range pR.Treasures {
@@ -390,7 +389,6 @@ func (pR *Room) refreshColliders() {
 
 		treasure.CollidableBody = b2TreasureBody
 		b2TreasureBody.SetUserData(treasure)
-		// PrettyPrintBody(treasure.CollidableBody)
 	}
 
 	for _, tower := range pR.GuardTowers {
@@ -421,9 +419,7 @@ func (pR *Room) refreshColliders() {
 		tower.CollidableBody = b2TrapBody
 		b2TrapBody.SetUserData(tower)
 	}
-}
 
-func (pR *Room) refreshContactListener() {
 	listener := RoomBattleContactListener{
 		name: "TreasureHunterX",
 		room: pR,
@@ -564,7 +560,7 @@ func diffBullet(last *pb.Bullet, curr *pb.Bullet) (bool, *pb.Bullet) {
 	return t, curr
 }
 
-func (pR *Room) ChooseStageAndRefreshColliders() error {
+func (pR *Room) ChooseStage() error {
 	/*
 	 * We use the verb "refresh" here to imply that upon invocation of this function, all colliders will be recovered if they were destroyed in the previous battle.
 	 *
@@ -640,7 +636,7 @@ func (pR *Room) ChooseStageAndRefreshColliders() error {
 		/*
 		   // For debug-printing only.
 
-		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for lowScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+		   Logger.Info("ChooseStage printing polygon2D for lowScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
 		*/
 
 		theTreasure := &Treasure{
@@ -661,7 +657,7 @@ func (pR *Room) ChooseStageAndRefreshColliders() error {
 		/*
 		   // For debug-printing only.
 
-		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for highScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+		   Logger.Info("ChooseStage printing polygon2D for highScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
 		*/
 		theTreasure := &Treasure{
 			Id:              0,
@@ -685,7 +681,7 @@ func (pR *Room) ChooseStageAndRefreshColliders() error {
 		/*
 		   // For debug-printing only.
 
-		   Logger.Info("ChooseStageAndRefreshColliders printing polygon2D for guardTowerPolygon2DList", zap.Any("guardTowerLocalIdInBattle", guardTowerLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points), zap.Any("pR.GuardTowers", pR.GuardTowers))
+		   Logger.Info("ChooseStage printing polygon2D for guardTowerPolygon2DList", zap.Any("guardTowerLocalIdInBattle", guardTowerLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points), zap.Any("pR.GuardTowers", pR.GuardTowers))
 		*/
 
 		var inRangePlayers InRangePlayerCollection
@@ -706,9 +702,6 @@ func (pR *Room) ChooseStageAndRefreshColliders() error {
 		guardTowerLocalIdInBattle++
 	}
 
-	// Refresh "Colliders" for server-side contact listening of B2World.
-	pR.refreshColliders()
-	pR.refreshContactListener()
 	return nil
 }
 
@@ -726,6 +719,10 @@ func (pR *Room) StartBattle() {
 	pR.Tick = 0
 	maxMillisToFreezePerPlayer := int64(5000)   // Hardcoded temporarily.
 	maxMillisToAddSpeedPerPlayer := int64(3000) // Hardcoded temporarily.
+
+	// Refresh "Colliders" for server-side contact listening of B2World.
+	pR.refreshColliders()
+
 	/**
 	 * Will be triggered from a goroutine which executes the critical `Room.AddPlayerIfPossible`, thus the `battleMainLoop` should be detached.
 	 * All of the consecutive stages, e.g. settlement, dismissal, should share the same goroutine with `battleMainLoop`.
@@ -1174,7 +1171,7 @@ func (pR *Room) onDismissed() {
 	pR.CmdFromPlayersChan = nil
 	pR.RoomDownsyncFrameBuffer = NewRingBuffer(512)
 
-	pR.ChooseStageAndRefreshColliders()
+	pR.ChooseStage()
 	pR.EffectivePlayerCount = 0
 
 	// [WARNING] It's deliberately ordered such that "pR.State = RoomBattleStateIns.IDLE" is put AFTER all the refreshing operations above.
@@ -1387,6 +1384,7 @@ func (pR *Room) OnPlayerBattleColliderAcked(playerId int32) bool {
 		return false
 	}
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
+  Logger.Info("OnPlayerBattleColliderAcked", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 
 	if pR.Capacity == len(pR.Players) {
 		allAcked := true
