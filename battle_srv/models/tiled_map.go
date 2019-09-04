@@ -17,8 +17,8 @@ import (
 const (
 	HIGH_SCORE_TREASURE_SCORE = 200
 	HIGH_SCORE_TREASURE_TYPE  = 2
-	LOW_SCORE_TREASURE_SCORE        = 100
-	LOW_SCORE_TREASURE_TYPE         = 1
+	LOW_SCORE_TREASURE_SCORE  = 100
+	LOW_SCORE_TREASURE_TYPE   = 1
 	SPEED_SHOES_TYPE          = 3
 
 	FLIPPED_HORIZONTALLY_FLAG uint32 = 0x80000000
@@ -41,12 +41,12 @@ type TmxOrTsxPolyline struct {
 }
 
 type TmxOrTsxObject struct {
-	Id         int                   `xml:"id,attr"`
-  Gid        *int                  `xml:"gid,attr"`
-	X          float64               `xml:"x,attr"`
-	Y          float64               `xml:"y,attr"`
-	Properties *TmxOrTsxProperties   `xml:"properties"`
-	Polyline   *TmxOrTsxPolyline     `xml:"polyline"`
+	Id         int                 `xml:"id,attr"`
+	Gid        *int                `xml:"gid,attr"`
+	X          float64             `xml:"x,attr"`
+	Y          float64             `xml:"y,attr"`
+	Properties *TmxOrTsxProperties `xml:"properties"`
+	Polyline   *TmxOrTsxPolyline   `xml:"polyline"`
 }
 
 type TmxOrTsxObjectGroup struct {
@@ -173,94 +173,94 @@ func (l *TmxLayer) decodeBase64() ([]uint32, error) {
 
 type Vec2DList []*Vec2D
 type Polygon2DList []*Polygon2D
-type StrToVec2DListMap map[string]Vec2DList
-type StrToPolygon2DListMap map[string]Polygon2DList
+type StrToVec2DListMap map[string]*Vec2DList         // Note that it's deliberately NOT using "map[string]Vec2DList", for the easy of passing return value to "models/room.go".
+type StrToPolygon2DListMap map[string]*Polygon2DList // Note that it's deliberately NOT using "map[string]Polygon2DList", for the easy of passing return value to "models/room.go".
 
 func TmxPolylineToPolygon2DInB2World(pTmxMapIns *TmxMap, singleObjInTmxFile *TmxOrTsxObject, targetPolyline *TmxOrTsxPolyline) (*Polygon2D, error) {
-  if nil == targetPolyline {
-    return nil, nil
-  }
+	if nil == targetPolyline {
+		return nil, nil
+	}
 
-  singleValueArray := strings.Split(targetPolyline.Points, " ")
+	singleValueArray := strings.Split(targetPolyline.Points, " ")
 
-  theUntransformedAnchor := &Vec2D{
-    X: singleObjInTmxFile.X,
-    Y: singleObjInTmxFile.Y,
-  }
-  theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedAnchor)
-  thePolygon2DFromPolyline := &Polygon2D{
-    Anchor: &theTransformedAnchor,
-    Points: make([]*Vec2D, len(singleValueArray)),
-  }
+	theUntransformedAnchor := &Vec2D{
+		X: singleObjInTmxFile.X,
+		Y: singleObjInTmxFile.Y,
+	}
+	theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedAnchor)
+	thePolygon2DFromPolyline := &Polygon2D{
+		Anchor: &theTransformedAnchor,
+		Points: make([]*Vec2D, len(singleValueArray)),
+	}
 
-  for k, value := range singleValueArray {
-    thePolygon2DFromPolyline.Points[k] = &Vec2D{}
-    for kk, v := range strings.Split(value, ",") {
-      coordinateValue, err := strconv.ParseFloat(v, 64)
-      if nil != err {
-        panic(err)
-      }
-      if 0 == (kk % 2) {
-        thePolygon2DFromPolyline.Points[k].X = (coordinateValue)
-      } else {
-        thePolygon2DFromPolyline.Points[k].Y = (coordinateValue)
-      }
-    }
+	for k, value := range singleValueArray {
+		thePolygon2DFromPolyline.Points[k] = &Vec2D{}
+		for kk, v := range strings.Split(value, ",") {
+			coordinateValue, err := strconv.ParseFloat(v, 64)
+			if nil != err {
+				panic(err)
+			}
+			if 0 == (kk % 2) {
+				thePolygon2DFromPolyline.Points[k].X = (coordinateValue)
+			} else {
+				thePolygon2DFromPolyline.Points[k].Y = (coordinateValue)
+			}
+		}
 
-    // Transform to B2World space coordinate.
-    tmp := &Vec2D{
-      X: thePolygon2DFromPolyline.Points[k].X,
-      Y: thePolygon2DFromPolyline.Points[k].Y,
-    }
-    transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
-    thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
-    thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
-  }
+		// Transform to B2World space coordinate.
+		tmp := &Vec2D{
+			X: thePolygon2DFromPolyline.Points[k].X,
+			Y: thePolygon2DFromPolyline.Points[k].Y,
+		}
+		transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
+		thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
+		thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
+	}
 
-  return thePolygon2DFromPolyline, nil
+	return thePolygon2DFromPolyline, nil
 }
 
 func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInTsxFile *TmxOrTsxObject, targetPolyline *TmxOrTsxPolyline, pTsxIns *Tsx) (*Polygon2D, error) {
-  if nil == targetPolyline {
-    return nil, nil
-  }
-  var factorHalf float64 = 0.5
-  offsetFromTopLeftInTileLocalCoordX := singleObjInTsxFile.X
-  offsetFromTopLeftInTileLocalCoordY := singleObjInTsxFile.Y
+	if nil == targetPolyline {
+		return nil, nil
+	}
+	var factorHalf float64 = 0.5
+	offsetFromTopLeftInTileLocalCoordX := singleObjInTsxFile.X
+	offsetFromTopLeftInTileLocalCoordY := singleObjInTsxFile.Y
 
-  singleValueArray := strings.Split(targetPolyline.Points, " ")
+	singleValueArray := strings.Split(targetPolyline.Points, " ")
 
-  thePolygon2DFromPolyline := &Polygon2D{
-    Anchor: nil,
-    Points: make([]*Vec2D, len(singleValueArray)),
-  }
+	thePolygon2DFromPolyline := &Polygon2D{
+		Anchor: nil,
+		Points: make([]*Vec2D, len(singleValueArray)),
+	}
 
-  for k, value := range singleValueArray {
-    thePolygon2DFromPolyline.Points[k] = &Vec2D{}
-    for kk, v := range strings.Split(value, ",") {
-      coordinateValue, err := strconv.ParseFloat(v, 64)
-      if nil != err {
-        panic(err)
-      }
-      if 0 == (kk % 2) {
-        thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
-      } else {
-        thePolygon2DFromPolyline.Points[k].Y = factorHalf*float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
+	for k, value := range singleValueArray {
+		thePolygon2DFromPolyline.Points[k] = &Vec2D{}
+		for kk, v := range strings.Split(value, ",") {
+			coordinateValue, err := strconv.ParseFloat(v, 64)
+			if nil != err {
+				panic(err)
+			}
+			if 0 == (kk % 2) {
+				thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
+			} else {
+				thePolygon2DFromPolyline.Points[k].Y = factorHalf*float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
 
-      }
-    }
+			}
+		}
 
-    // Transform to B2World space coordinate.
-    tmp := &Vec2D{
-      X: thePolygon2DFromPolyline.Points[k].X,
-      Y: thePolygon2DFromPolyline.Points[k].Y,
-    }
-    transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
-    thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
-    thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
-  }
+		// Transform to B2World space coordinate.
+		tmp := &Vec2D{
+			X: thePolygon2DFromPolyline.Points[k].X,
+			Y: thePolygon2DFromPolyline.Points[k].Y,
+		}
+		transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
+		thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
+		thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
+	}
 
-  return thePolygon2DFromPolyline, nil
+	return thePolygon2DFromPolyline, nil
 }
 
 func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, firstGid int, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) error {
@@ -269,16 +269,14 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 	if nil != err {
 		panic(err)
 	}
-  /*
-  // For debug-printing only. -- YFLu, 2019-09-04.
+	/*
+		  // For debug-printing only. -- YFLu, 2019-09-04.
 
-  reserializedTmxMap, err := pTmxMapIns.ToXML()
-	if nil != err {
-		panic(err)
-	}
-  */
-
-  Logger.Info("DeserializeTsxToColliderDict", zap.Any("pTsxIns", pTsxIns))
+		  reserializedTmxMap, err := pTmxMapIns.ToXML()
+			if nil != err {
+				panic(err)
+			}
+	*/
 
 	for _, tile := range pTsxIns.Tiles {
 		globalGid := (firstGid + int(tile.Id))
@@ -322,128 +320,144 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 				theStrToPolygon2DListMap = gidBoundariesMapInB2World[globalGid]
 			}
 
-			var thePolygon2DList Polygon2DList
-			if existingPolygon2DList, ok := theStrToPolygon2DListMap[key]; ok {
-				thePolygon2DList = existingPolygon2DList
+			var pThePolygon2DList *Polygon2DList
+			if _, ok := theStrToPolygon2DListMap[key]; ok {
+				pThePolygon2DList = theStrToPolygon2DListMap[key]
 			} else {
-				theStrToPolygon2DListMap[key] = make(Polygon2DList, 0)
-				thePolygon2DList = theStrToPolygon2DListMap[key]
+				thePolygon2DList := make(Polygon2DList, 0)
+				theStrToPolygon2DListMap[key] = &thePolygon2DList
+				pThePolygon2DList = theStrToPolygon2DListMap[key]
 			}
 
-      thePolygon2DFromPolyline, err := TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns, singleObj, singleObj.Polyline, pTsxIns)
-      if nil != err {
-        panic(err)
-      }
-			thePolygon2DList = append(thePolygon2DList, thePolygon2DFromPolyline)
+			thePolygon2DFromPolyline, err := TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns, singleObj, singleObj.Polyline, pTsxIns)
+			if nil != err {
+				panic(err)
+			}
+			*pThePolygon2DList = append(*pThePolygon2DList, thePolygon2DFromPolyline)
 		}
 	}
 	return nil
 }
 
 func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) (StrToVec2DListMap, StrToPolygon2DListMap, error) {
-  toRetStrToVec2DListMap := make(StrToVec2DListMap, 0)
-  toRetStrToPolygon2DListMap := make(StrToPolygon2DListMap, 0)
-  /*
-    Note that both 
-    - "Vec2D"s of "toRetStrToVec2DListMap", and 
-    - "Polygon2D"s of "toRetStrToPolygon2DListMap" 
+	toRetStrToVec2DListMap := make(StrToVec2DListMap, 0)
+	toRetStrToPolygon2DListMap := make(StrToPolygon2DListMap, 0)
+	/*
+	   Note that both
+	   - "Vec2D"s of "toRetStrToVec2DListMap", and
+	   - "Polygon2D"s of "toRetStrToPolygon2DListMap"
 
-    are already transformed into the "coordinate of B2World". 
+	   are already transformed into the "coordinate of B2World".
 
-    -- YFLu
-  */
+	   -- YFLu
+	*/
 
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-		switch (objGroup.Name) {
-		case "ControlledPlayerStartingPos":
-      theVec2DListToCache, ok := toRetStrToVec2DListMap[objGroup.Name]
-      if false == ok {
-        toRetStrToVec2DListMap[objGroup.Name] = make(Vec2DList, 0)
-        theVec2DListToCache = toRetStrToVec2DListMap[objGroup.Name]
-      }
-      for _, singleObjInTmxFile := range objGroup.Objects {
-        theUntransformedPos := &Vec2D{
-          X: singleObjInTmxFile.X,
-          Y: singleObjInTmxFile.Y,
-        }
-        thePosInWorld := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedPos)
-        theVec2DListToCache = append(theVec2DListToCache, &thePosInWorld)
-      }
-    case "Pumpkin", "SpeedShoe":
+		switch objGroup.Name {
+		case "PlayerStartingPos":
+			var pTheVec2DListToCache *Vec2DList
+			_, ok := toRetStrToVec2DListMap[objGroup.Name]
+			if false == ok {
+				theVec2DListToCache := make(Vec2DList, 0)
+				toRetStrToVec2DListMap[objGroup.Name] = &theVec2DListToCache
+				pTheVec2DListToCache = toRetStrToVec2DListMap[objGroup.Name]
+			} else {
+				pTheVec2DListToCache = toRetStrToVec2DListMap[objGroup.Name]
+			}
+			for _, singleObjInTmxFile := range objGroup.Objects {
+				theUntransformedPos := &Vec2D{
+					X: singleObjInTmxFile.X,
+					Y: singleObjInTmxFile.Y,
+				}
+				thePosInWorld := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedPos)
+				*pTheVec2DListToCache = append(*pTheVec2DListToCache, &thePosInWorld)
+			}
+		case "Pumpkin", "SpeedShoe":
 		case "Barrier":
 			/*
-			   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" is located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World.
+							   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" is located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World.
 
-         -- YFLu
+				         -- YFLu
 			*/
-      thePolygon2DListToCache, ok := toRetStrToPolygon2DListMap[objGroup.Name]
-      if false == ok {
-        toRetStrToPolygon2DListMap[objGroup.Name] = make(Polygon2DList, 0)
-        thePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
-      }
+			var pThePolygon2DListToCache *Polygon2DList
+			_, ok := toRetStrToPolygon2DListMap[objGroup.Name]
+			if false == ok {
+				thePolygon2DListToCache := make(Polygon2DList, 0)
+				toRetStrToPolygon2DListMap[objGroup.Name] = &thePolygon2DListToCache
+				pThePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
+			} else {
+				pThePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
+			}
 
-      for _, singleObjInTmxFile := range objGroup.Objects {
-        if nil == singleObjInTmxFile.Polyline {
-          continue
-        }
-        if nil == singleObjInTmxFile.Properties.Property || "boundary_type" != singleObjInTmxFile.Properties.Property[0].Name || "barrier" != singleObjInTmxFile.Properties.Property[0].Value {
-          continue
-        }
+			for _, singleObjInTmxFile := range objGroup.Objects {
+				if nil == singleObjInTmxFile.Polyline {
+					continue
+				}
+				if nil == singleObjInTmxFile.Properties.Property || "boundary_type" != singleObjInTmxFile.Properties.Property[0].Name || "barrier" != singleObjInTmxFile.Properties.Property[0].Value {
+					continue
+				}
 
-        thePolygon2DInWorld, err := TmxPolylineToPolygon2DInB2World(pTmxMapIns, singleObjInTmxFile, singleObjInTmxFile.Polyline)
-        if nil != err {
-          panic(err)
-        }
-        thePolygon2DListToCache = append(thePolygon2DListToCache, thePolygon2DInWorld)
-      }
+				thePolygon2DInWorld, err := TmxPolylineToPolygon2DInB2World(pTmxMapIns, singleObjInTmxFile, singleObjInTmxFile.Polyline)
+				if nil != err {
+					panic(err)
+				}
+				*pThePolygon2DListToCache = append(*pThePolygon2DListToCache, thePolygon2DInWorld)
+			}
 		case "LowScoreTreasure", "GuardTower", "HighScoreTreasure":
 			/*
-			   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" ISN'T located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World, refer to "https://shimo.im/docs/SmLJJhXm2C8XMzZT" for details.
+							   Note that in this case, the "Polygon2D.Anchor" of each "TmxOrTsxObject" ISN'T located exactly in an overlapping with "Polygon2D.Points[0]" w.r.t. B2World, refer to "https://shimo.im/docs/SmLJJhXm2C8XMzZT" for details.
 
-         -- YFLu
+				         -- YFLu
 			*/
-      for _, singleObjInTmxFile := range objGroup.Objects {
-        if nil == singleObjInTmxFile.Gid {
-          continue
-        }
-        theGlobalGid := singleObjInTmxFile.Gid
-        theStrToPolygon2DListMap, ok := gidBoundariesMapInB2World[*theGlobalGid]
-        if false == ok {
-          continue
-        }
-        thePolygon2DList, ok := theStrToPolygon2DListMap[objGroup.Name]
-        if false == ok {
-          continue
-        }
+			for _, singleObjInTmxFile := range objGroup.Objects {
+				if nil == singleObjInTmxFile.Gid {
+					continue
+				}
+				theGlobalGid := singleObjInTmxFile.Gid
+				theStrToPolygon2DListMap, ok := gidBoundariesMapInB2World[*theGlobalGid]
+				if false == ok {
+					continue
+				}
 
-        thePolygon2DListToCache, ok := toRetStrToPolygon2DListMap[objGroup.Name]
-        if false == ok {
-          toRetStrToPolygon2DListMap[objGroup.Name] = make(Polygon2DList, 0)
-          thePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
-        }
-        for _, thePolygon2D := range thePolygon2DList {
-          theUntransformedAnchor := &Vec2D{
-            X: singleObjInTmxFile.X,
-            Y: singleObjInTmxFile.Y,
-          }
-          theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedAnchor)
-          thePolygon2DInWorld := &Polygon2D{
-            Anchor: &theTransformedAnchor,
-            Points: make([]*Vec2D, len(thePolygon2D.Points)),
-          }
-          for kk, p := range thePolygon2D.Points {
-            // [WARNING] It's intentionally recreating a copy of "Vec2D" here.
-            thePolygon2DInWorld.Points[kk] = &Vec2D{
-              X: p.X,
-              Y: p.Y,
-            }
-          }
-          thePolygon2DListToCache = append(thePolygon2DListToCache, thePolygon2DInWorld)
-        }
-      }
+				pThePolygon2DList, ok := theStrToPolygon2DListMap[objGroup.Name]
+				if false == ok {
+					continue
+				}
+
+				var pThePolygon2DListToCache *Polygon2DList
+				_, ok = toRetStrToPolygon2DListMap[objGroup.Name]
+				if false == ok {
+					thePolygon2DListToCache := make(Polygon2DList, 0)
+					toRetStrToPolygon2DListMap[objGroup.Name] = &thePolygon2DListToCache
+					pThePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
+				} else {
+					pThePolygon2DListToCache = toRetStrToPolygon2DListMap[objGroup.Name]
+				}
+
+				for _, thePolygon2D := range *pThePolygon2DList {
+					theUntransformedAnchor := &Vec2D{
+						X: singleObjInTmxFile.X,
+						Y: singleObjInTmxFile.Y,
+					}
+					theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedAnchor)
+					thePolygon2DInWorld := &Polygon2D{
+						Anchor: &theTransformedAnchor,
+						Points: make([]*Vec2D, len(thePolygon2D.Points)),
+					}
+					for kk, p := range thePolygon2D.Points {
+						// [WARNING] It's intentionally recreating a copy of "Vec2D" here.
+						thePolygon2DInWorld.Points[kk] = &Vec2D{
+							X: p.X,
+							Y: p.Y,
+						}
+					}
+					*pThePolygon2DListToCache = append(*pThePolygon2DListToCache, thePolygon2DInWorld)
+				}
+			}
 		default:
 		}
 	}
+
 	return toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, nil
 }
 
@@ -473,9 +487,9 @@ func (pTmxMapIns *TmxMap) continuousObjLayerVecToContinuousMapNodeVec(continuous
 	convertedVecX := transMat[0][0]*continuousObjLayerVec.X + transMat[0][1]*continuousObjLayerVec.Y
 	convertedVecY := transMat[1][0]*continuousObjLayerVec.X + transMat[1][1]*continuousObjLayerVec.Y
 	converted := Vec2D{
-    X: convertedVecX,
-    Y: convertedVecY,
-  }
+		X: convertedVecX,
+		Y: convertedVecY,
+	}
 	return converted
 }
 
@@ -484,18 +498,18 @@ func (pTmxMapIns *TmxMap) continuousObjLayerOffsetToContinuousMapNodePos(continu
 	tileRectilinearSize.Width = float64(pTmxMapIns.TileWidth)
 	tileRectilinearSize.Height = float64(pTmxMapIns.TileHeight)
 
-  layerOffset := Vec2D{
-    X: 0,
-    Y: float64(pTmxMapIns.Height)*0.5,
-  }
+	layerOffset := Vec2D{
+		X: 0,
+		Y: float64(pTmxMapIns.Height) * 0.5,
+	}
 
-  calibratedVec := continuousObjLayerOffset
-  convertedVec := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(calibratedVec)
+	calibratedVec := continuousObjLayerOffset
+	convertedVec := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(calibratedVec)
 
-  toRet := Vec2D{
-    X: layerOffset.X + convertedVec.X,
-    Y: layerOffset.Y + convertedVec.Y,
-  }
+	toRet := Vec2D{
+		X: layerOffset.X + convertedVec.X,
+		Y: layerOffset.Y + convertedVec.Y,
+	}
 
-  return toRet
+	return toRet
 }

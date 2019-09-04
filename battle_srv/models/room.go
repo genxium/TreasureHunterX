@@ -315,9 +315,6 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 	return pR.createTrapBulletByPos(startPos, endPos)
 }
 
-func (pR *Room) InitGuardTower(pTmxMapIns *TmxMap, guardTowerPolygon2DList Polygon2DList) {
-}
-
 func (pR *Room) refreshColliders() {
 	/* 
     - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection! 
@@ -329,7 +326,6 @@ func (pR *Room) refreshColliders() {
 	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
 
-	Logger.Info("refreshColliders for pR.Players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -354,7 +350,6 @@ func (pR *Room) refreshColliders() {
 		// PrettyPrintBody(player.CollidableBody)
 	}
 
-	Logger.Info("refreshColliders for pR.Treasures:", zap.Any("roomId", pR.Id))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -384,8 +379,6 @@ func (pR *Room) refreshColliders() {
 		b2TreasureBody.SetUserData(treasure)
 		// PrettyPrintBody(treasure.CollidableBody)
 	}
-
-	Logger.Info("refreshColliders for pR.GuardTowers:", zap.Any("roomId", pR.Id))
 
 	for _, tower := range pR.GuardTowers {
 		var bdDef box2d.B2BodyDef
@@ -564,13 +557,8 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
   * 
   * -- YFLu, 2019-09-04
   */
-	execPath, err := os.Executable()
-	ErrFatal(err)
-
 	pwd, err := os.Getwd()
 	ErrFatal(err)
-
-	Logger.Info("StartBattle filepaths", zap.Any("execPath", execPath), zap.Any("pwd", pwd))
 
 	relativePathForAllMaps := "../frontend/assets/resources/map"
   chosenMapDirName := "pacman" // Hardcoded temporarily. -- YFLu
@@ -619,11 +607,8 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
     panic(err)
   }
 
-  Logger.Info("ParseTmxLayersAndGroups finished#1", zap.Any("roomId", pR.Id), zap.Any("toRetStrToVec2DListMap", toRetStrToVec2DListMap))
-  Logger.Info("ParseTmxLayersAndGroups finished#2", zap.Any("roomId", pR.Id), zap.Any("toRetStrToPolygon2DListMap", toRetStrToPolygon2DListMap))
-
   // Refresh "Player" data for RoomDownsyncFrame.
-  playerPosList := toRetStrToVec2DListMap["ControlledPlayerStartingPos"]
+  playerPosList := *(toRetStrToVec2DListMap["PlayerStartingPos"])
 	for index, player := range pR.Players {
 		player.X = playerPosList[index].X
 		player.Y = playerPosList[index].Y
@@ -631,11 +616,17 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
 	}
 
   // Refresh "Treasure" data for RoomDownsyncFrame.
-  lowScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["LowScoreTreasure"]
-  highScoreTreasurePolygon2DList := toRetStrToPolygon2DListMap["HighScoreTreasure"]
+  lowScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["LowScoreTreasure"])
+  highScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["HighScoreTreasure"])
 
   var treasureLocalIdInBattle int32 = 0
 	for _, polygon2D := range lowScoreTreasurePolygon2DList {
+    /*
+    // For debug-printing only. 
+
+    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for lowScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+    */
+
     theTreasure := &Treasure{
       Id:              0,
       LocalIdInBattle: treasureLocalIdInBattle,
@@ -651,6 +642,11 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
 	}
 
 	for _, polygon2D := range highScoreTreasurePolygon2DList {
+    /*
+    // For debug-printing only. 
+
+    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for highScoreTreasurePolygon2DList", zap.Any("treasureLocalIdInBattle", treasureLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points))
+    */
     theTreasure := &Treasure{
       Id:              0,
       LocalIdInBattle: treasureLocalIdInBattle,
@@ -665,12 +661,17 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
 
     treasureLocalIdInBattle++
 	}
-	Logger.Info("InitTreasures finished:", zap.Any("roomId", pR.Id), zap.Any("# of treasures", len(pR.Treasures)))
 
   // Refresh "GuardTower" data for RoomDownsyncFrame.
-  guardTowerPolygon2DList := toRetStrToPolygon2DListMap["GuardTower"]
+  guardTowerPolygon2DList := *(toRetStrToPolygon2DListMap["GuardTower"])
   var guardTowerLocalIdInBattle int32 = 0
 	for _, polygon2D := range guardTowerPolygon2DList {
+    /*
+    // For debug-printing only. 
+
+    Logger.Info("ChooseMapAndRefreshColliders printing polygon2D for guardTowerPolygon2DList", zap.Any("guardTowerLocalIdInBattle", guardTowerLocalIdInBattle), zap.Any("polygon2D.Anchor", polygon2D.Anchor), zap.Any("polygon2D.Points", polygon2D.Points), zap.Any("pR.GuardTowers", pR.GuardTowers))
+    */
+
     var inRangePlayers InRangePlayerCollection
     pInRangePlayers := &inRangePlayers
     pInRangePlayers = pInRangePlayers.Init(10)
@@ -681,14 +682,13 @@ func (pR *Room) ChooseMapAndRefreshColliders() error {
       Y:               polygon2D.Anchor.Y,
       PickupBoundary:  polygon2D,
       InRangePlayers:  pInRangePlayers,
-      LastAttackTick: utils.UnixtimeNano(),
+      LastAttackTick:  utils.UnixtimeNano(),
     }
 
     pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
 
     guardTowerLocalIdInBattle++
 	}
-	Logger.Info("InitGuardTower finished:", zap.Any("roomId", pR.Id), zap.Any("traps", pR.GuardTowers))
 
   // Refresh "Colliders" for server-side contact listening of B2World.
 	pR.refreshColliders()

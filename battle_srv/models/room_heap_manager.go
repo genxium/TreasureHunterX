@@ -112,6 +112,7 @@ func InitRoomHeapManager() {
 			ServerFPS:                    35,
 			Treasures:                    make(map[int32]*Treasure),
 			Traps:                        make(map[int32]*Trap),
+      GuardTowers:                  make(map[int32]*GuardTower),
 			Bullets:                      make(map[int32]*Bullet),
 			SpeedShoes:                   make(map[int32]*SpeedShoe),
 			Barriers:                     make(map[int32]*Barrier),
