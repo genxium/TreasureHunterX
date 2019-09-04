@@ -84,6 +84,8 @@
       "__id__": 1
     },
     "_enabled": true,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 1,
@@ -98,8 +100,6 @@
     "_isTrimmedMode": true,
     "_state": 0,
     "_atlas": null,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -148,12 +148,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "lowScoreSpriteFrame": {
-      "__uuid__": "69fa5b02-211c-4f30-8518-764440265567"
-    },
-    "highScoreSpriteFrame": {
-      "__uuid__": "cc1486e4-5c38-4a73-a0d3-70416d0dd57f"
-    },
     "_id": ""
   },
   {
@@ -162,7 +156,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "e108b9e7-e8b0-465d-8bf1-a850560c3b0f"
+      "__uuid__": "ec3f3234-9b84-43c2-a3cd-58b924cce8e5"
     },
     "fileId": "dc8aAweIBDDYuXBJblR5IA",
     "sync": false

@@ -15,11 +15,13 @@ import (
 )
 
 const (
-	HIGH_SCORE_TREASURE_SCORE = 200
-	HIGH_SCORE_TREASURE_TYPE  = 2
-	LOW_SCORE_TREASURE_SCORE  = 100
 	LOW_SCORE_TREASURE_TYPE   = 1
+	HIGH_SCORE_TREASURE_TYPE  = 2
+
 	SPEED_SHOES_TYPE          = 3
+
+	LOW_SCORE_TREASURE_SCORE  = 100
+	HIGH_SCORE_TREASURE_SCORE = 200
 
 	FLIPPED_HORIZONTALLY_FLAG uint32 = 0x80000000
 	FLIPPED_VERTICALLY_FLAG   uint32 = 0x40000000
@@ -288,7 +290,7 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 				    <objectgroup draworder="index">
 				     <object id="1" x="-154" y="-159">
 		          <properties>
-		           <property name="type" value="guardTower"/>
+		           <property name="boundary_type" value="guardTower"/>
 		          </properties>
 				      <polyline points="0,0 -95,179 18,407 361,434 458,168 333,-7"/>
 				     </object>
@@ -306,7 +308,7 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 				// Temporarily omit those non-polyline-containing objects.
 				continue
 			}
-			if nil == singleObj.Properties.Property || "type" != singleObj.Properties.Property[0].Name {
+			if nil == singleObj.Properties.Property || "boundary_type" != singleObj.Properties.Property[0].Name {
 				continue
 			}
 

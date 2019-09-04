@@ -1185,18 +1185,13 @@
     "player2Prefab": {
       "__uuid__": "1f479636-9eb8-4612-8f97-371964d6eae3"
     },
-    "pumpkinPrefab": {
-      "__uuid__": "0e13eee2-1abe-40bf-8714-064feec158c7"
-    },
     "treasurePrefab": {
-      "__uuid__": "e108b9e7-e8b0-465d-8bf1-a850560c3b0f"
+      "__uuid__": "ec3f3234-9b84-43c2-a3cd-58b924cce8e5"
     },
     "trapPrefab": {
       "__uuid__": "9f340a31-ddfa-46c2-94c7-d11615aedcb1"
     },
-    "acceleratorPrefab": {
-      "__uuid__": "7673e0e4-bebd-4caa-8a10-a6e1e86f1b2f"
-    },
+    "speedShoePrefab": null,
     "polygonBoundaryBarrierPrefab": {
       "__uuid__": "4154eec0-d644-482f-a889-c00ae6b69958"
     },
@@ -1243,7 +1238,7 @@
       "__uuid__": "b4e519f4-e698-4403-9ff2-47b8dacb077e"
     },
     "guardTowerPrefab": {
-      "__uuid__": "3cee8bde-8f1d-4960-b591-33208af1f997"
+      "__uuid__": "31a63530-7811-45bc-a4ee-571faf917e35"
     },
     "forceBigEndianFloatingNumDecoding": false,
     "_id": "d12gkAmppNlIzqcRDELa91"

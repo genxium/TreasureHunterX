@@ -5,7 +5,7 @@
   <objectgroup draworder="index">
    <object id="1" x="16" y="17">
     <properties>
-     <property name="type" value="LowScoreTreasure"/>
+     <property name="boundary_type" value="LowScoreTreasure"/>
     </properties>
     <polyline points="0,0 31,0 30,28 3,27"/>
    </object>
@@ -15,7 +15,7 @@
   <objectgroup draworder="index">
    <object id="1" x="7" y="4">
     <properties>
-     <property name="type" value="HighScoreTreasure"/>
+     <property name="boundary_type" value="HighScoreTreasure"/>
     </properties>
     <polyline points="0,0 50,0 51,55 1,54"/>
    </object>

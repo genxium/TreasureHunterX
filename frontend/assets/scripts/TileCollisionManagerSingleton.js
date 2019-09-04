@@ -331,8 +331,9 @@ TileCollisionManager.prototype.continuousMapNodePosToContinuousObjLayerOffset = 
 /**
  * Note that `TileCollisionManager.extractBoundaryObjects` returns everything with coordinates local to `withTiledMapNode`!
  */
+window.battleEntityTypeNameToGlobalGid = {};
 TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNode) {
-  var toRet = {
+  let toRet = {
     barriers: [],
     shelters: [],
     shelterChainTails: [],
@@ -343,92 +344,106 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     grandBoundaries: [],
     transparents: [],
   };
-  var tiledMapIns = withTiledMapNode.getComponent(cc.TiledMap); // This is a magic name.
-  var mapTileSize = tiledMapIns.getTileSize();
-  var mapOrientation = tiledMapIns.getMapOrientation();
+  const tiledMapIns = withTiledMapNode.getComponent(cc.TiledMap); // This is a magic name.
+  const mapTileSize = tiledMapIns.getTileSize();
+  const mapOrientation = tiledMapIns.getMapOrientation();
 
   /*
    * Copies from https://github.com/cocos-creator/engine/blob/master/cocos2d/tilemap/CCTiledMap.js as a hack to parse advanced <tile> info
    * of a TSX file. [BEGINS]
    */
-  var file = tiledMapIns._tmxFile;
-  var texValues = file.textures;
-  var texKeys = file.textureNames;
-  var textures = {};
-  for (var texIdx = 0; texIdx < texValues.length; ++texIdx) {
+  const file = tiledMapIns._tmxFile;
+  const texValues = file.textures;
+  const texKeys = file.textureNames;
+  const textures = {};
+  for (let texIdx = 0; texIdx < texValues.length; ++texIdx) {
     textures[texKeys[texIdx]] = texValues[texIdx];
   }
 
-  var tsxFileNames = file.tsxFileNames;
-  var tsxFiles = file.tsxFiles;
-  var tsxMap = {};
-  for (var tsxFilenameIdx = 0; tsxFilenameIdx < tsxFileNames.length; ++tsxFilenameIdx) {
+  const tsxFileNames = file.tsxFileNames;
+  const tsxFiles = file.tsxFiles;
+  let tsxMap = {};
+  for (let tsxFilenameIdx = 0; tsxFilenameIdx < tsxFileNames.length; ++tsxFilenameIdx) {
     if (0 >= tsxFileNames[tsxFilenameIdx].length) continue;
     tsxMap[tsxFileNames[tsxFilenameIdx]] = tsxFiles[tsxFilenameIdx].text;
   }
 
-  var mapInfo = new cc.TMXMapInfo(file.tmxXmlStr, tsxMap, textures);
-  var tileSets = mapInfo.getTilesets();
+  const mapInfo = new cc.TMXMapInfo(file.tmxXmlStr, tsxMap, textures);
+  const tileSets = mapInfo.getTilesets();
   /*
    * Copies from https://github.com/cocos-creator/engine/blob/master/cocos2d/tilemap/CCTiledMap.js as a hack to parse advanced <tile> info
    * of a TSX file. [ENDS]
    */
-  var gidBoundariesMap = {};
-  var tilesElListUnderTilesets = {};
-  for (var tsxFilenameIdx = 0; tsxFilenameIdx < tsxFileNames.length; ++tsxFilenameIdx) {
-
-    var tsxOrientation = tileSets[tsxFilenameIdx].orientation;
+  let gidBoundariesMap = {};
+  const tilesElListUnderTilesets = {};
+  for (let tsxFilenameIdx = 0; tsxFilenameIdx < tsxFileNames.length; ++tsxFilenameIdx) {
+    const tsxOrientation = tileSets[tsxFilenameIdx].orientation;
     if (cc.TiledMap.Orientation.ORTHO == tsxOrientation) {
       cc.error("Error at tileset %s: We proceed with ONLY tilesets in ORTHO orientation for all map orientations by now.", tsxFileNames[tsxFilenameIdx]);
       continue;
     };
 
-    var tsxXMLStr = tsxMap[tsxFileNames[tsxFilenameIdx]];
-    var selTileset = mapInfo._parser._parseXML(tsxXMLStr).documentElement;
-    var firstGid = (parseInt(selTileset.getAttribute('firstgid')) || tileSets[tsxFilenameIdx].firstGid || 0);
-    var currentTiles = selTileset.getElementsByTagName('tile');
+    const tsxXMLStr = tsxMap[tsxFileNames[tsxFilenameIdx]];
+    const selTileset = mapInfo._parser._parseXML(tsxXMLStr).documentElement;
+    const firstGid = (parseInt(selTileset.getAttribute('firstgid')) || tileSets[tsxFilenameIdx].firstGid || 0);
+    const currentTiles = selTileset.getElementsByTagName('tile');
     if (!currentTiles) continue;
     tilesElListUnderTilesets[tsxFileNames[tsxFilenameIdx]] = currentTiles;
 
-    for (var tileIdx = 0; tileIdx < currentTiles.length; ++tileIdx) {
-      var currentTile = currentTiles[tileIdx];
-      var parentGID = parseInt(firstGid) + parseInt(currentTile.getAttribute('id') || 0);
-      var childrenOfCurrentTile = (cc.sys.platform == cc.sys.WECHAT_GAME ? currentTile.childNodes : currentTile.children) ;
-      for (var childIdx = 0; childIdx < childrenOfCurrentTile.length; ++childIdx) {
-        var ch = childrenOfCurrentTile[childIdx];
-        if (!(ch.nodeName === 'objectgroup')) continue;
+    for (let tileIdx = 0; tileIdx < currentTiles.length; ++tileIdx) {
+      const currentTile = currentTiles[tileIdx];
+      const parentGid = parseInt(firstGid) + parseInt(currentTile.getAttribute('id') || 0);
+      let childrenOfCurrentTile = null;
+      if (cc.sys.isNative) {
+        childrenOfCurrentTile = currentTile.getElementsByTagName("objectgroup");
+      } else if (cc.sys.platform == cc.sys.WECHAT_GAME) {
+        childrenOfCurrentTile = currentTile.childNodes;
+      } else {
+        childrenOfCurrentTile = currentTile.children;
+      }
+      for (let childIdx = 0; childIdx < childrenOfCurrentTile.length; ++childIdx) {
+        const ch = childrenOfCurrentTile[childIdx];
+        if ('objectgroup' != ch.nodeName) continue;
         var currentObjectGroupUnderTile = mapInfo._parseObjectGroup(ch);
-        gidBoundariesMap[parentGID] = {
+        gidBoundariesMap[parentGid] = {
           barriers: [],
           shelters: [],
           sheltersZReducer: [],
         };
-        for (var oidx = 0; oidx < currentObjectGroupUnderTile._objects.length; ++oidx) {
-          var oo = currentObjectGroupUnderTile._objects[oidx];
-          var polylinePoints = oo.polylinePoints;
+        for (let oidx = 0; oidx < currentObjectGroupUnderTile._objects.length; ++oidx) {
+          const oo = currentObjectGroupUnderTile._objects[oidx];
+          const polylinePoints = oo.polylinePoints;
           if (!polylinePoints) continue;
-          var boundaryType = oo.boundary_type;
+          let boundaryType = oo.boundary_type;
           switch (boundaryType) {
+            case "LowScoreTreasure":
+            case "HighScoreTreasure":
+            case "GuardTower":
+              const spriteFrameInfoForGid = getOrCreateSpriteFrameForGid(parentGid, mapInfo, tilesElListUnderTilesets);
+              if (null != spriteFrameInfoForGid) {
+                window.battleEntityTypeNameToGlobalGid[boundaryType] = parentGid;
+              }
+            break;
             case "barrier":
-              var brToPushTmp = [];
-              for (var bidx = 0; bidx < polylinePoints.length; ++bidx) {
+              let brToPushTmp = [];
+              for (let bidx = 0; bidx < polylinePoints.length; ++bidx) {
                 brToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[bidx]));
               }
-              gidBoundariesMap[parentGID].barriers.push(brToPushTmp);
+              gidBoundariesMap[parentGid].barriers.push(brToPushTmp);
               break;
             case "shelter":
-              var shToPushTmp = [];
-              for (var shidx = 0; shidx < polylinePoints.length; ++shidx) {
+              let shToPushTmp = [];
+              for (let shidx = 0; shidx < polylinePoints.length; ++shidx) {
                 shToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[shidx]));
               }
-              gidBoundariesMap[parentGID].shelters.push(shToPushTmp);
+              gidBoundariesMap[parentGid].shelters.push(shToPushTmp);
               break;
             case "shelter_z_reducer":
-              var shzrToPushTmp = [];
-              for (var shzridx = 0; shzridx < polylinePoints.length; ++shzridx) {
+              let shzrToPushTmp = [];
+              for (let shzridx = 0; shzridx < polylinePoints.length; ++shzridx) {
                 shzrToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[shzridx]));
               }
-              gidBoundariesMap[parentGID].sheltersZReducer.push(shzrToPushTmp);
+              gidBoundariesMap[parentGid].sheltersZReducer.push(shzrToPushTmp);
               break;
             default:
               break;
@@ -437,8 +452,9 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
       }
     }
   }
+
   // Reference http://docs.cocos.com/creator/api/en/classes/TiledMap.html.
-  var allObjectGroups = tiledMapIns.getObjectGroups();
+  let allObjectGroups = tiledMapIns.getObjectGroups();
 
   for (var i = 0; i < allObjectGroups.length; ++i) {
     // Reference http://docs.cocos.com/creator/api/en/classes/TiledObjectGroup.html.
@@ -461,6 +477,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
       });
     }
   }
+
   for (var i = 0; i < allObjectGroups.length; ++i) {
     var objectGroup = allObjectGroups[i];
     if ("barrier_and_shelter" != objectGroup.getProperty("type")) continue;
@@ -504,14 +521,13 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     }
   }
 
-  var mapTileSize = tiledMapIns.getTileSize();
-  var allLayers = tiledMapIns.getLayers();
+  const allLayers = tiledMapIns.getLayers();
 
-  var layerDOMTrees = [];
-  var mapDomTree = mapInfo._parser._parseXML(tiledMapIns.tmxAsset.tmxXmlStr).documentElement;
-  var mapDOMAllChildren = (cc.sys.platform == cc.sys.WECHAT_GAME ? mapDomTree.childNodes : mapDomTree.children);
-  for (var mdtIdx = 0; mdtIdx < mapDOMAllChildren.length; ++mdtIdx) {
-    var tmpCh = mapDOMAllChildren[mdtIdx];
+  let layerDOMTrees = [];
+  const mapDomTree = mapInfo._parser._parseXML(tiledMapIns.tmxAsset.tmxXmlStr).documentElement;
+  const mapDOMAllChildren = (cc.sys.platform == cc.sys.WECHAT_GAME ? mapDomTree.childNodes : mapDomTree.children);
+  for (let mdtIdx = 0; mdtIdx < mapDOMAllChildren.length; ++mdtIdx) {
+    const tmpCh = mapDOMAllChildren[mdtIdx];
     if (mapInfo._shouldIgnoreNode(tmpCh)) {
       continue;
     }
@@ -521,31 +537,26 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     }
     layerDOMTrees.push(tmpCh);
   }
-  for (var j = 0; j < allLayers.length; ++j) {
+
+  for (let j = 0; j < allLayers.length; ++j) {
     // TODO: Respect layer offset!
-    var currentTileLayer = allLayers[j];
-    var currentTileset = currentTileLayer.getTileSet();
+    const currentTileLayer = allLayers[j];
+    const currentTileset = currentTileLayer.getTileSet();
 
     if (!currentTileset) {
       continue;
     }
 
-    var currentLayerSize = currentTileLayer.getLayerSize();
+    const currentLayerSize = currentTileLayer.getLayerSize();
 
-    var currentLayerTileSize = currentTileset._tileSize;
-    var firstGidInCurrentTileset = currentTileset.firstGid;
+    const currentLayerTileSize = currentTileset._tileSize;
+    const firstGidInCurrentTileset = currentTileset.firstGid;
 
-    /*
-    if ((0 != currentLayerTileSize.width % mapTileSize.width) || (0 != currentLayerTileSize.height % mapTileSize.height)) {
-      cc.error("TileSize of tileSet %s is not a multiple of the mapTileSize.", currentTileset.name); 
-    }
-    */
-
-    for (var discreteXInLayer = 0; discreteXInLayer < currentLayerSize.width; ++discreteXInLayer) {
-      for (var discreteYInLayer = 0; discreteYInLayer < currentLayerSize.height; ++discreteYInLayer) {
-        var currentGid = currentTileLayer.getTileGIDAt(discreteXInLayer, discreteYInLayer);
+    for (let discreteXInLayer = 0; discreteXInLayer < currentLayerSize.width; ++discreteXInLayer) {
+      for (let discreteYInLayer = 0; discreteYInLayer < currentLayerSize.height; ++discreteYInLayer) {
+        const currentGid = currentTileLayer.getTileGIDAt(discreteXInLayer, discreteYInLayer);
         if (0 >= currentGid) continue;
-        var gidBoundaries = gidBoundariesMap[currentGid];
+        const gidBoundaries = gidBoundariesMap[currentGid];
         if (!gidBoundaries) continue;
         switch (mapOrientation) {
           case cc.TiledMap.Orientation.ORTHO:
@@ -553,9 +564,9 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
             return toRet;
 
           case cc.TiledMap.Orientation.ISO:
-            var centreOfAnchorTileInMapNode = this._continuousFromCentreOfDiscreteTile(withTiledMapNode, tiledMapIns, currentTileLayer, discreteXInLayer, discreteYInLayer);
-            var topLeftOfWholeTsxTileInMapNode = centreOfAnchorTileInMapNode.add(cc.v2(-0.5 * mapTileSize.width, currentLayerTileSize.height - 0.5 * mapTileSize.height));
-            for (var bidx = 0; bidx < gidBoundaries.barriers.length; ++bidx) {
+            const centreOfAnchorTileInMapNode = this._continuousFromCentreOfDiscreteTile(withTiledMapNode, tiledMapIns, currentTileLayer, discreteXInLayer, discreteYInLayer);
+            const topLeftOfWholeTsxTileInMapNode = centreOfAnchorTileInMapNode.add(cc.v2(-0.5 * mapTileSize.width, currentLayerTileSize.height - 0.5 * mapTileSize.height));
+            for (let bidx = 0; bidx < gidBoundaries.barriers.length; ++bidx) {
               var theBarrier = gidBoundaries.barriers[bidx]; // An array of cc.v2 points.
               var brToPushTmp = [];
               for (var tbidx = 0; tbidx < theBarrier.length; ++tbidx) {
@@ -563,7 +574,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               }
               toRet.barriers.push(brToPushTmp);
             }
-            for (var shidx = 0; shidx < gidBoundaries.shelters.length; ++shzridx) {
+            for (let shidx = 0; shidx < gidBoundaries.shelters.length; ++shzridx) {
               var theShelter = gidBoundaries.shelters[shidx]; // An array of cc.v2 points.
               var shToPushTmp = [];
               for (var tshidx = 0; tshidx < theShelter.length; ++tshidx) {
@@ -571,7 +582,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               }
               toRet.shelters.push(shToPushTmp);
             }
-            for (var shzridx = 0; shzridx < gidBoundaries.sheltersZReducer.length; ++shzridx) {
+            for (let shzridx = 0; shzridx < gidBoundaries.sheltersZReducer.length; ++shzridx) {
               var theShelter = gidBoundaries.sheltersZReducer[shzridx]; // An array of cc.v2 points.
               var shzrToPushTmp = [];
               for (var tshzridx = 0; tshzridx < theShelter.length; ++tshzridx) {
@@ -633,6 +644,7 @@ TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScript
       break;
     }
   }
+
   for (let imageObject of extractedBoundaryObjs.imageObjects) {
     const imageObjectNode = cc.instantiate(mapScriptIns.imageObjectPrefab);
     const spriteComp = imageObjectNode.getComponent(cc.Sprite);

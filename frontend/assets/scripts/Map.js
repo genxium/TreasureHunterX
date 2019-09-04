@@ -44,10 +44,6 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
-    pumpkinPrefab: {
-      type: cc.Prefab,
-      default: null,
-    },
     treasurePrefab: {
       type: cc.Prefab,
       default: null,
@@ -56,7 +52,7 @@ cc.Class({
       type: cc.Prefab,
       default: null,
     },
-    acceleratorPrefab: {
+    speedShoePrefab: {
       type: cc.Prefab,
       default: null,
     },
@@ -152,18 +148,6 @@ cc.Class({
       }
     }
 
-    const pumpkin = diffFrame.pumpkin;
-    const pumpkinsLocalIdStrList = Object.keys(pumpkin);
-    for (let i = 0; i < pumpkinsLocalIdStrList.length; ++i) {
-      const k = pumpkinsLocalIdStrList[i];
-      const pumpkinLocalIdInBattle = parseInt(k);
-      if (true == diffFrame.pumpkin[pumpkinLocalIdInBattle].removed) {
-        delete newFullFrame.pumpkin[pumpkinLocalIdInBattle];
-      } else {
-        newFullFrame.pumpkin[pumpkinLocalIdInBattle] = diffFrame.pumpkin[pumpkinLocalIdInBattle];
-      }
-    }
-
     const treasures = diffFrame.treasures;
     const treasuresLocalIdStrList = Object.keys(treasures);
     for (let i = 0; i < treasuresLocalIdStrList.length; ++i) {
@@ -213,17 +197,6 @@ cc.Class({
       }
     }
 
-    const accs = diffFrame.speedShoes;
-    const accsLocalIdStrList = Object.keys(accs);
-    for (let i = 0; i < accsLocalIdStrList.length; ++i) {
-      const k = accsLocalIdStrList[i];
-      const accLocalIdInBattle = parseInt(k);
-      if (true == diffFrame.speedShoes[accLocalIdInBattle].removed) {
-        delete newFullFrame.speedShoes[accLocalIdInBattle];
-      } else {
-        newFullFrame.speedShoes[accLocalIdInBattle] = diffFrame.speedShoes[accLocalIdInBattle];
-      }
-    }
     return newFullFrame;
   },
 
@@ -417,18 +390,9 @@ cc.Class({
       }
     }
 
-    if (self.pumpkinNodeDict) {
-      for (let i in self.pumpkinNodeDict) {
-        let node = self.pumpkinNodeDict[i];
-        if (node.parent) {
-          node.parent.removeChild(node);
-        }
-      }
-    }
-
-    if (self.acceleratorNodeDict) {
-      for (let i in self.acceleratorNodeDict) {
-        let node = self.acceleratorNodeDict[i];
+    if (self.speedShoeNodeDict) {
+      for (let i in self.speedShoeNodeDict) {
+        let node = self.speedShoeNodeDict[i];
         if (node.parent) {
           node.parent.removeChild(node);
         }
@@ -461,8 +425,6 @@ cc.Class({
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
 
-    self.pumpkinInfoDict = {};
-    self.pumpkinNodeDict = {};
     self.otherPlayerCachedDataDict = {};
     self.otherPlayerNodeDict = {};
     self.treasureInfoDict = {};
@@ -472,7 +434,7 @@ cc.Class({
     self.trapBulletNodeDict = {};
     self.trapNodeDict = {};
     self.towerNodeDict = {};
-    self.acceleratorNodeDict = {};
+    self.speedShoeNodeDict = {};
     if (self.findingPlayerNode) {
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
@@ -595,14 +557,14 @@ cc.Class({
         }
         const refFrameId = diffFrame.refFrameId;
         if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.BATTLE_READY_TO_START == refFrameId) {
-          //显示倒计时
+          // 显示倒计时
           self.playersMatched(diffFrame.playerMetas);
           cachedPlayerMetas = diffFrame.playerMetas;
-          //隐藏返回按钮
+          // 隐藏返回按钮
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           findingPlayerScriptIns.hideExitButton();
         } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_ADDED == refFrameId) {
-          //显示匹配玩家
+          // 显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
           }
@@ -704,19 +666,7 @@ cc.Class({
           self.otherPlayerCachedDataDict[playerId] = anotherPlayer;
         }
 
-        //update pumpkin Info 
-        self.pumpkinInfoDict = {};
-        const pumpkin = roomDownsyncFrame.pumpkin;
-        const pumpkinsLocalIdStrList = Object.keys(pumpkin);
-        for (let i = 0; i < pumpkinsLocalIdStrList.length; ++i) {
-          const k = pumpkinsLocalIdStrList[i];
-          const pumpkinLocalIdInBattle = parseInt(k);
-          const pumpkinInfo = pumpkin[k];
-          self.pumpkinInfoDict[pumpkinLocalIdInBattle] = pumpkinInfo;
-        }
-
-
-        //update treasureInfoDict
+        // update `treasureInfoDict`
         self.treasureInfoDict = {};
         const treasures = roomDownsyncFrame.treasures;
         const treasuresLocalIdStrList = Object.keys(treasures);
@@ -727,18 +677,18 @@ cc.Class({
           self.treasureInfoDict[treasureLocalIdInBattle] = treasureInfo;
         }
 
-        //update acceleratorInfoDict
-        self.acceleratorInfoDict = {};
-        const accelartors = roomDownsyncFrame.speedShoes;
-        const accLocalIdStrList = Object.keys(accelartors);
-        for (let i = 0; i < accLocalIdStrList.length; ++i) {
-          const k = accLocalIdStrList[i];
-          const accLocalIdInBattle = parseInt(k);
-          const accInfo = accelartors[k];
-          self.acceleratorInfoDict[accLocalIdInBattle] = accInfo;
+        // update `speedShoeInfoDict`
+        self.speedShoeInfoDict = {};
+        const speedShoes = roomDownsyncFrame.speedShoes;
+        const speedShoeLocalIdStrList = Object.keys(speedShoes);
+        for (let i = 0; i < speedShoeLocalIdStrList.length; ++i) {
+          const k = speedShoeLocalIdStrList[i];
+          const speedShoeLocalIdInBattle = parseInt(k);
+          const speedShoeInfo = speedShoes[k];
+          self.speedShoeInfoDict[speedShoeLocalIdInBattle] = speedShoeInfo;
         }
 
-        //update trapInfoDict
+        // update `trapInfoDict`
         self.trapInfoDict = {};
         const traps = roomDownsyncFrame.traps;
         const trapsLocalIdStrList = Object.keys(traps);
@@ -749,6 +699,7 @@ cc.Class({
           self.trapInfoDict[trapLocalIdInBattle] = trapInfo;
         }
 
+        // update `trapBulletInfoDict`
         self.trapBulletInfoDict = {};
         const bullets = roomDownsyncFrame.bullets;
         const bulletsLocalIdStrList = Object.keys(bullets);
@@ -953,8 +904,8 @@ cc.Class({
         }
       }
 
-      let toRemoveAcceleratorNodeDict = {};
-      Object.assign(toRemoveAcceleratorNodeDict, self.acceleratorNodeDict);
+      let toRemoveSpeedShoeNodeDict = {};
+      Object.assign(toRemoveSpeedShoeNodeDict, self.speedShoeNodeDict);
 
       let toRemovePlayerNodeDict = {};
       Object.assign(toRemovePlayerNodeDict, self.otherPlayerNodeDict);
@@ -964,9 +915,6 @@ cc.Class({
 
       let toRemoveTrapNodeDict = {};
       Object.assign(toRemoveTrapNodeDict, self.trapNodeDict);
-
-      let toRemovePumpkinNodeDict = {};
-      Object.assign(toRemovePumpkinNodeDict, self.pumpkinNodeDict);
 
       /*
       * NOTE: At the beginning of each GUI update cycle, mark all `self.trapBulletNode` as `toRemoveBulletNode`, while only those that persist in `self.trapBulletInfoDict` are NOT finally removed. This approach aims to reduce the lines of codes for coping with node removal in the RoomDownsyncFrame algorithm.
@@ -982,7 +930,7 @@ cc.Class({
           cachedPlayerData.y
         );
 
-        //更新玩家信息展示
+        // 更新玩家信息展示
         if (null != cachedPlayerData) {
           const playersScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
           playersScriptIns.updateData(cachedPlayerData);
@@ -999,8 +947,6 @@ cc.Class({
         const aControlledOtherPlayerScriptIns = targetNode.getComponent("SelfPlayer");
         aControlledOtherPlayerScriptIns.updateSpeed(cachedPlayerData.speed);
 
-
-
         const oldPos = cc.v2(
           targetNode.x,
           targetNode.y
@@ -1010,21 +956,20 @@ cc.Class({
         const toMoveByVecMag = toMoveByVec.mag();
         aControlledOtherPlayerScriptIns.toMoveByVecMag = toMoveByVecMag;
         const toTeleportDisThreshold = (cachedPlayerData.speed * dt * 100);
-        //const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 0.5);
         const notToMoveDisThreshold = (cachedPlayerData.speed * dt * 1.0);
         if (toMoveByVecMag < notToMoveDisThreshold) {
-          aControlledOtherPlayerScriptIns.activeDirection = { //任意一个值为0都不会改变方向
+          aControlledOtherPlayerScriptIns.activeDirection = { 
             dx: 0,
             dy: 0
           };
         } else {
-          if (toMoveByVecMag > toTeleportDisThreshold) { //如果移动过大 打印log但还是会移动
+          if (toMoveByVecMag > toTeleportDisThreshold) { 
             console.log("Player ", cachedPlayerData.id, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
             aControlledOtherPlayerScriptIns.activeDirection = {
               dx: 0,
               dy: 0
             };
-            // TODO: Use `cc.Action`?
+            // Deliberately NOT using `cc.Action`. -- YFLu, 2019-09-04
             targetNode.setPosition(newPos);
           } else {
             // The common case which is suitable for interpolation.
@@ -1046,7 +991,6 @@ cc.Class({
           }
         }
 
-
         if (0 != cachedPlayerData.dir.dx || 0 != cachedPlayerData.dir.dy) {
           const newScheduledDirection = self.ctrl.discretizeDirection(cachedPlayerData.dir.dx, cachedPlayerData.dir.dy, self.ctrl.joyStickEps);
           aControlledOtherPlayerScriptIns.scheduleNewDirection(newScheduledDirection, false /* DON'T interrupt playing anim. */ );
@@ -1055,30 +999,29 @@ cc.Class({
         if (null != toRemovePlayerNodeDict[playerId]) {
           delete toRemovePlayerNodeDict[playerId];
         }
-
-
       }
 
       // 更新加速鞋显示 
-      for (let k in self.acceleratorInfoDict) {
-        const accLocalIdInBattle = parseInt(k);
-        const acceleratorInfo = self.acceleratorInfoDict[accLocalIdInBattle];
+      for (let k in self.speedShoeInfoDict) {
+        const speedShoeLocalIdInBattle = parseInt(k);
+        const speedShoeInfo = self.speedShoeInfoDict[speedShoeLocalIdInBattle];
         const newPos = cc.v2(
-          acceleratorInfo.x,
-          acceleratorInfo.y
+          speedShoeInfo.x,
+          speedShoeInfo.y
         );
-        let targetNode = self.acceleratorNodeDict[accLocalIdInBattle];
+        let targetNode = self.speedShoeNodeDict[speedShoeLocalIdInBattle];
         if (!targetNode) {
-          targetNode = cc.instantiate(self.acceleratorPrefab);
-          self.acceleratorNodeDict[accLocalIdInBattle] = targetNode;
+          targetNode = cc.instantiate(self.speedShoePrefab);
+          self.speedShoeNodeDict[speedShoeLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
         }
-        if (null != toRemoveAcceleratorNodeDict[accLocalIdInBattle]) {
-          delete toRemoveAcceleratorNodeDict[accLocalIdInBattle];
+        if (null != toRemoveSpeedShoeNodeDict[speedShoeLocalIdInBattle]) {
+          delete toRemoveSpeedShoeNodeDict[speedShoeLocalIdInBattle];
         }
       }
+
       // 更新陷阱显示 
       for (let k in self.trapInfoDict) {
         const trapLocalIdInBattle = parseInt(k);
@@ -1100,18 +1043,21 @@ cc.Class({
         }
       }
 
-      // 更新陷阱塔显示 
+      // 更新防御塔显示 
       for (let k in self.guardTowerInfoDict) {
-        const trapLocalIdInBattle = parseInt(k);
-        const towerInfo = self.guardTowerInfoDict[trapLocalIdInBattle];
+        const localIdInBattle = parseInt(k);
+        const towerInfo = self.guardTowerInfoDict[localIdInBattle];
         const newPos = cc.v2(
           towerInfo.x,
           towerInfo.y
         );
-        let targetNode = self.towerNodeDict[trapLocalIdInBattle];
+        let targetNode = self.towerNodeDict[localIdInBattle];
         if (!targetNode) {
           targetNode = cc.instantiate(self.guardTowerPrefab);
-          self.towerNodeDict[trapLocalIdInBattle] = targetNode;
+          const theSpriteComp = targetNode.getComponent(cc.Sprite); 
+          const targetGid = window.battleEntityTypeNameToGlobalGid["GuardTower"]; 
+          theSpriteComp.spriteFrame = window.getOrCreateSpriteFrameForGid(targetGid).spriteFrame;
+          self.towerNodeDict[localIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
@@ -1153,21 +1099,17 @@ cc.Class({
                   if (dy >= 0) {
                     //第一象限
                     return 360 - angleTemp;
-                  //return angleTemp;
                   } else {
                     //第四象限
                     return angleTemp;
-                  //return -angleTemp;
                   }
                 } else {
                   if (dy >= 0) {
                     //第二象限
                     return 360 - (180 - angleTemp);
-                  //return 180 - angleTemp;
                   } else {
                     //第三象限
                     return 360 - (180 + angleTemp);
-                  //return 180 + angleTemp;
                   }
                 }
               })();
@@ -1208,7 +1150,7 @@ cc.Class({
               dx: 0,
               dy: 0
             };
-            // TODO: Use `cc.Action`?
+            // Deliberately NOT using `cc.Action`. -- YFLu, 2019-09-04
             targetNode.setPosition(newPos);
           } else {
             // The common case which is suitable for interpolation.
@@ -1228,66 +1170,6 @@ cc.Class({
         }
         if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
           delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
-        }
-      }
-
-      //更新南瓜少年的显示
-      for (let k in self.pumpkinInfoDict) {
-        const pumpkinLocalIdInBattle = parseInt(k);
-        const pumpkinInfo = self.pumpkinInfoDict[pumpkinLocalIdInBattle];
-        const newPos = cc.v2(pumpkinInfo.x, pumpkinInfo.y);
-        let targetNode = self.pumpkinNodeDict[pumpkinLocalIdInBattle];
-        if (!targetNode) {
-          targetNode = cc.instantiate(self.pumpkinPrefab);
-          self.pumpkinNodeDict[pumpkinLocalIdInBattle] = targetNode;
-          safelyAddChild(mapNode, targetNode);
-          targetNode.setPosition(newPos);
-          setLocalZOrder(targetNode, 5);
-        }
-        const aPumpkinScriptIns = targetNode.getComponent("Pumpkin");
-        aPumpkinScriptIns.localIdInBattle = pumpkinLocalIdInBattle;
-        aPumpkinScriptIns.linearSpeed = pumpkinInfo.linearSpeed * 1000000000; // The `pumpkin.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
-
-        const oldPos = cc.v2(
-          targetNode.x,
-          targetNode.y,
-        );
-        const toMoveByVec = newPos.sub(oldPos);
-        const toMoveByVecMag = toMoveByVec.mag();
-        const toTeleportDisThreshold = (aPumpkinScriptIns.linearSpeed * dt * 100);
-        const notToMoveDisThreshold = (aPumpkinScriptIns.linearSpeed * dt * 0.5);
-        if (toMoveByVecMag < notToMoveDisThreshold) {
-          aPumpkinScriptIns.activeDirection = {
-            dx: 0,
-            dy: 0,
-          };
-        } else {
-          if (toMoveByVecMag > toTeleportDisThreshold) {
-            console.log("Pumpkin ", pumpkinLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
-            aPumpkinScriptIns.activeDirection = {
-              dx: 0,
-              dy: 0
-            };
-            // TODO: Use `cc.Action`?
-            targetNode.setPosition(newPos);
-          } else {
-            // The common case which is suitable for interpolation.
-            const normalizedDir = {
-              dx: toMoveByVec.x / toMoveByVecMag,
-              dy: toMoveByVec.y / toMoveByVecMag,
-            };
-            if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
-              aPumpkinScriptIns.activeDirection = {
-                dx: 0,
-                dy: 0,
-              };
-            } else {
-              aPumpkinScriptIns.activeDirection = normalizedDir;
-            }
-          }
-        }
-        if (null != toRemovePumpkinNodeDict[pumpkinLocalIdInBattle]) {
-          delete toRemovePumpkinNodeDict[pumpkinLocalIdInBattle];
         }
       }
 
@@ -1333,20 +1215,13 @@ cc.Class({
         delete self.otherPlayerNodeDict[playerId];
       }
 
-      // Coping with removed pumpkins.
-      for (let k in toRemovePumpkinNodeDict) {
-        const pumpkinLocalIdInBattle = parseInt(k);
-        toRemovePumpkinNodeDict[k].parent.removeChild(toRemovePlayerNodeDict[k]);
-        delete self.pumpkinNodeDict[pumpkinLocalIdInBattle];
-      }
-
       // Coping with removed treasures.
       for (let k in toRemoveTreasureNodeDict) {
         const treasureLocalIdInBattle = parseInt(k);
         const treasureScriptIns = toRemoveTreasureNodeDict[k].getComponent("Treasure");
         treasureScriptIns.playPickedUpAnimAndDestroy();
         if (self.musicEffectManagerScriptIns) {
-          if (2 == treasureScriptIns.type) {
+          if (window.HIGH_SCORE_TREASURE_TYPE == treasureScriptIns.type) {
             self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
           } else {
             self.musicEffectManagerScriptIns.playTreasurePicked();
@@ -1362,11 +1237,11 @@ cc.Class({
         delete self.trapNodeDict[trapLocalIdInBattle];
       }
 
-      // Coping with removed accelerators.
-      for (let k in toRemoveAcceleratorNodeDict) {
-        const accLocalIdInBattle = parseInt(k);
-        toRemoveAcceleratorNodeDict[k].parent.removeChild(toRemoveAcceleratorNodeDict[k]);
-        delete self.acceleratorNodeDict[accLocalIdInBattle];
+      // Coping with removed speedShoes.
+      for (let k in toRemoveSpeedShoeNodeDict) {
+        const speedShoeLocalIdInBattle = parseInt(k);
+        toRemoveSpeedShoeNodeDict[k].parent.removeChild(toRemoveSpeedShoeNodeDict[k]);
+        delete self.speedShoeNodeDict[speedShoeLocalIdInBattle];
       }
 
       // Coping with removed bullets.

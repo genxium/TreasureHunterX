@@ -330,9 +330,9 @@ func (pR *Room) createTrapBullet(pPlayer *Player, pTrap *Trap) *Bullet {
 
 func (pR *Room) refreshColliders() {
 	/*
-	    - "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection!
+	  "BarrierCollider"s are NOT added to the "colliders in B2World of the current battle", thus NOT involved in server-side collision detection!
 
-	  -- YFLu
+	  -- YFLu, 2019-09-04
 	*/
 	gravity := box2d.MakeB2Vec2(0.0, 0.0)
 	world := box2d.MakeB2World(gravity)
@@ -346,7 +346,7 @@ func (pR *Room) refreshColliders() {
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
 		bdDef.Position.Set(player.X+colliderOffset.X, player.Y+colliderOffset.Y)
 
-		b2PlayerBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2Body := pR.CollidableWorld.CreateBody(&bdDef)
 
 		b2CircleShape := box2d.MakeB2CircleShape()
 		b2CircleShape.M_radius = 32 // Matching that of client-side setting.
@@ -356,10 +356,10 @@ func (pR *Room) refreshColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_CONTROLLED_PLAYER
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_CONTROLLED_PLAYER
 		fd.Density = 0.0
-		b2PlayerBody.CreateFixtureFromDef(&fd)
+		b2Body.CreateFixtureFromDef(&fd)
 
-		player.CollidableBody = b2PlayerBody
-		b2PlayerBody.SetUserData(player)
+		player.CollidableBody = b2Body
+		b2Body.SetUserData(player)
 	}
 
 	for _, treasure := range pR.Treasures {
@@ -368,7 +368,7 @@ func (pR *Room) refreshColliders() {
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Position.Set(treasure.PickupBoundary.Anchor.X, treasure.PickupBoundary.Anchor.Y)
 
-		b2TreasureBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2Body := pR.CollidableWorld.CreateBody(&bdDef)
 
 		pointsCount := len(treasure.PickupBoundary.Points)
 
@@ -385,10 +385,10 @@ func (pR *Room) refreshColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_TREASURE
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_TREASURE
 		fd.Density = 0.0
-		b2TreasureBody.CreateFixtureFromDef(&fd)
+		b2Body.CreateFixtureFromDef(&fd)
 
-		treasure.CollidableBody = b2TreasureBody
-		b2TreasureBody.SetUserData(treasure)
+		treasure.CollidableBody = b2Body
+		b2Body.SetUserData(treasure)
 	}
 
 	for _, tower := range pR.GuardTowers {
@@ -397,7 +397,7 @@ func (pR *Room) refreshColliders() {
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Position.Set(tower.PickupBoundary.Anchor.X, tower.PickupBoundary.Anchor.Y)
 
-		b2TrapBody := pR.CollidableWorld.CreateBody(&bdDef)
+		b2Body := pR.CollidableWorld.CreateBody(&bdDef)
 
 		pointsCount := len(tower.PickupBoundary.Points)
 
@@ -414,10 +414,10 @@ func (pR *Room) refreshColliders() {
 		fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
 		fd.Density = 0.0
-		b2TrapBody.CreateFixtureFromDef(&fd)
+		b2Body.CreateFixtureFromDef(&fd)
 
-		tower.CollidableBody = b2TrapBody
-		b2TrapBody.SetUserData(tower)
+		tower.CollidableBody = b2Body
+		b2Body.SetUserData(tower)
 	}
 
 	listener := RoomBattleContactListener{

@@ -5,7 +5,7 @@
   <objectgroup draworder="index">
    <object id="1" x="-27" y="-64">
     <properties>
-     <property name="type" value="GuardTower"/>
+     <property name="boundary_type" value="GuardTower"/>
     </properties>
     <polyline points="0,0 -95,179 18,407 361,434 458,168 333,-7"/>
    </object>
