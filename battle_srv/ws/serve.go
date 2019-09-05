@@ -252,6 +252,13 @@ func Serve(c *gin.Context) {
 		signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v!", playerId))
 	}
   if pThePlayer,ok :=  pRoom.Players[int32(playerId)]; ok && models.PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState {
+    defer func() {
+      time.AfterFunc(2*time.Second, func() {
+        if models.PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState {
+		      signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("The expected Ack for BattleColliderInfo is not received in time, for playerId == %v!", playerId))
+        }
+      })
+    }()
     playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap)
 
     theBytes, marshalErr := proto.Marshal(playerBattleColliderInfo)
