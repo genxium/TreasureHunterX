@@ -521,6 +521,44 @@ cc.Class({
 
     const tiledMapIns = self.node.getComponent(cc.TiledMap);
 
+    window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
+      console.log(parsedBattleColliderInfo);
+      self.battleColliderInfo = parsedBattleColliderInfo; 
+      
+      const fullPathOfTmxFile = cc.js.formatStr("map/%s/map", parsedBattleColliderInfo.stageName);
+      cc.loader.loadRes(fullPathOfTmxFile, cc.TiledMapAsset, (err, tmxAsset) => {
+        if (null != err) {
+          console.error(err);
+          return;
+        }
+        
+        tiledMapIns.tmxAsset = tmxAsset;
+        const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
+        tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
+
+        /*
+        [WARNING] 
+        
+        The order of the following statements is important, because we should have finished "_resetCurrentMatch" before the first "RoomDownsyncFrame". 
+
+        -- YFLu, 2019-09-05
+        */
+        self._resetCurrentMatch(); // Will set "self.selfPlayerInfo" within. 
+
+        self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
+        Object.assign(self.selfPlayerInfo, {
+          id: self.selfPlayerInfo.playerId
+        });
+
+        const wrapped = {
+          msgId: Date.now(),
+          act: "PlayerBattleColliderAck",
+          data: {},
+        }
+        window.sendSafely(JSON.stringify(wrapped));
+      });
+    };
+
     self.initAfterWSConnected = () => {
       const self = window.mapIns;
       self.hideGameRuleNode();
@@ -529,44 +567,6 @@ cc.Class({
       self.setupInputControls();
 
       let cachedPlayerMetas = {};
-
-      window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
-        console.log(parsedBattleColliderInfo);
-        self.battleColliderInfo = parsedBattleColliderInfo; 
-        
-        const fullPathOfTmxFile = cc.js.formatStr("map/%s/map", parsedBattleColliderInfo.stageName);
-        cc.loader.loadRes(fullPathOfTmxFile, cc.TiledMapAsset, (err, tmxAsset) => {
-          if (null != err) {
-            console.error(err);
-            return;
-          }
-          
-          tiledMapIns.tmxAsset = tmxAsset;
-          const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
-          tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
-
-          /*
-          [WARNING] 
-          
-          The order of the following statements is important, because we should have finished "_resetCurrentMatch" before the first "RoomDownsyncFrame". 
-
-          -- YFLu, 2019-09-05
-          */
-          self._resetCurrentMatch(); // Will set "self.selfPlayerInfo" within. 
-
-          self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
-          Object.assign(self.selfPlayerInfo, {
-            id: self.selfPlayerInfo.playerId
-          });
-
-          const wrapped = {
-            msgId: Date.now(),
-            act: "PlayerBattleColliderAck",
-            data: {},
-          }
-          window.sendSafely(JSON.stringify(wrapped));
-        });
-      };
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
         /*

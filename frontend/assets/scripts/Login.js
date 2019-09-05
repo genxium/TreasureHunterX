@@ -141,8 +141,7 @@ cc.Class({
           if ( (CC_DEBUG || isUsingX5BlinkKernelOrWebkitWeChatKernel) ) {
             if (null != qDict && qDict["code"]) {
               const code = qDict["code"];
-              console.log("Got the wx authcode: " + code);
-              console.log("while at full url: " + window.location.href);
+              console.log("Got the wx authcode: ", code, "while at full url: " + window.location.href);
               self.useWXCodeLogin(code);
             } else {
               if (isUsingX5BlinkKernelOrWebkitWeChatKernel) {
@@ -283,7 +282,7 @@ cc.Class({
         return true;
       }
     } else {
-      if (type === 'login') {
+      if ('login' == type) {
         self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.CAPTCHA_ERR");
       }
       return false;
@@ -302,7 +301,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function(xhr, status, errMsg) {
-        cc.log(`Login attempt "useTokenLogin" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
+        console.log("Login attempt `useTokenLogin` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
       },
       timeout: function() {
@@ -345,7 +344,7 @@ cc.Class({
         self.onLoggedIn(resp);
       },
       error: function(xhr, status, errMsg) {
-        cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
+        console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
       },
       timeout: function() {
@@ -353,6 +352,7 @@ cc.Class({
       }
     });
   },
+
   onWechatLoggedIn(res) {
     const self = this;
     if (res.ret === self.retCodeDict.OK) {
@@ -370,7 +370,7 @@ cc.Class({
       const qDict = window.getQueryParamDict();
       const expectedRoomId = qDict["expectedRoomId"];
       if (null != expectedRoomId) {
-        console.log("OnLoggedIn using expectedRoomId == " + expectedRoomId);
+        console.log("onWechatLoggedIn using expectedRoomId == " + expectedRoomId);
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       }
       // To remove "code=XXX" in "query string".
@@ -401,11 +401,10 @@ cc.Class({
         intAuthToken: res.intAuthToken,
         avatar: res.avatar,
         displayName: res.displayName,
-        //kobako: 新增
         name: res.name,
       }
       cc.sys.localStorage.setItem('selfPlayer', JSON.stringify(selfPlayer));
-      cc.log(`cc.sys.localStorage.selfPlayer = ${cc.sys.localStorage.getItem('selfPlayer')}`);
+      console.log("cc.sys.localStorage.selfPlayer = ", cc.sys.localStorage.getItem('selfPlayer'));
       if (self.countdownTimer) {
         clearInterval(self.countdownTimer);
       }
@@ -450,6 +449,7 @@ cc.Class({
       }
     }
   },
+
   useWXCodeLogin(_code) {
     const self = this;
     NetworkUtils.ajax({
@@ -462,7 +462,7 @@ cc.Class({
         self.onWechatLoggedIn(res);
       },
       error: function(xhr, status, errMsg) {
-        cc.log(`Login attempt "onLoginButtonClicked" failed, about to execute "clearBoundRoomIdInBothVolatileAndPersistentStorage".`);
+        console.log("Login attempt `useWXCodeLogin` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
         self.wechatLoginTips.string = constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg;
@@ -470,6 +470,7 @@ cc.Class({
       },
     });
   },
+
   getWechatCode(evt) {
     let self = this;
     self.wechatLoginTips.string = "";

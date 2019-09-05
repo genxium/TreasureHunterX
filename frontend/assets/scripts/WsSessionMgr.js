@@ -42,6 +42,14 @@ window.handleHbRequirements = function(resp) {
     cc.sys.localStorage.setItem('boundRoomIdExpiresAt', Date.now() + 10 * 60 * 1000); // Temporarily hardcoded, for `boundRoomId` only.
   }
 
+  if (window.handleBattleColliderInfo) {
+    const typedArray = _base64ToUint8Array(resp.data.battleColliderInfo);
+    const parsedBattleColliderInfo = (() => {
+      return window.BattleColliderInfo.decode(typedArray);
+    })();
+    window.handleBattleColliderInfo(parsedBattleColliderInfo);
+  }
+
   window.clientSessionPingInterval = setInterval(() => {
     if (clientSession.readyState != WebSocket.OPEN) return;
     const param = {
@@ -53,6 +61,7 @@ window.handleHbRequirements = function(resp) {
     };
     window.sendSafely(JSON.stringify(param));
   }, resp.data.intervalToPing);
+
 };
 
 window.handleHbPong = function(resp) {
@@ -172,15 +181,6 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
               return window.RoomDownsyncFrame.decode(typedArray);
             })();
             window.handleRoomDownsyncFrame(parsedRoomDownsyncFrame);
-          }
-          break;
-        case "BattleColliderInfo":
-          if (window.handleBattleColliderInfo) {
-            const typedArray = _base64ToUint8Array(resp.data);
-            const parsedBattleColliderInfo = (() => {
-              return window.BattleColliderInfo.decode(typedArray);
-            })();
-            window.handleBattleColliderInfo(parsedBattleColliderInfo);
           }
           break;
         case "Ready": {

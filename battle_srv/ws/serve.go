@@ -234,23 +234,7 @@ func Serve(c *gin.Context) {
 		return
 	}
 
-	resp := wsResp{
-		Ret:         int32(Constants.RetCode.Ok),
-		EchoedMsgId: int32(0),
-		Act:         "HeartbeatRequirements",
-		Data: struct {
-			IntervalToPing        int `json:"intervalToPing"`
-			WillKickIfInactiveFor int `json:"willKickIfInactiveFor"`
-			BoundRoomId           int `json:"boundRoomId"`
-		}{Constants.Ws.IntervalToPing, Constants.Ws.WillKickIfInactiveFor, int(pRoom.Id)},
-	}
-
-	connIOMux.Lock()
-	err = conn.WriteJSON(resp)
-	if nil != err {
-		Logger.Error("HeartbeatRequirements resp not written:", zap.Any("playerId", playerId), zap.Error(err))
-		signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v!", playerId))
-	}
+  theBattleColliderInfoStr := ""
 	if pThePlayer, ok := pRoom.Players[int32(playerId)]; ok && (models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState) {
 		defer func() {
 			timeoutSeconds := time.Duration(5)
@@ -260,16 +244,35 @@ func Serve(c *gin.Context) {
 				}
 			})
 		}()
+
 		playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap)
 
 		theBytes, marshalErr := proto.Marshal(playerBattleColliderInfo)
 		if nil != marshalErr {
 			Logger.Error("Error marshalling playerBattleColliderInfo:", zap.Any("the error", marshalErr), zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
-			signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v and roomId == %v!", playerId, pRoom.Id))
+			signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("Error marshalling playerBattleColliderInfo, playerId == %v and roomId == %v!", playerId, pRoom.Id))
 		} else {
-			theStr := string(theBytes)
-			wsSendActionPb(conn, "BattleColliderInfo", theStr)
+			theBattleColliderInfoStr = string(theBytes)
 		}
+	}
+
+	resp := wsResp{
+		Ret:         int32(Constants.RetCode.Ok),
+		EchoedMsgId: int32(0),
+		Act:         "HeartbeatRequirements",
+		Data: struct {
+			IntervalToPing        int `json:"intervalToPing"`
+			WillKickIfInactiveFor int `json:"willKickIfInactiveFor"`
+			BoundRoomId           int `json:"boundRoomId"`
+      BattleColliderInfo    []byte `json:"battleColliderInfo"`
+		}{Constants.Ws.IntervalToPing, Constants.Ws.WillKickIfInactiveFor, int(pRoom.Id), []byte(theBattleColliderInfoStr)},
+	}
+
+	connIOMux.Lock()
+	err = conn.WriteJSON(resp)
+	if nil != err {
+		Logger.Error("HeartbeatRequirements resp not written:", zap.Any("playerId", playerId), zap.Error(err))
+		signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v!", playerId))
 	}
 	connIOMux.Unlock()
 
