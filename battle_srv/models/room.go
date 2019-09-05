@@ -302,7 +302,7 @@ func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet {
 
 	bullet := &Bullet{
 		LocalIdInBattle: pR.AccumulatedLocalIdForBullets,
-		LinearSpeed:     0.0000004,
+		LinearSpeed:     0.0000004, // Per nanosecond
 		X:               startPos.X,
 		Y:               startPos.Y,
 		StartAtPoint:    &startPos,
@@ -688,6 +688,8 @@ func (pR *Room) ChooseStage() error {
 			PickupBoundary:  polygon2D,
 			InRangePlayers:  pInRangePlayers,
 			LastAttackTick:  utils.UnixtimeNano(),
+      WidthInB2World:  float64(polygon2D.TmxObjectWidth),
+      HeightInB2World:  float64(polygon2D.TmxObjectHeight),
 		}
 
 		pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
@@ -920,9 +922,10 @@ func (pR *Room) StartBattle() {
 					tower.LastAttackTick = now
 
 					playerNode := tower.InRangePlayers.NextPlayerToAttack()
+          towerHeight := float64(tower.HeightInB2World)
 					startPos := Vec2D{
 						X: tower.CollidableBody.GetPosition().X,
-						Y: tower.CollidableBody.GetPosition().Y,
+						Y: tower.CollidableBody.GetPosition().Y + 0.5*towerHeight,
 					}
 					endPos := Vec2D{
 						X: playerNode.player.CollidableBody.GetPosition().X,
@@ -947,7 +950,7 @@ func (pR *Room) StartBattle() {
 						case *SpeedShoe:
 							pR.onSpeedShoePickedUp(player, v, collisionNowMillis)
 						default:
-							Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
+							// Logger.Warn("player Collision ", zap.Any("playerId", player.Id), zap.Any("collision", v))
 						}
 					}
 				}

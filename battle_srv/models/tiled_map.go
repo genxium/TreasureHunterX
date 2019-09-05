@@ -237,8 +237,8 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 	thePolygon2DFromPolyline := &Polygon2D{
 		Anchor: nil,
 		Points: make([]*Vec2D, len(singleValueArray)),
-    TileWidth: &pTsxIns.TileWidth,
-    TileHeight: &pTsxIns.TileHeight,
+    TileWidth: pTsxIns.TileWidth,
+    TileHeight: pTsxIns.TileHeight,
 	}
 
   /*
@@ -261,14 +261,7 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 			}
 		}
 
-		// Transform to B2World space coordinate.
-		tmp := &Vec2D{
-			X: thePolygon2DFromPolyline.Points[k].X,
-			Y: thePolygon2DFromPolyline.Points[k].Y,
-		}
-		transformedTmp := pTmxMapIns.continuousObjLayerVecToContinuousMapNodeVec(tmp)
-		thePolygon2DFromPolyline.Points[k].X = transformedTmp.X
-		thePolygon2DFromPolyline.Points[k].Y = transformedTmp.Y
+		// No need to transform for B2World space coordinate because the marks in a Tsx file is already rectilinear.
 	}
 
 	return thePolygon2DFromPolyline, nil
@@ -446,17 +439,23 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 				}
 
 				for _, thePolygon2D := range *pThePolygon2DList {
-					theUntransformedBottomCenter := &Vec2D{
+					theUntransformedBottomCenterAsAnchor := &Vec2D{
 						X: singleObjInTmxFile.X,
 						Y: singleObjInTmxFile.Y,
 					}
 
-					theTransformedAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedBottomCenter)
+					theTransformedBottomCenterAsAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedBottomCenterAsAnchor)
 
 					thePolygon2DInWorld := &Polygon2D{
-						Anchor: &theTransformedAnchor,
+						Anchor: &theTransformedBottomCenterAsAnchor,
 						Points: make([]*Vec2D, len(thePolygon2D.Points)),
+            TileWidth: thePolygon2D.TileWidth,
+            TileHeight: thePolygon2D.TileHeight,
 					}
+          if nil != singleObjInTmxFile.Width && nil != singleObjInTmxFile.Height {
+            thePolygon2DInWorld.TmxObjectWidth = *singleObjInTmxFile.Width
+            thePolygon2DInWorld.TmxObjectHeight = *singleObjInTmxFile.Height
+          }
 					for kk, p := range thePolygon2D.Points {
 						// [WARNING] It's intentionally recreating a copy of "Vec2D" here.
 						thePolygon2DInWorld.Points[kk] = &Vec2D{

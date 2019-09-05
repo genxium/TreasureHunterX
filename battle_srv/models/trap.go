@@ -31,4 +31,9 @@ type GuardTower struct {
 
 	InRangePlayers *InRangePlayerCollection `json:"-"`
 	LastAttackTick int64                    `json:"-"`
+
+  TileWidth         float64               `json:"-"`
+  TileHeight        float64               `json:"-"`
+  WidthInB2World    float64               `json:"-"`
+  HeightInB2World   float64               `json:"-"`
 }

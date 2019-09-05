@@ -137,6 +137,7 @@ func toPbBullets(modelInstances map[int32]*Bullet) map[int32]*pb.Bullet {
 		}
 		toRet[k] = &pb.Bullet{
 			LocalIdInBattle: last.LocalIdInBattle,
+      LinearSpeed:     last.LinearSpeed,
 			X:               last.X,
 			Y:               last.Y,
 			Removed:         last.Removed,

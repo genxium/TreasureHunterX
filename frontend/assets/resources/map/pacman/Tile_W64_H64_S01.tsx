@@ -7,7 +7,7 @@
     <properties>
      <property name="boundary_type" value="LowScoreTreasure"/>
     </properties>
-    <polyline points="0,0 31,0 30,28 3,27"/>
+    <polyline points="16,-48 88,3 26,93 -45,33"/>
    </object>
   </objectgroup>
  </tile>
@@ -17,7 +17,7 @@
     <properties>
      <property name="boundary_type" value="HighScoreTreasure"/>
     </properties>
-    <polyline points="0,0 50,0 51,55 1,54"/>
+    <polyline points="-39,-35 106,-34 106,103 -37,103"/>
    </object>
   </objectgroup>
  </tile>

@@ -23,9 +23,5 @@ cc.Class({
 
   },
 
-  playPickedUpAnimAndDestroy() {
-    this.node.destroy();
-  },
-
   start() {},
 })

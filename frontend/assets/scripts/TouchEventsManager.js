@@ -324,7 +324,7 @@ cc.Class({
     } else {
       const criticalRatio = continuousDy / continuousDx;
       if (criticalRatio > this.magicLeanLowerBound && criticalRatio < this.magicLeanUpperBound) {
-        ret.dx = continuousDx > 0 ? +2 : -2; //斜向上 or 
+        ret.dx = continuousDx > 0 ? +2 : -2; 
         ret.dy = continuousDx > 0 ? +1 : -1;
       } else if (criticalRatio > -this.magicLeanUpperBound && criticalRatio < -this.magicLeanLowerBound) {
         ret.dx = continuousDx > 0 ? +2 : -2;

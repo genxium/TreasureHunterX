@@ -412,7 +412,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
         for (let oidx = 0; oidx < currentObjectGroupUnderTile._objects.length; ++oidx) {
           const oo = currentObjectGroupUnderTile._objects[oidx];
           const polylinePoints = oo.polylinePoints;
-          if (!polylinePoints) continue;
+          if (null == polylinePoints) continue;
           const boundaryType = oo.boundary_type;
           switch (boundaryType) {
             case "LowScoreTreasure":
@@ -422,7 +422,6 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               if (null != spriteFrameInfoForGid) {
                 window.battleEntityTypeNameToGlobalGid[boundaryType] = parentGid;
               }
-              /* [WARNING] In these cases, the backend recognizes the "ProportionalAnchor a.k.a. `AnchorInCocos` == (0.5, 0)". */
             break;
             case "barrier":
               let brToPushTmp = [];

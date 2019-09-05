@@ -15,7 +15,6 @@ window.ALL_BATTLE_STATES = {
 };
 
 window.MAGIC_ROOM_DOWNSYNC_FRAME_ID = {
-  COLLIDERS_IN_CURRENT_BATTLE: -100,
   BATTLE_READY_TO_START: -99,
   PLAYER_ADDED: -98,
   PLAYER_READDED: -97,
@@ -542,6 +541,7 @@ cc.Class({
         console.log(parsedBattleColliderInfo);
         // TODO: Acks a signal back to the server for actually toggling the corresponding `pRoom.Players[playerId].BattleState: PENDING_BATTLE_COLLIDER_ACK -> ACTIVE`.
 
+        self.battleColliderInfo = parsedBattleColliderInfo; 
         const wrapped = {
           msgId: Date.now(),
           act: "PlayerBattleColliderAck",
@@ -623,7 +623,7 @@ cc.Class({
         }
         const countdownSeconds = parseInt(countdownNanos / 1000000000);
         if (isNaN(countdownSeconds)) {
-          cc.warn(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
+          console.warn(`countdownSeconds is NaN for countdownNanos == ${countdownNanos}.`);
         }
         self.countdownLabel.string = countdownSeconds;
         const roomDownsyncFrame = (
@@ -1014,8 +1014,8 @@ cc.Class({
         if (!targetNode) {
           targetNode = cc.instantiate(self.speedShoePrefab);
           self.speedShoeNodeDict[speedShoeLocalIdInBattle] = targetNode;
-          safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
+          safelyAddChild(mapNode, targetNode);
           setLocalZOrder(targetNode, 5);
         }
         if (null != toRemoveSpeedShoeNodeDict[speedShoeLocalIdInBattle]) {
@@ -1035,8 +1035,8 @@ cc.Class({
         if (!targetNode) {
           targetNode = cc.instantiate(self.trapPrefab);
           self.trapNodeDict[trapLocalIdInBattle] = targetNode;
-          safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
+          safelyAddChild(mapNode, targetNode);
           setLocalZOrder(targetNode, 5);
         }
         if (null != toRemoveTrapNodeDict[trapLocalIdInBattle]) {
@@ -1058,9 +1058,21 @@ cc.Class({
           const theSpriteComp = targetNode.getComponent(cc.Sprite); 
           const targetGid = window.battleEntityTypeNameToGlobalGid["GuardTower"]; 
           theSpriteComp.spriteFrame = window.getOrCreateSpriteFrameForGid(targetGid).spriteFrame;
+
+          const guardTowerNodePolygonColliderScriptIns = targetNode.getComponent(cc.PolygonCollider); 
+          guardTowerNodePolygonColliderScriptIns.points = [];
+
+          /* [WARNING] In these cases, the backend recognizes the "ProportionalAnchor a.k.a. `AnchorInCocos` == (0.5, 0)". */
+          let theKey = "GuardTower";
+          let theBattleColliderInfoListFromRemote = self.battleColliderInfo.strToPolygon2DListMap[theKey].polygon2DList;
+          let theBattleColliderInfoFromRemote = theBattleColliderInfoListFromRemote[0]; // Hardcoded temporarily. -- YFLu, 2019-09-04  
+
+          for (let p of theBattleColliderInfoFromRemote.Points) {
+            guardTowerNodePolygonColliderScriptIns.points.push(p);
+          }
           self.towerNodeDict[localIdInBattle] = targetNode;
-          safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
+          safelyAddChild(mapNode, targetNode);
           setLocalZOrder(targetNode, 5);
         }
       }
@@ -1069,108 +1081,36 @@ cc.Class({
       for (let k in self.trapBulletInfoDict) {
         const bulletLocalIdInBattle = parseInt(k);
         const bulletInfo = self.trapBulletInfoDict[bulletLocalIdInBattle];
-        const newPos = cc.v2(
-          bulletInfo.x,
-          bulletInfo.y
-        );
+        if (true == bulletInfo.removed) {
+          continue;
+        }
         let targetNode = self.trapBulletNodeDict[bulletLocalIdInBattle];
+        let aBulletScriptIns = null;
+
         if (!targetNode) {
           targetNode = cc.instantiate(self.trapBulletPrefab);
+          aBulletScriptIns = targetNode.getComponent("Bullet");
+          aBulletScriptIns.ctrl = self.ctrl;
 
-          targetNode.rotation = (() => {
-            if (true == bulletInfo.remove) {
-              return null;
-            }
-            if (null == bulletInfo.startAtPoint || null == bulletInfo.endAtPoint) {
-              console.error(`Init bullet direction error, startAtPoint:${bulletInfo.startAtPoint}, endAtPoint:${bulletInfo.endAtPoint}`);
-              return null;
-            } else {
-              const dx = bulletInfo.endAtPoint.x - bulletInfo.startAtPoint.x;
-              const dy = bulletInfo.endAtPoint.y - bulletInfo.startAtPoint.y;
-              const radian = (() => {
-                if (dx == 0) {
-                  return Math.PI / 2;
-                } else {
-                  return Math.abs(Math.atan(dy / dx));
-                }
-              })();
-              const angleTemp = radian * 180 / Math.PI;
-              const angle = (() => {
-                if (dx >= 0) {
-                  if (dy >= 0) {
-                    //第一象限
-                    return 360 - angleTemp;
-                  } else {
-                    //第四象限
-                    return angleTemp;
-                  }
-                } else {
-                  if (dy >= 0) {
-                    //第二象限
-                    return 360 - (180 - angleTemp);
-                  } else {
-                    //第三象限
-                    return 360 - (180 + angleTemp);
-                  }
-                }
-              })();
-              return angle;
-            }
-          })();
-
-          if (null == targetNode.rotation) {
+          const res = aBulletScriptIns.setData(bulletLocalIdInBattle, bulletInfo); 
+          if (false == res) {
             continue;  
           }
 
           self.trapBulletNodeDict[bulletLocalIdInBattle] = targetNode;
           safelyAddChild(mapNode, targetNode);
-          targetNode.setPosition(newPos);
           setLocalZOrder(targetNode, 5);
         }
-        const aBulletScriptIns = targetNode.getComponent("Bullet");
-        aBulletScriptIns.localIdInBattle = bulletLocalIdInBattle;
-        aBulletScriptIns.linearSpeed = bulletInfo.linearSpeed * 1000000000; // The `bullet.LinearSpeed` on server-side is denoted in pts/nanoseconds. 
+        if (null == aBulletScriptIns) {
+          aBulletScriptIns = targetNode.getComponent("Bullet");
+        } 
 
-        const oldPos = cc.v2(
-          targetNode.x,
-          targetNode.y,
-        );
-        const toMoveByVec = newPos.sub(oldPos);
-        const toMoveByVecMag = toMoveByVec.mag();
-        const toTeleportDisThreshold = (aBulletScriptIns.linearSpeed * dt * 100);
-        const notToMoveDisThreshold = (aBulletScriptIns.linearSpeed * dt * 0.5);
-        if (toMoveByVecMag < notToMoveDisThreshold) {
-          aBulletScriptIns.activeDirection = {
-            dx: 0,
-            dy: 0,
-          };
-        } else {
-          if (toMoveByVecMag > toTeleportDisThreshold) {
-            console.log("Bullet ", bulletLocalIdInBattle, " is teleporting! Having toMoveByVecMag == ", toMoveByVecMag, ", toTeleportDisThreshold == ", toTeleportDisThreshold);
-            aBulletScriptIns.activeDirection = {
-              dx: 0,
-              dy: 0
-            };
-            // Deliberately NOT using `cc.Action`. -- YFLu, 2019-09-04
-            targetNode.setPosition(newPos);
-          } else {
-            // The common case which is suitable for interpolation.
-            const normalizedDir = {
-              dx: toMoveByVec.x / toMoveByVecMag,
-              dy: toMoveByVec.y / toMoveByVecMag,
-            };
-            if (isNaN(normalizedDir.dx) || isNaN(normalizedDir.dy)) {
-              aBulletScriptIns.activeDirection = {
-                dx: 0,
-                dy: 0,
-              };
-            } else {
-              aBulletScriptIns.activeDirection = normalizedDir;
-            }
+        let res = aBulletScriptIns.setData(bulletLocalIdInBattle, bulletInfo); // No need to handle the returned result in this case. 
+
+        if (true == res) {
+          if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
+            delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
           }
-        }
-        if (null != toRemoveBulletNodeDict[bulletLocalIdInBattle]) {
-          delete toRemoveBulletNodeDict[bulletLocalIdInBattle];
         }
       }
 
@@ -1178,6 +1118,9 @@ cc.Class({
       for (let k in self.treasureInfoDict) {
         const treasureLocalIdInBattle = parseInt(k);
         const treasureInfo = self.treasureInfoDict[treasureLocalIdInBattle];
+        if (true == treasureInfo.removed || -1 == [window.LOW_SCORE_TREASURE_TYPE, window.HIGH_SCORE_TREASURE_TYPE].indexOf(treasureInfo.type)) {
+          continue;
+        }
         const newPos = cc.v2(
           treasureInfo.x,
           treasureInfo.y
@@ -1187,26 +1130,45 @@ cc.Class({
           targetNode = cc.instantiate(self.treasurePrefab);
           const treasureNodeScriptIns = targetNode.getComponent("Treasure");
           treasureNodeScriptIns.setData(treasureInfo);
+
+          const treasureNodePolygonColliderScriptIns = targetNode.getComponent(cc.PolygonCollider); 
+          treasureNodePolygonColliderScriptIns.points = [];
+
+          let theKey = null;
+          let theBattleColliderInfoListFromRemote = null; 
+          let theBattleColliderInfoFromRemote = null;  
+
+          /* [WARNING] In these cases, the backend recognizes the "ProportionalAnchor a.k.a. `AnchorInCocos` == (0.5, 0)". */
+          switch (treasureInfo.type) {
+          case window.LOW_SCORE_TREASURE_TYPE:
+            theKey = "LowScoreTreasure";
+          break;
+          case window.HIGH_SCORE_TREASURE_TYPE:
+            theKey = "HighScoreTreasure";
+          break;
+          default:
+          break;
+          }
+
+          if (null == theKey) {
+            continue;
+          }
+          theBattleColliderInfoListFromRemote = self.battleColliderInfo.strToPolygon2DListMap[theKey].polygon2DList;
+          theBattleColliderInfoFromRemote = theBattleColliderInfoListFromRemote[0]; // Hardcoded temporarily. -- YFLu, 2019-09-04  
+
+          for (let p of theBattleColliderInfoFromRemote.Points) {
+            treasureNodePolygonColliderScriptIns.points.push(p);
+          }
           self.treasureNodeDict[treasureLocalIdInBattle] = targetNode;
-          safelyAddChild(mapNode, targetNode);
           targetNode.setPosition(newPos);
+          safelyAddChild(mapNode, targetNode);
           setLocalZOrder(targetNode, 5);
         }
 
         if (null != toRemoveTreasureNodeDict[treasureLocalIdInBattle]) {
           delete toRemoveTreasureNodeDict[treasureLocalIdInBattle];
         }
-        if (0 < targetNode.getNumberOfRunningActions()) {
-          // A significant trick to smooth the position sync performance!
-          continue;
-        }
-        const oldPos = cc.v2(
-          targetNode.x,
-          targetNode.y
-        );
-        const toMoveByVec = newPos.sub(oldPos);
-        const durationSeconds = dt; // Using `dt` temporarily!
-        targetNode.runAction(cc.moveTo(durationSeconds, newPos));
+        targetNode.setPosition(newPos);
       }
 
       // Coping with removed players.
@@ -1220,7 +1182,7 @@ cc.Class({
       for (let k in toRemoveTreasureNodeDict) {
         const treasureLocalIdInBattle = parseInt(k);
         const treasureScriptIns = toRemoveTreasureNodeDict[k].getComponent("Treasure");
-        treasureScriptIns.playPickedUpAnimAndDestroy();
+        toRemoveTreasureNodeDict[k].parent.removeChild(toRemoveTreasureNodeDict[k]);
         if (self.musicEffectManagerScriptIns) {
           if (window.HIGH_SCORE_TREASURE_TYPE == treasureScriptIns.type) {
             self.musicEffectManagerScriptIns.playHighScoreTreasurePicked();
