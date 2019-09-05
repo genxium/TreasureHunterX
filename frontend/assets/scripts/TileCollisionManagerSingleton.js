@@ -413,7 +413,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
           const oo = currentObjectGroupUnderTile._objects[oidx];
           const polylinePoints = oo.polylinePoints;
           if (!polylinePoints) continue;
-          let boundaryType = oo.boundary_type;
+          const boundaryType = oo.boundary_type;
           switch (boundaryType) {
             case "LowScoreTreasure":
             case "HighScoreTreasure":
@@ -422,12 +422,14 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               if (null != spriteFrameInfoForGid) {
                 window.battleEntityTypeNameToGlobalGid[boundaryType] = parentGid;
               }
+              /* [WARNING] In these cases, the backend recognizes the "ProportionalAnchor a.k.a. `AnchorInCocos` == (0.5, 0)". */
             break;
             case "barrier":
               let brToPushTmp = [];
               for (let bidx = 0; bidx < polylinePoints.length; ++bidx) {
                 brToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[bidx]));
               }
+              brToPushTmp.boundaryType = boundaryType;
               gidBoundariesMap[parentGid].barriers.push(brToPushTmp);
               break;
             case "shelter":
@@ -435,6 +437,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               for (let shidx = 0; shidx < polylinePoints.length; ++shidx) {
                 shToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[shidx]));
               }
+              shToPushTmp.boundaryType = boundaryType;
               gidBoundariesMap[parentGid].shelters.push(shToPushTmp);
               break;
             case "shelter_z_reducer":
@@ -442,6 +445,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
               for (let shzridx = 0; shzridx < polylinePoints.length; ++shzridx) {
                 shzrToPushTmp.push(cc.v2(oo.x, oo.y).add(polylinePoints[shzridx]));
               }
+              shzrToPushTmp.boundaryType = boundaryType;
               gidBoundariesMap[parentGid].sheltersZReducer.push(shzrToPushTmp);
               break;
             default:
@@ -477,41 +481,44 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     }
   }
 
-  for (var i = 0; i < allObjectGroups.length; ++i) {
+  for (let i = 0; i < allObjectGroups.length; ++i) {
     var objectGroup = allObjectGroups[i];
     if ("barrier_and_shelter" != objectGroup.getProperty("type")) continue;
     var allObjects = objectGroup.getObjects();
-    for (var j = 0; j < allObjects.length; ++j) {
-      var object = allObjects[j];
-      var gid = object.gid;
-      if (gid > 0) {
+    for (let j = 0; j < allObjects.length; ++j) {
+      let object = allObjects[j];
+      let gid = object.gid;
+      if (0 < gid) {
         continue;
       }
-      var polylinePoints = object.polylinePoints;
-      if (!polylinePoints) {
+      const polylinePoints = object.polylinePoints;
+      if (null == polylinePoints) {
         continue
       }
-      var boundaryType = object.boundary_type;
+      const boundaryType = object.boundary_type;
       switch (boundaryType) {
         case "barrier":
-          var toPushBarriers = [];
-          for (var k = 0; k < polylinePoints.length; ++k) {
+          let toPushBarriers = [];
+          for (let k = 0; k < polylinePoints.length; ++k) {
             toPushBarriers.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[k])));
           }
+          toPushBarriers.boundaryType = boundaryType;
           toRet.barriers.push(toPushBarriers);
           break;
         case "shelter":
-          var toPushShelters = [];
-          for (var kk = 0; kk < polylinePoints.length; ++kk) {
+          let toPushShelters = [];
+          for (let kk = 0; kk < polylinePoints.length; ++kk) {
             toPushShelters.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[kk])));
           }
+          toPushShelters.boundaryType = boundaryType;
           toRet.shelters.push(toPushShelters);
           break;
         case "shelter_z_reducer":
-          var toPushSheltersZReducer = [];
-          for (var kkk = 0; kkk < polylinePoints.length; ++kkk) {
+          let toPushSheltersZReducer = [];
+          for (let kkk = 0; kkk < polylinePoints.length; ++kkk) {
             toPushSheltersZReducer.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, object.offset.add(polylinePoints[kkk])));
           }
+          toPushSheltersZReducer.boundaryType = boundaryType;
           toRet.sheltersZReducer.push(toPushSheltersZReducer);
           break;
         default:
@@ -566,25 +573,25 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
             const centreOfAnchorTileInMapNode = this._continuousFromCentreOfDiscreteTile(withTiledMapNode, tiledMapIns, currentTileLayer, discreteXInLayer, discreteYInLayer);
             const topLeftOfWholeTsxTileInMapNode = centreOfAnchorTileInMapNode.add(cc.v2(-0.5 * mapTileSize.width, currentLayerTileSize.height - 0.5 * mapTileSize.height));
             for (let bidx = 0; bidx < gidBoundaries.barriers.length; ++bidx) {
-              var theBarrier = gidBoundaries.barriers[bidx]; // An array of cc.v2 points.
-              var brToPushTmp = [];
-              for (var tbidx = 0; tbidx < theBarrier.length; ++tbidx) {
+              const theBarrier = gidBoundaries.barriers[bidx]; // An array of cc.v2 points.
+              let brToPushTmp = [];
+              for (let tbidx = 0; tbidx < theBarrier.length; ++tbidx) {
                 brToPushTmp.push(topLeftOfWholeTsxTileInMapNode.add(cc.v2(theBarrier[tbidx].x, -theBarrier[tbidx].y /* Mind the reverse y-axis here. */)));
               }
               toRet.barriers.push(brToPushTmp);
             }
             for (let shidx = 0; shidx < gidBoundaries.shelters.length; ++shzridx) {
-              var theShelter = gidBoundaries.shelters[shidx]; // An array of cc.v2 points.
-              var shToPushTmp = [];
-              for (var tshidx = 0; tshidx < theShelter.length; ++tshidx) {
+              const theShelter = gidBoundaries.shelters[shidx]; // An array of cc.v2 points.
+              let shToPushTmp = [];
+              for (let tshidx = 0; tshidx < theShelter.length; ++tshidx) {
                 shToPushTmp.push(topLeftOfWholeTsxTileInMapNode.add(cc.v2(theShelter[tshidx].x, -theShelter[tshidx].y)));
               }
               toRet.shelters.push(shToPushTmp);
             }
             for (let shzridx = 0; shzridx < gidBoundaries.sheltersZReducer.length; ++shzridx) {
-              var theShelter = gidBoundaries.sheltersZReducer[shzridx]; // An array of cc.v2 points.
-              var shzrToPushTmp = [];
-              for (var tshzridx = 0; tshzridx < theShelter.length; ++tshzridx) {
+              const theShelter = gidBoundaries.sheltersZReducer[shzridx]; // An array of cc.v2 points.
+              let shzrToPushTmp = [];
+              for (let tshzridx = 0; tshzridx < theShelter.length; ++tshzridx) {
                 shzrToPushTmp.push(topLeftOfWholeTsxTileInMapNode.add(cc.v2(theShelter[tshzridx].x, -theShelter[tshzridx].y)));
               }
               toRet.sheltersZReducer.push(shzrToPushTmp);
@@ -663,7 +670,7 @@ TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScript
   mapScriptIns.dictOfTiledFrameAnimationList = {};
   for (let frameAnim of extractedBoundaryObjs.frameAnimations) {
     if (!frameAnim.type) {
-      cc.warn("should bind a type to the frameAnim obejct layer");
+      cc.warn("should bind a type to the frameAnim object layer");
       continue
     }
     const tiledMapIns = mapScriptIns.node.getComponent(cc.TiledMap);

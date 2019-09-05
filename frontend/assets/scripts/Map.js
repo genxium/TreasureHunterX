@@ -464,7 +464,8 @@ cc.Class({
     const canvasNode = mapNode.parent;
     cc.director.getCollisionManager().enabled = true;
     cc.director.getCollisionManager().enabledDebugDraw = CC_DEBUG;
-    self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
+    // self.musicEffectManagerScriptIns = self.node.getComponent("MusicEffectManager");
+    self.musicEffectManagerScriptIns = null;
 
     /** Init required prefab started. */
     self.confirmLogoutNode = cc.instantiate(self.confirmLogoutPrefab);

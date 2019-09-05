@@ -226,6 +226,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 		Logger.Warn("AddPlayerIfPossible error, existing in the room.PlayersDict:", zap.Any("playerId", pPlayer.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
 		return false
 	}
+
 	defer pR.onPlayerAdded(pPlayer.Id)
 	pR.Players[pPlayer.Id] = pPlayer
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
@@ -618,14 +619,6 @@ func (pR *Room) ChooseStage() error {
 
 	pR.RawBattleStrToVec2DListMap = toRetStrToVec2DListMap
 	pR.RawBattleStrToPolygon2DListMap = toRetStrToPolygon2DListMap
-
-	// Refresh "Player" data for RoomDownsyncFrame.
-	playerPosList := *(toRetStrToVec2DListMap["PlayerStartingPos"])
-	for index, player := range pR.Players {
-		player.X = playerPosList[index].X
-		player.Y = playerPosList[index].Y
-		player.Score = 0
-	}
 
 	// Refresh "Treasure" data for RoomDownsyncFrame.
 	lowScoreTreasurePolygon2DList := *(toRetStrToPolygon2DListMap["LowScoreTreasure"])
@@ -1297,6 +1290,22 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 		if false == value {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
 			pR.JoinIndexBooleanArr[index] = true
+
+      // Lazily assign the initial position of "Player" for "RoomDownsyncFrame".
+      playerPosList := *(pR.RawBattleStrToVec2DListMap["PlayerStartingPos"])
+      if index > len(playerPosList) {
+        Logger.Warn("onPlayerAdded error, index >= len(playerPosList):", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+        panic("onPlayerAdded error")
+      }
+      playerPos := playerPosList[index]
+
+      if nil == playerPos {
+        Logger.Warn("onPlayerAdded error, nil == playerPos:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+        panic("onPlayerAdded error")
+      }
+      pR.Players[playerId].X = playerPos.X
+      pR.Players[playerId].Y = playerPos.Y
+
 			break
 		}
 	}
