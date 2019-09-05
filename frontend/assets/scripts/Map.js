@@ -16,8 +16,8 @@ window.ALL_BATTLE_STATES = {
 
 window.MAGIC_ROOM_DOWNSYNC_FRAME_ID = {
   BATTLE_READY_TO_START: -99,
-  PLAYER_ADDED: -98,
-  PLAYER_READDED: -97,
+  PLAYER_ADDED_AND_ACKED: -98,
+  PLAYER_READDED_AND_ACKED: -97,
 };
 
 cc.Class({
@@ -133,7 +133,7 @@ cc.Class({
       players: refFullFrame.players,
       speedShoes: refFullFrame.speedShoes,
       pumpkin: refFullFrame.pumpkin,
-      guardTowers: refFullFrame.guardTowers, //TODO: 根据diffFrame信息增删或者移动守护塔
+      guardTowers: refFullFrame.guardTowers,
     };
     const players = diffFrame.players;
     const playersLocalIdStrList = Object.keys(players);
@@ -402,14 +402,6 @@ cc.Class({
       clearInterval(self.upsyncLoopInterval);
     }
 
-    self.mainCameraNode = canvasNode.getChildByName("Main Camera");
-    self.mainCamera = self.mainCameraNode.getComponent(cc.Camera);
-    for (let child of self.mainCameraNode.children) {
-      child.setScale(1 / self.mainCamera.zoomRatio);
-    }
-    self.widgetsAboveAllNode = self.mainCameraNode.getChildByName("WidgetsAboveAll");
-    self.mainCameraNode.setPosition(cc.v2());
-
     self.resyncing = false;
     self.lastRoomDownsyncFrameId = 0;
 
@@ -438,8 +430,8 @@ cc.Class({
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
     }
-    self.showPopupInCanvas(self.gameRuleNode);
     safelyAddChild(self.widgetsAboveAllNode, self.playersInfoNode);
+    safelyAddChild(self.widgetsAboveAllNode, self.findingPlayerNode);
   },
 
   onLoad() {
@@ -478,8 +470,8 @@ cc.Class({
     const resultPanelScriptIns = self.resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.mapScriptIns = self;
     resultPanelScriptIns.onAgainClicked = () => {
+      self.battleState = ALL_BATTLE_STATES.WAITING; 
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      self._resetCurrentMatch();
       window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */ );
     };
     resultPanelScriptIns.onCloseDelegate = () => {
@@ -505,6 +497,14 @@ cc.Class({
     self.countdownToBeginGameNode.width = self.canvasNode.width;
     self.countdownToBeginGameNode.height = self.canvasNode.height;
 
+    self.mainCameraNode = canvasNode.getChildByName("Main Camera");
+    self.mainCamera = self.mainCameraNode.getComponent(cc.Camera);
+    for (let child of self.mainCameraNode.children) {
+      child.setScale(1 / self.mainCamera.zoomRatio);
+    }
+    self.widgetsAboveAllNode = self.mainCameraNode.getChildByName("WidgetsAboveAll");
+    self.mainCameraNode.setPosition(cc.v2());
+
     self.playersNode = {};
     const player1Node = cc.instantiate(self.player1Prefab);
     const player2Node = cc.instantiate(self.player2Prefab);
@@ -518,19 +518,12 @@ cc.Class({
     /** Init required prefab ended. */
 
     self.clientUpsyncFps = 20;
-    self._resetCurrentMatch();
 
     const tiledMapIns = self.node.getComponent(cc.TiledMap);
-    const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
-    tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
 
     self.initAfterWSConnected = () => {
       const self = window.mapIns;
       self.hideGameRuleNode();
-      self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
-      Object.assign(self.selfPlayerInfo, {
-        id: self.selfPlayerInfo.playerId
-      });
       self.transitToState(ALL_MAP_STATES.WAITING);
       self._inputControlEnabled = false;
       self.setupInputControls();
@@ -540,15 +533,47 @@ cc.Class({
       window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
         console.log(parsedBattleColliderInfo);
         self.battleColliderInfo = parsedBattleColliderInfo; 
-        const wrapped = {
-          msgId: Date.now(),
-          act: "PlayerBattleColliderAck",
-          data: {},
-        }
-        window.sendSafely(JSON.stringify(wrapped));
+        
+        const fullPathOfTmxFile = cc.js.formatStr("map/%s/map", parsedBattleColliderInfo.stageName);
+        cc.loader.loadRes(fullPathOfTmxFile, cc.TiledMapAsset, (err, tmxAsset) => {
+          if (null != err) {
+            console.error(err);
+            return;
+          }
+          
+          tiledMapIns.tmxAsset = tmxAsset;
+          const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
+          tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
+
+          /*
+          [WARNING] 
+          
+          The order of the following statements is important, because we should have finished "_resetCurrentMatch" before the first "RoomDownsyncFrame". 
+
+          -- YFLu, 2019-09-05
+          */
+          self._resetCurrentMatch(); // Will set "self.selfPlayerInfo" within. 
+
+          self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
+          Object.assign(self.selfPlayerInfo, {
+            id: self.selfPlayerInfo.playerId
+          });
+
+          const wrapped = {
+            msgId: Date.now(),
+            act: "PlayerBattleColliderAck",
+            data: {},
+          }
+          window.sendSafely(JSON.stringify(wrapped));
+        });
       };
 
       window.handleRoomDownsyncFrame = function(diffFrame) {
+        /*
+         Right upon establishment of the "PersistentSessionClient", we should receive an initial signal "BattleColliderInfo" earlier than any "RoomDownsyncFrame" containing "PlayerMeta" data. 
+      
+          -- YFLu, 2019-09-05
+        */ 
         if (ALL_BATTLE_STATES.WAITING != self.battleState
           && ALL_BATTLE_STATES.IN_BATTLE != self.battleState
           && ALL_BATTLE_STATES.IN_SETTLEMENT != self.battleState) {
@@ -562,7 +587,7 @@ cc.Class({
           // 隐藏返回按钮
           const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
           findingPlayerScriptIns.hideExitButton();
-        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_ADDED == refFrameId) {
+        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_ADDED_AND_ACKED == refFrameId) {
           // 显示匹配玩家
           if (window.initWxSdk) {
             window.initWxSdk();
@@ -581,8 +606,27 @@ cc.Class({
           findingPlayerScriptIns.updatePlayersInfo(diffFrame.playerMetas);
           cachedPlayerMetas = diffFrame.playerMetas;
           return;
-        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_READDED == refFrameId) {
+        } else if (window.MAGIC_ROOM_DOWNSYNC_FRAME_ID.PLAYER_READDED_AND_ACKED == refFrameId) {
           cachedPlayerMetas = diffFrame.playerMetas;
+          /*
+          [WARNING]
+          
+          In this case, we're definitely in an active battle, thus the "self.findingPlayerNode" should hidden if being presented. 
+
+          -- YFLu, 2019-09-05
+          */
+
+          if (self.findingPlayerNode && self.findingPlayerNode.parent) {
+            self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
+            self.transitToState(ALL_MAP_STATES.VISUAL);
+            if (self.playersInfoNode) {
+              for (let i in cachedPlayerMetas) {
+                const playerMeta = cachedPlayerMetas[i];
+                const playersInfoScriptIns = self.playersInfoNode.getComponent("PlayersInfo");
+                playersInfoScriptIns.updateData(playerMeta);
+              }
+            }
+          }
           return;
         } else {
           // Deliberately left blank.
@@ -735,12 +779,26 @@ cc.Class({
 
     // The player is now viewing "self.gameRuleNode" with button(s) to start an actual battle. -- YFLu
     const expectedRoomId = window.getExpectedRoomIdSync();
-    console.warn("expectedRoomId: ", expectedRoomId);
+    const boundRoomId = window.getBoundRoomIdFromPersistentStorage();
+
+    console.warn("Map.onLoad, expectedRoomId == ", expectedRoomId, ", boundRoomId == ", boundRoomId);
+
     if (null != expectedRoomId) {
       self.disableGameRuleNode();
-      // The player is now viewing "self.gameRuleNode" with no button, and should wait for `self.initAfterWSConnected` to be called. -- YFLu
+
+      /* 
+        The player is now possibly viewing "self.gameRuleNode" with no button, and should wait for `self.initAfterWSConnected` to be called. 
+
+        -- YFLu, 2019-09-05
+      */
+      self.battleState = ALL_BATTLE_STATES.WAITING; 
+      window.initPersistentSessionClient(self.initAfterWSConnected, expectedRoomId);
+    } else if (null != boundRoomId) {
+      self.disableGameRuleNode();
+      self.battleState = ALL_BATTLE_STATES.WAITING; 
       window.initPersistentSessionClient(self.initAfterWSConnected, expectedRoomId);
     } else {
+      self.showPopupInCanvas(self.gameRuleNode);
       // Deliberately left blank. -- YFLu
     }
     self.bottomBannerAd = null;
@@ -1279,6 +1337,7 @@ cc.Class({
 
   onGameRule1v1ModeClicked(evt, cb) {
     const self = this;
+    self.battleState = ALL_BATTLE_STATES.WAITING; 
     window.initPersistentSessionClient(self.initAfterWSConnected, null /* Deliberately NOT passing in any `expectedRoomId`. -- YFLu */ );
     self.hideGameRuleNode();
   },

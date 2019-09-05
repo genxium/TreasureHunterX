@@ -193,7 +193,7 @@ window.initPersistentSessionClient = function(onopenCb, expectedRoomId) {
           break;
       }
     } catch (e) {
-      console.warn("Unexpected error when parsing data of:", event.data);
+      console.error("Unexpected error when parsing data of:", event.data, e);
     }
   };
 

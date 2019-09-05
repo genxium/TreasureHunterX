@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 	"net/http"
@@ -15,7 +16,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"github.com/golang/protobuf/proto"
 )
 
 const (
@@ -251,25 +251,26 @@ func Serve(c *gin.Context) {
 		Logger.Error("HeartbeatRequirements resp not written:", zap.Any("playerId", playerId), zap.Error(err))
 		signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v!", playerId))
 	}
-  if pThePlayer,ok :=  pRoom.Players[int32(playerId)]; ok && models.PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState {
-    defer func() {
-      time.AfterFunc(2*time.Second, func() {
-        if models.PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState {
-		      signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("The expected Ack for BattleColliderInfo is not received in time, for playerId == %v!", playerId))
-        }
-      })
-    }()
-    playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap)
+	if pThePlayer, ok := pRoom.Players[int32(playerId)]; ok && (models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState) {
+		defer func() {
+			timeoutSeconds := time.Duration(5)
+			time.AfterFunc(timeoutSeconds*time.Second, func() {
+				if (models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState) {
+					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("The expected Ack for BattleColliderInfo is not received in %s seconds, for playerId == %v!", timeoutSeconds, playerId))
+				}
+			})
+		}()
+		playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap)
 
-    theBytes, marshalErr := proto.Marshal(playerBattleColliderInfo)
-    if nil != marshalErr {
-      Logger.Error("Error marshalling playerBattleColliderInfo:", zap.Any("the error", marshalErr), zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
-		  signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v and roomId == %v!", playerId, pRoom.Id))
-    } else {
-      theStr := string(theBytes)
-      wsSendActionPb(conn, "BattleColliderInfo", theStr)
-    }
-  }
+		theBytes, marshalErr := proto.Marshal(playerBattleColliderInfo)
+		if nil != marshalErr {
+			Logger.Error("Error marshalling playerBattleColliderInfo:", zap.Any("the error", marshalErr), zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
+			signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("HeartbeatRequirements resp not written to playerId == %v and roomId == %v!", playerId, pRoom.Id))
+		} else {
+			theStr := string(theBytes)
+			wsSendActionPb(conn, "BattleColliderInfo", theStr)
+		}
+	}
 	connIOMux.Unlock()
 
 	// Starts the receiving loop against the client-side

@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN = 5
-	MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START = -99
-	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED          = -98
-	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED        = -97
+	MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN    = 5
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_BATTLE_READY_TO_START    = -99
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED_AND_ACKED   = -98
+	MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED_AND_ACKED = -97
 
 	MAGIC_JOIN_INDEX_DEFAULT = 0
 	MAGIC_JOIN_INDEX_INVALID = -1
@@ -121,7 +121,7 @@ type Room struct {
 	RoomDownsyncFrameBuffer      *RingBuffer
 	JoinIndexBooleanArr          []bool
 
-  StageName                    string
+	StageName                      string
 	RawBattleStrToVec2DListMap     StrToVec2DListMap
 	RawBattleStrToPolygon2DListMap StrToPolygon2DListMap
 }
@@ -232,7 +232,7 @@ func (pR *Room) AddPlayerIfPossible(pPlayer *Player) bool {
 	// Always instantiates a new channel and let the old one die out due to not being retained by any root reference.
 	pR.PlayerDownsyncChanDict[pPlayer.Id] = make(chan string, (MAGIC_REMOVED_AT_FRAME_ID_PERMANENT_REMOVAL_MARGIN << 2) /* Hardcoded temporarily. */)
 
-	pPlayer.BattleState = PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK
+	pPlayer.BattleState = PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK
 	pPlayer.FrozenAtGmtMillis = -1       // Hardcoded temporarily.
 	pPlayer.Speed = PLAYER_DEFAULT_SPEED // Hardcoded temporarily.
 	pPlayer.AddSpeedAtGmtMillis = -1     // Hardcoded temporarily.
@@ -258,14 +258,7 @@ func (pR *Room) ReAddPlayerIfPossible(pTmpPlayerInstance *Player) bool {
 	pEffectiveInRoomPlayerInstance := pR.Players[pTmpPlayerInstance.Id]
 	pEffectiveInRoomPlayerInstance.AckingFrameId = 0
 
-	/*
-	  [WARNING]
-
-	  It's UNNECESSARY to mark a "ReAddedPlayer" to "BattleState == PlayerBattleStateIns.PENDING_BATTLE_COLLIDER_ACK".
-
-	  -- YFLu, 2019-09-04
-	*/
-	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.ACTIVE
+	pEffectiveInRoomPlayerInstance.BattleState = PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK
 
 	Logger.Warn("ReAddPlayerIfPossible finished.", zap.Any("playerId", pTmpPlayerInstance.Id), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("player AckingFrameId", pEffectiveInRoomPlayerInstance.AckingFrameId))
 	return true
@@ -570,7 +563,7 @@ func (pR *Room) ChooseStage() error {
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-  pR.StageName = "pacman" // Hardcoded temporarily. -- YFLu
+	pR.StageName = "pacman" // Hardcoded temporarily. -- YFLu
 
 	relativePathForAllStages := "../frontend/assets/resources/map"
 	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, pR.StageName)
@@ -688,8 +681,8 @@ func (pR *Room) ChooseStage() error {
 			PickupBoundary:  polygon2D,
 			InRangePlayers:  pInRangePlayers,
 			LastAttackTick:  utils.UnixtimeNano(),
-      WidthInB2World:  float64(polygon2D.TmxObjectWidth),
-      HeightInB2World:  float64(polygon2D.TmxObjectHeight),
+			WidthInB2World:  float64(polygon2D.TmxObjectWidth),
+			HeightInB2World: float64(polygon2D.TmxObjectHeight),
 		}
 
 		pR.GuardTowers[theGuardTower.LocalIdInBattle] = theGuardTower
@@ -821,7 +814,7 @@ func (pR *Room) StartBattle() {
 				 *
 				 * DON'T send any DiffFrame into "DedicatedForwardingChanForPlayer" if the player is disconnected, because it could jam the channel and cause significant delay upon "battle recovery for reconnected player".
 				 */
-				if player.BattleState == PlayerBattleStateIns.DISCONNECTED || player.BattleState == PlayerBattleStateIns.LOST {
+				if PlayerBattleStateIns.ACTIVE != player.BattleState {
 					continue
 				} else {
 					theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
@@ -922,7 +915,7 @@ func (pR *Room) StartBattle() {
 					tower.LastAttackTick = now
 
 					playerNode := tower.InRangePlayers.NextPlayerToAttack()
-          towerHeight := float64(tower.HeightInB2World)
+					towerHeight := float64(tower.HeightInB2World)
 					startPos := Vec2D{
 						X: tower.CollidableBody.GetPosition().X,
 						Y: tower.CollidableBody.GetPosition().Y + 0.5*towerHeight,
@@ -1294,59 +1287,27 @@ func (pR *Room) onPlayerAdded(playerId int32) {
 			pR.Players[playerId].JoinIndex = int32(index) + 1
 			pR.JoinIndexBooleanArr[index] = true
 
-      // Lazily assign the initial position of "Player" for "RoomDownsyncFrame".
-      playerPosList := *(pR.RawBattleStrToVec2DListMap["PlayerStartingPos"])
-      if index > len(playerPosList) {
-        Logger.Warn("onPlayerAdded error, index >= len(playerPosList):", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
-        panic("onPlayerAdded error")
-      }
-      playerPos := playerPosList[index]
+			// Lazily assign the initial position of "Player" for "RoomDownsyncFrame".
+			playerPosList := *(pR.RawBattleStrToVec2DListMap["PlayerStartingPos"])
+			if index > len(playerPosList) {
+				Logger.Warn("onPlayerAdded error, index >= len(playerPosList):", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+				panic("onPlayerAdded error")
+			}
+			playerPos := playerPosList[index]
 
-      if nil == playerPos {
-        Logger.Warn("onPlayerAdded error, nil == playerPos:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
-        panic("onPlayerAdded error")
-      }
-      pR.Players[playerId].X = playerPos.X
-      pR.Players[playerId].Y = playerPos.Y
+			if nil == playerPos {
+				Logger.Warn("onPlayerAdded error, nil == playerPos:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("roomState", pR.State), zap.Any("roomEffectivePlayerCount", pR.EffectivePlayerCount))
+				panic("onPlayerAdded error")
+			}
+			pR.Players[playerId].X = playerPos.X
+			pR.Players[playerId].Y = playerPos.Y
 
 			break
 		}
 	}
 
-	Logger.Info("onPlayerAdded", zap.Any("roomId", pR.Id), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
-
-	playerMetas := make(map[int32]*pb.PlayerMeta, 0)
-	for _, player := range pR.Players {
-		playerMetas[player.Id] = &pb.PlayerMeta{
-			Id:          player.Id,
-			Name:        player.Name,
-			DisplayName: player.DisplayName,
-			Avatar:      player.Avatar,
-			JoinIndex:   player.JoinIndex,
-		}
-	}
-
-	playerAddedFrame := &pb.RoomDownsyncFrame{
-		Id:          pR.Tick,
-		Players:     toPbPlayers(pR.Players),
-		SentAt:      utils.UnixtimeMilli(),
-		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED,
-		PlayerMetas: playerMetas,
-	}
-
-	theBytes, marshalErr := proto.Marshal(playerAddedFrame)
-	if nil != marshalErr {
-		Logger.Error("Error marshalling playerAddedFrame in onPlayerAdded:", zap.Any("the error", marshalErr))
-	}
-	theStr := string(theBytes)
-
-	for _, player := range pR.Players {
-		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
-		utils.SendStrSafely(theStr, theForwardingChannel)
-	}
-
 	pR.updateScore()
-	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("RoomBattleState", pR.State))
+	Logger.Info("onPlayerAdded:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("joinIndex", pR.Players[playerId].JoinIndex), zap.Any("EffectivePlayerCount", pR.EffectivePlayerCount), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr), zap.Any("RoomBattleState", pR.State))
 }
 
 func (pR *Room) onPlayerReAdded(playerId int32) {
@@ -1358,6 +1319,15 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 	 */
 	Logger.Info("Room got `onPlayerReAdded` invoked,", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId), zap.Any("resulted pR.JoinIndexBooleanArr", pR.JoinIndexBooleanArr))
 
+	pR.updateScore()
+}
+
+func (pR *Room) OnPlayerBattleColliderAcked(playerId int32) bool {
+	pPlayer, ok := pR.Players[playerId]
+	if false == ok {
+		return false
+	}
+
 	playerMetas := make(map[int32]*pb.PlayerMeta, 0)
 	for _, player := range pR.Players {
 		playerMetas[player.Id] = &pb.PlayerMeta{
@@ -1369,34 +1339,50 @@ func (pR *Room) onPlayerReAdded(playerId int32) {
 		}
 	}
 
-	playerReAddedFrame := &pb.RoomDownsyncFrame{
+  var playerAckedFrame *pb.RoomDownsyncFrame
+
+  switch (pPlayer.BattleState) {
+  case PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK:
+	playerAckedFrame = &pb.RoomDownsyncFrame{
 		Id:          pR.Tick,
 		Players:     toPbPlayers(pR.Players),
 		SentAt:      utils.UnixtimeMilli(),
-		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED,
+		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_ADDED_AND_ACKED,
 		PlayerMetas: playerMetas,
 	}
+  case PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK:
+	playerAckedFrame = &pb.RoomDownsyncFrame{
+		Id:          pR.Tick,
+		Players:     toPbPlayers(pR.Players),
+		SentAt:      utils.UnixtimeMilli(),
+		RefFrameId:  MAGIC_ROOM_DOWNSYNC_FRAME_ID_PLAYER_READDED_AND_ACKED,
+		PlayerMetas: playerMetas,
+	}
+  default:
+  }
 
-	theBytes, marshalErr := proto.Marshal(playerReAddedFrame)
+	theBytes, marshalErr := proto.Marshal(playerAckedFrame)
 	if nil != marshalErr {
-		Logger.Error("Error marshalling playerReAddedFrame in `onPlayerReAdded`:", zap.Any("the error", marshalErr))
+		Logger.Error("Error marshalling playerAckedFrame in `OnPlayerBattleColliderAcked`:", zap.Any("the error", marshalErr))
 	}
 	theStr := string(theBytes)
 
 	for _, player := range pR.Players {
 		theForwardingChannel := pR.PlayerDownsyncChanDict[player.Id]
+    /*
+    [WARNING] 
+
+    This `playerAckedFrame` is the first ever "RoomDownsyncFrame" for every "PersistentSessionClient on the frontend", and it goes right after each "BattleColliderInfo". 
+
+    By making use of the sequential nature of each `theForwardingChannel`, all later "RoomDownsyncFrame"s generated after `pRoom.StartBattle()` will be put behind this `playerAckedFrame`.
+
+    -- YFLu, 2019-09-05
+    */
 		utils.SendStrSafely(theStr, theForwardingChannel)
 	}
-	pR.updateScore()
-}
 
-func (pR *Room) OnPlayerBattleColliderAcked(playerId int32) bool {
-	pPlayer, ok := pR.Players[playerId]
-	if false == ok {
-		return false
-	}
 	pPlayer.BattleState = PlayerBattleStateIns.ACTIVE
-  Logger.Info("OnPlayerBattleColliderAcked", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
+	Logger.Info("OnPlayerBattleColliderAcked", zap.Any("roomId", pR.Id), zap.Any("playerId", playerId))
 
 	if pR.Capacity == len(pR.Players) {
 		allAcked := true
@@ -1407,7 +1393,7 @@ func (pR *Room) OnPlayerBattleColliderAcked(playerId int32) bool {
 			}
 		}
 		if true == allAcked {
-			pR.StartBattle()
+			pR.StartBattle() // WON'T run if the battle state is not in WAITING.
 		}
 	}
 

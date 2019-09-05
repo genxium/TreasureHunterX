@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	LOW_SCORE_TREASURE_TYPE   = 1
-	HIGH_SCORE_TREASURE_TYPE  = 2
+	LOW_SCORE_TREASURE_TYPE  = 1
+	HIGH_SCORE_TREASURE_TYPE = 2
 
-	SPEED_SHOES_TYPE          = 3
+	SPEED_SHOES_TYPE = 3
 
 	LOW_SCORE_TREASURE_SCORE  = 100
 	HIGH_SCORE_TREASURE_SCORE = 200
@@ -235,15 +235,15 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 	singleValueArray := strings.Split(targetPolyline.Points, " ")
 
 	thePolygon2DFromPolyline := &Polygon2D{
-		Anchor: nil,
-		Points: make([]*Vec2D, len(singleValueArray)),
-    TileWidth: pTsxIns.TileWidth,
-    TileHeight: pTsxIns.TileHeight,
+		Anchor:     nil,
+		Points:     make([]*Vec2D, len(singleValueArray)),
+		TileWidth:  pTsxIns.TileWidth,
+		TileHeight: pTsxIns.TileHeight,
 	}
 
-  /*
-  [WARNING] In this case, the "Treasure"s and "GuardTower"s are put into Tmx file as "ImageObject"s, of each the "ProportionalAnchor" is (0.5, 0). Therefore we calculate that "thePolygon2DFromPolyline.Points" are "offsets(in B2World) w.r.t. the BottomCenter". See https://shimo.im/docs/SmLJJhXm2C8XMzZT for details.
-  */
+	/*
+	  [WARNING] In this case, the "Treasure"s and "GuardTower"s are put into Tmx file as "ImageObject"s, of each the "ProportionalAnchor" is (0.5, 0). Therefore we calculate that "thePolygon2DFromPolyline.Points" are "offsets(in B2World) w.r.t. the BottomCenter". See https://shimo.im/docs/SmLJJhXm2C8XMzZT for details.
+	*/
 
 	for k, value := range singleValueArray {
 		thePolygon2DFromPolyline.Points[k] = &Vec2D{}
@@ -253,10 +253,10 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 				panic(err)
 			}
 			if 0 == (kk % 2) {
-        // W.r.t. center.
+				// W.r.t. center.
 				thePolygon2DFromPolyline.Points[k].X = (coordinateValue + offsetFromTopLeftInTileLocalCoordX) - factorHalf*float64(pTsxIns.TileWidth)
 			} else {
-        // W.r.t. bottom.
+				// W.r.t. bottom.
 				thePolygon2DFromPolyline.Points[k].Y = float64(pTsxIns.TileHeight) - (coordinateValue + offsetFromTopLeftInTileLocalCoordY)
 			}
 		}
@@ -357,7 +357,7 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 	*/
 
 	for _, objGroup := range pTmxMapIns.ObjectGroups {
-		switch (objGroup.Name) {
+		switch objGroup.Name {
 		case "PlayerStartingPos":
 			var pTheVec2DListToCache *Vec2DList
 			_, ok := toRetStrToVec2DListMap[objGroup.Name]
@@ -447,15 +447,15 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 					theTransformedBottomCenterAsAnchor := pTmxMapIns.continuousObjLayerOffsetToContinuousMapNodePos(theUntransformedBottomCenterAsAnchor)
 
 					thePolygon2DInWorld := &Polygon2D{
-						Anchor: &theTransformedBottomCenterAsAnchor,
-						Points: make([]*Vec2D, len(thePolygon2D.Points)),
-            TileWidth: thePolygon2D.TileWidth,
-            TileHeight: thePolygon2D.TileHeight,
+						Anchor:     &theTransformedBottomCenterAsAnchor,
+						Points:     make([]*Vec2D, len(thePolygon2D.Points)),
+						TileWidth:  thePolygon2D.TileWidth,
+						TileHeight: thePolygon2D.TileHeight,
 					}
-          if nil != singleObjInTmxFile.Width && nil != singleObjInTmxFile.Height {
-            thePolygon2DInWorld.TmxObjectWidth = *singleObjInTmxFile.Width
-            thePolygon2DInWorld.TmxObjectHeight = *singleObjInTmxFile.Height
-          }
+					if nil != singleObjInTmxFile.Width && nil != singleObjInTmxFile.Height {
+						thePolygon2DInWorld.TmxObjectWidth = *singleObjInTmxFile.Width
+						thePolygon2DInWorld.TmxObjectHeight = *singleObjInTmxFile.Height
+					}
 					for kk, p := range thePolygon2D.Points {
 						// [WARNING] It's intentionally recreating a copy of "Vec2D" here.
 						thePolygon2DInWorld.Points[kk] = &Vec2D{

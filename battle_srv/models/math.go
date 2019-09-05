@@ -40,17 +40,17 @@ type Polygon2D struct {
 	   Refer to https://shimo.im/docs/SmLJJhXm2C8XMzZT for more information.
 	*/
 
-  /*
-  [WARNING] Used to cache "`TileWidth & TileHeight` of a Tsx file" only.
-  */
-  TileWidth  int
-  TileHeight int
+	/*
+	  [WARNING] Used to cache "`TileWidth & TileHeight` of a Tsx file" only.
+	*/
+	TileWidth  int
+	TileHeight int
 
-  /*
-  [WARNING] Used to cache "`Width & TileHeight` of an object in Tmx file" only.
-  */
-  TmxObjectWidth  float64
-  TmxObjectHeight float64
+	/*
+	  [WARNING] Used to cache "`Width & TileHeight` of an object in Tmx file" only.
+	*/
+	TmxObjectWidth  float64
+	TmxObjectHeight float64
 }
 
 func MoveDynamicBody(body *box2d.B2Body, pToTargetPos *box2d.B2Vec2, inSeconds float64) {
