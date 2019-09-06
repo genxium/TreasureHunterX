@@ -358,7 +358,7 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 	return nil
 }
 
-func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) (StrToVec2DListMap, StrToPolygon2DListMap, error) {
+func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[int]StrToPolygon2DListMap) (int32, int32, int32, int32, StrToVec2DListMap, StrToPolygon2DListMap, error) {
 	toRetStrToVec2DListMap := make(StrToVec2DListMap, 0)
 	toRetStrToPolygon2DListMap := make(StrToPolygon2DListMap, 0)
 	/*
@@ -484,8 +484,7 @@ func ParseTmxLayersAndGroups(pTmxMapIns *TmxMap, gidBoundariesMapInB2World map[i
 		default:
 		}
 	}
-
-	return toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, nil
+	return int32(pTmxMapIns.Width), int32(pTmxMapIns.Height), int32(pTmxMapIns.TileWidth), int32(pTmxMapIns.TileHeight), toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, nil
 }
 
 func (pTmxMap *TmxMap) ToXML() (string, error) {

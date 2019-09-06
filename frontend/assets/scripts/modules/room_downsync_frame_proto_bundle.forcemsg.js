@@ -1099,6 +1099,10 @@ $root.treasurehunterx = (function() {
          * @property {string|null} [stageName] BattleColliderInfo stageName
          * @property {Object.<string,treasurehunterx.Vec2DList>|null} [strToVec2DListMap] BattleColliderInfo strToVec2DListMap
          * @property {Object.<string,treasurehunterx.Polygon2DList>|null} [strToPolygon2DListMap] BattleColliderInfo strToPolygon2DListMap
+         * @property {number|null} [StageDiscreteW] BattleColliderInfo StageDiscreteW
+         * @property {number|null} [StageDiscreteH] BattleColliderInfo StageDiscreteH
+         * @property {number|null} [StageTileW] BattleColliderInfo StageTileW
+         * @property {number|null} [StageTileH] BattleColliderInfo StageTileH
          */
 
         /**
@@ -1143,6 +1147,38 @@ $root.treasurehunterx = (function() {
         BattleColliderInfo.prototype.strToPolygon2DListMap = $util.emptyObject;
 
         /**
+         * BattleColliderInfo StageDiscreteW.
+         * @member {number} StageDiscreteW
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.StageDiscreteW = 0;
+
+        /**
+         * BattleColliderInfo StageDiscreteH.
+         * @member {number} StageDiscreteH
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.StageDiscreteH = 0;
+
+        /**
+         * BattleColliderInfo StageTileW.
+         * @member {number} StageTileW
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.StageTileW = 0;
+
+        /**
+         * BattleColliderInfo StageTileH.
+         * @member {number} StageTileH
+         * @memberof treasurehunterx.BattleColliderInfo
+         * @instance
+         */
+        BattleColliderInfo.prototype.StageTileH = 0;
+
+        /**
          * Creates a new BattleColliderInfo instance using the specified properties.
          * @function create
          * @memberof treasurehunterx.BattleColliderInfo
@@ -1178,6 +1214,14 @@ $root.treasurehunterx = (function() {
                     writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]);
                     $root.treasurehunterx.Polygon2DList.encode(message.strToPolygon2DListMap[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
                 }
+            if (message.StageDiscreteW != null && message.hasOwnProperty("StageDiscreteW"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.StageDiscreteW);
+            if (message.StageDiscreteH != null && message.hasOwnProperty("StageDiscreteH"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.StageDiscreteH);
+            if (message.StageTileW != null && message.hasOwnProperty("StageTileW"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.StageTileW);
+            if (message.StageTileH != null && message.hasOwnProperty("StageTileH"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.StageTileH);
             return writer;
         };
 
@@ -1230,6 +1274,18 @@ $root.treasurehunterx = (function() {
                     key = reader.string();
                     reader.pos++;
                     message.strToPolygon2DListMap[key] = $root.treasurehunterx.Polygon2DList.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.StageDiscreteW = reader.int32();
+                    break;
+                case 5:
+                    message.StageDiscreteH = reader.int32();
+                    break;
+                case 6:
+                    message.StageTileW = reader.int32();
+                    break;
+                case 7:
+                    message.StageTileH = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1289,6 +1345,18 @@ $root.treasurehunterx = (function() {
                         return "strToPolygon2DListMap." + error;
                 }
             }
+            if (message.StageDiscreteW != null && message.hasOwnProperty("StageDiscreteW"))
+                if (!$util.isInteger(message.StageDiscreteW))
+                    return "StageDiscreteW: integer expected";
+            if (message.StageDiscreteH != null && message.hasOwnProperty("StageDiscreteH"))
+                if (!$util.isInteger(message.StageDiscreteH))
+                    return "StageDiscreteH: integer expected";
+            if (message.StageTileW != null && message.hasOwnProperty("StageTileW"))
+                if (!$util.isInteger(message.StageTileW))
+                    return "StageTileW: integer expected";
+            if (message.StageTileH != null && message.hasOwnProperty("StageTileH"))
+                if (!$util.isInteger(message.StageTileH))
+                    return "StageTileH: integer expected";
             return null;
         };
 
@@ -1326,6 +1394,14 @@ $root.treasurehunterx = (function() {
                     message.strToPolygon2DListMap[keys[i]] = $root.treasurehunterx.Polygon2DList.fromObject(object.strToPolygon2DListMap[keys[i]]);
                 }
             }
+            if (object.StageDiscreteW != null)
+                message.StageDiscreteW = object.StageDiscreteW | 0;
+            if (object.StageDiscreteH != null)
+                message.StageDiscreteH = object.StageDiscreteH | 0;
+            if (object.StageTileW != null)
+                message.StageTileW = object.StageTileW | 0;
+            if (object.StageTileH != null)
+                message.StageTileH = object.StageTileH | 0;
             return message;
         };
 
@@ -1346,8 +1422,13 @@ $root.treasurehunterx = (function() {
                 object.strToVec2DListMap = {};
                 object.strToPolygon2DListMap = {};
             }
-            if (options.defaults)
+            if (options.defaults) {
                 object.stageName = "";
+                object.StageDiscreteW = 0;
+                object.StageDiscreteH = 0;
+                object.StageTileW = 0;
+                object.StageTileH = 0;
+            }
             if (message.stageName != null && message.hasOwnProperty("stageName"))
                 object.stageName = message.stageName;
             var keys2;
@@ -1361,6 +1442,14 @@ $root.treasurehunterx = (function() {
                 for (var j = 0; j < keys2.length; ++j)
                     object.strToPolygon2DListMap[keys2[j]] = $root.treasurehunterx.Polygon2DList.toObject(message.strToPolygon2DListMap[keys2[j]], options);
             }
+            if (message.StageDiscreteW != null && message.hasOwnProperty("StageDiscreteW"))
+                object.StageDiscreteW = message.StageDiscreteW;
+            if (message.StageDiscreteH != null && message.hasOwnProperty("StageDiscreteH"))
+                object.StageDiscreteH = message.StageDiscreteH;
+            if (message.StageTileW != null && message.hasOwnProperty("StageTileW"))
+                object.StageTileW = message.StageTileW;
+            if (message.StageTileH != null && message.hasOwnProperty("StageTileH"))
+                object.StageTileH = message.StageTileH;
             return object;
         };
 

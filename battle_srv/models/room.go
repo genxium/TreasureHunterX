@@ -122,6 +122,10 @@ type Room struct {
 	JoinIndexBooleanArr          []bool
 
 	StageName                      string
+  StageDiscreteW                 int32
+  StageDiscreteH                 int32
+  StageTileW                     int32
+  StageTileH                     int32
 	RawBattleStrToVec2DListMap     StrToVec2DListMap
 	RawBattleStrToPolygon2DListMap StrToPolygon2DListMap
 }
@@ -618,11 +622,15 @@ func (pR *Room) ChooseStage() error {
 		DeserializeTsxToColliderDict(pTmxMapIns, byteArrOfTsxFile, int(tileset.FirstGid), gidBoundariesMapInB2World)
 	}
 
-	toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
+	stageDiscreteW, stageDiscreteH, stageTileW, stageTileH, toRetStrToVec2DListMap, toRetStrToPolygon2DListMap, err := ParseTmxLayersAndGroups(pTmxMapIns, gidBoundariesMapInB2World)
 	if nil != err {
 		panic(err)
 	}
 
+  pR.StageDiscreteW = stageDiscreteW
+  pR.StageDiscreteH = stageDiscreteH
+  pR.StageTileW = stageTileW
+  pR.StageTileH = stageTileH
 	pR.RawBattleStrToVec2DListMap = toRetStrToVec2DListMap
 	pR.RawBattleStrToPolygon2DListMap = toRetStrToPolygon2DListMap
 

@@ -245,7 +245,7 @@ func Serve(c *gin.Context) {
 			})
 		}()
 
-		playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap)
+		playerBattleColliderInfo := models.ToPbStrToBattleColliderInfo(pRoom.StageName, pRoom.RawBattleStrToVec2DListMap, pRoom.RawBattleStrToPolygon2DListMap, pRoom.StageDiscreteW, pRoom.StageDiscreteH, pRoom.StageTileW, pRoom.StageTileH)
 
 		theBytes, marshalErr := proto.Marshal(playerBattleColliderInfo)
 		if nil != marshalErr {

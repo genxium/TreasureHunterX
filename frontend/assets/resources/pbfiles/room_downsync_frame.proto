@@ -28,6 +28,10 @@ message BattleColliderInfo {
   string stageName = 1;
   map<string, Vec2DList> strToVec2DListMap = 2; 
   map<string, Polygon2DList> strToPolygon2DListMap = 3; 
+  int32 StageDiscreteW = 4;
+  int32 StageDiscreteH = 5;
+  int32 StageTileW = 6;
+  int32 StageTileH = 7;
 }
 
 message Player {
