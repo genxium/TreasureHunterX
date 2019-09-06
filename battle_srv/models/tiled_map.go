@@ -12,6 +12,8 @@ import (
 	. "server/common"
 	"strconv"
 	"strings"
+  "fmt"
+	"github.com/ByteArena/box2d"
 )
 
 const (
@@ -145,7 +147,7 @@ func (d *TmxLayerEncodedData) decodeBase64() ([]byte, error) {
 		return ioutil.ReadAll(rclose)
 	}
 	Logger.Error("tmx data decode invalid compression: ", zap.Any("encoding", d.Encoding), zap.Any("compression", d.Compression), zap.Any("value", d.Value))
-	return nil, errors.New("invalid compression")
+	return nil, errors.New("Invalid compression.")
 }
 
 func (l *TmxLayer) decodeBase64() ([]uint32, error) {
@@ -154,11 +156,11 @@ func (l *TmxLayer) decodeBase64() ([]uint32, error) {
 		return nil, err
 	}
 	if l.Width == 0 || l.Height == 0 {
-		return nil, errors.New("zero width or height")
+		return nil, errors.New("Zero width or height.")
 	}
 	if len(databytes) != l.Height*l.Width*4 {
 		Logger.Error("TmxLayer decodeBase64 invalid data bytes:", zap.Any("width", l.Width), zap.Any("height", l.Height), zap.Any("data lenght", len(databytes)))
-		return nil, errors.New("data length error")
+		return nil, errors.New("Data length error.")
 	}
 	dindex := 0
 	gids := make([]uint32, l.Height*l.Width)
@@ -186,6 +188,11 @@ func TmxPolylineToPolygon2DInB2World(pTmxMapIns *TmxMap, singleObjInTmxFile *Tmx
 	}
 
 	singleValueArray := strings.Split(targetPolyline.Points, " ")
+  pointsCount := len(singleValueArray)
+
+  if pointsCount >= box2d.B2_maxPolygonVertices {
+    return nil, errors.New(fmt.Sprintf("During `TmxPolylineToPolygon2DInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
+  }
 
 	theUntransformedAnchor := &Vec2D{
 		X: singleObjInTmxFile.X,
@@ -233,10 +240,15 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 	offsetFromTopLeftInTileLocalCoordY := singleObjInTsxFile.Y
 
 	singleValueArray := strings.Split(targetPolyline.Points, " ")
+  pointsCount := len(singleValueArray)
+
+  if pointsCount >= box2d.B2_maxPolygonVertices {
+    return nil, errors.New(fmt.Sprintf("During `TsxPolylineToOffsetsWrtTileCenterInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
+  }
 
 	thePolygon2DFromPolyline := &Polygon2D{
 		Anchor:     nil,
-		Points:     make([]*Vec2D, len(singleValueArray)),
+		Points:     make([]*Vec2D, pointsCount),
 		TileWidth:  pTsxIns.TileWidth,
 		TileHeight: pTsxIns.TileHeight,
 	}
@@ -305,6 +317,9 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 		*/
 
 		theObjGroup := tile.ObjectGroup
+    if nil == theObjGroup {
+      continue
+    }
 		for _, singleObj := range theObjGroup.Objects {
 			if nil == singleObj.Polyline {
 				// Temporarily omit those non-polyline-containing objects.

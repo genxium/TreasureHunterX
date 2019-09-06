@@ -280,8 +280,8 @@ func (pR *Room) createTrapBulletByPos(startPos Vec2D, endPos Vec2D) *Bullet {
 
 	fd := box2d.MakeB2FixtureDef()
 	fd.Shape = &b2CircleShape
-	fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP
-	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
+	fd.Filter.CategoryBits = COLLISION_CATEGORY_TRAP_BULLET
+	fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP_BULLET
 	fd.Density = 0.0
 	b2Body.CreateFixtureFromDef(&fd)
 
@@ -333,6 +333,7 @@ func (pR *Room) refreshColliders() {
 	world.SetContactFilter(&box2d.B2ContactFilter{})
 	pR.CollidableWorld = &world
 
+  Logger.Info("Begins `refreshColliders` for players:", zap.Any("roomId", pR.Id))
 	for _, player := range pR.Players {
 		var bdDef box2d.B2BodyDef
 		colliderOffset := box2d.MakeB2Vec2(0, 0) // Matching that of client-side setting.
@@ -355,7 +356,9 @@ func (pR *Room) refreshColliders() {
 		player.CollidableBody = b2Body
 		b2Body.SetUserData(player)
 	}
+  Logger.Info("Ends `refreshColliders` for players:", zap.Any("roomId", pR.Id))
 
+  Logger.Info("Begins `refreshColliders` for treasures:", zap.Any("roomId", pR.Id))
 	for _, treasure := range pR.Treasures {
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
@@ -384,14 +387,18 @@ func (pR *Room) refreshColliders() {
 		treasure.CollidableBody = b2Body
 		b2Body.SetUserData(treasure)
 	}
+  Logger.Info("Ends `refreshColliders` for treasures:", zap.Any("roomId", pR.Id))
 
+  Logger.Info("Begins `refreshColliders` for towers:", zap.Any("roomId", pR.Id))
 	for _, tower := range pR.GuardTowers {
+    // Logger.Info("Begins `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower.LocalIdInBattle", tower.LocalIdInBattle), zap.Any("tower.X", tower.X), zap.Any("tower.Y", tower.Y), zap.Any("tower.PickupBoundary", tower.PickupBoundary), zap.Any("tower.PickupBoundary.Points", tower.PickupBoundary.Points), zap.Any("tower.WidthInB2World", tower.WidthInB2World), zap.Any("tower.HeightInB2World", tower.HeightInB2World), zap.Any("roomId", pR.Id))
 		var bdDef box2d.B2BodyDef
 		bdDef.Type = box2d.B2BodyType.B2_dynamicBody
 		bdDef = box2d.MakeB2BodyDef()
 		bdDef.Position.Set(tower.PickupBoundary.Anchor.X, tower.PickupBoundary.Anchor.Y)
 
 		b2Body := pR.CollidableWorld.CreateBody(&bdDef)
+    // Logger.Info("Checks#1 `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 
 		pointsCount := len(tower.PickupBoundary.Points)
 
@@ -399,9 +406,12 @@ func (pR *Room) refreshColliders() {
 		for vIndex, v2 := range tower.PickupBoundary.Points {
 			b2Vertices[vIndex] = v2.ToB2Vec2()
 		}
+    // Logger.Info("Checks#2 `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 
 		b2PolygonShape := box2d.MakeB2PolygonShape()
+    // Logger.Info("Checks#3 `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 		b2PolygonShape.Set(b2Vertices, pointsCount)
+    // Logger.Info("Checks#4 `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 
 		fd := box2d.MakeB2FixtureDef()
 		fd.Shape = &b2PolygonShape
@@ -409,10 +419,13 @@ func (pR *Room) refreshColliders() {
 		fd.Filter.MaskBits = COLLISION_MASK_FOR_TRAP
 		fd.Density = 0.0
 		b2Body.CreateFixtureFromDef(&fd)
+    // Logger.Info("Checks#5 `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 
 		tower.CollidableBody = b2Body
 		b2Body.SetUserData(tower)
+    // Logger.Info("Ends `refreshColliders` for single tower:", zap.Any("k-th", k), zap.Any("tower", tower), zap.Any("roomId", pR.Id))
 	}
+  Logger.Info("Ends `refreshColliders` for towers:", zap.Any("roomId", pR.Id))
 
 	listener := RoomBattleContactListener{
 		name: "TreasureHunterX",
@@ -563,7 +576,7 @@ func (pR *Room) ChooseStage() error {
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-	pR.StageName = "pacman" // Hardcoded temporarily. -- YFLu
+	pR.StageName = "richsoil" /* ["pacman", "richsoil"] */ // Hardcoded temporarily. -- YFLu
 
 	relativePathForAllStages := "../frontend/assets/resources/map"
 	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, pR.StageName)
@@ -728,6 +741,7 @@ func (pR *Room) StartBattle() {
 
 		BULLET_MAX_DIST := 600.0 //移动600个像素点距离后消失
 
+    Logger.Info("The `battleMainLoop` is started for:", zap.Any("roomId", pR.Id))
 		for {
 			if totalElapsedNanos > pR.BattleDurationNanos {
 				pR.StopBattleForSettlement()

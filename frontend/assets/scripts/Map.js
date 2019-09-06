@@ -532,6 +532,7 @@ cc.Class({
           return;
         }
         
+        mapNode.removeAllChildren();
         tiledMapIns.tmxAsset = tmxAsset;
         const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
         tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);

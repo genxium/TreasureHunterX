@@ -117,7 +117,7 @@ window.getOrCreateSpriteFrameForGid = function(gid, tiledMapInfo, tilesElListUnd
   var offset = cc.v2(targetTileset._tileSize.width * col, targetTileset._tileSize.height * row);
   var origSize = targetTileset._tileSize;
   var rect = cc.rect(offset.x, offset.y, origSize.width, origSize.height);
-  var sf = new cc.SpriteFrame(targetTileset.sourceImage, rect, false /* rotated */ , offset, origSize);
+  var sf = new cc.SpriteFrame(targetTileset.sourceImage, rect, false /* rotated */ , cc.v2() /* DON'T use `offset` here or you will have an offsetted image from the `cc.Sprite.node.anchor`. */, origSize);
   const data = {
     origSize: targetTileset._tileSize,
     spriteFrame: sf,
@@ -176,7 +176,7 @@ window.getOrCreateAnimationClipForGid = function(gid, tiledMapInfo, tilesElListU
     var offset = cc.v2(targetTileset._tileSize.width*col, targetTileset._tileSize.height*row);
     var origSize = targetTileset._tileSize;
     var rect = cc.rect(offset.x, offset.y, origSize.width, origSize.height);
-    var sf = new cc.SpriteFrame(targetTileset.sourceImage, rect, false /* rotated */, offset, origSize);
+    var sf = new cc.SpriteFrame(targetTileset.sourceImage, rect, false /* rotated */, cc.v2(), origSize);
     sfList.push(sf);
   } 
   var sampleRate = 1/uniformDurationSecondsPerFrame; // A.k.a. fps.
