@@ -8,6 +8,7 @@ const WECHAT_ON_HIDE_TARGET_ACTION = {
 
 const pbStructRoot = require('./modules/room_downsync_frame_proto_bundle.forcemsg.js');
 window.RoomDownsyncFrame = pbStructRoot.treasurehunterx.RoomDownsyncFrame;
+window.BattleColliderInfo = pbStructRoot.treasurehunterx.BattleColliderInfo;
 
 cc.Class({
   extends: cc.Component,

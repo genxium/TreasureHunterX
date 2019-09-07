@@ -73,13 +73,6 @@ A non-tricky way to make package size always uploadable is to
 - delete the local `<proj-root>/frontend/build/wechatgame/res/`, then
 - upload the residual package files in "微信开发者工具(downloaded from https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)".
 
-For example, given the following context
-```
-/* <proj-root>/frontend/build-templates/wechatgame/game.js */
-
-wxDownloader.REMOTE_SERVER_ROOT = "https://bgmoba.lokcol.com/static/";
-```
-
 ```
 shell> nslookup bgmoba.lokcol.com
 Server:  XiaoQiang
@@ -125,7 +118,11 @@ server {
 }
 ```
 
-, you should upload by the following command(s).
+, you should 
+
+- set `REMOTE_SERVER_ROOT = "https://bgmoba.lokcol.com/static/"` in the build panel
+
+and then upload by the following command(s).
 ```
 shell> scp -r ./frontend/build/wechatgame/res/* ubuntu@bgmoba.lokcol.com:/var/www/html/bgmoba/static/res/
 ```
