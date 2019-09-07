@@ -519,12 +519,12 @@ cc.Class({
 
     self.clientUpsyncFps = 20;
 
-    const tiledMapIns = self.node.getComponent(cc.TiledMap);
-
     window.handleBattleColliderInfo = function(parsedBattleColliderInfo) {
       console.log(parsedBattleColliderInfo);
+
       self.battleColliderInfo = parsedBattleColliderInfo; 
-      
+      const tiledMapIns = self.node.getComponent(cc.TiledMap);
+
       const fullPathOfTmxFile = cc.js.formatStr("map/%s/map", parsedBattleColliderInfo.stageName);
       cc.loader.loadRes(fullPathOfTmxFile, cc.TiledMapAsset, (err, tmxAsset) => {
         if (null != err) {
@@ -532,7 +532,17 @@ cc.Class({
           return;
         }
         
+        /*
+        [WARNING] 
+
+        - The method "BaseNode.removeComponent" is deprecated and won't work as expected!
+        - To ensure clearance, put destruction of the "cc.TiledMap" component preceding that of "mapNode.destroyAllChildren()".
+
+        -- YFLu, 2019-09-07
+        */
+        tiledMapIns.tmxAsset = null;
         mapNode.removeAllChildren();
+
         tiledMapIns.tmxAsset = tmxAsset;
         const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
         tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);

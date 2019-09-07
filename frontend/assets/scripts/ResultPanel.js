@@ -70,22 +70,22 @@ cc.Class({
 
     for (let playerId in playerMetas) {
       const p = playerMetas[playerId];
-      p.id = playerId; //附带上id
+      p.id = playerId;
+      if (null == p.score) {
+        p.score = players[playerId].score;
+      }
+      if (null == p.score) {
+        p.score = 0;
+      }
       sortablePlayers.push(p);
     }
     const sortedPlayers = sortablePlayers.sort((a, b) => {
-      if (a.score == null) { //为null的必定排后面
-        return 1;
-      } else if (b.score == null) { //为null的必定排后面
-        return -1;
+      if (a.score != b.score) {
+        return (b.score - a.score);
       } else {
-        if (a.score < b.score) { //分数大的排前面
-          return 1;
-        } else {
-          return -1;
-        }
+        return (a.id > b.id);
       }
-    })
+    });
 
     const selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
     for (let k in sortedPlayers) {
@@ -103,7 +103,7 @@ cc.Class({
         }
       })();
 
-      if (selfPlayerInfo.playerId == p.id) { //如果不是第一名就不显示WIN字样
+      if (selfPlayerInfo.playerId == p.id) {
         const rank = k + 1;
         if (rank != 1 && null != self.winNode) {
           self.winNode.active = false;

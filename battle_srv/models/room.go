@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/xml"
+  "math/rand"
 	"fmt"
 	"github.com/ByteArena/box2d"
 	"github.com/golang/protobuf/proto"
@@ -580,7 +581,10 @@ func (pR *Room) ChooseStage() error {
 	pwd, err := os.Getwd()
 	ErrFatal(err)
 
-	pR.StageName = "richsoil" /* ["pacman", "richsoil"] */ // Hardcoded temporarily. -- YFLu
+  rand.Seed(time.Now().Unix())
+  stageNameList := []string{"pacman", "richsoil"} // Hardcoded temporarily. -- YFLu
+  chosenStageIndex := rand.Int() % len(stageNameList)
+	pR.StageName = stageNameList[chosenStageIndex]
 
 	relativePathForAllStages := "../frontend/assets/resources/map"
 	relativePathForChosenStage := fmt.Sprintf("%s/%s", relativePathForAllStages, pR.StageName)
