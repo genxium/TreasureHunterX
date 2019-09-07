@@ -353,6 +353,8 @@ cc.Class({
         node.active = true;
       }
     }
+
+    // Clearing previous info of otherPlayers. [BEGINS]
     if (self.otherPlayerNodeDict) {
       for (let i in self.otherPlayerNodeDict) {
         let node = self.otherPlayerNodeDict[i];
@@ -361,9 +363,33 @@ cc.Class({
         }
       }
     }
+    self.otherPlayerCachedDataDict = {};
+    self.otherPlayerNodeDict = {};
+    // Clearing previous info of otherPlayers. [ENDS]
+
+    // Clearing previous info of selfPlayer. [BEGINS]
     if (self.selfPlayerNode && self.selfPlayerNode.parent) {
       self.selfPlayerNode.parent.removeChild(self.selfPlayerNode);
     }
+    self.selfPlayerNode = null;
+    self.selfPlayerScriptIns = null;
+    self.selfPlayerInfo = null;
+    // Clearing previous info of selfPlayer. [ENDS]
+
+    // Clearing previous info of towers. [BEGINS]
+    if (self.guardTowerNodeDict) {
+      for (let i in self.guardTowerNodeDict) {
+        let node = self.guardTowerNodeDict[i];
+        if (node.parent) {
+          node.parent.removeChild(node);
+        }
+      }
+    }
+    self.guardTowerInfoDict = {};
+    self.guardTowerNodeDict = {};
+    // Clearing previous info of towers. [ENDS]
+
+    // Clearing previous info of treasures. [BEGINS]
     if (self.treasureNodeDict) {
       for (let i in self.treasureNodeDict) {
         let node = self.treasureNodeDict[i];
@@ -372,6 +398,11 @@ cc.Class({
         }
       }
     }
+    self.treasureInfoDict = {};
+    self.treasureNodeDict = {};
+    // Clearing previous info of treasures. [ENDS]
+
+    // Clearing previous info of bullets. [BEGINS]
     if (self.trapBulletNodeDict) {
       for (let i in self.trapBulletNodeDict) {
         let node = self.trapBulletNodeDict[i];
@@ -380,6 +411,11 @@ cc.Class({
         }
       }
     }
+    self.trapBulletInfoDict = {};
+    self.trapBulletNodeDict = {};
+    // Clearing previous info of bullets. [ENDS]
+
+    // Clearing previous info of traps. [BEGINS]
     if (self.trapNodeDict) {
       for (let i in self.trapNodeDict) {
         let node = self.trapNodeDict[i];
@@ -388,7 +424,11 @@ cc.Class({
         }
       }
     }
+    self.trapInfoDict = {};
+    self.trapNodeDict = {};
+    // Clearing previous info of traps. [BEGINS]
 
+    // Clearing previous info of speedShoes. [BEGINS]
     if (self.speedShoeNodeDict) {
       for (let i in self.speedShoeNodeDict) {
         let node = self.speedShoeNodeDict[i];
@@ -397,6 +437,9 @@ cc.Class({
         }
       }
     }
+    self.speedShoeInfoDict = {};
+    self.speedShoeNodeDict = {};
+    // Clearing previous info of speedShoes. [ENDS]
 
     if (self.upsyncLoopInterval) {
       clearInterval(self.upsyncLoopInterval);
@@ -408,24 +451,11 @@ cc.Class({
     self.recentFrameCache = {};
     self.recentFrameCacheCurrentSize = 0;
     self.recentFrameCacheMaxCount = 2048;
-    self.selfPlayerNode = null;
-    self.selfPlayerScriptIns = null;
-    self.selfPlayerInfo = null;
     self.upsyncLoopInterval = null;
     self.transitToState(ALL_MAP_STATES.VISUAL);
 
     self.battleState = ALL_BATTLE_STATES.WAITING;
 
-    self.otherPlayerCachedDataDict = {};
-    self.otherPlayerNodeDict = {};
-    self.treasureInfoDict = {};
-    self.treasureNodeDict = {};
-    self.trapInfoDict = {};
-    self.trapBulletInfoDict = {};
-    self.trapBulletNodeDict = {};
-    self.trapNodeDict = {};
-    self.towerNodeDict = {};
-    self.speedShoeNodeDict = {};
     if (self.findingPlayerNode) {
       const findingPlayerScriptIns = self.findingPlayerNode.getComponent("FindingPlayer");
       findingPlayerScriptIns.init();
@@ -534,27 +564,26 @@ cc.Class({
         
         /*
         [WARNING] 
-
-        - The method "BaseNode.removeComponent" is deprecated and won't work as expected!
+        
+        - The order of the following statements is important, because we should have finished "_resetCurrentMatch" before the first "RoomDownsyncFrame". 
+        - It's important to assign new "tmxAsset" before "extractBoundaryObjects => initMapNodeByTiledBoundaries", to ensure that the correct tilesets are used.
         - To ensure clearance, put destruction of the "cc.TiledMap" component preceding that of "mapNode.destroyAllChildren()".
 
         -- YFLu, 2019-09-07
+
         */
+
         tiledMapIns.tmxAsset = null;
         mapNode.removeAllChildren();
+        self._resetCurrentMatch(); // Will set "self.selfPlayerInfo" and remove the residual nodes of previous battle within. 
 
         tiledMapIns.tmxAsset = tmxAsset;
+        const newMapSize = tiledMapIns.getMapSize();
+        const newTileSize = tiledMapIns.getTileSize();
+        self.node.setContentSize(newMapSize.width*newTileSize.width, newMapSize.height*newTileSize.height);
+        self.node.setPosition(cc.v2(0, 0));
         const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
         tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
-
-        /*
-        [WARNING] 
-        
-        The order of the following statements is important, because we should have finished "_resetCurrentMatch" before the first "RoomDownsyncFrame". 
-
-        -- YFLu, 2019-09-05
-        */
-        self._resetCurrentMatch(); // Will set "self.selfPlayerInfo" within. 
 
         self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
         Object.assign(self.selfPlayerInfo, {
@@ -1119,7 +1148,7 @@ cc.Class({
           towerInfo.x,
           towerInfo.y
         );
-        let targetNode = self.towerNodeDict[localIdInBattle];
+        let targetNode = self.guardTowerNodeDict[localIdInBattle];
         if (!targetNode) {
           targetNode = cc.instantiate(self.guardTowerPrefab);
           const theSpriteComp = targetNode.getComponent(cc.Sprite); 
@@ -1137,7 +1166,7 @@ cc.Class({
           for (let p of theBattleColliderInfoFromRemote.Points) {
             guardTowerNodePolygonColliderScriptIns.points.push(p);
           }
-          self.towerNodeDict[localIdInBattle] = targetNode;
+          self.guardTowerNodeDict[localIdInBattle] = targetNode;
           targetNode.setPosition(newPos);
           safelyAddChild(mapNode, targetNode);
           setLocalZOrder(targetNode, 5);

@@ -6,14 +6,14 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
+	"fmt"
+	"github.com/ByteArena/box2d"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"math"
 	. "server/common"
 	"strconv"
 	"strings"
-  "fmt"
-	"github.com/ByteArena/box2d"
 )
 
 const (
@@ -188,11 +188,11 @@ func TmxPolylineToPolygon2DInB2World(pTmxMapIns *TmxMap, singleObjInTmxFile *Tmx
 	}
 
 	singleValueArray := strings.Split(targetPolyline.Points, " ")
-  pointsCount := len(singleValueArray)
+	pointsCount := len(singleValueArray)
 
-  if pointsCount >= box2d.B2_maxPolygonVertices {
-    return nil, errors.New(fmt.Sprintf("During `TmxPolylineToPolygon2DInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
-  }
+	if pointsCount >= box2d.B2_maxPolygonVertices {
+		return nil, errors.New(fmt.Sprintf("During `TmxPolylineToPolygon2DInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
+	}
 
 	theUntransformedAnchor := &Vec2D{
 		X: singleObjInTmxFile.X,
@@ -240,11 +240,11 @@ func TsxPolylineToOffsetsWrtTileCenterInB2World(pTmxMapIns *TmxMap, singleObjInT
 	offsetFromTopLeftInTileLocalCoordY := singleObjInTsxFile.Y
 
 	singleValueArray := strings.Split(targetPolyline.Points, " ")
-  pointsCount := len(singleValueArray)
+	pointsCount := len(singleValueArray)
 
-  if pointsCount >= box2d.B2_maxPolygonVertices {
-    return nil, errors.New(fmt.Sprintf("During `TsxPolylineToOffsetsWrtTileCenterInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
-  }
+	if pointsCount >= box2d.B2_maxPolygonVertices {
+		return nil, errors.New(fmt.Sprintf("During `TsxPolylineToOffsetsWrtTileCenterInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
+	}
 
 	thePolygon2DFromPolyline := &Polygon2D{
 		Anchor:     nil,
@@ -317,9 +317,9 @@ func DeserializeTsxToColliderDict(pTmxMapIns *TmxMap, byteArrOfTsxFile []byte, f
 		*/
 
 		theObjGroup := tile.ObjectGroup
-    if nil == theObjGroup {
-      continue
-    }
+		if nil == theObjGroup {
+			continue
+		}
 		for _, singleObj := range theObjGroup.Objects {
 			if nil == singleObj.Polyline {
 				// Temporarily omit those non-polyline-containing objects.

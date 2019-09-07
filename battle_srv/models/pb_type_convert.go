@@ -48,10 +48,10 @@ func ToPbStrToBattleColliderInfo(stageName string, modelInstance1 StrToVec2DList
 		StageName:             stageName,
 		StrToVec2DListMap:     make(map[string]*pb.Vec2DList, 0),
 		StrToPolygon2DListMap: make(map[string]*pb.Polygon2DList, 0),
-    StageDiscreteW:          stageDiscreteW,
-    StageDiscreteH:          stageDiscreteH,
-    StageTileW:              stageTileW,
-    StageTileH:              stageTileH,
+		StageDiscreteW:        stageDiscreteW,
+		StageDiscreteH:        stageDiscreteH,
+		StageTileW:            stageTileW,
+		StageTileH:            stageTileH,
 	}
 	for k, v := range modelInstance1 {
 		toRet.StrToVec2DListMap[k] = toPbVec2DList(v)

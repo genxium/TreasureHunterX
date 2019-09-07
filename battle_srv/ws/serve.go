@@ -234,12 +234,12 @@ func Serve(c *gin.Context) {
 		return
 	}
 
-  theBattleColliderInfoStr := ""
+	theBattleColliderInfoStr := ""
 	if pThePlayer, ok := pRoom.Players[int32(playerId)]; ok && (models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState) {
 		defer func() {
 			timeoutSeconds := time.Duration(5)
 			time.AfterFunc(timeoutSeconds*time.Second, func() {
-				if (models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState) {
+				if models.PlayerBattleStateIns.ADDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState || models.PlayerBattleStateIns.READDED_PENDING_BATTLE_COLLIDER_ACK == pThePlayer.BattleState {
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, fmt.Sprintf("The expected Ack for BattleColliderInfo is not received in %s seconds, for playerId == %v!", timeoutSeconds, playerId))
 				}
 			})
@@ -261,10 +261,10 @@ func Serve(c *gin.Context) {
 		EchoedMsgId: int32(0),
 		Act:         "HeartbeatRequirements",
 		Data: struct {
-			IntervalToPing        int `json:"intervalToPing"`
-			WillKickIfInactiveFor int `json:"willKickIfInactiveFor"`
-			BoundRoomId           int `json:"boundRoomId"`
-      BattleColliderInfo    []byte `json:"battleColliderInfo"`
+			IntervalToPing        int    `json:"intervalToPing"`
+			WillKickIfInactiveFor int    `json:"willKickIfInactiveFor"`
+			BoundRoomId           int    `json:"boundRoomId"`
+			BattleColliderInfo    []byte `json:"battleColliderInfo"`
 		}{Constants.Ws.IntervalToPing, Constants.Ws.WillKickIfInactiveFor, int(pRoom.Id), []byte(theBattleColliderInfoStr)},
 	}
 
