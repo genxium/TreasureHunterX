@@ -1,129 +1,334 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="isometric" renderorder="right-down" width="46" height="46" tilewidth="256" tileheight="128" infinite="0" nextlayerid="19" nextobjectid="167">
- <tileset firstgid="1" source="Tile_W256_H256_S01.tsx"/>
- <tileset firstgid="21" source="Tile_W256_H256_S02.tsx"/>
- <layer id="11" name="GroundFloor" width="46" height="46">
+<map version="1.2" tiledversion="1.2.3" orientation="isometric" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="11" nextobjectid="213">
+ <tileset firstgid="1" source="Tile_W64_H64_S01.tsx"/>
+ <tileset firstgid="17" source="Tile_W300_H300_S01.tsx"/>
+ <layer id="1" name="GroundFloor" width="50" height="50" locked="1">
   <data encoding="base64" compression="zlib">
-   eJztmNsOAyEIRNXem97+/2urSU0MEbs2A9XIwzwtuocJLrjBORdMJpPJtIyeUZeKHhtiaJwWW9I+alfRuVh/ZWJoHJqZY2tpK/dJyPfWOxHcUvxa3Oi6eUUdmHd4sLLv0p570P6h4NbwfHRuzvMZuGuez8Bd83wWbur5LNyZ/fbRyNypz3PfUzR39uPesYZ7lmo692AqNDdyTatHo7mR88m3Po/ktj4/L3fr3jAyt+a5NG7974nN33y9SNzTJObvPD9wdYOS1D+VMgcujyOJaYmuR/bMWj1yefTMdNz5kfIceSZruffk/U9uLRn3etzoO5JxG/cq3P7H/bfu/QamEBWW
+   eJztz0ENACAMALGR4F8zNspyjwronZm7xPlcD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPSw9LD0sPy7bHBg/ldQwR
   </data>
  </layer>
- <layer id="13" name="FirstFloor" width="46" height="46">
-  <data encoding="base64" compression="zlib">
-   eJztmdEKwyAMRfsXjv7/h449CEWSNNFrvMoOlIHdktMsWtddl8xtHNb7NKx4nhhW7DaHRAk6eK9Lyh/5bCR+SxHyIvB6M+LpQUbevFmR1oP6ankX41wP0XjWOsaM5o3kA473Q+uTmTkRvHkzot2nmdH6mGlOSmtMpjdyjuxQb4mIN9OaYnkzs5t3uyduiXij9ygedqv3k6g3y/xE1zvruk7rEzZ36Xvs3X+vWEueZPxumMHfO5dTvOsYm7tnTaljbO4t1rNaZvcTnxHW82zuXic294gLwh21P4i6MNU96oF0H9mz9zr0+ve6tj02UruVfTOad5U7Iifi/0JtTOsrVL2y647MleU+I8+ddMwge55+AUD0Fwk=
-  </data>
- </layer>
- <objectgroup id="14" name="PlayerStartingPos">
-  <object id="104" x="1310" y="4034">
+ <objectgroup id="2" name="PlayerStartingPos" locked="1">
+  <object id="135" x="320" y="2884">
    <point/>
   </object>
-  <object id="105" x="3752" y="1312">
+  <object id="137" x="2876" y="320">
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="15" name="Barrier">
+ <layer id="3" name="FirsrtFloor" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztWctuBCEMW7Vqt9v2/7+32gMSQnnYTmB6WB+ZwZmEkHHgdnuBxe8/5WLwcyHXuzH2ccAuw5Wty3j/bjyzxlC7M9iYrFxZfNbnqi/IOqAxqfow8AWOoXZmZL58k9xvzrg1L+JS9oO6LijfCR882yvWdUH5rG+KuBgfrFo42+7CJ/m+l5MWoloYjZ+CUsN2+OLVc0YDRPa9nNzhC7LPs//Xo8FuNs5wRvt2Rw7v8AXZ5zty2FvL3Xsf4e+qsVf60l1jq754MR2w8qFSY6MaqdSRJ7KYRnNWIL509iseZ4de93TyHZirwOOM1lXtC6JnSg+K2FPnVHSysr9P+4Dq8a5+Wp2jcHq5FPWgFXuZXu/sqxCuHX1cR+1BtN4A0y96/ycldiu8XOquxWhNOZ1LDFA+RCdn/4OOeFjw9nLl/5TVUPZ8YIX3bSd6z26w33zKl0xzM/xd2hvhnKFo7ox/h/ZmtOcpXzp1q6K5PXjfjPSAKJcF9jwXQdd9B8q1E8pZYUW3zlBqVYSOPRatm1XjKrUqQsUXties1qqs9kd8im5l7ovQnOzYr0wuWc+YOz7kvcq6ILkU9ZOqhmfvdj17M6rn3ayGV30YUM8qB6qxeIK9n96FaixmXOVDJ3bomRc4/AGscghn
+  </data>
+ </layer>
+ <objectgroup id="7" name="HighScoreTreasure">
+  <object id="172" gid="16" x="1736" y="708" width="64" height="64"/>
+  <object id="173" gid="16" x="2284" y="768" width="64" height="64"/>
+  <object id="170" gid="16" x="916" y="1608" width="64" height="64"/>
+  <object id="171" gid="16" x="1166" y="2674" width="64" height="64"/>
+  <object id="199" gid="16" x="2536.36" y="2533.7" width="64" height="64"/>
+  <object id="200" gid="16" x="2812.12" y="3045.82" width="64" height="64"/>
+  <object id="201" gid="16" x="3033.33" y="2824.61" width="64" height="64"/>
+  <object id="202" gid="16" x="2093.94" y="1467.03" width="64" height="64"/>
+  <object id="203" gid="16" x="654.545" y="664" width="64" height="64"/>
+  <object id="204" gid="16" x="172.727" y="376.121" width="64" height="64"/>
+  <object id="205" gid="16" x="360.606" y="176.121" width="64" height="64"/>
+ </objectgroup>
+ <objectgroup id="4" name="Barrier" locked="1">
   <properties>
    <property name="type" value="barrier_and_shelter"/>
   </properties>
-  <object id="103" x="-216" y="3488">
+  <object id="1" x="234" y="730">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
+   <polyline points="0,0 -74,78 178,330 250,258"/>
   </object>
-  <object id="106" x="-168" y="3560">
+  <object id="2" x="804" y="156">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
+   <polyline points="0,0 -74,78 178,330 250,258"/>
   </object>
-  <object id="107" x="-230" y="3518">
+  <object id="3" x="230" y="410">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 2552,2504 3028,2476 150,-326"/>
+   <polyline points="250,-258 -74,78 178,330 504,0"/>
   </object>
-  <object id="108" x="-340" y="3508">
+  <object id="4" x="2470" y="2650">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 630,610 616,624 1194,-3762 -56,-3784"/>
+   <polyline points="250,-258 -74,78 178,330 504,0"/>
   </object>
-  <object id="109" x="-184" y="-136">
+  <object id="5" x="1082.23" y="1537.08">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 4,452 6116,524 6088,-72"/>
+   <polyline points="548.339,-547.082 -94.2284,95.4898 230.657,408.918 867.772,-230"/>
   </object>
-  <object id="110" x="1586" y="5406">
+  <object id="6" x="1188" y="604">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 402,582 4556,708 4516,-36 250,-106"/>
+   <polyline points="0,0 -74,78 178,330 250,258"/>
   </object>
-  <object id="111" x="4958" y="-342">
+  <object id="7" x="889.741" y="770">
    <properties>
     <property name="boundary_type" value="barrier"/>
    </properties>
-   <polyline points="0,0 294,6626 1488,6640 1138,70"/>
+   <polyline points="-26,22 -93.7407,98.1818 283.593,478 358.259,416.909"/>
+  </object>
+  <object id="8" x="691.741" y="1088">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-18,30 -93.7407,98.1818 169.593,356 238.259,288.909"/>
+  </object>
+  <object id="9" x="311.741" y="1916">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-22,30 -93.7407,98.1818 867.593,1062 938.259,992.909"/>
+  </object>
+  <object id="10" x="629.741" y="1854">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-22,30 -93.7407,98.1818 361.593,548 430.259,480.909"/>
+  </object>
+  <object id="11" x="1015.74" y="1852">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 329.593,512 396.259,450.909"/>
+  </object>
+  <object id="12" x="1973.74" y="514">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 355.593,538 424.259,474.909"/>
+  </object>
+  <object id="13" x="2041.74" y="194">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 865.593,1048 934.259,992.909"/>
+  </object>
+  <object id="14" x="1975.74" y="896">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 317.593,508 382.259,440.909"/>
+  </object>
+  <object id="15" x="1917.74" y="1798">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 285.593,472 352.259,402.909"/>
+  </object>
+  <object id="16" x="1399.74" y="2564">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 228.259,278.909"/>
+  </object>
+  <object id="17" x="1595.74" y="2372">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="18" x="1791.74" y="2184">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="19" x="2301.74" y="1670">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="20" x="2489.74" y="1478">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="21" x="2683.74" y="1284">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="22" x="2109.74" y="2690">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="23" x="2809.74" y="1986">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-26,26 -93.7407,98.1818 161.593,348 226.259,280.909"/>
+  </object>
+  <object id="41" x="1069.7" y="415.152">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -66.6667,-72.7273 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="42" x="684.848" y="793.939">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -66.6667,-72.7273 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="43" x="360.606" y="1560.61">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="381.818,-375.758 309.091,-442.424 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="44" x="1445.45" y="475.758">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="381.818,-375.758 309.091,-442.424 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="45" x="354.545" y="2778.79">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="136.364,-130.303 63.6364,-190.909 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="46" x="481.818" y="2906.06">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="136.364,-130.303 63.6364,-190.909 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="47" x="2915.15" y="224.242">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="136.364,-130.303 63.6364,-190.909 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="48" x="3048.48" y="351.515">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="136.364,-130.303 63.6364,-190.909 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="49" x="869.697" y="1754.55">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-3.0303,-3.0303 -66.6667,-66.6667 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="50" x="2021.21" y="609.091">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="-3.0303,-3.0303 -66.6667,-66.6667 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="51" x="2406.06" y="1309.09">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="118.182,-124.242 57.5758,-184.848 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="52" x="1454.55" y="2266.67">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="118.182,-124.242 57.5758,-184.848 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="53" x="1818.18" y="2648.48">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="200,-193.939 133.333,-260.606 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="54" x="2718.18" y="1754.55">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="200,-193.939 133.333,-260.606 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="55" x="2342.42" y="2596.97">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="60.6061,-72.7273 3.0303,-136.364 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="56" x="2793.94" y="2151.52">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="60.6061,-72.7273 3.0303,-136.364 -330.303,196.97 -266.667,260.606"/>
+  </object>
+  <object id="57" x="69.697" y="57.5758">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -78.7879,-1.27898e-13 -66.6667,3121.21 1.13687e-13,3121.21"/>
+  </object>
+  <object id="59" x="3200" y="66.6667">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -6.06061,-78.7879 -3215.15,-81.8182 -3221.21,9.09091"/>
+  </object>
+  <object id="60" x="3203.03" y="3221.21">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -6.06061,-78.7879 -3215.15,-81.8182 -3221.21,9.09091"/>
+  </object>
+  <object id="61" x="3209.09" y="27.2727">
+   <properties>
+    <property name="boundary_type" value="barrier"/>
+   </properties>
+   <polyline points="0,0 -78.7879,-1.27898e-13 -66.6667,3121.21 1.13687e-13,3121.21"/>
   </object>
  </objectgroup>
- <objectgroup id="16" name="LowScoreTreasure">
-  <object id="144" gid="21" x="1342" y="1786" width="256" height="256"/>
-  <object id="145" gid="21" x="1186" y="2158" width="256" height="256"/>
-  <object id="146" gid="21" x="2714" y="3198" width="256" height="256"/>
-  <object id="147" gid="21" x="2616" y="3680" width="256" height="256"/>
-  <object id="148" gid="21" x="3172" y="3676" width="256" height="256"/>
-  <object id="149" gid="21" x="3526" y="3498" width="256" height="256"/>
-  <object id="150" gid="21" x="3834" y="3150" width="256" height="256"/>
-  <object id="151" gid="21" x="2826" y="2318" width="256" height="256"/>
-  <object id="152" gid="21" x="2960" y="3056" width="256" height="256"/>
-  <object id="153" gid="21" x="3336" y="2752" width="256" height="256"/>
-  <object id="154" gid="21" x="1730" y="2294" width="256" height="256"/>
-  <object id="155" gid="21" x="1480" y="632" width="256" height="256"/>
-  <object id="156" gid="21" x="1116" y="1100" width="256" height="256"/>
-  <object id="157" gid="21" x="3952" y="2528" width="256" height="256"/>
-  <object id="158" gid="21" x="4942" y="3562" width="256" height="256"/>
-  <object id="159" gid="21" x="5032" y="2896" width="256" height="256"/>
-  <object id="160" gid="21" x="2606" y="722" width="256" height="256"/>
-  <object id="161" gid="21" x="3026" y="710" width="256" height="256"/>
-  <object id="162" gid="21" x="1828" y="740" width="256" height="256"/>
-  <object id="163" gid="21" x="1678" y="890" width="256" height="256"/>
-  <object id="164" gid="21" x="1060" y="1324" width="256" height="256"/>
-  <object id="165" gid="21" x="4606" y="2242" width="256" height="256"/>
-  <object id="166" gid="21" x="3848" y="1936" width="256" height="256"/>
+ <objectgroup id="5" name="LowScoreTreasure">
+  <object id="165" gid="13" x="1520" y="204" width="64" height="64"/>
+  <object id="166" gid="13" x="1372" y="352" width="64" height="64"/>
+  <object id="167" gid="13" x="1184" y="524" width="64" height="64"/>
+  <object id="168" gid="13" x="544" y="1184" width="64" height="64"/>
+  <object id="169" gid="13" x="294" y="1442" width="64" height="64"/>
+  <object id="174" gid="16" x="2750" y="1234" width="64" height="64"/>
+  <object id="175" gid="13" x="1562" y="1990" width="64" height="64"/>
+  <object id="176" gid="13" x="1846" y="1718" width="64" height="64"/>
+  <object id="177" gid="13" x="906" y="2438" width="64" height="64"/>
+  <object id="178" gid="13" x="638" y="2186" width="64" height="64"/>
+  <object id="179" gid="13" x="378" y="1878" width="64" height="64"/>
+  <object id="180" gid="13" x="580" y="1672" width="64" height="64"/>
+  <object id="181" gid="13" x="1518" y="634" width="64" height="64"/>
+  <object id="182" gid="13" x="1818" y="410" width="64" height="64"/>
+  <object id="183" gid="13" x="2308" y="360" width="64" height="64"/>
+  <object id="184" gid="13" x="2524" y="576" width="64" height="64"/>
+  <object id="186" gid="13" x="2726" y="790" width="64" height="64"/>
+  <object id="187" gid="13" x="2928" y="972" width="64" height="64"/>
+  <object id="192" gid="13" x="1484.85" y="3064" width="64" height="64"/>
+  <object id="193" gid="13" x="1972.73" y="3048.85" width="64" height="64"/>
+  <object id="194" gid="13" x="2006.06" y="2664" width="64" height="64"/>
+  <object id="195" gid="13" x="312.121" y="2291.27" width="64" height="64"/>
+  <object id="196" gid="13" x="503.03" y="2488.24" width="64" height="64"/>
+  <object id="197" gid="13" x="606.061" y="3076.12" width="64" height="64"/>
+  <object id="198" gid="13" x="833.333" y="2842.79" width="64" height="64"/>
+  <object id="206" gid="13" x="2612.12" y="2064" width="64" height="64"/>
+  <object id="207" gid="13" x="3030.3" y="1985.21" width="64" height="64"/>
  </objectgroup>
- <objectgroup id="17" name="HighScoreTreasure">
-  <object id="125" gid="22" x="1926" y="4586" width="256" height="256"/>
-  <object id="126" gid="22" x="2274" y="4990" width="256" height="256"/>
-  <object id="127" gid="22" x="1326" y="3410" width="256" height="256"/>
-  <object id="128" gid="22" x="704" y="3696" width="256" height="256"/>
-  <object id="129" gid="22" x="1520" y="2944" width="256" height="256"/>
-  <object id="130" gid="22" x="886" y="3058" width="256" height="256"/>
-  <object id="131" gid="22" x="3120" y="4968" width="256" height="256"/>
-  <object id="132" gid="22" x="2584" y="4504" width="256" height="256"/>
-  <object id="133" gid="22" x="4344" y="4472" width="256" height="256"/>
-  <object id="134" gid="22" x="4504" y="4208" width="256" height="256"/>
-  <object id="135" gid="22" x="3490" y="1982" width="256" height="256"/>
-  <object id="136" gid="22" x="4068" y="2916" width="256" height="256"/>
-  <object id="137" gid="22" x="4578" y="3150" width="256" height="256"/>
-  <object id="138" gid="22" x="2326" y="762" width="256" height="256"/>
-  <object id="139" gid="22" x="2276" y="1348" width="256" height="256"/>
-  <object id="140" gid="22" x="3366" y="2418" width="256" height="256"/>
-  <object id="141" gid="22" x="4526" y="2586" width="256" height="256"/>
-  <object id="142" gid="22" x="4586" y="1174" width="256" height="256"/>
-  <object id="143" gid="22" x="4126" y="666" width="256" height="256"/>
- </objectgroup>
- <objectgroup id="18" name="GuardTower">
-  <object id="112" gid="25" x="904" y="3384" width="256" height="256"/>
-  <object id="113" gid="25" x="1714" y="4158" width="256" height="256"/>
-  <object id="114" gid="25" x="2734" y="5074" width="256" height="256"/>
-  <object id="115" gid="25" x="2180" y="3324" width="256" height="256"/>
-  <object id="116" gid="25" x="3108" y="4076" width="256" height="256"/>
-  <object id="117" gid="25" x="4634" y="4934" width="256" height="256"/>
-  <object id="118" gid="25" x="1094" y="1690" width="256" height="256"/>
-  <object id="119" gid="25" x="2004" y="884" width="256" height="256"/>
-  <object id="120" gid="25" x="2956" y="892" width="256" height="256"/>
-  <object id="121" gid="25" x="3488" y="624" width="256" height="256"/>
-  <object id="122" gid="25" x="4798" y="2626" width="256" height="256"/>
-  <object id="123" gid="25" x="4842" y="4494" width="256" height="256"/>
-  <object id="124" gid="25" x="4632" y="3624" width="256" height="256"/>
+ <objectgroup id="6" name="GuardTower">
+  <object id="188" gid="17" x="1429.33" y="1781.33" width="300" height="300"/>
+  <object id="210" gid="17" x="1784.67" y="1414" width="300" height="300"/>
+  <object id="211" gid="17" x="2786" y="2783.33" width="300" height="300"/>
+  <object id="212" gid="17" x="532.667" y="543.333" width="300" height="300"/>
  </objectgroup>
 </map>

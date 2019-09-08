@@ -1,6 +1,6 @@
 {
   "ver": "2.2.0",
-  "uuid": "9be7f51e-7428-4672-b080-01fc59efe5cd",
+  "uuid": "ad433d85-5c88-4067-b4b7-129be0f54d57",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -8,8 +8,8 @@
   "subMetas": {
     "Tile_W256_H256_S01": {
       "ver": "1.0.4",
-      "uuid": "342e698d-017b-42bc-9d4d-64a0707faced",
-      "rawTextureUuid": "9be7f51e-7428-4672-b080-01fc59efe5cd",
+      "uuid": "6c14c41c-4946-4992-b75d-8b580de43c83",
+      "rawTextureUuid": "ad433d85-5c88-4067-b4b7-129be0f54d57",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

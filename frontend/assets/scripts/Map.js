@@ -122,6 +122,10 @@ cc.Class({
     forceBigEndianFloatingNumDecoding: {
       default: false,
     },
+    backgroundMapTiledIns: {
+      type: cc.TiledMap,
+      default: null
+    },
   },
 
   _generateNewFullFrame: function(refFullFrame, diffFrame) {
@@ -590,12 +594,28 @@ cc.Class({
           id: self.selfPlayerInfo.playerId
         });
 
-        const wrapped = {
-          msgId: Date.now(),
-          act: "PlayerBattleColliderAck",
-          data: {},
-        }
-        window.sendSafely(JSON.stringify(wrapped));
+        const fullPathOfBackgroundMapTmxFile = cc.js.formatStr("map/%s/BackgroundMap/map", parsedBattleColliderInfo.stageName);
+        cc.loader.loadRes(fullPathOfBackgroundMapTmxFile, cc.TiledMapAsset, (err, backgroundMapTmxAsset) => {
+          if (null != err) {
+            console.error(err);
+            return;
+          }
+
+          self.backgroundMapTiledIns.tmxAsset = null;
+          self.backgroundMapTiledIns.node.removeAllChildren();
+          self.backgroundMapTiledIns.tmxAsset = backgroundMapTmxAsset;
+          const newBackgroundMapSize = self.backgroundMapTiledIns.getMapSize();
+          const newBackgroundMapTileSize = self.backgroundMapTiledIns.getTileSize();
+          self.backgroundMapTiledIns.node.setContentSize(newBackgroundMapSize.width*newBackgroundMapTileSize.width, newBackgroundMapSize.height*newBackgroundMapTileSize.height);
+          self.backgroundMapTiledIns.node.setPosition(cc.v2(0, 0));
+
+          const wrapped = {
+            msgId: Date.now(),
+            act: "PlayerBattleColliderAck",
+            data: {},
+          }
+          window.sendSafely(JSON.stringify(wrapped));
+        });
       });
     };
 
