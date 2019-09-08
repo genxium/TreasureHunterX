@@ -25,6 +25,7 @@ window.i18n.languages['en'] = {
   login: {
     "tips": {
       "LOGOUT": 'Logout',
+      "DUPLICATED": 'Login id conflict, please retry',
       "LOGIN_TOKEN_EXPIRED": 'Previous login status expired',
       "PHONE_COUNTRY_CODE_ERR": 'Incorrect phone country code',
       "CAPTCHA_ERR": 'Incorrect format',
@@ -39,7 +40,6 @@ window.i18n.languages['en'] = {
       "WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN": "WeChat authorized, logging in...",
       "WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY": "WeChat login failed, tap the screen to retry",
       "AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN": "Auto login failed, creating manual login button",
-      "WECHAT_LOGIN_AND_INT_AUTH_TOKEN_LOGIN_SUCCEEDED": "WeChat login failed, tap the screen to retry",
       "AUTO_LOGIN_1": "Automatically logging in",
       "AUTO_LOGIN_2": "Automatically logging in...",
     },

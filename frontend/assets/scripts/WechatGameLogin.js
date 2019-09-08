@@ -230,23 +230,24 @@ cc.Class({
       },
       success: function(res) {
         switch (res.ret) {
-          case self.retCodeDict.OK:
+          case constants.RET_CODE.OK:
             self.phoneNumberTips.getComponent(cc.Label).string = '';
             self.captchaTips.getComponent(cc.Label).string = '';
             break;
-          case self.retCodeDict.DUPLICATED:
-            self.phoneNumberTips.getComponent(cc.Label).string = constants.ALERT.TIP_LABEL.LOG_OUT;
+          case constants.RET_CODE.DUPLICATED:
+            self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.DUPLICATED");
             break;
-          case self.retCodeDict.INCORRECT_PHONE_COUNTRY_CODE_OR_NUMBER:
+          case constants.RET_CODE.INCORRECT_PHONE_COUNTRY_CODE:
+          case constants.RET_CODE.INCORRECT_PHONE_NUMBER:
             self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.PHONE_ERR");
             break;
-          case self.retCodeDict.IS_TEST_ACC:
+          case constants.RET_CODE.IS_TEST_ACC:
             self.smsLoginCaptchaInput.getComponent(cc.EditBox).string = res.smsLoginCaptcha;
             self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.TEST_USER");
             timerEnable = false;
             // clearInterval(self.countdownTimer);
             break;
-          case self.retCodeDict.SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY:
+          case constants.RET_CODE.SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY:
             self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.SMS_CAPTCHA_FREEQUENT_REQUIRE");
           default:
             break;
@@ -385,7 +386,7 @@ cc.Class({
   },
   onWechatLoggedIn(res) {
     const self = this;
-    if (res.ret === self.retCodeDict.OK) {
+    if (constants.RET_CODE.OK == res.ret) {
       //根据服务器返回信息设置selfPlayer
       self.enableInteractiveControls(false);
       const date = Number(res.expiresAt);
@@ -402,7 +403,6 @@ cc.Class({
     } else {
       cc.sys.localStorage.removeItem("selfPlayer");
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-      self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret);
 
       self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY") + ", errorCode = " + res.ret);
       self.createAuthorizeThenLoginButton();
@@ -412,7 +412,7 @@ cc.Class({
   onLoggedIn(res) {
     const self = this;
     console.log("OnLoggedIn: ", res);
-    if (res.ret === self.retCodeDict.OK) {
+    if (constants.RET_CODE.OK == res.ret) {
       if (window.isUsingX5BlinkKernelOrWebkitWeChatKernel()) {
         window.initWxSdk = self.initWxSdk.bind(self);
         window.initWxSdk();
@@ -440,29 +440,30 @@ cc.Class({
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.enableInteractiveControls(true);
       switch (res.ret) {
-        case self.retCodeDict.DUPLICATED:
-          this.phoneNumberTips.getComponent(cc.Label).string = constants.ALERT.TIP_LABEL.LOG_OUT;
+        case constants.RET_CODE.DUPLICATED:
+          this.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.DUPLICATED");
           break;
-        case this.retCodeDict.TOKEN_EXPIRED:
-          this.captchaTips.getComponent(cc.Label).string = constants.ALERT.TIP_LABEL.TOKEN_EXPIRED;
+        case constants.RET_CODE.TOKEN_EXPIRED:
+          this.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.LOGIN_TOKEN_EXPIRED");
           break;
-        case this.retCodeDict.SMS_CAPTCHA_NOT_MATCH:
+        case constants.RET_CODE.SMS_CAPTCHA_NOT_MATCH:
           self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.SMS_CAPTCHA_NOT_MATCH");
           break;
-        case this.retCodeDict.INCORRECT_CAPTCHA:
+        case constants.RET_CODE.INCORRECT_CAPTCHA:
           self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.SMS_CAPTCHA_NOT_MATCH");
           break;
-        case this.retCodeDict.SMS_CAPTCHA_CODE_NOT_EXISTING:
+        case constants.RET_CODE.SMS_CAPTCHA_CODE_NOT_EXISTING:
           self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.SMS_CAPTCHA_NOT_MATCH");
           break;
-        case this.retCodeDict.INCORRECT_PHONE_NUMBER:
+        case constants.RET_CODE.INCORRECT_PHONE_NUMBER:
           self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.INCORRECT_PHONE_NUMBER");
           break;
-        case this.retCodeDict.INVALID_REQUEST_PARAM:
+        case constants.RET_CODE.INVALID_REQUEST_PARAM:
           self.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.INCORRECT_PHONE_NUMBER");
           break;
-        case this.retCodeDict.INCORRECT_PHONE_COUNTRY_CODE:
-          this.captchaTips.getComponent(cc.Label).string = constants.ALERT.TIP_LABEL.INCORRECT_PHONE_COUNTRY_CODE;
+        case constants.RET_CODE.INCORRECT_PHONE_COUNTRY_CODE:
+        case constants.RET_CODE.INCORRECT_PHONE_NUMBER:
+          this.captchaTips.getComponent(cc.Label).string = i18n.t("login.tips.INCORRECT_PHONE_NUMBER");
           break;
         default:
           break;
@@ -488,7 +489,13 @@ cc.Class({
         console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
+        self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY") + ", errorMsg =" + errMsg);
+      },
+      timeout: function() {
+        console.log("Login attempt `onLoginButtonClicked` timed out, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
+        cc.sys.localStorage.removeItem("selfPlayer");
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY") + ", errorMsg =" + errMsg);
       },
     });
   },
