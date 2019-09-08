@@ -23,9 +23,26 @@ window.i18n.languages['en'] = {
     mode: "1v1 模式",
   },
   login: {
-    tips: {
-      loginSuccess: "Successfully logged, please wait..."
-    }
+    "tips": {
+      "LOGOUT": 'Logout',
+      "LOGIN_TOKEN_EXPIRED": 'Previous login status expired',
+      "PHONE_COUNTRY_CODE_ERR": 'Incorrect phone country code',
+      "CAPTCHA_ERR": 'Incorrect format',
+      "PHONE_ERR": 'Incorrect phone number format',
+      "SMS_CAPTCHA_FREQUENT_REQUIRE": 'Request too often',
+      "SMS_CAPTCHA_NOT_MATCH": 'Incorrect verification code',
+      "TEST_USER": 'test account',
+      "INCORRECT_PHONE_NUMBER": 'Incorrect phone number',
+      "LOGGED_IN_SUCCESSFULLY": "Logged in successfully, please wait...",
+
+      "PLEASE_AUTHORIZE_WECHAT_LOGIN_FIRST": "Please tap the screen to authorize WeChat login first",
+      "WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN": "WeChat authorized, logging in...",
+      "WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY": "WeChat login failed, tap the screen to retry",
+      "AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN": "Auto login failed, creating manual login button",
+      "WECHAT_LOGIN_AND_INT_AUTH_TOKEN_LOGIN_SUCCEEDED": "WeChat login failed, tap the screen to retry",
+      "AUTO_LOGIN_1": "Automatically logging in",
+      "AUTO_LOGIN_2": "Automatically logging in...",
+    },
   },
   findingPlayer: {
     exit: "Exit",

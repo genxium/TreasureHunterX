@@ -30,11 +30,41 @@ cc.Class({
       default: null,
       type: cc.Label,
     },
+
+    downloadProgress: {
+      default: null,
+      type: cc.ProgressBar,
+    },
+    writtenBytes: {
+      default: null,
+      type: cc.Label,
+    },
+    expectedToWriteBytes: {
+      default: null,
+      type: cc.Label,
+    },
+
+    handlerProgress: {
+      default: null,
+      type: cc.ProgressBar,
+    },
+    handledUrlsCount: {
+      default: null,
+      type: cc.Label,
+    },
+    toHandledUrlsCount: {
+      default: null,
+      type: cc.Label,
+    },
   },
 
   
   // LIFE-CYCLE CALLBACKS:
   onLoad() {
+    wx.onShow((res) => {
+      console.log("+++++ wx onShow(), onShow.res ", res);
+      window.expectedRoomId = res.query.expectedRoomId;
+    });
     wx.onHide((res) => {
       // Reference https://developers.weixin.qq.com/minigame/dev/api/wx.exitMiniProgram.html.
       console.log("+++++ wx onHide(), onHide.res: ", res);
@@ -55,61 +85,54 @@ cc.Class({
     self.getRetCodeList();
     self.getRegexList();
 
-    cc.loader.loadRes("pbfiles/room_downsync_frame", function(err, textAsset /* cc.TextAsset */ ) {
-      if (err) {
-        console.error(err);
-        return;
-      }
+    self.showTips(i18n.t("login.tips.AUTO_LOGIN_1"));
+    self.checkIntAuthTokenExpire().then(
+      () => {
+        self.showTips(i18n.t("login.tips.AUTO_LOGIN_2"));
+        const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
+        self.useTokenLogin(intAuthToken);
+      },
+      () => {
+        // 调用wx.login然后请求登录。
+        wx.authorize({
+          scope: "scope.userInfo",
+          success() {
+            self.showTips(i18n.t("login.tips.WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN"));
+            wx.login({
+              success(res) {
+                console.log("wx login success, res: ", res);
+                const code = res.code;
 
-      self.showTips("自动登录中");
-      self.checkIntAuthTokenExpire().then(
-        () => {
-          self.showTips("   自动登录中...");
-          const intAuthToken = JSON.parse(cc.sys.localStorage.getItem('selfPlayer')).intAuthToken;
-          self.useTokenLogin(intAuthToken);
-        },
-        () => {
-          // 调用wx.login然后请求登录。
-          wx.authorize({
-            scope: "scope.userInfo",
-            success() {
-              self.showTips("授权成功, 登录中...");
-              wx.login({
-                success(res) {
-                  console.log("wx login success, res: ", res);
-                  const code = res.code;
-
-                  wx.getUserInfo({
-                    success(res) {
-                      const userInfo = res.userInfo;
-                      console.log("Get user info ok: ", userInfo);
-                      self.useWxCodeMiniGameLogin(code, userInfo);
-                    },
-                    fail(err) {
-                      console.error("wx.getUserInfo失败, 已获取权限, 可能由于网络原因获取失败: ", err);
-                      self.showTips('点击屏幕授权后登录');
-                      self.createAuthorizeThenLoginButton();
-                    },
-                  })
-                },
-                fail(err) {
-                  if (err) {
-                    console.error("wx.login失败, 已获取权限, 可能由于网络原因获取失败: ", err);
-                    self.showTips('点击屏幕授权后登录');
+                wx.getUserInfo({
+                  success(res) {
+                    const userInfo = res.userInfo;
+                    console.log("Get user info ok: ", userInfo);
+                    self.useWxCodeMiniGameLogin(code, userInfo);
+                  },
+                  fail(err) {
+                    console.error(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"), err);
+                    self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
                     self.createAuthorizeThenLoginButton();
-                  }
-                },
-              });
-            },
-            fail() { //授权失败, 创建授权按钮
-              console.warn('授权失败, 创建授权按钮');
-              self.showTips('点击屏幕授权后登录');
-              self.createAuthorizeThenLoginButton();
-            }
-          })
-        }
-      );
-    });
+                  },
+                })
+              },
+              fail(err) {
+                if (err) {
+                  console.error(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"), err);
+                  self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
+                  self.createAuthorizeThenLoginButton();
+                }
+              },
+            });
+          },
+          fail() {
+            console.error(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"), err);
+            self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
+            self.createAuthorizeThenLoginButton();
+          }
+        })
+      }
+    );
   },
 
   createAuthorizeThenLoginButton(tips) {
@@ -139,25 +162,22 @@ cc.Class({
       console.log(res);
       if (null != res.userInfo) {
         const userInfo = res.userInfo;
-        self.showTips('授权成功, 登录中...');
+        self.showTips(i18n.t("login.tips.WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN"));
 
         wx.login({
           success(res) {
-            console.log('wx.login success, res:');
-            console.log(res);
+            console.log('wx.login success, res:', res);
             const code = res.code;
             self.useWxCodeMiniGameLogin(code, userInfo);
-            //完全登录成功后删除按钮
             button.destroy();
           },
           fail(err) {
-            if (err) {
-              self.showTips('微信登录失败, 点击屏幕重试');
-            }
+            console.err(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"), err);
+            self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
           },
         });
       } else {
-        self.showTips('请先授权');
+        self.showTips(i18n.t("login.tips.PLEASE_AUTHORIZE_WECHAT_LOGIN_FIRST"));
       }
     })
 
@@ -323,7 +343,7 @@ cc.Class({
         console.log("Login attempt `useTokenLogin` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage()
 
-        self.showTips('使用token登录失败, 点击屏幕重试');
+        self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
         self.createAuthorizeThenLoginButton();
       },
       timeout: function() {
@@ -384,7 +404,7 @@ cc.Class({
       window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
       self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorCode = " + res.ret);
 
-      self.showTips('登录失败, 请点击屏幕重试');
+      self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY") + ", errorCode = " + res.ret);
       self.createAuthorizeThenLoginButton();
     }
   },
@@ -448,7 +468,7 @@ cc.Class({
           break;
       }
 
-      self.showTips('登录失败, 点击屏幕重试');
+      self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
       self.createAuthorizeThenLoginButton();
     }
   },
@@ -473,7 +493,7 @@ cc.Class({
     });
   },
 
-  //对比useWxCodeLogin函数只是请求了不同url
+  // 对比useWxCodeLogin函数只是请求了不同url
   useWxCodeMiniGameLogin(_code, _userInfo) {
     const self = this;
     NetworkUtils.ajax({
@@ -491,9 +511,14 @@ cc.Class({
         console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
         cc.sys.localStorage.removeItem("selfPlayer");
         window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-        self.showTips(constants.ALERT.TIP_LABEL.WECHAT_LOGIN_FAILS + ", errorMsg =" + errMsg);
-
-        self.showTips('登录失败, 点击屏幕重试');
+        self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY") + ", errorMsg =" + errMsg);
+        self.createAuthorizeThenLoginButton();
+      },
+      timeout: function() {
+        console.log("Login attempt `onLoginButtonClicked` failed, about to execute `clearBoundRoomIdInBothVolatileAndPersistentStorage`.");
+        cc.sys.localStorage.removeItem("selfPlayer");
+        window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
+        self.showTips(i18n.t("login.tips.WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY"));
         self.createAuthorizeThenLoginButton();
       },
     });
@@ -577,4 +602,20 @@ cc.Class({
       },
     });
   },
+
+  update(dt) {
+    const self = this;
+    if (null != wxDownloader && 0 < wxDownloader.totalBytesExpectedToWriteForAllTasks) {
+      self.writtenBytes.string = wxDownloader.totalBytesWrittenForAllTasks;
+      self.expectedToWriteBytes.string = wxDownloader.totalBytesExpectedToWriteForAllTasks;
+      self.downloadProgress.progress = 1.0*wxDownloader.totalBytesWrittenForAllTasks/wxDownloader.totalBytesExpectedToWriteForAllTasks;
+    }
+    const totalUrlsToHandle = (wxDownloader.immediateHandleItemCount + wxDownloader.immediateReadFromLocalCount + wxDownloader.immediatePackDownloaderCount);
+    const totalUrlsHandled = (wxDownloader.immediateHandleItemCompleteCount + wxDownloader.immediateReadFromLocalCompleteCount + wxDownloader.immediatePackDownloaderCompleteCount);
+    if (null != wxDownloader && 0 < totalUrlsToHandle) {
+      self.handledUrlsCount.string = totalUrlsHandled;
+      self.toHandledUrlsCount.string = totalUrlsToHandle;
+      self.handlerProgress.progress = 1.0*totalUrlsHandled/totalUrlsToHandle;
+    }
+  }
 });

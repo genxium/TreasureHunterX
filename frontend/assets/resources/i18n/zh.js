@@ -23,9 +23,26 @@ window.i18n.languages['zh'] = {
     mode: "1v1 模式",
   },
   login: {
-    tips: {
-      loginSuccess: "登录成功，加载中..."
-    }
+    "tips": {
+      "LOGOUT": '登出',
+      "LOGIN_TOKEN_EXPIRED": '登入状态已过期，请重新登入',
+      "PHONE_COUNTRY_CODE_ERR": '电话号码的国家号不正确',
+      "CAPTCHA_ERR": '格式有误',
+      "PHONE_ERR": '电话号码的格式不对',
+      "SMS_CAPTCHA_FREQUENT_REQUIRE": '请求过于频繁，请稍候再试',
+      "SMS_CAPTCHA_NOT_MATCH": '验证码不正确',
+      "TEST_USER": '测试账号',
+      "INCORRECT_PHONE_NUMBER": '电话号码不正确',
+      "LOGGED_IN_SUCCESSFULLY": "登入成功，正在加载中...",
+
+      "PLEASE_AUTHORIZE_WECHAT_LOGIN_FIRST": "请先点击屏幕进行微信授权登录",
+      "WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN": "微信授权登录成功，正在登入...",
+      "WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY": "微信授权登录失败，请点击屏幕重试",
+      "AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN": "自动登入失败，请点击屏幕空白处手动授权登入...",
+      "WECHAT_LOGIN_AND_INT_AUTH_TOKEN_LOGIN_SUCCEEDED": "微信授权登录失败，请点击屏幕重试",
+      "AUTO_LOGIN_1": "正在自动登入",
+      "AUTO_LOGIN_2": "正在自动登入...",
+    },
   },
   findingPlayer: {
     exit: "退出",
