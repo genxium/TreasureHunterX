@@ -125,7 +125,7 @@ cc.Class({
               },
             });
           },
-          fail() {
+          fail(err) {
             console.error(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"), err);
             self.showTips(i18n.t("login.tips.AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN"));
             self.createAuthorizeThenLoginButton();
