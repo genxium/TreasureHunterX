@@ -54,7 +54,7 @@ type constants struct {
 		SmsCaptchaRequestedTooFrequently                 int    `json:"SMS_CAPTCHA_REQUESTED_TOO_FREQUENTLY"`
 		TradeCreationTooFrequently                       int    `json:"TRADE_CREATION_TOO_FREQUENTLY"`
 		UnknownError                                     int    `json:"UNKNOWN_ERROR"`
-		WecahtServerError                                int    `json:"WECHAT_SERVER_ERROR"`
+		WechatServerError                                int    `json:"WECHAT_SERVER_ERROR"`
 		Comment                                          string `json:"__comment__"`
 	} `json:"RET_CODE"`
 	Ws struct {

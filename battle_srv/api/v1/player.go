@@ -51,7 +51,7 @@ func (p *playerController) GetWechatShareConfig(c *gin.Context) {
 	config, err := utils.WechatIns.GetJsConfig(req.Url)
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
-		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		c.Set(api.RET, Constants.RetCode.WechatServerError)
 		return
 	}
 	resp := struct {
@@ -237,7 +237,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
-		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		c.Set(api.RET, Constants.RetCode.WechatServerError)
 		return
 	}
 
@@ -245,7 +245,7 @@ func (p *playerController) WechatLogin(c *gin.Context) {
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
-		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		c.Set(api.RET, Constants.RetCode.WechatServerError)
 		return
 	}
 	//fserver不会返回openId
@@ -303,18 +303,23 @@ type wechatGameLogin struct {
 func (p *playerController) WechatGameLogin(c *gin.Context) {
 	var req wechatGameLogin
 	err := c.ShouldBindWith(&req, binding.FormPost)
-	api.CErr(c, err)
-	if err != nil || req.Authcode == "" || req.AvatarUrl == "" || req.NickName == "" {
+	if nil != err {
+                Logger.Error("WechatGameLogin got an invalid request param error", zap.Error(err))
 		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
 		return
 	}
+        if "" == req.Authcode {
+                Logger.Warn("WechatGameLogin got an invalid request param", zap.Any("req", req))
+		c.Set(api.RET, Constants.RetCode.InvalidRequestParam)
+		return
+        }
 
 	//baseInfo ResAccessToken 获取用户授权access_token的返回结果
 	baseInfo, err := utils.WechatGameIns.GetOauth2Basic(req.Authcode)
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
-		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		c.Set(api.RET, Constants.RetCode.WechatServerError)
 		return
 	}
 
@@ -327,7 +332,7 @@ func (p *playerController) WechatGameLogin(c *gin.Context) {
 
 	if err != nil {
 		Logger.Info("err", zap.Any("", err))
-		c.Set(api.RET, Constants.RetCode.WecahtServerError)
+		c.Set(api.RET, Constants.RetCode.WechatServerError)
 		return
 	}
 	//fserver不会返回openId
