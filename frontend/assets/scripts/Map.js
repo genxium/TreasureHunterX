@@ -349,14 +349,6 @@ cc.Class({
     const mapNode = self.node;
     const canvasNode = mapNode.parent;
     self.countdownLabel.string = "";
-    if (self.playersNode) {
-      for (let i in self.playersNode) {
-        let node = self.playersNode[i];
-        node.getComponent(cc.Animation).play("Bottom");
-        node.getComponent("SelfPlayer").start();
-        node.active = true;
-      }
-    }
 
     // Clearing previous info of otherPlayers. [BEGINS]
     if (self.otherPlayerNodeDict) {
@@ -825,6 +817,12 @@ cc.Class({
         }
 
         if (0 == self.lastRoomDownsyncFrameId) {
+          /*
+          [WARNING]
+
+          This closure is used even for "resyncing", because "_resetCurrentMatch" is called to set "self.lastRoomDownsyncFrameId =0" 
+            within "handleBattleColliderInfo" which was invoked anyway upon "WsSession establishment".
+          */ 
           self.battleState = ALL_BATTLE_STATES.IN_BATTLE;
           if (1 == frameId) {
             // No need to prompt upon rejoined.
@@ -894,27 +892,35 @@ cc.Class({
   closeBottomBannerAd() {
     const self = this;
     if (CC_WECHATGAME && null != self.bottomBannerAd) {
-      self.bottomBannerAd.destroy();
       if (null != self.bottomBannerAd.autoDisappearTimmer) {
         clearTimeout(self.bottomBannerAd.autoDisappearTimmer);
         self.bottomBannerAd.autoDisappearTimmer = null;
       }
+      self.bottomBannerAd.destroy();
       self.bottomBannerAd = null;
     }
   },
 
   disableGameRuleNode() {
     const self = window.mapIns;
-    if (null != self.gameRuleNode && null != self.gameRuleNode.active && null != self.gameRuleScriptIns) {
-      self.gameRuleScriptIns.modeButton.active = false;
+    if (null == self.gameRuleNode) {
+      return;
     }
+    if (null == self.gameRuleScriptIns) {
+      return;
+    }
+    if (null == self.gameRuleScriptIns.modeButton) {
+      return;
+    }
+    self.gameRuleScriptIns.modeButton.active = false;
   },
 
   hideGameRuleNode() {
     const self = window.mapIns;
-    if (null != self.gameRuleNode && null != self.gameRuleNode.active) {
-      self.gameRuleNode.active = false;
+    if (null == self.gameRuleNode) {
+      return;
     }
+    self.gameRuleNode.active = false;
   },
 
   setupInputControls() {
@@ -946,7 +952,7 @@ cc.Class({
   onBattleStarted() {
     console.log('On battle started!');
     const self = window.mapIns;
-    if (self.musicEffectManagerScriptIns) {
+    if (null != self.musicEffectManagerScriptIns) {
       self.musicEffectManagerScriptIns.playBGM();
     }
     const canvasNode = self.canvasNode;
@@ -977,8 +983,10 @@ cc.Class({
     const resultPanelScriptIns = resultPanelNode.getComponent("ResultPanel");
     resultPanelScriptIns.showPlayerInfo(playerMetas, players);
     window.clearBoundRoomIdInBothVolatileAndPersistentStorage();
-    // Such that it doesn't execute "update(dt)" anymore. 
-    self.selfPlayerNode.active = false;
+    if (null != self.selfPlayerNode) {
+      // Such that it doesn't execute "update(dt)" anymore. 
+      self.selfPlayerNode.active = false;
+    }
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopupInCanvas(resultPanelNode);
     self.openBottonBannerAd();
@@ -996,12 +1004,15 @@ cc.Class({
     newPlayerNode.setPosition(toStartWithPos);
     newPlayerNode.getComponent("SelfPlayer").mapNode = instance.node;
 
-    instance.node.addChild(newPlayerNode);
-    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
-    instance.selfPlayerScriptIns.showArrowTipNode();
+    safelyAddChild(instance.node, newPlayerNode);
 
     setLocalZOrder(newPlayerNode, 5);
     instance.selfPlayerNode = newPlayerNode;
+    instance.selfPlayerNode.active = true;
+
+    instance.selfPlayerScriptIns = newPlayerNode.getComponent("SelfPlayer");
+    instance.selfPlayerScriptIns.scheduleNewDirection({dx: 0, dy: -1}, true);
+    instance.selfPlayerScriptIns.showArrowTipNode();
   },
 
   update(dt) {
@@ -1418,7 +1429,7 @@ cc.Class({
     findingPlayerScriptIns.updatePlayersInfo(playerMetas);
     window.setTimeout(() => {
       self.closeBottomBannerAd();
-      if (self.findingPlayerNode.parent) {
+      if (null != self.findingPlayerNode.parent) {
         self.findingPlayerNode.parent.removeChild(self.findingPlayerNode);
         self.transitToState(ALL_MAP_STATES.VISUAL);
         for (let i in playerMetas) {

@@ -105,7 +105,7 @@ cc.Class({
 
       if (selfPlayerInfo.playerId == p.id) {
         const rank = k + 1;
-        if (rank != 1 && null != self.winNode) {
+        if (1 != rank && null != self.winNode) {
           self.winNode.active = false;
         }
       }

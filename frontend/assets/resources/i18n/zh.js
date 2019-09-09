@@ -39,7 +39,6 @@ window.i18n.languages['zh'] = {
       "WECHAT_AUTHORIZED_AND_INT_AUTH_TOKEN_LOGGING_IN": "微信授权登录成功，正在登入...",
       "WECHAT_LOGIN_FAILED_TAP_SCREEN_TO_RETRY": "微信授权登录失败，请点击屏幕重试",
       "AUTO_LOGIN_FAILED_WILL_USE_MANUAL_LOGIN": "自动登入失败，请点击屏幕空白处手动授权登入...",
-      "WECHAT_LOGIN_AND_INT_AUTH_TOKEN_LOGIN_SUCCEEDED": "微信授权登录失败，请点击屏幕重试",
       "AUTO_LOGIN_1": "正在自动登入",
       "AUTO_LOGIN_2": "正在自动登入...",
     },

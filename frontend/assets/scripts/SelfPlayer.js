@@ -30,8 +30,14 @@ cc.Class({
 
   showArrowTipNode() {
     const self = this;
+    if (null == self.arrowTipNode) {
+      return;
+    }
     self.arrowTipNode.active = true;
     window.setTimeout(function(){
+      if (null == self.arrowTipNode) {
+        return;
+      }
       self.arrowTipNode.active = false;
     }, 3000)
   },

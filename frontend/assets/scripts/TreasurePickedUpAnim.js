@@ -44,7 +44,7 @@ cc.Class({
   update (dt) {
     const changingNode = this.pickedUpAnimNode; 
     const elapsedMillis = Date.now() - this.startedAtMillis; 
-    if(elapsedMillis >= this.binglingAnimDurationMillis && this.binglingAnimNode.active) {
+    if(elapsedMillis >= this.binglingAnimDurationMillis && null != this.binglingAnimNode && true == this.binglingAnimNode.active) {
       this.binglingAnimNode.active = false;
       this.startedAtMillis = Date.now();
     }

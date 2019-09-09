@@ -42,8 +42,12 @@ cc.Class({
   },
 
   init() {
-    this.firstPlayerInfoNode.active = false;
-    this.secondPlayerInfoNode.active = false;
+    if (null != this.firstPlayerInfoNode) {
+      this.firstPlayerInfoNode.active = false;
+    }
+    if (null != this.secondPlayerInfoNode) {
+      this.secondPlayerInfoNode.active = false;
+    }
     this.playersInfoNode = {};
     Object.assign(this.playersInfoNode, {
       1: this.firstPlayerInfoNode
@@ -52,14 +56,18 @@ cc.Class({
       2: this.secondPlayerInfoNode
     });
 
-    window.firstPlayerInfoNode = this.firstPlayerInfoNode;
-    this.findingAnimNode.active = true;
-
-  },
-  hideExitButton() {
-    if (this.exitBtnNode != null) {
-      this.exitBtnNode.active = false;
+    if (null != this.findingAnimNode) {
+      this.findingAnimNode.active = true;
     }
+
+    window.firstPlayerInfoNode = this.firstPlayerInfoNode;
+  },
+
+  hideExitButton() {
+    if (null == this.exitBtnNode != null) {
+      return;
+    }
+    this.exitBtnNode.active = false;
   },
 
   exitBtnOnClick(evt) {
@@ -73,13 +81,18 @@ cc.Class({
   },
 
   updatePlayersInfo(playerMetas) {
-    if (!playerMetas) return;
+    if (null == playerMetas) return;
     for (let i in playerMetas) {
       const playerMeta = playerMetas[i];
       const playerInfoNode = this.playersInfoNode[playerMeta.joinIndex];
+      if (null == playerInfoNode) {
+        cc.error("There's no playerInfoNode for joinIndex == ", joinIndex, ", as `this.playerInfoNode` is currently ", this.playersInfoNode);
+      } 
       playerInfoNode.active = true;
       if (2 == playerMeta.joinIndex) {
-        this.findingAnimNode.active = false;
+        if (null != this.findingAnimNode) { 
+          this.findingAnimNode.active = false;
+        }
       }
     }
 
@@ -100,9 +113,12 @@ cc.Class({
           url: remoteUrl,
           type: 'jpg'
         }, function(err, texture) {
-          if (err != null) {
+          if (null != err ) {
             console.error(err);
           } else {
+            if (null == texture) {
+              return;
+            }
             const sf = new cc.SpriteFrame();
             sf.setTexture(texture);
             playerInfoNode.getChildByName('avatarMask').getChildByName('avatar').getComponent(cc.Sprite).spriteFrame = sf;
@@ -121,7 +137,7 @@ cc.Class({
         } else if (!isEmptyString(playerMeta.name)) {
           return playerMeta.name
         } else {
-          return "No name"
+          return ""
         }
       })();
       nameNode.getComponent(cc.Label).string = nameToDisplay;
