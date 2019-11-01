@@ -135,7 +135,7 @@
     if (null == angleToRotate) {
       return false;
     }
-    targetNode.setRotation(angleToRotate); 
+    set2dRotation(targetNode, angleToRotate); 
 
     const newPos = cc.v2(
       bulletInfo.x,

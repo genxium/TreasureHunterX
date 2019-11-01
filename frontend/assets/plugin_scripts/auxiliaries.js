@@ -54,6 +54,16 @@ window.safelyAssignParent = function(proposedChild, proposedParent) {
   return true;
 };
 
+window.get2dRotation = function(aCCNode, angle) {
+  // return aCCNode.rotation; // For cc2.0+ 
+  return aCCNode.angle; // For cc2.1+ 
+};
+
+window.set2dRotation = function(aCCNode, angle) {
+  // aCCNode.rotation = angle; // For cc2.0+ 
+  aCCNode.angle = angle; // For cc2.1+ 
+};
+
 window.setLocalZOrder = function(aCCNode, zIndex) {
   aCCNode.zIndex = zIndex; // For cc2.0+ 
 };
