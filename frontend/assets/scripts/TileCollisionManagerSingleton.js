@@ -494,12 +494,16 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
       if (null == polylinePoints) {
         continue
       }
+      for (let k = 0; k < polylinePoints.length; ++k) {
+        /* Since CocosCreatorv2.1.3, the Y-coord of object polylines DIRECTLY DRAWN ON tmx with ISOMETRIC ORIENTATION is inverted. -- YFLu, 2019-11-01. */
+        polylinePoints[k].y = -polylinePoints[k].y;
+      }
       const boundaryType = object.boundary_type;
       switch (boundaryType) {
         case "barrier":
           let toPushBarriers = [];
           for (let k = 0; k < polylinePoints.length; ++k) {
-            const tmp = object.offset.add(cc.v2(polylinePoints[k].x, -polylinePoints[k].y /* Since CocosCreatorv2.1.3, the Y-coord of object polylines DIRECTLY DRAWN ON tmx with ISOMETRIC ORIENTATION is inverted. -- YFLu, 2019-11-01. */));
+            const tmp = object.offset.add(polylinePoints[k]);
             toPushBarriers.push(this.continuousObjLayerOffsetToContinuousMapNodePos(withTiledMapNode, tmp));
           }
           if (null != object.debug_mark) {
