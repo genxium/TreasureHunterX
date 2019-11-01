@@ -45,7 +45,9 @@
     "Physics",
     "StudioComponent",
     "3D",
-    "Mesh"
+    "Mesh",
+    "Geom Utils",
+    "3D Primitive"
   ],
   "facebook": {
     "appID": "",

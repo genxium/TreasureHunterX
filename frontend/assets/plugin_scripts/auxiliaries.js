@@ -54,14 +54,14 @@ window.safelyAssignParent = function(proposedChild, proposedParent) {
   return true;
 };
 
-window.get2dRotation = function(aCCNode, angle) {
+window.get2dRotation = function(aCCNode) {
   // return aCCNode.rotation; // For cc2.0+ 
   return aCCNode.angle; // For cc2.1+ 
 };
 
-window.set2dRotation = function(aCCNode, angle) {
+window.set2dRotation = function(aCCNode, clockwiseAngle) {
   // aCCNode.rotation = angle; // For cc2.0+ 
-  aCCNode.angle = angle; // For cc2.1+ 
+  aCCNode.angle = -clockwiseAngle; // For cc2.1+ 
 };
 
 window.setLocalZOrder = function(aCCNode, zIndex) {
