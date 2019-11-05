@@ -392,15 +392,6 @@ func (p *playerController) IntAuthTokenLogin(c *gin.Context) {
 		c.Set(api.RET, Constants.RetCode.InvalidToken)
 		return
 	}
-	if playerLogin.FromPublicIP != models.NewNullString(c.ClientIP()) {
-		err = models.DelPlayerLoginByToken(playerLogin.IntAuthToken)
-		if err != nil {
-			c.Set(api.RET, Constants.RetCode.MysqlError)
-			return
-		}
-		//新生成一个token
-		token = utils.TokenGenerator(32)
-	}
 
 	//kobako: 从player获取display name等
 	player, err := models.GetPlayerById(playerLogin.PlayerID)
