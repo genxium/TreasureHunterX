@@ -141,7 +141,7 @@ func (pR *Room) onTreasurePickedUp(contactingPlayer *Player, contactingTreasure 
 }
 
 const (
-	PLAYER_DEFAULT_SPEED = 300 // Hardcoded
+	PLAYER_DEFAULT_SPEED = 200 // Hardcoded
 	ADD_SPEED            = 100 // Hardcoded
 )
 

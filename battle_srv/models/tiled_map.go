@@ -191,7 +191,7 @@ func TmxPolylineToPolygon2DInB2World(pTmxMapIns *TmxMap, singleObjInTmxFile *Tmx
 	pointsCount := len(singleValueArray)
 
 	if pointsCount >= box2d.B2_maxPolygonVertices {
-		return nil, errors.New(fmt.Sprintf("During `TmxPolylineToPolygon2DInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v", pointsCount, box2d.B2_maxPolygonVertices))
+		return nil, errors.New(fmt.Sprintf("During `TmxPolylineToPolygon2DInB2World`, you have a polygon with pointsCount == %v, exceeding or equal to box2d.B2_maxPolygonVertices == %v, of polyines [%v]", pointsCount, box2d.B2_maxPolygonVertices, singleValueArray))
 	}
 
 	theUntransformedAnchor := &Vec2D{
