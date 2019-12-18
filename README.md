@@ -1,3 +1,12 @@
+# 0. Preface
+This repository introduces an intact "multillayer online arena" game, with centralized framesync@30fps(tunable), room management and player session management. 
+
+Currently both frontend and backend are aligned to support only 1v1 mode, but the backend is comparatively easy to be configured to support 2v2 ~ 5v5 etc. (tested), while the frontend is not as easy to tune. The sync algorithm is applicable to UDP as well.
+
+[The corresponding BotSpawningService can be found here](https://github.com/genxium/AIPlayerForTreasureHunterX).
+
+We decided to open source this project due to lack of resource to maintain it, therefore new feature proposal, bug report or pull-request might not be handled in time -- and we'll try our best.
+
 # 1. Database Server
 
 The database product to be used for this project is MySQL 5.7.
