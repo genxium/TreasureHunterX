@@ -2,6 +2,7 @@
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
+    "packageName": "org.cocos2d.helloworld",
     "pathPattern": "",
     "recordPath": "",
     "scheme": "https",
@@ -16,14 +17,14 @@
   },
   "encryptJs": true,
   "excludeScenes": [
-    "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4"
+    "475b849b-44b3-4390-982d-bd0d9e695093"
   ],
   "fb-instant-games": {},
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
   "md5Cache": true,
-  "mergeStartScene": false,
+  "mergeStartScene": true,
   "optimizeHotUpdate": false,
   "orientation": {
     "landscapeLeft": true,
@@ -36,7 +37,7 @@
     "REMOTE_SERVER_ROOT": "",
     "orientation": "portrait"
   },
-  "startScene": "475b849b-44b3-4390-982d-bd0d9e695093",
+  "startScene": "2ff474d9-0c9e-4fe3-87ec-fbff7cae85b4",
   "title": "TreasureHunterX",
   "webOrientation": "portrait",
   "wechatgame": {
@@ -45,5 +46,15 @@
     "orientation": "portrait"
   },
   "xxteaKey": "4d54a3d5-e6f3-49",
-  "zipCompressJs": true
+  "zipCompressJs": true,
+  "android": {
+    "packageName": "org.cocos2d.helloworld"
+  },
+  "ios": {
+    "packageName": "org.cocos2d.helloworld"
+  },
+  "mac": {
+    "packageName": "org.cocos2d.helloworld"
+  },
+  "win32": {}
 }

@@ -1220,16 +1220,7 @@ func (pR *Room) onPlayerExpelledDuringGame(playerId int32) {
 func (pR *Room) onPlayerExpelledForDismissal(playerId int32) {
 	pR.onPlayerLost(playerId)
 
-	Logger.Info("Player expelled for dismissal:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
-
-	/*
-	 * This is a magic empty string handled by `<proj-root>/battle_srv/ws/serve.go` to invoke respective `signalToCloseConnOfThisPlayer`.
-	 * It's deliberately put AFTER the invocation of `pR.onPlayerLost(...)` for each in-battle-player to
-	 *
-	 *  -- YFLu
-	 */
-	theForwardingChannel := pR.PlayerDownsyncChanDict[playerId]
-	utils.SendStrSafely("", theForwardingChannel)
+	Logger.Info("onPlayerExpelledForDismissal:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 }
 
 func (pR *Room) OnPlayerDisconnected(playerId int32) {
@@ -1238,25 +1229,37 @@ func (pR *Room) OnPlayerDisconnected(playerId int32) {
 			Logger.Error("Room OnPlayerDisconnected, recovery spot#1, recovered from: ", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("panic", r))
 		}
 	}()
-	/**
-	 * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
-	 */
+
+	if _, existent := pR.Players[playerId]; existent {
+    switch (pR.Players[playerId].BattleState) {
+    case PlayerBattleStateIns.DISCONNECTED:
+    case PlayerBattleStateIns.LOST:
+    case PlayerBattleStateIns.EXPELLED_DURING_GAME:
+    case PlayerBattleStateIns.EXPELLED_IN_DISMISSAL:
+      Logger.Info("Room OnPlayerDisconnected[early return #1]:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+      return
+    }
+  } else {
+    // Not even the "pR.Players[playerId]" exists.
+    Logger.Info("Room OnPlayerDisconnected[early return #2]:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
+    return
+  }
+
 	switch pR.State {
 	case RoomBattleStateIns.WAITING:
 		pR.onPlayerLost(playerId)
 		delete(pR.Players, playerId) // Note that this statement MUST be put AFTER `pR.onPlayerLost(...)` to avoid nil pointer exception.
-		if pR.EffectivePlayerCount == 0 {
+		if 0 == pR.EffectivePlayerCount {
 			pR.State = RoomBattleStateIns.IDLE
 		}
 		pR.updateScore()
 		Logger.Info("Player disconnected while room is at RoomBattleStateIns.WAITING:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
-		break
 	default:
-		if _, existent := pR.Players[playerId]; existent {
-			pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
-			Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
-		}
-		break
+    pR.Players[playerId].BattleState = PlayerBattleStateIns.DISCONNECTED
+    /**
+     * Note that there's no need to close `pR.PlayerDownsyncChanDict[playerId]` immediately.
+     */
+    Logger.Info("Player is just disconnected from room:", zap.Any("playerId", playerId), zap.Any("playerBattleState", pR.Players[playerId].BattleState), zap.Any("roomId", pR.Id), zap.Any("nowRoomBattleState", pR.State), zap.Any("nowRoomEffectivePlayerCount", pR.EffectivePlayerCount))
 	}
 }
 
@@ -1269,6 +1272,8 @@ func (pR *Room) onPlayerLost(playerId int32) {
 	if player, existent := pR.Players[playerId]; existent {
 		player.BattleState = PlayerBattleStateIns.LOST
 		if _, chanExistent := pR.PlayerDownsyncChanDict[playerId]; chanExistent {
+      Logger.Info("onPlayerLost, sending termination symbol for:", zap.Any("playerId", playerId), zap.Any("roomId", pR.Id))
+      utils.SendStrSafely("", pR.PlayerDownsyncChanDict[playerId])
 			utils.CloseStrChanSafely(pR.PlayerDownsyncChanDict[playerId])
 			delete(pR.PlayerDownsyncChanDict, playerId)
 		}

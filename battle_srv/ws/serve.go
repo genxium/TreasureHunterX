@@ -341,6 +341,7 @@ func Serve(c *gin.Context) {
 			select {
 			case typedRoomDownsyncFrame := <-dedicatedChanToForward:
 				if "" == typedRoomDownsyncFrame {
+          Logger.Warn("Goroutine `forwardingLoopAgainstBoundRoom` received termination symbol:", zap.Any("roomId", pRoom.Id), zap.Any("playerId", playerId))
 					signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
 					return nil
 				}

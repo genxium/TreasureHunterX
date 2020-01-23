@@ -339,9 +339,7 @@ TileCollisionManager.prototype.extractBoundaryObjects = function (withTiledMapNo
     shelterChainHeads: [],
     sheltersZReducer: [],
     frameAnimations: [],
-    imageObjects: [],
     grandBoundaries: [],
-    transparents: [],
   };
   const tiledMapIns = withTiledMapNode.getComponent(cc.TiledMap); // This is a magic name.
   const mapTileSize = tiledMapIns.getTileSize();
@@ -658,22 +656,6 @@ TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScript
     }
   }
 
-  for (let imageObject of extractedBoundaryObjs.imageObjects) {
-    const imageObjectNode = cc.instantiate(mapScriptIns.imageObjectPrefab);
-    const spriteComp = imageObjectNode.getComponent(cc.Sprite);
-    imageObjectNode.setPosition(imageObject.posInMapNode);
-    imageObjectNode.width = imageObject.sizeInMapNode.width;
-    imageObjectNode.height = imageObject.sizeInMapNode.height;
-    imageObjectNode.setScale(imageObject.sizeInMapNode.width / imageObject.origSize.width, imageObject.sizeInMapNode.height / imageObject.origSize.height);
-    imageObjectNode.setAnchorPoint(cc.v2(0.5, 0)); // A special requirement for "image-type Tiled object" by "CocosCreator v2.0.1".
-    spriteComp.spriteFrame = imageObject.spriteFrame;
-    imageObjectNode.active = false;
-    safelyAddChild(mapScriptIns.node, imageObjectNode);
-    setLocalZOrder(imageObjectNode, window.CORE_LAYER_Z_INDEX.IMAGE_OBJ);
-    imageObjectNode.origZIndex = window.CORE_LAYER_Z_INDEX.IMAGE_OBJ;
-    imageObject.imageObjectNode = imageObjectNode;
-  }
-
   mapScriptIns.dictOfTiledFrameAnimationList = {};
   for (let frameAnim of extractedBoundaryObjs.frameAnimations) {
     if (!frameAnim.type) {
@@ -755,21 +737,6 @@ TileCollisionManager.prototype.initMapNodeByTiledBoundaries = function(mapScript
     }
     mapScriptIns.barrierColliders.push(newBarrierColliderIns);
     mapScriptIns.node.addChild(newBarrier);
-  }
-
-  for (let boundaryObj of extractedBoundaryObjs.transparents) {
-    const newTransparent = cc.instantiate(mapScriptIns.polygonBoundaryTransparentPrefab);
-    const newBoundaryOffsetInMapNode = cc.v2(boundaryObj[0].x, boundaryObj[0].y);
-    newTransparent.setPosition(newBoundaryOffsetInMapNode);
-    newTransparent.setAnchorPoint(cc.v2(0, 0));
-    const newTransparentColliderIns = newTransparent.getComponent(cc.PolygonCollider);
-    newTransparentColliderIns.points = [];
-    for (let p of boundaryObj) {
-      newTransparentColliderIns.points.push(p.sub(newBoundaryOffsetInMapNode));
-    }
-    newTransparent.pTiledLayer = boundaryObj.pTiledLayer;
-    newTransparent.tileDiscretePos = boundaryObj.tileDiscretePos;
-    mapScriptIns.node.addChild(newTransparent);
   }
 
   for (let boundaryObj of extractedBoundaryObjs.sheltersZReducer) {

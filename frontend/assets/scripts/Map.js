@@ -578,8 +578,19 @@ cc.Class({
         const newTileSize = tiledMapIns.getTileSize();
         self.node.setContentSize(newMapSize.width*newTileSize.width, newMapSize.height*newTileSize.height);
         self.node.setPosition(cc.v2(0, 0));
+        /*
+        * Deliberately hiding "ImageLayer"s. This dirty fix is specific to "CocosCreator v2.2.1", where it got back the rendering capability of "ImageLayer of Tiled", yet made incorrectly. In this game our "markers of ImageLayers" are rendered by dedicated prefabs with associated colliders.
+        *
+        * -- YFLu, 2020-01-23
+        */
+        const existingImageLayers = tiledMapIns.getObjectGroups();
+        for (let singleImageLayer of existingImageLayers) {
+          singleImageLayer.node.opacity = 0;  
+        }
+
         const boundaryObjs = tileCollisionManager.extractBoundaryObjects(self.node);
         tileCollisionManager.initMapNodeByTiledBoundaries(self, mapNode, boundaryObjs);
+      
 
         self.selfPlayerInfo = JSON.parse(cc.sys.localStorage.getItem('selfPlayer'));
         Object.assign(self.selfPlayerInfo, {
@@ -648,7 +659,7 @@ cc.Class({
           if (!self.findingPlayerNode.parent) {
             self.showPopupInCanvas(self.findingPlayerNode);
           }
-          self.openBottonBannerAd(function() {
+          self.openBottomBannerAd(function() {
             if (null != self.bottomBannerAd) {
               self.bottomBannerAd.autoDisappearTimmer = setTimeout(function() {
                 self.closeBottomBannerAd();
@@ -862,9 +873,9 @@ cc.Class({
     self.bottomBannerAd = null;
   },
 
-  openBottonBannerAd(callback) {
+  openBottomBannerAd(callback) {
     const self = this;
-    if (CC_WECHATGAME && null == self.bottomBannerAd) {
+    if (cc.sys.platform === cc.sys.WECHAT_GAME && null == self.bottomBannerAd) {
       let {windowWidth, windowHeight} = wx.getSystemInfoSync();
       self.bottomBannerAd = self.bottomBannerAd || wx.createBannerAd({
         adUnitId: 'adunit-b1088bf52d58a70d',
@@ -891,7 +902,7 @@ cc.Class({
 
   closeBottomBannerAd() {
     const self = this;
-    if (CC_WECHATGAME && null != self.bottomBannerAd) {
+    if (cc.sys.platform === cc.sys.WECHAT_GAME && null != self.bottomBannerAd) {
       if (null != self.bottomBannerAd.autoDisappearTimmer) {
         clearTimeout(self.bottomBannerAd.autoDisappearTimmer);
         self.bottomBannerAd.autoDisappearTimmer = null;
@@ -989,7 +1000,7 @@ cc.Class({
     }
     self.battleState = ALL_BATTLE_STATES.IN_SETTLEMENT;
     self.showPopupInCanvas(resultPanelNode);
-    self.openBottonBannerAd();
+    self.openBottomBannerAd();
 
     // Clear player info
     self.playersInfoNode.getComponent("PlayersInfo").clearInfo();

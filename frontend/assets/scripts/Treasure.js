@@ -20,7 +20,6 @@ cc.Class({
     const spriteComponent = this.node.getComponent(cc.Sprite);
     const targetGid = (window.LOW_SCORE_TREASURE_TYPE == treasureInfo.type ? window.battleEntityTypeNameToGlobalGid["LowScoreTreasure"] : window.battleEntityTypeNameToGlobalGid["HighScoreTreasure"])
     spriteComponent.spriteFrame = window.getOrCreateSpriteFrameForGid(targetGid).spriteFrame;
-
   },
 
   start() {},

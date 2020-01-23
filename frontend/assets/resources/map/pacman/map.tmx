@@ -298,36 +298,36 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="LowScoreTreasure">
-  <object id="165" gid="13" x="1520" y="204" width="64" height="64"/>
-  <object id="166" gid="13" x="1372" y="352" width="64" height="64"/>
-  <object id="167" gid="13" x="1184" y="524" width="64" height="64"/>
-  <object id="168" gid="13" x="544" y="1184" width="64" height="64"/>
-  <object id="169" gid="13" x="294" y="1442" width="64" height="64"/>
-  <object id="174" gid="16" x="2750" y="1234" width="64" height="64"/>
-  <object id="175" gid="13" x="1562" y="1990" width="64" height="64"/>
-  <object id="176" gid="13" x="1846" y="1718" width="64" height="64"/>
-  <object id="177" gid="13" x="906" y="2438" width="64" height="64"/>
-  <object id="178" gid="13" x="638" y="2186" width="64" height="64"/>
-  <object id="179" gid="13" x="378" y="1878" width="64" height="64"/>
-  <object id="180" gid="13" x="580" y="1672" width="64" height="64"/>
-  <object id="181" gid="13" x="1518" y="634" width="64" height="64"/>
-  <object id="182" gid="13" x="1818" y="410" width="64" height="64"/>
-  <object id="183" gid="13" x="2308" y="360" width="64" height="64"/>
-  <object id="184" gid="13" x="2524" y="576" width="64" height="64"/>
-  <object id="186" gid="13" x="2726" y="790" width="64" height="64"/>
-  <object id="187" gid="13" x="2928" y="972" width="64" height="64"/>
-  <object id="192" gid="13" x="1484.85" y="3064" width="64" height="64"/>
-  <object id="193" gid="13" x="1972.73" y="3048.85" width="64" height="64"/>
-  <object id="194" gid="13" x="2006.06" y="2664" width="64" height="64"/>
-  <object id="195" gid="13" x="312.121" y="2291.27" width="64" height="64"/>
-  <object id="196" gid="13" x="503.03" y="2488.24" width="64" height="64"/>
-  <object id="197" gid="13" x="606.061" y="3076.12" width="64" height="64"/>
-  <object id="198" gid="13" x="833.333" y="2842.79" width="64" height="64"/>
-  <object id="206" gid="13" x="2612.12" y="2064" width="64" height="64"/>
-  <object id="207" gid="13" x="3030.3" y="1985.21" width="64" height="64"/>
+  <object id="165" gid="13" x="1520" y="204" width="64" height="64" visible="0"/>
+  <object id="166" gid="13" x="1372" y="352" width="64" height="64" visible="0"/>
+  <object id="167" gid="13" x="1184" y="524" width="64" height="64" visible="0"/>
+  <object id="168" gid="13" x="544" y="1184" width="64" height="64" visible="0"/>
+  <object id="169" gid="13" x="294" y="1442" width="64" height="64" visible="0"/>
+  <object id="174" gid="16" x="2750" y="1234" width="64" height="64" visible="0"/>
+  <object id="175" gid="13" x="1562" y="1990" width="64" height="64" visible="0"/>
+  <object id="176" gid="13" x="1846" y="1718" width="64" height="64" visible="0"/>
+  <object id="177" gid="13" x="906" y="2438" width="64" height="64" visible="0"/>
+  <object id="178" gid="13" x="638" y="2186" width="64" height="64" visible="0"/>
+  <object id="179" gid="13" x="378" y="1878" width="64" height="64" visible="0"/>
+  <object id="180" gid="13" x="580" y="1672" width="64" height="64" visible="0"/>
+  <object id="181" gid="13" x="1518" y="634" width="64" height="64" visible="0"/>
+  <object id="182" gid="13" x="1818" y="410" width="64" height="64" visible="0"/>
+  <object id="183" gid="13" x="2308" y="360" width="64" height="64" visible="0"/>
+  <object id="184" gid="13" x="2524" y="576" width="64" height="64" visible="0"/>
+  <object id="186" gid="13" x="2726" y="790" width="64" height="64" visible="0"/>
+  <object id="187" gid="13" x="2928" y="972" width="64" height="64" visible="0"/>
+  <object id="192" gid="13" x="1484.85" y="3064" width="64" height="64" visible="0"/>
+  <object id="193" gid="13" x="1972.73" y="3048.85" width="64" height="64" visible="0"/>
+  <object id="194" gid="13" x="2006.06" y="2664" width="64" height="64" visible="0"/>
+  <object id="195" gid="13" x="312.121" y="2291.27" width="64" height="64" visible="0"/>
+  <object id="196" gid="13" x="503.03" y="2488.24" width="64" height="64" visible="0"/>
+  <object id="197" gid="13" x="606.061" y="3076.12" width="64" height="64" visible="0"/>
+  <object id="198" gid="13" x="833.333" y="2842.79" width="64" height="64" visible="0"/>
+  <object id="206" gid="13" x="2612.12" y="2064" width="64" height="64" visible="0"/>
+  <object id="207" gid="13" x="3030.3" y="1985.21" width="64" height="64" visible="0"/>
  </objectgroup>
  <objectgroup id="6" name="GuardTower">
-  <object id="188" gid="17" x="1429.33" y="1781.33" width="300" height="300"/>
+  <object id="188" gid="17" x="1429.33" y="1781.33" width="300" height="300" visible="0"/>
   <object id="210" gid="17" x="1784.67" y="1414" width="300" height="300"/>
   <object id="211" gid="17" x="2786" y="2783.33" width="300" height="300"/>
   <object id="212" gid="17" x="532.667" y="543.333" width="300" height="300"/>
