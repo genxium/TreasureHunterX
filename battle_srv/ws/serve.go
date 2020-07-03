@@ -276,6 +276,67 @@ func Serve(c *gin.Context) {
 	}
 	connIOMux.Unlock()
 
+  /*
+  TODO
+
+  Is there a way to EXPLICITLY make this "receivingLoopAgainstPlayer/conn.ReadJSON(...)" edge-triggered or yield/park otherwise? For example a C-style equivalent would be as follows.
+
+  ```
+	receivingLoopAgainstPlayer := func() error {
+		defer func() {
+			if r := recover(); r != nil {
+				Logger.Warn("Goroutine `receivingLoopAgainstPlayer`, recovery spot#1, recovered from: ", zap.Any("panic", r))
+			}
+			Logger.Info("Goroutine `receivingLoopAgainstPlayer` is stopped for:", zap.Any("playerId", playerId), zap.Any("roomId", pRoom.Id))
+		}()
+
+    // Set O_NONBLOCK on "fdOfThisConn".
+    int flags = fcntl(fdOfThisConn, F_GETFL, 0);
+    fcntl(fdOfThisConn, F_SETFL, flags | O_NONBLOCK);
+
+    int ep_fd = epoll_create1(0);
+    epoll_event ev;
+    ev.data.fd = fdOfThisConn;
+    ev.events = (EPOLLIN | EPOLLET | CUSTOM_SIGNAL_TO_CLOSE); // Is this possible?
+    epoll_ctl(ep_fd, EPOLL_CTL_ADD, fdOfThisConn, &ev);
+    epoll_event *evs = (epoll_event*)calloc(MAXEVENTS, sizeof(epoll_event)); 	
+
+    bool localAwarenessOfSignaledToClose = false;
+
+    while(true) {
+      if (true == localAwarenessOfSignaledToClose) {
+        return;
+      }
+
+      // Would yield the current KernelThread and park it to a "queue" for later being unparked from the same "queue", thus resumed running. See http://web.stanford.edu/~hhli/CS110Notes/CS110NotesCollection/Topic%204%20Networking%20(5).html for more information. However, multiple "goroutine"s might share a same KernelThread and could be an issue for yielding.
+      int n = epoll_wait(ep_fd, evs, MAXEVENTS, -1);
+
+      for (int i = 0; i < n; ++i) {
+        if (evs[i].data.fd == fdOfThisConn) {
+          if (
+              (evs[i].events & EPOLLERR) ||
+              (evs[i].events & EPOLLHUP) ||
+              (evs[i].events & CUSTOM_SIGNAL_TO_CLOSE)
+            ) {
+            signalToCloseConnOfThisPlayer(Constants.RetCode.UnknownError, "")
+            localAwarenessOfSignaledToClose = true;
+            break;
+          }
+          int nbytes = 0;
+          while(nbytes = recv(fdOfThisConn, buff, sizeof(buff)) && 0 < nbytes) {
+            ...
+          }
+          // Now that "0 == nbytes" or "EWOULDBLOCK == nbytes" or other errors came up.
+          continue; 
+        }
+      }
+    }
+  }
+
+  ```
+  -- YFLu, 2020-07-03
+  */
+
 	// Starts the receiving loop against the client-side
 	receivingLoopAgainstPlayer := func() error {
 		defer func() {
